@@ -29,13 +29,16 @@ public class User extends MainActivity {
     protected int followerAmount;
     protected String broadcasterType;
     protected String description;
-    private Globals globals = new Globals(getApplicationContext());
+    private Globals globals;
 
+    //TODO add tags to volley, refresh button, change layout
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user);
         getSupportActionBar().setTitle("User");
+
+        globals = new Globals(getApplicationContext());
         getUser();
     }
 
@@ -122,6 +125,7 @@ public class User extends MainActivity {
         }
     }
 
+    //TODO this can be removed
     protected void readUser() {
         try {
             JSONObject user = new JSONObject(readFromFile(getApplicationContext().getFilesDir() + File.separator + "USER", getApplicationContext()));

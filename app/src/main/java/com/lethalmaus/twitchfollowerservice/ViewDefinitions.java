@@ -45,9 +45,15 @@ public class ViewDefinitions {
         tableRow.setId(View.generateViewId());
         tableRow.addView(imageView);
         tableRow.addView(textView);
-        tableRow.addView(button1);
-        tableRow.addView(button2);
-        tableRow.addView(button3);
+        if (button1 != null) {
+            tableRow.addView(button1);
+        }
+        if (button2 != null) {
+            tableRow.addView(button2);
+        }
+        if (button3 != null) {
+            tableRow.addView(button3);
+        }
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(tableRow);
@@ -67,39 +73,44 @@ public class ViewDefinitions {
         constraintSet.connect(textView.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
         constraintSet.connect(textView.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
 
-        constraintSet.setMargin(button1.getId(), ConstraintSet.END, margin);
-        constraintSet.setMargin(button1.getId(), ConstraintSet.TOP, margin);
-        constraintSet.setMargin(button1.getId(), ConstraintSet.BOTTOM, margin);
-        constraintSet.connect(button1.getId(), ConstraintSet.END, tableRow.getId(), ConstraintSet.END);
-        constraintSet.connect(button1.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
-        constraintSet.connect(button1.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
-
-        constraintSet.setMargin(button2.getId(), ConstraintSet.END, margin);
-        constraintSet.setMargin(button2.getId(), ConstraintSet.TOP, margin);
-        constraintSet.setMargin(button2.getId(), ConstraintSet.BOTTOM, margin);
-        constraintSet.connect(button2.getId(), ConstraintSet.END, button1.getId(), ConstraintSet.START);
-        constraintSet.connect(button2.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
-        constraintSet.connect(button2.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
-
-        constraintSet.setMargin(button3.getId(), ConstraintSet.END, margin);
-        constraintSet.setMargin(button3.getId(), ConstraintSet.TOP, margin);
-        constraintSet.setMargin(button3.getId(), ConstraintSet.BOTTOM, margin);
-        constraintSet.connect(button3.getId(), ConstraintSet.END, button2.getId(), ConstraintSet.START);
-        constraintSet.connect(button3.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
-        constraintSet.connect(button3.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
-
+        if (button1 != null) {
+            constraintSet.setMargin(button1.getId(), ConstraintSet.END, margin);
+            constraintSet.setMargin(button1.getId(), ConstraintSet.TOP, margin);
+            constraintSet.setMargin(button1.getId(), ConstraintSet.BOTTOM, margin);
+            constraintSet.connect(button1.getId(), ConstraintSet.END, tableRow.getId(), ConstraintSet.END);
+            constraintSet.connect(button1.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
+            constraintSet.connect(button1.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
+        }
+        if (button2 != null) {
+            constraintSet.setMargin(button2.getId(), ConstraintSet.END, margin);
+            constraintSet.setMargin(button2.getId(), ConstraintSet.TOP, margin);
+            constraintSet.setMargin(button2.getId(), ConstraintSet.BOTTOM, margin);
+            constraintSet.connect(button2.getId(), ConstraintSet.END, button1.getId(), ConstraintSet.START);
+            constraintSet.connect(button2.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
+            constraintSet.connect(button2.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
+        }
+        if (button3 != null) {
+            constraintSet.setMargin(button3.getId(), ConstraintSet.END, margin);
+            constraintSet.setMargin(button3.getId(), ConstraintSet.TOP, margin);
+            constraintSet.setMargin(button3.getId(), ConstraintSet.BOTTOM, margin);
+            constraintSet.connect(button3.getId(), ConstraintSet.END, button2.getId(), ConstraintSet.START);
+            constraintSet.connect(button3.getId(), ConstraintSet.TOP, tableRow.getId(), ConstraintSet.TOP);
+            constraintSet.connect(button3.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
+        }
         constraintSet.applyTo(tableRow);
         return tableRow;
     }
 
     protected void setUserTableRowButton(ImageButton button) {
-        if (!button.hasOnClickListeners()) {
-            button.setVisibility(View.GONE);
-        } else {
-            button.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, 130));
-            button.setBackgroundColor(Color.TRANSPARENT);
-            button.setAdjustViewBounds(true);
+        if (button != null) {
+            if (!button.hasOnClickListeners()) {
+                button.setVisibility(View.GONE);
+            } else {
+                button.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, 130));
+                button.setBackgroundColor(Color.TRANSPARENT);
+                button.setAdjustViewBounds(true);
+            }
+            button.setId(View.generateViewId());
         }
-        button.setId(View.generateViewId());
     }
 }

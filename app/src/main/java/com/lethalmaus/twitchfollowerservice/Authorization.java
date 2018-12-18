@@ -8,12 +8,13 @@ import android.widget.Toast;
 
 public class Authorization extends AppCompatActivity {
 
-    private Globals globals = new Globals(getApplicationContext());
+    Globals globals;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.authorization);
+        globals = new Globals(getApplicationContext());
         WebView webView = findViewById(R.id.authWebView);
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url){
