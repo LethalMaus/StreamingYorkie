@@ -1,72 +1,48 @@
 package com.lethalmaus.twitchfollowerservice;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
-import com.bumptech.glide.Glide;
+/*FIXME
+request timeout takes too long (test on local device)
+ */
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-//TODO
-//add put & delete for followers
-//notifications for followers
-//arrange followers
-//update files (or for each follower a file maybe)
-//exclusions get just id
-//auto follow & unfollow
-//f4f
-//following
-//logout
-//settings
-//ui styling
-
+/*TODO
+settings & properties
+automize follow/unfollow
+documentation & support
+github cleanup
+app icon & name
+RELEASE!!
+logout.xml design
+multiple user prefs (log out & keep info?)
+refactor buttons
+sort fonts
+error logging
+streaming schedule
+host4host
+load user portion wise if possible (this might need a big refactor)
+ */
 public class MainActivity extends AppCompatActivity {
 
-    protected String username;
-    protected String userID;
-    protected String userLogo;
-    protected String token;
+    Globals globals;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_activity);
 
-        if (!userLoggedIn()) {
+        globals = new Globals(MainActivity.this, getApplicationContext());
+        if (!globals.userLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
         }
+        globals.showUser();
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.menu);
-
-        token = readFromFile(getApplicationContext().getFilesDir() + File.separator + "TOKEN", getApplicationContext());
-        try {
-            JSONObject user = new JSONObject(readFromFile(getApplicationContext().getFilesDir() + File.separator + "USER", getApplicationContext()));
-            username = user.getString("display_name");
-            userID = user.getString("_id");
-            userLogo = user.getString("logo");
-            //showUser();
-        } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(), "User can't be read", Toast.LENGTH_SHORT).show();
-        }
-
-        Button user = findViewById(R.id.user);
+        ImageButton user = findViewById(R.id.userinfo_menu);
         user.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -76,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        Button followers = findViewById(R.id.followers);
+        ImageButton followers = findViewById(R.id.followers_menu);
         followers.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -86,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        Button authorization = findViewById(R.id.authorization);
+        ImageButton authorization = findViewById(R.id.authorization_menu);
         authorization.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -96,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        Button following = findViewById(R.id.following);
+        ImageButton following = findViewById(R.id.following_menu);
         following.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -105,47 +81,21 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+
+        ImageButton f4f = findViewById(R.id.f4f_menu);
+        f4f.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, Follow4Follow.class);
+                        startActivity(intent);
+                    }
+                });
     }
 
-    protected void showUser() {
-        ImageView user_Logo = findViewById(R.id.user_Logo);
-        Glide.with(getApplicationContext()).load(userLogo).into(user_Logo);
-        TextView user_Username = findViewById(R.id.user_Username);
-        user_Username.setText(username);
-    }
-
-    protected boolean userLoggedIn() {
-        File file = new File(getApplicationContext().getFilesDir(), "TOKEN");
-        return file.exists();
-    }
-
-    protected boolean isNetworkAvailable (ConnectivityManager systemService) {
-        NetworkInfo activeNetwork = systemService.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnected();
-    }
-
-    protected String readFromFile(String filename, Context appContext) {
-        try {
-            File file = new File(filename);
-            if (file.exists()) {
-                FileInputStream fileInputStream = new FileInputStream(file);
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                String temp;
-                while ((temp = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(temp);
-                }
-                bufferedReader.close();
-                inputStreamReader.close();
-                fileInputStream.close();
-                return stringBuilder.toString();
-            }
-        } catch (FileNotFoundException e) {
-            Toast.makeText(appContext.getApplicationContext(), "Errors opening file '" + filename + "'", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            Toast.makeText(appContext.getApplicationContext(), "Errors reading from file '" + filename + "'", Toast.LENGTH_SHORT).show();
-        }
-        return "";
+    @Override
+    protected void onResume() {
+        super.onResume();
+        globals.showUser();
     }
 }

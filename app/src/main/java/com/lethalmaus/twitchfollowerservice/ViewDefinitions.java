@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 public class ViewDefinitions {
 
@@ -25,8 +26,12 @@ public class ViewDefinitions {
         ImageView imageView = new ImageView(context);
         imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,90));
         imageView.setAdjustViewBounds(true);
-        Glide.with(context).load(userLogo).into(imageView);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imageView.setId(View.generateViewId());
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.user);
+        requestOptions.error(R.drawable.error);
+        Glide.with(context).setDefaultRequestOptions(requestOptions).load(userLogo).into(imageView);
 
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,90));
@@ -82,7 +87,7 @@ public class ViewDefinitions {
             constraintSet.connect(button1.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
         }
         if (button2 != null) {
-            constraintSet.setMargin(button2.getId(), ConstraintSet.END, margin);
+            constraintSet.setMargin(button2.getId(), ConstraintSet.END, margin*2);
             constraintSet.setMargin(button2.getId(), ConstraintSet.TOP, margin);
             constraintSet.setMargin(button2.getId(), ConstraintSet.BOTTOM, margin);
             constraintSet.connect(button2.getId(), ConstraintSet.END, button1.getId(), ConstraintSet.START);
@@ -90,7 +95,7 @@ public class ViewDefinitions {
             constraintSet.connect(button2.getId(), ConstraintSet.BOTTOM, tableRow.getId(), ConstraintSet.BOTTOM);
         }
         if (button3 != null) {
-            constraintSet.setMargin(button3.getId(), ConstraintSet.END, margin);
+            constraintSet.setMargin(button3.getId(), ConstraintSet.END, margin*2);
             constraintSet.setMargin(button3.getId(), ConstraintSet.TOP, margin);
             constraintSet.setMargin(button3.getId(), ConstraintSet.BOTTOM, margin);
             constraintSet.connect(button3.getId(), ConstraintSet.END, button2.getId(), ConstraintSet.START);
