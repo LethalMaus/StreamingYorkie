@@ -1,1 +1,1 @@
-include ':app'
+include ':streaming_yorkie'

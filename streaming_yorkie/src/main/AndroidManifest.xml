@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lethalmaus.streaming_yorkie">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/streaming_yorkie"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/streaming_yorkie_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light">
+        <activity android:name="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:icon="@mipmap/streaming_yorkie">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:label="Authorization" android:name="com.lethalmaus.streaming_yorkie.activity.Authorization" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity"/>
+        <activity android:label="User Info" android:name="com.lethalmaus.streaming_yorkie.activity.User" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity"/>
+        <activity android:name="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity"/>
+        <activity android:label="Follow4Follow" android:name="com.lethalmaus.streaming_yorkie.activity.Follow4Follow" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent"/>
+        <activity android:label="Followers" android:name="com.lethalmaus.streaming_yorkie.activity.Followers" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent"/>
+        <activity android:label="Following" android:name="com.lethalmaus.streaming_yorkie.activity.Following" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent"/>
+        <activity android:label="Info" android:name="com.lethalmaus.streaming_yorkie.activity.Info"/>
+        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.Settings"/>
+        <activity android:label="Logs" android:name="com.lethalmaus.streaming_yorkie.activity.Logs"/>
+        <!--
+        <service android:name=".AutoFollowObserver" android:enabled="true" android:exported="false" ></service>
+        -->
+    </application>
+
+</manifest>
