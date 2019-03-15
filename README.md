@@ -269,5 +269,3 @@ Any support or donations are highly appreciated (but not expected) & go towards 
 </a><br><br>
 
 I'm on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my Development preferences & experiences.
-
----
