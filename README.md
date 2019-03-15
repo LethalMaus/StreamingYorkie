@@ -19,9 +19,9 @@
     + [Logs](#logs)
   + [Settings](#settings)
 + [Updates](#updates)
-  + [1.0.0-a](#1.0.0-a)
+  + [1.0.0-a](#100-a)
 + [Roadmap](#roadmap)
-+ [Reported Bugs & Problems](#)
++ [Reported Bugs & Problems](#reported-bugs--problems)
 + [Contact](#contact)
 
 ---
@@ -268,6 +268,6 @@ Any support or donations are highly appreciated (but not expected) & go towards 
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
 </a><br><br>
 
-I'm on [LinkedIn]("https://www.linkedin.com/in/james-cullimore-042ab397/"). Here you will find my Development preferences & experiences.
+I'm on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my Development preferences & experiences.
 
 ---
