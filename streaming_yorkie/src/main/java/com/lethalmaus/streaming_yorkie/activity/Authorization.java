@@ -6,11 +6,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.Time;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebResourceRequest;
@@ -35,12 +33,12 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-//This is needed to log into Twitch, even though its not recommended & is dangerous. Hence the Lint suppression
-@SuppressLint("SetJavaScriptEnabled")
 /**
  * Activity for logging in & out of twitch & the app
  * @author LethalMaus
  */
+//This is needed to log into Twitch, even though its not recommended & is dangerous. Hence the Lint suppression
+@SuppressLint("SetJavaScriptEnabled")
 public class Authorization extends AppCompatActivity {
 
     /*FIXME connection timeout isn't working as it should. The page progress wasn't taken into consideration

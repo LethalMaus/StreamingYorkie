@@ -35,7 +35,7 @@
     <string name="userinfo_menu">UserInfo Menu</string>
     <string name="info_menu">Info Menu</string>
     <string name="settings_menu">Settings Menu</string>
-    <string name="auto_follow_service">Auto-Follow Service</string>
+    <string name="auto_follow_service">AutoFollow Service</string>
     <string name="off">Off</string>
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
@@ -44,9 +44,9 @@
     <string name="autofollow_interval_minutes">Minute(s)</string>
     <string name="autofollow_interval_hours">Hour(s)</string>
     <string name="autofollow_interval_days">Day(s)</string>
-    <string name="autofollow_notifications">Auto-Follow Enable Notifications</string>
+    <string name="autofollow_notifications">AutoFollow Enable Notifications</string>
     <string name="save_symbol">Save Symbol</string>
-    <string name="autofollow_interval">Auto-Follow Interval</string>
+    <string name="autofollow_interval">AutoFollow Interval</string>
     <string name="blank_text">_____</string>
     <string name="description">Description:</string>
     <string name="game">Game:</string>
