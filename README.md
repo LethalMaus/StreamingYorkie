@@ -2,6 +2,7 @@
 
 <p align="center">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/streaming_yorkie-web.png"><br><br>
+  A Twitch streamers best friend.
 </p>
 
 ---
