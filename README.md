@@ -10,10 +10,19 @@
 
 + [Introduction](#introduction)
 + [Guide](#guide)
-  + [Login & Logout](#login-logout)
-  + [Followers, Following & F4F](#followers-following-f4f)
+  + [Login & Logout](#login--logout-)
+  + [Followers, Following & F4F](#followers--following---f4f-)
     + [Menu Categories](#menu-categories)
     + [Catgory Actions](#category-actions)
+  + [User Info](#user-info-)
+  + [Info](#info)
+    + [Logs](#logs)
+  + [Settings](#settings)
++ [Updates](#updates)
+  + [1.0.0-a](#1.0.0-a)
++ [Roadmap](#roadmap)
++ [Reported Bugs & Problems](#)
++ [Contact](#contact)
 
 ---
 
@@ -29,9 +38,9 @@ Streaming Yorkie communicates exclusivly with the *Twitch API*. A login is requi
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
 
 Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality code & the code itself is documented with *JavaDocs* & comments.
-**DRY** (Dont Repeat Yourself) & **KISS** (Keep It Simple Stupid) principles are enforced as much as possible. Variable naming conventions are in place. 
+**DRY** *(Dont Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible. Variable naming conventions are in place. 
 
-> The Variable name must explain what it is or what it does, clearly, for any developer to understand.
+> The variable name must explain what it is or what it does, clearly, for any developer to understand.
 
 Hopefully this can be used as an example for good coding as well as how to develop an Android App in Java.
 Any collaborations are welcome, so feel free to fork & ask for merge requests.
@@ -61,6 +70,8 @@ To logout click on the *options* in the *Support Bar* (top right) & then on the 
 ### Followers <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followers_menu.png" height="40" width="40">, Following <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_menu.png" height="40" width="40"> & F4F <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.png" height="40" width="40">
 
 Here you can see who you follow (a.k.a. *Following*), who follows you (a.k.a. *Followers*), who unfollowed you & lots more.
+
+To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20">
 
 #### Menu Categories
 Each Menu is split into 4 of the following categories:
@@ -100,11 +111,13 @@ This is an overview of the *User* who is currently logged in, that shows the fol
 + **Status:** Your Go Live status
 + **Description:** Your profile description
 
+To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20">
+
 If you would like anything else to be displayed, or have the info display differently, [let me know](#contact).
 
 ---
 
-### Info
+### Info <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="40" width="40">
 
 Here you can find external links in relation to the Streaming Yorkie & its Developer.
  
@@ -112,33 +125,149 @@ Source Code & Documentation
 
 <a href="https://github.com/LethalMaus/StreamingYorkie">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.png" height="60">
-</a><br>
+</a><br><br>
 
 Support & Descriptive Animals Community
 
 <a href="https://discord.gg/asZsz2F">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.png" height="60"> 
-</a><br>
+</a><br><br>
 
 Live Streams & Entertainment
 
 <a href="https://www.twitch.tv/lethalmaus">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.png" height="60">
-</a><br>
+</a><br><br>
 
 Membership & Partnership
 
 <a href="https://www.patreon.com/LethalMaus/creators">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="60">
-</a><br>
+</a><br><br>
 
 Donations (not expected, but welcomed)
 
 <a href="https://paypal.me/JamesCullimore/2,50">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
-</a><br>
+</a><br><br>
 
 #### Logs
 Tapping the *Developer Logo* **8** times will give you access to the app logs & files. An error log is available along with much more for support.
+
+---
+
+### Settings <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.png" height="40" width="40">
+
+Here you can configure the *AutoFollow* to run in the backround.
+
++ **AutoFollow Service:** *Following, Unfollowing or Following & Unfollowing* can be activated.
+
++ **AutoFollow Interval:** The interval slider ranges from *1-60* with a unit option of *Minutes, Hours or Days*.
+Please be wary, due to a high battery consumption & inefficiency from other Apps, the interval has been restriced by Android to a minimum of 15 Minutes. Going below this will default back to 15 Minutes.
+
++ **AutoFollow Enable Notifications:** You can switch on or off whether the *AutoFollow* activates notifications for each new Follower.
+
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.png" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a File.
+
+> **Warning**
+>
+> Please make sure you have excluded Followers & Following you wish to be left alone from the AutoFollow Service.
+
+If you run into problems with the AutoFollow Service, deactivate it & [contact](#contact) me.
+
+---
+
+## Updates
+
+### 1.0.0-a
+
+First Public Major Release.
+
+Features:
++ User Overview
++	Follower, Following & Follow4Follow Overview
++	Developer Overview
++	Settings implemented
++	AutoFollow implemented
++	Login/Logout implemented
+
+Bug Fixes:
++	User list view lag
++	User list order wrong
++	Action buttons funtionality fix
++	AutoFollow activation fix
++	Multiple request collision fix
++	Skipped frames fix
+
+---
+
+## Roadmap
+
+The following tasks and features are currently on the roadmap & some of which are likely to be within the next release.
+
++ Apply Themes, Color, Fonts & Logo throughout app
++ Redesign info.xml to rid of nested weights
++ Implement JaCoCo code coverage
++ Implement JavaDoc restrictions
++ All weak references need to be checked for availability
++ Unit tests
++ Data backup & recovery
++ File Observer to renew changes when in User view
++ Stream Scheduler (for past, current & future streams)
++ Auto VOD Exporter
++ Host for Host
++ Status, Game, Tags & Description update 
++ Reusable Activities (Go Live text, game, tags)
++ Instant AutoFollow & AutoUnfollow
++ Stream Info (views, hosts, followers, chats)
++ Stream Lurker (audio only mode)
++ Streaming tips (obs settings, camera & green screen, networking, chat interactions)
++ Handle Muliple accounts
++ i18n (Internationalization)
+
+They are ordered in priority. If you would prefer something to be higher on the list, [let me know](#contact)
+
+---
+
+## Reported Bugs & Problems
+
+Any *bugs, problems, Code inefficiencies* will be listed here.
+Please give a **detailed description** as to how to reproduce the problem.
+
+| **Problem** | **Reproduction** | **Version** | **From** |
+|:----------- |:---------------- |:-----------:|:--------:|
+| Request timeout takes too long in VM (test on local device) | n/a | 1.0.0-a | LethalMaus |
+| Authorization connection timeout not working | n/a | 1.0.0-a | LethalMaus |
+| Settings should be an Async Task | n/a | 1.0.0-a | LethalMaus |
+| User request is sent twice (saw twice, needs reproduction) | Has relation to weak Internet when starting Main Activity | 1.0.0-a | LethalMaus |
+| On rotation activity refreshes | n/a | 1.0.0-a | LethalMaus |
+
+---
+
+## Contact
+
+For any issues, request for changes or questions, feel free to ask. I will get back to you as soon as I can.
+
+<a href="https://discord.gg/asZsz2F">
+  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.png" height="60"> 
+</a><br><br>
+
+I also love to entertain, game & stream as a hobby. If you're interested, come & say 'Hi'
+
+<a href="https://www.twitch.tv/lethalmaus">
+  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.png" height="60">
+</a><br><br>
+
+Any support or donations are highly appreciated (but not expected) & go towards improving development & entertainment.
+
+<a href="https://www.patreon.com/LethalMaus/creators">
+  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="60">
+</a><br>
+
+<a href="https://paypal.me/JamesCullimore/2,50">
+  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
+</a><br><br>
+
+I'm on [LinkedIn]("https://www.linkedin.com/in/james-cullimore-042ab397/"). Here you will find my Development preferences & experiences.
 
 ---
