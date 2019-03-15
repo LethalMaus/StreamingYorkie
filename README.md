@@ -35,7 +35,7 @@ Helps build a bigger community by simplifying communication & freeing time to st
 Streaming Yorkie can be found in the [Google Play Store].
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
-Streaming Yorkie communicates exclusivly with the *Twitch API*. A login is required to be able to edit your *Followers & Following*.
+Streaming Yorkie communicates exclusively with the *Twitch API*. A login is required to be able to edit your *Followers & Following*.
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
 
 Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality code & the code itself is documented with *JavaDocs* & comments.
@@ -49,7 +49,7 @@ See something inefficient? [Let me know](#contact). I'm always trying to improve
 
 Currently it is in an **Alpha** state. 
 It could be that a *Bug* may appear or the app behaves in an unexpected manner.
-Please report any problems or suspiscions to help improve Streaming Yorkie for everyone.
+Please report any problems or suspicions to help improve Streaming Yorkie for everyone.
 
 ---
 
