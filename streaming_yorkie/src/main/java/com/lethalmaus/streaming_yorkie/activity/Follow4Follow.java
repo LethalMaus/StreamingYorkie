@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
+import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowersRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowingRequestHandler;
 
@@ -103,12 +103,13 @@ public class Follow4Follow extends FollowParent {
             @Override
             protected void offlineResponseHandler() {
                 Toast.makeText(weakContext.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
-                recyclerView.setAdapter(new UserAdapter(weakActivity, weakContext)
-                        .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
-                        .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3));
+                new OrganizeFileHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true, false)
+                        .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
+                        .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
+                        .execute();
             }
         };
-        followingRequestHandler.setDisplayPreferences("FOLLOWED_NOTFOLLOWING", "EXCLUDE_BUTTON", "FOLLOW_BUTTON", null);
+        followingRequestHandler.setDisplayPreferences("FOLLOWED_NOTFOLLOWING", "EXCLUDE_BUTTON", null, "FOLLOW_BUTTON");
         highlightButton(notFollowing_FollowersButton);
         setSubtitle("Followers not being Followed");
         progressBar.setVisibility(View.VISIBLE);

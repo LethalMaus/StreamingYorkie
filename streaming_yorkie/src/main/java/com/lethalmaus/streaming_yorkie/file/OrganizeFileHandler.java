@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
+import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -106,6 +107,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
      * @author LethalMaus
      */
     private void organizeFolders() {
+
         //each time it is called, the new folder is deleted
         boolean newUsersDirectoryNeedsRenewal = true;
         //List of the requested users
@@ -113,31 +115,33 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of the previously current users
         ArrayList<String> currentUsers = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
 
-        //Iterate to find if a user has unfollowed
-        for (int i = 0; i < currentUsers.size(); i++) {
-            if (!requestedUsers.contains(currentUsers.get(i)) &&
-                    !new File(appDirectory + File.separator + excludedUsersPath + File.separator + currentUsers.get(i)).exists()) {
-                new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + currentUsers.get(i), null, null, false).run();
-                new DeleteFileHandler(weakContext, currentUsersPath + File.separator + currentUsers.get(i)).run();
-            }
-        }
-        //Iterate to find new users and add them
-        for (int i = 0; i < requestedUsers.size(); i++) {
-            if (!currentUsers.contains(requestedUsers.get(i)) &&
-                    !new File(appDirectory + File.separator + excludedUsersPath + File.separator + requestedUsers.get(i)).exists()) {
-                if (newUsersDirectoryNeedsRenewal) {
-                    newUsersDirectoryNeedsRenewal = false;
-                    new DeleteFileHandler(weakContext, null).deleteFileOrPath(newUsersPath);
-                }
-                new WriteFileHandler(weakContext, newUsersPath + File.separator + requestedUsers.get(i), null, null, false).run();
-                new WriteFileHandler(weakContext, currentUsersPath + File.separator + requestedUsers.get(i), null, null, false).run();
-                if (new File(appDirectory + File.separator + unfollowedUsersPath + File.separator + requestedUsers.get(i)).exists()) {
-                    new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + requestedUsers.get(i)).run();
+        if (!requestedUsers.isEmpty()) {
+            //Iterate to find if a user has unfollowed
+            for (int i = 0; i < currentUsers.size(); i++) {
+                if (!requestedUsers.contains(currentUsers.get(i)) &&
+                        !new File(appDirectory + File.separator + excludedUsersPath + File.separator + currentUsers.get(i)).exists()) {
+                    new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + currentUsers.get(i), null, null, false).run();
+                    new DeleteFileHandler(weakContext, currentUsersPath + File.separator + currentUsers.get(i)).run();
                 }
             }
+            //Iterate to find new users and add them
+            for (int i = 0; i < requestedUsers.size(); i++) {
+                if (!currentUsers.contains(requestedUsers.get(i)) &&
+                        !new File(appDirectory + File.separator + excludedUsersPath + File.separator + requestedUsers.get(i)).exists()) {
+                    if (newUsersDirectoryNeedsRenewal) {
+                        newUsersDirectoryNeedsRenewal = false;
+                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(newUsersPath);
+                    }
+                    new WriteFileHandler(weakContext, newUsersPath + File.separator + requestedUsers.get(i), null, null, false).run();
+                    new WriteFileHandler(weakContext, currentUsersPath + File.separator + requestedUsers.get(i), null, null, false).run();
+                    if (new File(appDirectory + File.separator + unfollowedUsersPath + File.separator + requestedUsers.get(i)).exists()) {
+                        new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + requestedUsers.get(i)).run();
+                    }
+                }
+            }
+            //Deletes the requested users that are no longer needed
+            new DeleteFileHandler(weakContext, requestPath).run();
         }
-        //Deletes the requested users that are no longer needed
-        new DeleteFileHandler(weakContext, requestPath).run();
         if (!commonFolders) {
             organizeF4FFolders();
         }
