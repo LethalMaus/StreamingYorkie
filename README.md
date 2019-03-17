@@ -14,7 +14,7 @@
   + [Login & Logout](#login--logout-)
   + [Followers, Following & F4F](#followers--following---f4f-)
     + [Menu Categories](#menu-categories)
-    + [Catgory Actions](#category-actions)
+    + [Category Actions](#category-actions)
   + [User Info](#user-info-)
   + [Info](#info)
     + [Logs](#logs)
@@ -32,14 +32,14 @@
 Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers as well as offering a better overview of *Followers & Following*.
 Automatically *Follow, Unfollow & F4F* simply by just installing and configuring Streaming Yorkie with help from this guide.
 Helps build a bigger community by simplifying communication & freeing time to stream more.
-Streaming Yorkie can be found in the [Google Play Store].
+Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
 Streaming Yorkie communicates exclusively with the *Twitch API*. A login is required to be able to edit your *Followers & Following*.
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
 
 Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality code & the code itself is documented with *JavaDocs* & comments.
-**DRY** *(Dont Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible. Variable naming conventions are in place. 
+**DRY** *(Don't Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible. Variable naming conventions are in place. 
 
 > The variable name must explain what it is or what it does, clearly, for any developer to understand.
 
@@ -223,7 +223,7 @@ The following tasks and features are currently on the roadmap & some of which ar
 + Stream Info (views, hosts, followers, chats)
 + Stream Lurker (audio only mode)
 + Streaming tips (obs settings, camera & green screen, networking, chat interactions)
-+ Handle Muliple accounts
++ Handle Multiple accounts
 + i18n (Internationalization)
 
 They are ordered in priority. If you would prefer something to be higher on the list, [let me know](#contact)
@@ -269,4 +269,4 @@ Any support or donations are highly appreciated (but not expected) & go towards 
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
 </a><br><br>
 
-I'm on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my Development preferences & experiences.
+I'm on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my development preferences & experiences.
