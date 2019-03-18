@@ -19,7 +19,9 @@
   + [Info](#info)
     + [Logs](#logs)
   + [Settings](#settings)
+    + [AutoFollow](#autofollow)
 + [Updates](#updates)
+  + [1.0.1-a](#101-a)
   + [1.0.0-a](#100-a)
 + [Roadmap](#roadmap)
 + [Reported Bugs & Problems](#reported-bugs--problems)
@@ -35,7 +37,7 @@ Helps build a bigger community by simplifying communication & freeing time to st
 Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
-Streaming Yorkie communicates exclusively with the *Twitch API*. A login is required to be able to edit your *Followers & Following*.
+Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/). A login is required to be able to edit your *Followers & Following*.
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
 
 Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality code & the code itself is documented with *JavaDocs* & comments.
@@ -55,7 +57,7 @@ Please report any problems or suspicions to help improve Streaming Yorkie for ev
 
 ## Guide
 
-### Login & Logout <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="40" width="40">
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="30" width="30"> Login & Logout
 
 Here you will be asked for your *Username & Password* which will be given directly to *Twitch*.
 Streaming Yorkie needs to be authorized to be allow you to edit & change you account.
@@ -68,7 +70,7 @@ To logout click on the *options* in the *Support Bar* (top right) & then on the 
 
 ---
 
-### Followers <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followers_menu.png" height="40" width="40">, Following <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_menu.png" height="40" width="40"> & F4F <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.png" height="40" width="40">
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followers_menu.png" height="30" width="30">Followers, <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_menu.png" height="30" width="30">Following & <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.png" height="30" width="30">F4F
 
 Here you can see who you follow (a.k.a. *Following*), who follows you (a.k.a. *Followers*), who unfollowed you & lots more.
 
@@ -94,11 +96,17 @@ Each category contains up to 3 of the following actions:
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/include.png" height="20" width="20"> Includes Users from other categories & from AutoFollow
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/delete.png" height="20" width="20"> Deletes User from the Device (all users, even the unfollowed ones are saved until otherwise)
 
-In F4F at the end of <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.png" height="20" width="20"> or <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.png" height="20" width="20"> there is an option to **Follow/Unfollow all users** within the category.
+> Each Menu has its own exclusion list for view customization that do **not** reflect in other lists.
+>
+> Once excluded from any **single** list, it will be excluded from *AutoFollow*.
+>
+> **_Example:_** Excluding a user in *Follower* will **not** exclude the user in *F4F*, but **will** exclude it from *AutoFollow*.
+
+> In F4F at the end of <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.png" height="20" width="20"> or <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.png" height="20" width="20"> there is an option to **Follow/Unfollow all users** within the category.
 
 ---
 
-### User Info <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.png" height="40" width="40">
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.png" height="30" width="30"> User Info 
 
 This is an overview of the *User* who is currently logged in, that shows the following:
 + **Logo:** Your profile picture
@@ -118,9 +126,9 @@ If you would like anything else to be displayed, or have the info display differ
 
 ---
 
-### Info <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="40" width="40">
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="30" width="30"> Info
 
-Here you can find external links in relation to the Streaming Yorkie & its Developer.
+Here you can find external links in relation to the Streaming Yorkie & its developer.
  
 Source Code & Documentation
 
@@ -157,14 +165,16 @@ Tapping the *Developer Logo* **8** times will give you access to the app logs & 
 
 ---
 
-### Settings <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.png" height="40" width="40">
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.png" height="30" width="30"> Settings
 
-Here you can configure the *AutoFollow* to run in the backround.
+#### Autofollow
+
+Here you can configure the *AutoFollow* to run in the background.
 
 + **AutoFollow Service:** *Following, Unfollowing or Following & Unfollowing* can be activated.
 
 + **AutoFollow Interval:** The interval slider ranges from *1-60* with a unit option of *Minutes, Hours or Days*.
-Please be wary, due to a high battery consumption & inefficiency from other Apps, the interval has been restriced by Android to a minimum of 15 Minutes. Going below this will default back to 15 Minutes.
+Please be wary, due to a high battery consumption & inefficiency from other Apps, the interval has been restricted by Android to a minimum of 15 Minutes. Going below this will default back to 15 Minutes.
 
 + **AutoFollow Enable Notifications:** You can switch on or off whether the *AutoFollow* activates notifications for each new Follower.
 
@@ -179,6 +189,17 @@ If you run into problems with the AutoFollow Service, deactivate it & [contact](
 ---
 
 ## Updates
+
+### 1.0.1-a
+
+Patch for fixes listed below.
+
+Bug Fixes:
++	User list order wrong (previous code was not implemented)
++	Activity refreshes on screen rotation fix
++   Exclusion lists inconsistency fix (wrong path & decision to keep)
+
+---
 
 ### 1.0.0-a
 
@@ -195,7 +216,7 @@ Features:
 Bug Fixes:
 +	User list view lag
 +	User list order wrong
-+	Action buttons funtionality fix
++	Action buttons functionality fix
 +	AutoFollow activation fix
 +	Multiple request collision fix
 +	Skipped frames fix
@@ -207,14 +228,15 @@ Bug Fixes:
 The following tasks and features are currently on the roadmap & some of which are likely to be within the next release.
 
 + Apply Themes, Color, Fonts & Logo throughout app
-+ Redesign info.xml to rid of nested weights
 + Implement JaCoCo code coverage
 + Implement JavaDoc restrictions
-+ All weak references need to be checked for availability
 + Unit tests
 + Data backup & recovery
 + File Observer to renew changes when in User view
 + Stream Scheduler (for past, current & future streams)
++ Extend Settings for Wifi only, user pic size, theme choice
++ Quick Tap host
++ Offline App Guide
 + Auto VOD Exporter
 + Host for Host
 + Status, Game, Tags & Description update 
@@ -240,8 +262,10 @@ Please give a **detailed description** as to how to reproduce the problem.
 | Request timeout takes too long in VM (test on local device) | n/a | 1.0.0-a | LethalMaus |
 | Authorization connection timeout not working | n/a | 1.0.0-a | LethalMaus |
 | Settings should be an Async Task | n/a | 1.0.0-a | LethalMaus |
-| User request is sent twice (saw twice, needs reproduction) | Has relation to weak Internet when starting Main Activity | 1.0.0-a | LethalMaus |
-| On rotation activity refreshes | n/a | 1.0.0-a | LethalMaus |
+| User request is sent twice (seen twice, needs reproduction) | Has relation to weak Internet when starting Main Activity | 1.0.0-a | LethalMaus |
+| All weak references need to be checked for availability | n/a | 1.0.0-a | LethalMaus |
+| info.xml needs to be redesigned to rid of nested weights | n/a | 1.0.0-a | LethalMaus |
+| F4F users not being moved after action | n/a | 1.0.0-a | LethalMaus |
 
 ---
 
