@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
@@ -102,7 +103,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.usersPath = usersPath;
         //As soon as we know the paths, the counts can be set
         setPageCounts();
-        setPageCountViews(weakActivity.get());
+        setPageCountViews(weakActivity);
         return this;
     }
 
@@ -123,16 +124,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         //As soon as we know how to display the users, we get the user Dataset
         getUsers();
         //An empty row or table can be displayed based on if the dataset is empty or not
-        if (userDataset.size() > 0) {
-            Activity activity = weakActivity.get();
-            activity.findViewById(R.id.table).setVisibility(View.VISIBLE);
-            activity.findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
-        } else {
-            Activity activity = weakActivity.get();
-            activity.findViewById(R.id.table).setVisibility(View.GONE);
-            activity.findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-            ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
-            progressBar.setVisibility(View.INVISIBLE);
+        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+            if (userDataset.size() > 0) {
+                weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
+                weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
+            } else {
+                weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+                weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+                ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
+                progressBar.setVisibility(View.INVISIBLE);
+            }
         }
         return this;
     }
@@ -146,32 +147,34 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder userViewHolder, int position) {
-        try {
-            JSONObject userObject;
-            if (new File(weakContext.get().getFilesDir() + File.separator + Globals.FOLLOWING_PATH + File.separator + userDataset.get(position)).exists()) {
-                userObject = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userDataset.get(position)).readFile());
-            } else {
-                userObject = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWERS_PATH + File.separator + userDataset.get(position)).readFile());
+        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
+            try {
+                JSONObject userObject;
+                if (new File(weakContext.get().getFilesDir() + File.separator + Globals.FOLLOWING_PATH + File.separator + userDataset.get(position)).exists()) {
+                    userObject = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userDataset.get(position)).readFile());
+                } else {
+                    userObject = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWERS_PATH + File.separator + userDataset.get(position)).readFile());
+                }
+
+                TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
+                textView.setText(userObject.getString("display_name"));
+
+                ImageView imageView = userViewHolder.userRow.findViewById(R.id.emptyuserrow_logo);
+                Glide.with(weakContext.get()).load(userObject.getString("logo")).into(imageView);
+
+                ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
+                editButton(button1, actionButtonType1, userObject.getString("_id"));
+                ImageButton button2 = userViewHolder.userRow.findViewById(R.id.userrow_button2);
+                editButton(button2, actionButtonType2, userObject.getString("_id"));
+                ImageButton button3 = userViewHolder.userRow.findViewById(R.id.userrow_button3);
+                editButton(button3, actionButtonType3, userObject.getString("_id"));
+
+                ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
+                progressBar.setVisibility(View.INVISIBLE);
+
+            } catch (JSONException e) {
+                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
             }
-
-            TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
-            textView.setText(userObject.getString("display_name"));
-
-            ImageView imageView = userViewHolder.userRow.findViewById(R.id.emptyuserrow_logo);
-            Glide.with(weakContext.get()).load(userObject.getString("logo")).into(imageView);
-
-            ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
-            editButton(button1, actionButtonType1, userObject.getString("_id"));
-            ImageButton button2 = userViewHolder.userRow.findViewById(R.id.userrow_button2);
-            editButton(button2, actionButtonType2, userObject.getString("_id"));
-            ImageButton button3 = userViewHolder.userRow.findViewById(R.id.userrow_button3);
-            editButton(button3, actionButtonType3, userObject.getString("_id"));
-
-            ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
-            progressBar.setVisibility(View.INVISIBLE);
-
-        } catch (JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
         }
     }
 
@@ -215,6 +218,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
                 break;
         }
+        //To show the newest first
+        Collections.reverse(userDataset);
     }
 
     /**
@@ -265,7 +270,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 userDataset.remove(userID);
                 notifyDataSetChanged();
                 pageCount3--;
-                setPageCountViews(weakActivity.get());
+                setPageCountViews(weakActivity);
             }
         });
     }
@@ -305,7 +310,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 }
                 new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
                 pageCount4++;
-                setPageCountViews(weakActivity.get());
+                setPageCountViews(weakActivity);
             }
         });
     }
@@ -343,7 +348,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 }
                 new DeleteFileHandler(weakContext, excludedUsersPath + File.separator + userID).run();
                 pageCount4--;
-                setPageCountViews(weakActivity.get());
+                setPageCountViews(weakActivity);
             }
         });
     }
@@ -438,16 +443,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     /**
      * Method for setting the page count views
      * @author LethalMaus
-     * @param activity the activity which contains the views
+     * @param weakActivity weak reference of an activity which contains the views
      */
-    private void setPageCountViews(Activity activity) {
-        TextView page1 = activity.findViewById(R.id.count1);
-        TextView page2 = activity.findViewById(R.id.count2);
-        TextView page3 = activity.findViewById(R.id.count3);
-        TextView page4 = activity.findViewById(R.id.count4);
-        page1.setText(String.valueOf(pageCount1));
-        page2.setText(String.valueOf(pageCount2));
-        page3.setText(String.valueOf(pageCount3));
-        page4.setText(String.valueOf(pageCount4));
+    private void setPageCountViews(WeakReference<Activity> weakActivity) {
+        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+            TextView page1 = weakActivity.get().findViewById(R.id.count1);
+            TextView page2 = weakActivity.get().findViewById(R.id.count2);
+            TextView page3 = weakActivity.get().findViewById(R.id.count3);
+            TextView page4 = weakActivity.get().findViewById(R.id.count4);
+            page1.setText(String.valueOf(pageCount1));
+            page2.setText(String.valueOf(pageCount2));
+            page3.setText(String.valueOf(pageCount3));
+            page4.setText(String.valueOf(pageCount4));
+        }
     }
 }

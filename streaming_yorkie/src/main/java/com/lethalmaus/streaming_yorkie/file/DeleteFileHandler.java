@@ -24,7 +24,9 @@ public class DeleteFileHandler implements Runnable {
      */
     public DeleteFileHandler(WeakReference<Context> weakContext, String pathOrFileName) {
         this.weakContext = weakContext;
-        this.appDirectory = weakContext.get().getFilesDir().toString();
+        if (weakContext != null && weakContext.get() != null) {
+            this.appDirectory = weakContext.get().getFilesDir().toString();
+        }
         this.pathOrFileName = pathOrFileName;
     }
 

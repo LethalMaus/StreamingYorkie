@@ -49,8 +49,10 @@ public class DevInfoRequestHandler extends RequestHandler {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                ImageView developer_Logo = weakActivity.get().findViewById(R.id.developer_Logo);
-                                Glide.with(weakActivity.get()).load(response.getString("logo")).into(developer_Logo);
+                                if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                    ImageView developer_Logo = weakActivity.get().findViewById(R.id.developer_Logo);
+                                    Glide.with(weakActivity.get()).load(response.getString("logo")).into(developer_Logo);
+                                }
                             } catch (JSONException e) {
                                 new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();                            }
                         }
@@ -78,15 +80,18 @@ public class DevInfoRequestHandler extends RequestHandler {
     public void requestDevLink(String url) {
         if (networkIsAvailable()) {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                weakActivity.get().startActivity(intent);
-            } catch(ActivityNotFoundException e) {
-                Toast.makeText(weakContext.get(), "No browser can be found", Toast.LENGTH_SHORT).show();
+                if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    weakActivity.get().startActivity(intent);
+                }
+            } catch (ActivityNotFoundException e) {
+                if (weakContext != null && weakContext.get() != null) {
+                    Toast.makeText(weakContext.get(), "No browser can be found", Toast.LENGTH_SHORT).show();
+                }
                 new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
             }
-        } else {
+        } else if (weakContext != null && weakContext.get() != null) {
             Toast.makeText(weakContext.get(), "OFFLINE: Can't open link", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

@@ -11,20 +11,12 @@
 
 + [Introduction](#introduction)
 + [Guide](#guide)
-  + [Login & Logout](#login--logout-)
-  + [Followers, Following & F4F](#followers--following---f4f-)
-    + [Menu Categories](#menu-categories)
-    + [Category Actions](#category-actions)
-  + [User Info](#user-info-)
-  + [Info](#info)
-    + [Logs](#logs)
-  + [Settings](#settings)
-    + [AutoFollow](#autofollow)
 + [Updates](#updates)
+  + [1.0.2-a](#102-a)
   + [1.0.1-a](#101-a)
   + [1.0.0-a](#100-a)
 + [Roadmap](#roadmap)
-+ [Reported Bugs & Problems](#reported-bugs--problems)
++ [Issues](#issues)
 + [Contact](#contact)
 
 ---
@@ -56,6 +48,16 @@ Please report any problems or suspicions to help improve Streaming Yorkie for ev
 ---
 
 ## Guide
+
++ [Login & Logout](#login--logout-)
++ [Followers, Following & F4F](#followers--following---f4f-)
+  + [Menu Categories](#menu-categories)
+  + [Category Actions](#category-actions)
++ [User Info](#user-info-)
++ [Info](#info)
+  + [Logs](#logs)
++ [Settings](#settings)
+  + [AutoFollow](#autofollow)
 
 ### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="30" width="30"> Login & Logout
 
@@ -190,11 +192,23 @@ If you run into problems with the AutoFollow Service, deactivate it & [contact](
 
 ## Updates
 
+### 1.0.2-a
+
+Patch for fixes listed below.
+
+Issues:
++	Link to Guide/Manual in Info
++	User list order wrong (due to Collections reverse order mistake)
++	Weak References checked against null
++	Nested weights in info.xml removed (redesigned)
+
+---
+
 ### 1.0.1-a
 
 Patch for fixes listed below.
 
-Bug Fixes:
+Issues:
 +	User list order wrong (previous code was not implemented)
 +	Activity refreshes on screen rotation fix
 +   Exclusion lists inconsistency fix (wrong path & decision to keep)
@@ -206,14 +220,14 @@ Bug Fixes:
 First Public Major Release.
 
 Features:
-+ User Overview
++	User Overview
 +	Follower, Following & Follow4Follow Overview
 +	Developer Overview
 +	Settings implemented
 +	AutoFollow implemented
 +	Login/Logout implemented
 
-Bug Fixes:
+Issues:
 +	User list view lag
 +	User list order wrong
 +	Action buttons functionality fix
@@ -227,18 +241,20 @@ Bug Fixes:
 
 The following tasks and features are currently on the roadmap & some of which are likely to be within the next release.
 
-+ Apply Themes, Color, Fonts & Logo throughout app
++ Bug/Issue template for Github & replace in readme
 + Implement JaCoCo code coverage
 + Implement JavaDoc restrictions
 + Unit tests
 + Data backup & recovery
++ Apply Themes, Color, Fonts & Logo throughout app
++ Extend Settings for Wifi only, user pic size, theme choice
 + File Observer to renew changes when in User view
 + Stream Scheduler (for past, current & future streams)
-+ Extend Settings for Wifi only, user pic size, theme choice
 + Quick Tap host
 + Offline App Guide
 + Auto VOD Exporter
 + Host for Host
++ Follow 4 Follow Group (in App)
 + Status, Game, Tags & Description update 
 + Reusable Activities (Go Live text, game, tags)
 + Instant AutoFollow & AutoUnfollow
@@ -252,19 +268,15 @@ They are ordered in priority. If you would prefer something to be higher on the 
 
 ---
 
-## Reported Bugs & Problems
+## Issues
 
 Any *bugs, problems, Code inefficiencies* will be listed here.
 Please give a **detailed description** as to how to reproduce the problem.
 
 | **Problem** | **Reproduction** | **Version** | **From** |
 |:----------- |:---------------- |:-----------:|:--------:|
-| Request timeout takes too long in VM (test on local device) | n/a | 1.0.0-a | LethalMaus |
-| Authorization connection timeout not working | n/a | 1.0.0-a | LethalMaus |
+| Authorization connection timeout for webview not working | n/a | 1.0.0-a | LethalMaus |
 | Settings should be an Async Task | n/a | 1.0.0-a | LethalMaus |
-| User request is sent twice (seen twice, needs reproduction) | Has relation to weak Internet when starting Main Activity | 1.0.0-a | LethalMaus |
-| All weak references need to be checked for availability | n/a | 1.0.0-a | LethalMaus |
-| info.xml needs to be redesigned to rid of nested weights | n/a | 1.0.0-a | LethalMaus |
 | F4F users not being moved after action | n/a | 1.0.0-a | LethalMaus |
 
 ---

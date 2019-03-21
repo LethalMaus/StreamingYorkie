@@ -112,7 +112,8 @@ public class Authorization extends AppCompatActivity {
                         */
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
                             new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
-                            Toast.makeText(weakContext.get(), "Login Successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+
                             new UserRequestHandler(weakActivity, weakContext, false, false, true) {
                                 @Override
                                 public void responseHandler(JSONObject response) {

@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
-import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -54,7 +53,9 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
         this.recyclerView = recyclerView;
-        this.appDirectory = weakContext.get().getFilesDir().toString();
+        if (weakContext != null && weakContext.get() != null) {
+            this.appDirectory = weakContext.get().getFilesDir().toString();
+        }
         this.displayUsers = displayUsers;
         this.commonFolders = commonFolders;
     }
@@ -194,7 +195,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void v) {
-        if (displayUsers && recyclerView != null) {
+        if (displayUsers && recyclerView != null && recyclerView.get() != null) {
             recyclerView.get().setAdapter(new UserAdapter(weakActivity, weakContext)
                     .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
                     .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3));

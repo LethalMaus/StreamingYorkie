@@ -35,7 +35,9 @@ public class WriteFileHandler implements Runnable {
      */
     public WriteFileHandler(WeakReference<Context> weakContext, String fileOrPathName, ArrayList<String> files, String data, boolean append) {
         this.weakContext = weakContext;
-        this.appDirectory = weakContext.get().getFilesDir().toString();
+        if (weakContext != null && weakContext.get() != null) {
+            this.appDirectory = weakContext.get().getFilesDir().toString();
+        }
         this.fileOrPathName = fileOrPathName;
         this.files = files;
         this.data = data;
@@ -72,12 +74,18 @@ public class WriteFileHandler implements Runnable {
             File file = new File(appDirectory + File.separator + fileOrPathName);
             if (!file.exists()) {
                 if (!new File(file.getParent()).exists() && !new File(file.getParent()).mkdirs()) {
-                    Toast.makeText(weakContext.get(), "Error creating directory '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
-                    System.out.println("Error creating directory '" + fileOrPathName + "'");
+                    if (weakContext != null && weakContext.get() != null) {
+                        Toast.makeText(weakContext.get(), "Error creating directory '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
+                    } else {
+                        System.out.println("Error creating directory '" + fileOrPathName + "'");
+                    }
                 }
                 if (!file.createNewFile()) {
-                    Toast.makeText(weakContext.get(), "Error creating file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
-                    System.out.println("Error creating file '" + fileOrPathName + "'");
+                    if (weakContext != null && weakContext.get() != null) {
+                        Toast.makeText(weakContext.get(), "Error creating file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
+                    } else {
+                        System.out.println("Error creating file '" + fileOrPathName + "'");
+                    }
                 }
             }
             if (data != null) {
@@ -91,13 +99,15 @@ public class WriteFileHandler implements Runnable {
                 fileOutputStream.close();
             }
         } catch (FileNotFoundException e) {
-            if (weakContext != null) {
+            if (weakContext != null && weakContext.get() != null) {
                 Toast.makeText(weakContext.get(), "Error retrieving file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
+            } else {
                 System.out.println("Error retrieving file '" + fileOrPathName + "'");
             }
         } catch (IOException e) {
-            if (weakContext != null) {
+            if (weakContext != null && weakContext.get() != null) {
                 Toast.makeText(weakContext.get(), "Error writing to file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
+            } else {
                 System.out.println("Error writing to file '" + fileOrPathName + "'");
             }
         }

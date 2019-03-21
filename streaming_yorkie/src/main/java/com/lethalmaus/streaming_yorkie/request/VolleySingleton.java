@@ -48,7 +48,7 @@ public class VolleySingleton {
      * @return newRequestQueue or null
      */
     public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
+        if (mRequestQueue == null && weakContext != null && weakContext.get() != null) {
             mRequestQueue = Volley.newRequestQueue(weakContext.get().getApplicationContext());
         }
         return mRequestQueue;

@@ -80,7 +80,9 @@ public class FollowRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(weakContext.get(), "Error changing Following preference", Toast.LENGTH_SHORT).show();
+                    if (weakContext != null && weakContext.get() != null) {
+                        Toast.makeText(weakContext.get(), "Error changing Following preference", Toast.LENGTH_SHORT).show();
+                    }
                     new WriteFileHandler(weakContext, "ERROR", null, error.toString() + "\n", true).run();
                 }
             }) {
@@ -108,7 +110,7 @@ public class FollowRequestHandler extends RequestHandler {
             };
             jsObjRequest.setTag("FOLLOW");
             VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
-        } else {
+        } else if (weakContext != null && weakContext.get() != null) {
             Toast.makeText(weakContext.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
         }
     }
@@ -121,7 +123,7 @@ public class FollowRequestHandler extends RequestHandler {
         } else {
             new WriteFileHandler(weakContext, Globals.FOLLOWING_UNFOLLOWED_PATH + File.separator + followingID, null, null, false).run();
             new DeleteFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH + File.separator + followingID).run();
-            if (new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.FOLLOWING_NEW_PATH + File.separator + followingID).exists()) {
+            if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.FOLLOWING_NEW_PATH + File.separator + followingID).exists()) {
                 new DeleteFileHandler(weakContext, Globals.FOLLOWING_NEW_PATH + File.separator + followingID).run();
             }
         }

@@ -60,8 +60,8 @@ public class UserRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if (weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                        Toast.makeText(weakActivity.get(), "Error requesting User", Toast.LENGTH_SHORT).show();
+                    if (weakContext != null && weakContext.get() != null) {
+                        Toast.makeText(weakContext.get(), "Error requesting User", Toast.LENGTH_SHORT).show();
                     }
                     new WriteFileHandler(weakContext, "ERROR", null, error.toString() + "\n", true).run();
                     offlineResponseHandler();
@@ -88,8 +88,8 @@ public class UserRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && requestUpdate) {
-            Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved User", Toast.LENGTH_SHORT).show();
+        if (weakContext != null && weakContext.get() != null && requestUpdate) {
+            Toast.makeText(weakContext.get(), "OFFLINE: Showing saved User", Toast.LENGTH_SHORT).show();
         }
         new UserView(weakActivity, weakContext, displayUser, showAllInfo).execute();
     }

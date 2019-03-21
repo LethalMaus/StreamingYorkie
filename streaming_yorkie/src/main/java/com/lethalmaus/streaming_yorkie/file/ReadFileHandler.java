@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Class to read files as list within a folder or a file itself
@@ -29,7 +28,9 @@ public class ReadFileHandler {
      */
     public ReadFileHandler(WeakReference<Context> weakContext, String filename) {
         this.weakContext = weakContext;
-        this.appDirectory = weakContext.get().getFilesDir().toString();
+        if (weakContext != null && weakContext.get() != null) {
+            this.appDirectory = weakContext.get().getFilesDir().toString();
+        }
         this.filename = filename;
     }
 
@@ -74,7 +75,6 @@ public class ReadFileHandler {
         if (fileArray != null && fileArray.length > 0) {
             files = new ArrayList<>(Arrays.asList(fileArray));
         }
-        Collections.sort(files, Collections.<String>reverseOrder());
         return files;
     }
 

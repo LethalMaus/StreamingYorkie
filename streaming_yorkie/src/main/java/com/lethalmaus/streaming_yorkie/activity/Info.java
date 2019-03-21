@@ -54,14 +54,23 @@ public class Info extends AppCompatActivity {
             }
         });
 
-        //Link to App on Github for source code & documentation
+        //Link to StreamingYorkie Guide on Github
+        ImageButton streaming_yorkie = findViewById(R.id.streaming_yorkie_Logo);
+        streaming_yorkie.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie#guide");
+                    }
+                });
+
+        //Link to Github for Open Source Projects
         ImageButton github = findViewById(R.id.github_Logo);
         github.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO change to repo when not private
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus");
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/");
                     }
                 });
 
@@ -101,7 +110,6 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO change once paypal cleaned
                         devInfoRequestHandler.requestDevLink("https://paypal.me/JamesCullimore/2,50");
                     }
                 });

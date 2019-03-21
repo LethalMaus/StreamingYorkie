@@ -33,7 +33,9 @@ public class LogView extends AsyncTask<Void, Button, Void> {
     public LogView(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
-        this.setCurrentDirectory(weakContext.get().getFilesDir().toString());
+        if (weakContext != null && weakContext.get() != null) {
+            this.setCurrentDirectory(weakContext.get().getFilesDir().toString());
+        }
     }
 
     /**
