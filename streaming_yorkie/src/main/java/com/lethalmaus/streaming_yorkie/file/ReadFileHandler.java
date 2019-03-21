@@ -74,6 +74,7 @@ public class ReadFileHandler {
         if (fileArray != null && fileArray.length > 0) {
             files = new ArrayList<>(Arrays.asList(fileArray));
         }
+        Collections.sort(files, Collections.<String>reverseOrder());
         return files;
     }
 

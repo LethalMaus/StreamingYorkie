@@ -286,6 +286,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 userDataset.remove(userID);
                 notifyDataSetChanged();
                 if (new File(appDirectory + File.separator + newUsersPath + File.separator + userID).exists()) {
+                    //When a user is excluded from new, it has not considered new anymore
+                    if (!newUsersPath.contains("NEW")) {
+                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + newUsersPath + File.separator + userID, null, null, false).run();
+                    }
                     new DeleteFileHandler(weakContext, newUsersPath + File.separator + userID).run();
                     pageCount1--;
                 }
@@ -321,6 +325,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 new DeleteFileHandler(weakContext, null).deleteFileOrPath(excludedUsersPath + File.separator + userID);
                 userDataset.remove(userID);
                 notifyDataSetChanged();
+                //Only for F4F exclusions is the newUsersPath needed
+                if (new File(appDirectory + File.separator + excludedUsersPath + "_" + newUsersPath + File.separator + userID).exists() && !newUsersPath.contains("NEW")) {
+                    new WriteFileHandler(weakContext, newUsersPath + File.separator + userID, null, null, false).run();
+                    new DeleteFileHandler(weakContext, excludedUsersPath + "_" + newUsersPath + File.separator + userID).run();
+                    pageCount1++;
+                }
                 if (new File(appDirectory + File.separator + excludedUsersPath + "_" + currentUsersPath + File.separator + userID).exists()) {
                     new WriteFileHandler(weakContext, currentUsersPath + File.separator + userID, null, null, false).run();
                     new DeleteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID).run();

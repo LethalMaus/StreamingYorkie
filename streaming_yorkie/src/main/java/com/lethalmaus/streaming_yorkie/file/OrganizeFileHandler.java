@@ -172,7 +172,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of current following from common folders
         ArrayList<String> following = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
         //Adds all excluded from common folders to allow users to exclude again for preference
-        following.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWERS_CURRENT_PATH).readFileNames());
+        following.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWING_CURRENT_PATH).readFileNames());
         //Removes F4F excluded
         following.removeAll(excluded);
 

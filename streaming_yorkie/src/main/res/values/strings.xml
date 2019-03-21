@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Streaming Yorkie</string>
+    <string name="app_name">StreamingYorkie</string>
     <string name="error_symbol">Error Symbol</string>
     <string name="authorization_failed">Authorization Failed!</string>
     <string name="error_message">This can be caused by one of the following: No Internet Wrong User and/or Password Undiscovered bug / Feature impediment</string>
@@ -15,7 +15,7 @@
     <string name="count3">0</string>
     <string name="count4">0</string>
     <string name="emptyuserrow">Nothing to show!</string>
-    <string name="emptyuserrow_symbol">Empty Userrow Symbol</string>
+    <string name="emptyuserrow_symbol">Empty user row Symbol</string>
     <string name="twitch_text"><![CDATA[Live Streams & Entertainment]]></string>
     <string name="patreon_text"><![CDATA[Membership & Partnership]]></string>
     <string name="paypal_text">Donations</string>
