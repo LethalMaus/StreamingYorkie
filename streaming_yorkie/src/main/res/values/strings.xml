@@ -17,10 +17,11 @@
     <string name="emptyuserrow">Nothing to show!</string>
     <string name="emptyuserrow_symbol">Empty user row Symbol</string>
     <string name="twitch_text"><![CDATA[Live Streams & Entertainment]]></string>
+    <string name="steaming_yorkie_text">Usage Manual / Guide</string>
     <string name="patreon_text"><![CDATA[Membership & Partnership]]></string>
     <string name="paypal_text">Donations</string>
     <string name="developer_text">Developer</string>
-    <string name="github_text"><![CDATA[Source Code & Documentation]]></string>
+    <string name="github_text">Open Source Projects</string>
     <string name="github_logo">Github Logo</string>
     <string name="discord_logo">Discord Logo</string>
     <string name="discord_text"><![CDATA[Support & Descriptive Animals Community]]></string>

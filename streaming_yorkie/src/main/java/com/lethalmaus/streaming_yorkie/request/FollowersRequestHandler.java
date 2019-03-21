@@ -92,15 +92,15 @@ public class FollowersRequestHandler extends RequestHandler {
             if (response.getJSONArray("follows").length() > 0) {
                 sendRequest(offset);
             } else {
-                if (twitchTotal != userCount && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                    Toast.makeText(weakActivity.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal
+                if (twitchTotal != userCount && weakContext != null && weakContext.get() != null) {
+                    Toast.makeText(weakContext.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal
                             + "' but is only giving '" + userCount + "'", Toast.LENGTH_SHORT).show();
                 }
                 responseAction();
             }
         } catch (JSONException e) {
-            if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
+            if (weakContext != null && weakContext.get() != null) {
+                Toast.makeText(weakContext.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
             }
             new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         }

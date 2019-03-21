@@ -68,9 +68,7 @@ public class AutoFollowWorker extends Worker {
                         .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
                         .execute();
             }
-        }
-                .newRequest()
-                .sendRequest(0);
+        }.newRequest().sendRequest(0);
         return Result.success();
     }
 
@@ -144,22 +142,22 @@ public class AutoFollowWorker extends Worker {
                     }
                 }
             }
-            notifyUser(weakContext.get());
+            notifyUser(weakContext);
         }
     }
 
     /**
      * Method for pushing notifications to inform user if someone has followed, unfollowed or both
      * @author LethalMaus
-     * @param context app context
+     * @param weakContext weak reference context
      */
-    private static void notifyUser(Context context) {
-        int autoFollowCount = new ReadFileHandler(new WeakReference<>(context), Globals.NOTIFICATION_FOLLOW).countFiles();
-        int autoUnfollowCount = new ReadFileHandler(new WeakReference<>(context), Globals.NOTIFICATION_UNFOLLOW).countFiles();
-        if (autoFollowCount > 0 || autoUnfollowCount > 0) {
-            Intent intent = new Intent(context, Follow4Follow.class);
+    private static void notifyUser(WeakReference<Context> weakContext) {
+        int autoFollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();
+        int autoUnfollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).countFiles();
+        if (autoFollowCount > 0 || autoUnfollowCount > 0 && weakContext != null && weakContext.get() != null) {
+            Intent intent = new Intent(weakContext.get(), Follow4Follow.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(weakContext.get(), 0, intent, 0);
 
             String content = "";
             if (autoFollowCount > 0) {
@@ -169,7 +167,7 @@ public class AutoFollowWorker extends Worker {
                 content += "You unfollowed '" + autoUnfollowCount + "' Unfollowers.";
             }
 
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Globals.NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(weakContext.get(), Globals.NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.mipmap.streaming_yorkie)
                     .setContentTitle("AutoFollow")
                     .setContentText(content)
@@ -178,7 +176,7 @@ public class AutoFollowWorker extends Worker {
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(weakContext.get());
             notificationManager.notify(1, mBuilder.build());
         }
     }

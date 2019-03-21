@@ -37,7 +37,7 @@ import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_UNFOLLOW;
 /**
  * Activity for Settings view that creates the settings when first opened.
  * The settings are never needed unless the user tries to change them.
- * TODO this needs to be an async task once it starts getting bigger
+ * TODO this might need to be an async task once it starts getting bigger or broken into separate submenus
  * @author LethalMaus
  */
 public class Settings extends AppCompatActivity {

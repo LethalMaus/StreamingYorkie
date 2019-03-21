@@ -32,7 +32,7 @@ public class RequestHandler {
     //User token for authorization
     private String token;
 
-    public int offset;
+    int offset;
     int twitchTotal;
     int userCount;
     String userID;
@@ -75,7 +75,7 @@ public class RequestHandler {
         this.weakContext = weakContext;
         this.recyclerView = recyclerView;
 
-        if (new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+        if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
             token = new ReadFileHandler(weakContext,"TOKEN").readFile();
         }
         try {
@@ -157,8 +157,10 @@ public class RequestHandler {
      * @author LethalMaus
      */
     protected void offlineResponseHandler() {
-        if (displayUsers && recyclerView != null) {
-            Toast.makeText(weakContext.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
+        if (displayUsers && recyclerView != null && recyclerView.get() != null) {
+            if (weakContext != null && weakContext.get() != null) {
+                Toast.makeText(weakContext.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
+            }
             recyclerView.get().setAdapter(new UserAdapter(weakActivity, weakContext)
                     .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
                     .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3));
@@ -172,8 +174,8 @@ public class RequestHandler {
      * @param e Volley Error
      */
     void errorHandler(VolleyError e) {
-        if (weakActivity != null) {
-            Toast.makeText(weakActivity.get(), "Error requesting Users", Toast.LENGTH_SHORT).show();
+        if (weakContext != null && weakContext.get() != null) {
+            Toast.makeText(weakContext.get(), "Error requesting Users", Toast.LENGTH_SHORT).show();
         }
         new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         offlineResponseHandler();
@@ -182,7 +184,7 @@ public class RequestHandler {
     /**
      * Method for retrieving Request headers
      * @author LethalMaus
-     * @return HashMap<String, String> of headers
+     * @return HashMap - String, String - of headers
      */
     HashMap<String, String> getRequestHeaders() {
         HashMap<String, String> headers = new HashMap<>();
@@ -209,8 +211,11 @@ public class RequestHandler {
      * @return boolean as to whether network is available
      */
     public boolean networkIsAvailable() {
-        ConnectivityManager systemService = (ConnectivityManager) weakContext.get().getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = systemService.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = null;
+        if (weakContext != null && weakContext.get() != null) {
+            ConnectivityManager systemService = (ConnectivityManager) weakContext.get().getSystemService(CONNECTIVITY_SERVICE);
+            activeNetwork = systemService.getActiveNetworkInfo();
+        }
         return activeNetwork != null && activeNetwork.isConnected();
     }
 }

@@ -1,16 +1,24 @@
-<h2>Introduction</h2>
+﻿<h2><b>Introduction</b></h2>
 Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers as well as offering a better overview of <i>Followers & Following</i>.
-Automatically <i>Follow, Unfollow & F4F</i> simply by just installing and configuring Streaming Yorkie with help from this <a href="https://github.com/LethalMaus/StreamingYorkie#guide">guide</a>.
+Automatically <i>Follow, Unfollow & F4F</i> simply by just installing and configuring Streaming Yorkie.
 Helps build a bigger community by simplifying communication & freeing time to stream more.
 
-The code is <b>Open Source</b>, contains <b>no costs & no advertisements</b> are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
-Streaming Yorkie communicates exclusively with the <i>Twitch API</i>. A login is required to be able to edit your <i>Followers & Following</i>.
-Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
+<b>Guide</b>
+https://github.com/LethalMaus/StreamingYorkie#guide
 
-Streaming Yorkie was developed with <i>Android Studio</i> in <i>Java</i>. <i>Lint</i> was used to acquire high quality code & the code itself is documented with <i>JavaDocs</i> & comments.
-<b>DRY</b> <i>(Don't Repeat Yourself)</i> & <b>KISS</b> <i>(Keep It Simple Stupid)</i> principles are enforced as much as possible. Variable naming conventions are in place.
+The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved.
+Streaming Yorkie is a gift back to a great community who I will continue to support for free.
 
-<blockquote>The variable name must explain what it is or what it does, clearly, for any developer to understand.</blockquote>
+Streaming Yorkie communicates exclusively with the <i>Twitch API</i>.
+A login is required to be able to edit your <i>Followers & Following</i>.
+Passwords are not saved, rather a unique Token given by Twitch is saved.
+This ensures that your account is as safe as can be.
+
+Streaming Yorkie was developed with <i>Android Studio</i> in <i>Java</i>.
+<i>Lint</i> was used to acquire high quality code & the code itself is documented with <i>JavaDocs</i> & comments.
+<b>DRY</b> <i>(Don't Repeat Yourself)</i> & <b>KISS</b> <i>(Keep It Simple Stupid)</i> principles are enforced as much as possible.
+Variable naming conventions are in place.
+The variable name must explain what it is or what it does, clearly, for any developer to understand.
 
 Hopefully this can be used as an example for good coding as well as how to develop an Android App in Java.
 Any collaborations are welcome, so feel free to fork & ask for merge requests.
@@ -20,26 +28,25 @@ Currently it is in an <b>Alpha</b> state.
 It could be that a <i>Bug</i> may appear or the app behaves in an unexpected manner.
 Please report any problems or suspicions to help improve Streaming Yorkie for everyone.
 
-<a href="https://github.com/LethalMaus/StreamingYorkie#guide">Guidance on using the App</a>
+<b>Open Source Code</b>
+https://github.com/LethalMaus/StreamingYorkie
 
-<a href="https://github.com/LethalMaus/StreamingYorkie">Open Source Code</a>
-
-<h2>Roadmap</h2>
+<h2><b>Roadmap</b></h2>
 The following tasks and features are currently on the Roadmap & some of which are likely to be within the next release.
 
- • Apply Themes, Color, Fonts & Logo throughout app
- • Implement JaCoCo code coverage
- • Implement JavaDoc restrictions
  • Unit tests
+ • Implement JaCoCo code coverage
  • Data backup & recovery
+ • Apply Themes, Color, Fonts & Logo throughout app
+ • Extend Settings for Wifi only, user pic size, theme choice
  • File Observer to renew changes when in User view
  • Stream Scheduler (for past, current & future streams)
- • Extend Settings for Wifi only, user pic size, theme choice
  • Quick Tap host
  • Offline App Guide
  • Auto VOD Exporter
  • Host for Host
- • Status, Game, Tags & Description update
+ • Follow 4 Follow Group (in App)
+ • Status, Game, Tags & Description update 
  • Reusable Activities (Go Live text, game, tags)
  • Instant AutoFollow & AutoUnfollow
  • Stream Info (views, hosts, followers, chats)
@@ -47,20 +54,23 @@ The following tasks and features are currently on the Roadmap & some of which ar
  • Streaming tips (obs settings, camera & green screen, networking, chat interactions)
  • Handle Multiple accounts
  • i18n (Internationalization)
- • They are ordered in priority. If you would prefer something to be higher on the list, let me know
 
-<h2>Contact</h2>
+They are ordered in priority. If you would prefer something to be higher on the list, let me know
+
+<h2><b>Contact</b></h2>
+<b>Discord</b>
 For any issues, request for changes or questions, feel free to ask. I will get back to you as soon as I can.
-<a href="https://discord.gg/asZsz2F">Discord</a>
+https://discord.gg/asZsz2F
 
+<b>Twitch</b>
 I also love to entertain, game & stream as a hobby. If you're interested, come & say 'Hi'
-<a href="https://www.twitch.tv/lethalmaus">Twitch</a>
+https://www.twitch.tv/lethalmaus
 
+<b>Support & Donate</b>
 Any support or donations are highly appreciated (but not expected) & go towards improving development & entertainment.
-<a href="https://www.patreon.com/LethalMaus/creators">Patreon</a>
-<a href="https://paypal.me/JamesCullimore/2,50">Paypal</a>
+https://github.com/LethalMaus/StreamingYorkie#contact
 
-<i>
+<small><i>
 Tags:
-Twitch Stream Follower Following Tool Follow F4F Followers Following Automatic
-</i>
+StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Automatic Follow F4F Followers Bigger Steamer Community Free Open Source 
+</i></small>
