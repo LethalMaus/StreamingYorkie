@@ -81,7 +81,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public UserAdapter(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
-        this.appDirectory = weakContext.get().getFilesDir().toString();
+        if (weakContext != null && weakContext.get() != null) {
+            this.appDirectory = weakContext.get().getFilesDir().toString();
+        }
         followRequestHandler = new FollowRequestHandler(weakActivity, weakContext);
     }
 
