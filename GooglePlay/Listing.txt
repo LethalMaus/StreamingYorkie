@@ -68,10 +68,7 @@ https://www.twitch.tv/lethalmaus
 
 <b>Support & Donate</b>
 Any support or donations are highly appreciated (but not expected) & go towards improving development & entertainment.
-<b>Patreon</b>
-https://www.patreon.com/LethalMaus/creators
-<b>Paypal</b>
-https://paypal.me/JamesCullimore/2,50
+https://github.com/LethalMaus/StreamingYorkie#contact
 
 <small><i>
 Tags:
