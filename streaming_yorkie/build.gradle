@@ -1,4 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'checkstyle'
+
+preBuild.dependsOn('checkstyle')
+assemble.dependsOn('lint')
+check.dependsOn('checkstyle')
 
 android {
     compileSdkVersion 28
@@ -6,8 +11,8 @@ android {
         applicationId 'com.lethalmaus.streaming_yorkie'
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.0.1-a"
+        versionCode 3
+        versionName "1.0.2-a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -18,6 +23,22 @@ android {
     }
     productFlavors {
     }
+    lintOptions {
+        abortOnError true
+        ignoreWarnings false
+        checkAllWarnings true
+        warningsAsErrors true
+        htmlReport true
+    }
+}
+
+task checkstyle(type: Checkstyle) {
+    configFile = rootProject.file('config/checkstyle.xml')
+    showViolations = true
+    source 'src/main/java'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
 }
 
 dependencies {

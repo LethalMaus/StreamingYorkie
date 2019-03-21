@@ -68,6 +68,7 @@ public class Globals {
     public static final String NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new followers are followed and unfollowers that are unfollowed";
 
     /**
+     * Options menu to be available throughout app
      * @author LethalMaus
      * @param activity activity requiring options
      * @param item MenuItem that is selected eg. Info or Settings

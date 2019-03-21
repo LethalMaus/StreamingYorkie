@@ -20,6 +20,7 @@ public class UserFileHandler implements Runnable {
     /**
      * Constructor with weak reference to a context, needed to display the user info
      * @author LethalMaus
+     * @param weakContext weak reference context
      */
     public UserFileHandler(WeakReference<Context> weakContext) {
         this.weakContext = weakContext;

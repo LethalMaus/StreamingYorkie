@@ -149,7 +149,7 @@ public class AutoFollowWorker extends Worker {
     /**
      * Method for pushing notifications to inform user if someone has followed, unfollowed or both
      * @author LethalMaus
-     * @param context app context
+     * @param weakContext weak reference context
      */
     private static void notifyUser(WeakReference<Context> weakContext) {
         int autoFollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();

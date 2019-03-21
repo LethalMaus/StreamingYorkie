@@ -44,8 +44,9 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
      * Constructor is kept small to keep clarity.
      * setPaths & setDisplayPreferences need to be called afterwards.
      * @author LethalMaus
-     * @param weakActivity weak reference of the activity which called this constructor
-     * @param weakContext weak reference of the context which called this constructor
+     * @param weakActivity weak reference of the activity
+     * @param weakContext weak reference of the context
+     * @param recyclerView weak reference of the recycler view
      * @param displayUsers bool if users need to be displayed or not
      * @param commonFolders bool if folders are for Followers/Following or F4F
      */

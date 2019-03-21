@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.bumptech.glide.Glide;
@@ -29,9 +30,14 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Recycler View Adapter for Followers/Following/F4F
+ * @author LethalMaus
+ */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     //All activities & contexts are weak referenced to avoid memory leaks
+    private Activity activity;
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
     private String appDirectory;
@@ -66,6 +72,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         View userRow;
 
+        /**
+         * Holder for User View
+         * @param userRow View for User Row
+         */
         UserViewHolder(View userRow) {
             super(userRow);
             this.userRow = userRow;
@@ -79,6 +89,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param weakContext weak referenced context
      */
     public UserAdapter(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
+        activity = weakActivity.get();
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
         if (weakContext != null && weakContext.get() != null) {
@@ -110,7 +121,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     *
+     * Sets Display preferences
      * @author LethalMaus
      * @param usersToDisplay constant of which users are to be displayed
      * @param actionButtonType1 constant of which button is required in relation to the usersToDisplay
@@ -372,15 +383,40 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                        new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
-                    followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
-                            .requestFollow();
-                    imageButton.setImageResource(R.drawable.follow);
-                } else {
-                    followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
-                            .requestFollow();
-                    imageButton.setImageResource(R.drawable.unfollow);
+                if (followRequestHandler.networkIsAvailable()) {
+                    if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
+                            new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
+                        followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
+                                .requestFollow();
+                        if (newUsersPath.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
+                            userDataset.remove(userID);
+                            notifyDataSetChanged();
+                            pageCount1--;
+                            setPageCountViews(weakActivity);
+                        } else if (currentUsersPath.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
+                            userDataset.remove(userID);
+                            notifyDataSetChanged();
+                            pageCount2--;
+                            pageCount3++;
+                            setPageCountViews(weakActivity);
+                        } else {
+                            imageButton.setImageResource(R.drawable.follow);
+                        }
+                    } else {
+                        followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
+                                .requestFollow();
+                        if (unfollowedUsersPath.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
+                            userDataset.remove(userID);
+                            notifyDataSetChanged();
+                            pageCount2++;
+                            pageCount3--;
+                            setPageCountViews(weakActivity);
+                        } else {
+                            imageButton.setImageResource(R.drawable.unfollow);
+                        }
+                    }
+                } else if (weakContext != null && weakContext.get() != null) {
+                    Toast.makeText(weakContext.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -409,19 +445,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 imageButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userID).readFile());
-                            if (user.getBoolean("notifications")) {
-                                followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
-                                        .requestFollow();
-                                imageButton.setImageResource(R.drawable.notifications);
-                            } else {
-                                followRequestHandler.setRequestParameters(Request.Method.PUT, userID, true)
-                                        .requestFollow();
-                                imageButton.setImageResource(R.drawable.deactivate_notifications);
+                        if (followRequestHandler.networkIsAvailable()) {
+                            try {
+                                JSONObject user = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userID).readFile());
+                                if (user.getBoolean("notifications")) {
+                                    followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
+                                            .requestFollow();
+                                    imageButton.setImageResource(R.drawable.notifications);
+                                } else {
+                                    followRequestHandler.setRequestParameters(Request.Method.PUT, userID, true)
+                                            .requestFollow();
+                                    imageButton.setImageResource(R.drawable.deactivate_notifications);
+                                }
+                            } catch (JSONException e) {
+                                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
                             }
-                        } catch (JSONException e) {
-                            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                        } else if (weakContext != null && weakContext.get() != null) {
+                            Toast.makeText(weakContext.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

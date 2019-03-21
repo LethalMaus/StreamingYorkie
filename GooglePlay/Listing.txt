@@ -34,10 +34,8 @@ https://github.com/LethalMaus/StreamingYorkie
 <h2><b>Roadmap</b></h2>
 The following tasks and features are currently on the Roadmap & some of which are likely to be within the next release.
 
- • Bug/Issue template for Github & replace in readme
- • Implement JaCoCo code coverage
- • Implement JavaDoc restrictions
  • Unit tests
+ • Implement JaCoCo code coverage
  • Data backup & recovery
  • Apply Themes, Color, Fonts & Logo throughout app
  • Extend Settings for Wifi only, user pic size, theme choice
@@ -77,5 +75,5 @@ https://paypal.me/JamesCullimore/2,50
 
 <small><i>
 Tags:
-Twitch Stream Follower Following Tool Automatic Follow F4F Followers Bigger Steamer Community Free Open Source 
+StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Automatic Follow F4F Followers Bigger Steamer Community Free Open Source 
 </i></small>

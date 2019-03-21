@@ -201,6 +201,11 @@ Issues:
 +	User list order wrong (due to Collections reverse order mistake)
 +	Weak References checked against null
 +	Nested weights in info.xml removed (redesigned)
++	F4F Menu Users removed from view when Follow/Unfollow action taken
++	Check in place for Follow/Unfollow/Notification actions when offline
++	Bug/Issue template for Github & replace in readme
++	Implemented Javadoc Checkstyle restrictions
++	Implemented Lint Standards restrictions
 
 ---
 
@@ -241,10 +246,8 @@ Issues:
 
 The following tasks and features are currently on the roadmap & some of which are likely to be within the next release.
 
-+ Bug/Issue template for Github & replace in readme
-+ Implement JaCoCo code coverage
-+ Implement JavaDoc restrictions
 + Unit tests
++ Implement JaCoCo code coverage
 + Data backup & recovery
 + Apply Themes, Color, Fonts & Logo throughout app
 + Extend Settings for Wifi only, user pic size, theme choice
@@ -270,14 +273,36 @@ They are ordered in priority. If you would prefer something to be higher on the 
 
 ## Issues
 
-Any *bugs, problems, Code inefficiencies* will be listed here.
-Please give a **detailed description** as to how to reproduce the problem.
+Please report any issues you may come across to help improve Streaming Yorkie.
+You can either use [Githubs Issue Tab](https://github.com/LethalMaus/StreamingYorkie/issues/new) or contact me on [Discord](https://discord.gg/asZsz2F).
+Please try to use the following template to help resolve the issue quicker.
 
-| **Problem** | **Reproduction** | **Version** | **From** |
-|:----------- |:---------------- |:-----------:|:--------:|
-| Authorization connection timeout for webview not working | n/a | 1.0.0-a | LethalMaus |
-| Settings should be an Async Task | n/a | 1.0.0-a | LethalMaus |
-| F4F users not being moved after action | n/a | 1.0.0-a | LethalMaus |
+```
+**Description:**
+
+**Reproduction:**
+
+**Code Path:**
+
+**StreamingYorkie Version:**
+
+**Android Version:**
+
+**Smartphone Make & Model:**
+
+```
+
+> Description: A description of what the issue is
+>
+> (Bug/Problem) Reproduction: How to reproduce the error or proof (picture/video) of the error
+>
+> (Code Inefficiency) Code Path: Where to find the code inefficiency e.g. Link to class & line number
+>
+> Streaming Yorkie Version: Version of App being used e.g. 1.0.0-a
+>
+> Android Version: Version of Android being used e.g 4.4.4
+>
+> Smartphone Make & Model: Where the App is being used e.g Samsung S9
 
 ---
 

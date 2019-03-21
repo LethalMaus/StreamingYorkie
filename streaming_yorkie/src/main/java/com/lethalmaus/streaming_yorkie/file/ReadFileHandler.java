@@ -25,6 +25,8 @@ public class ReadFileHandler {
     /**
      * Constructor for Read File Handler, filename can be null
      * @author LethalMaus
+     * @param weakContext weak reference context
+     * @param filename name of file to be read
      */
     public ReadFileHandler(WeakReference<Context> weakContext, String filename) {
         this.weakContext = weakContext;

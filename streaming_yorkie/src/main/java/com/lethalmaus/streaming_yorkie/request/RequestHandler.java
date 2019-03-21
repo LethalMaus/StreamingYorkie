@@ -184,7 +184,7 @@ public class RequestHandler {
     /**
      * Method for retrieving Request headers
      * @author LethalMaus
-     * @return HashMap<String, String> of headers
+     * @return HashMap - String, String - of headers
      */
     HashMap<String, String> getRequestHeaders() {
         HashMap<String, String> headers = new HashMap<>();
