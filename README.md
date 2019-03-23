@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.0.3-a](#103-a)
   + [1.0.2-a](#102-a)
   + [1.0.1-a](#101-a)
   + [1.0.0-a](#100-a)
@@ -191,6 +192,16 @@ If you run into problems with the AutoFollow Service, deactivate it & [contact](
 ---
 
 ## Updates
+
+### 1.0.3-a
+
+Patch for fixes listed below.
+
+Issues:
++	F4F Menu Users movement correction
++	Updates for Google Play Listing Policies
+
+---
 
 ### 1.0.2-a
 
