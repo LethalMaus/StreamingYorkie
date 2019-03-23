@@ -11,8 +11,8 @@ android {
         applicationId 'com.lethalmaus.streaming_yorkie'
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.0.2-a"
+        versionCode 4
+        versionName "1.0.3-a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
