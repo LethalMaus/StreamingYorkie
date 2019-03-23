@@ -37,7 +37,6 @@ import java.util.Collections;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     //All activities & contexts are weak referenced to avoid memory leaks
-    private Activity activity;
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
     private String appDirectory;
@@ -89,7 +88,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param weakContext weak referenced context
      */
     public UserAdapter(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
-        activity = weakActivity.get();
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
         if (weakContext != null && weakContext.get() != null) {
@@ -388,16 +386,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
                         followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
                                 .requestFollow();
-                        if (newUsersPath.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
+                        if (usersToDisplay.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
                             userDataset.remove(userID);
                             notifyDataSetChanged();
-                            pageCount1--;
+                            pageCount3--;
+                            pageCount2++;
                             setPageCountViews(weakActivity);
-                        } else if (currentUsersPath.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
+                        } else if (usersToDisplay.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
                             userDataset.remove(userID);
                             notifyDataSetChanged();
                             pageCount2--;
-                            pageCount3++;
+                            pageCount1++;
                             setPageCountViews(weakActivity);
                         } else {
                             imageButton.setImageResource(R.drawable.follow);
@@ -405,11 +404,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     } else {
                         followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
                                 .requestFollow();
-                        if (unfollowedUsersPath.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
+                        if (usersToDisplay.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
                             userDataset.remove(userID);
                             notifyDataSetChanged();
+                            pageCount1--;
                             pageCount2++;
-                            pageCount3--;
                             setPageCountViews(weakActivity);
                         } else {
                             imageButton.setImageResource(R.drawable.unfollow);

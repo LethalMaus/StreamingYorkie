@@ -203,9 +203,9 @@ Issues:
 +	Nested weights in info.xml removed (redesigned)
 +	F4F Menu Users removed from view when Follow/Unfollow action taken
 +	Check in place for Follow/Unfollow/Notification actions when offline
-+	Bug/Issue template for Github & replace in readme
++	Bug/Issue template for Github & replaced in readme
 +	Implemented Javadoc Checkstyle restrictions
-+	Implemented Lint Standards restrictions
++	Implemented Lint restrictions (for maintaining high code quality)
 
 ---
 

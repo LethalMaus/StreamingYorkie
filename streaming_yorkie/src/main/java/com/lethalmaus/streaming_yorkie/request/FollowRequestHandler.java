@@ -120,11 +120,24 @@ public class FollowRequestHandler extends RequestHandler {
         if (response != null && !response.toString().equals("") && requestMethod != Request.Method.DELETE) {
             followFileHandler.setResponse(response);
             followFileHandler.run();
+            //Check if it is present by F4F
+            if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + followingID).exists()) {
+                new DeleteFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + followingID).run();
+                new WriteFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + followingID, null, null, false).run();
+            }
         } else {
             new WriteFileHandler(weakContext, Globals.FOLLOWING_UNFOLLOWED_PATH + File.separator + followingID, null, null, false).run();
             new DeleteFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH + File.separator + followingID).run();
             if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.FOLLOWING_NEW_PATH + File.separator + followingID).exists()) {
                 new DeleteFileHandler(weakContext, Globals.FOLLOWING_NEW_PATH + File.separator + followingID).run();
+            }
+            //Check if it is present by F4F
+            if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + followingID).exists()) {
+                new DeleteFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + followingID).run();
+            }
+            if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + followingID).exists()) {
+                new DeleteFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + followingID).run();
+                new WriteFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + followingID, null, null, false).run();
             }
         }
     }
