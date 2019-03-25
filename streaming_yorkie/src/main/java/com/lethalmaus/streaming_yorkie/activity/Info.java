@@ -64,6 +64,16 @@ public class Info extends AppCompatActivity {
                     }
                 });
 
+        //Link to Paypal for donations
+        ImageButton streaming_yorkie_contact = findViewById(R.id.streaming_yorkie_contact_Logo);
+        streaming_yorkie_contact.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie#contact");
+                    }
+                });
+
         //Link to Github for Open Source Projects
         ImageButton github = findViewById(R.id.github_Logo);
         github.setOnClickListener(
@@ -104,15 +114,6 @@ public class Info extends AppCompatActivity {
                     }
                 });
 
-        //Link to Paypal for donations
-        ImageButton paypal = findViewById(R.id.paypal_Logo);
-        paypal.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://paypal.me/JamesCullimore/2,50");
-                    }
-                });
     }
     //Cancels the Dev Logo request when it is not needed
     @Override
