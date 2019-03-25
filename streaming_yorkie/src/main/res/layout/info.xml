@@ -56,10 +56,10 @@
         app:layout_constraintEnd_toEndOf="@+id/streaming_yorkie_Logo"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/streaming_yorkie_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/github_Logo" />
+        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Logo" />
 
     <ImageButton
-        android:id="@+id/github_Logo"
+        android:id="@+id/streaming_yorkie_contact_Logo"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_marginTop="32dp"
@@ -71,6 +71,33 @@
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/developer_Text"
+        app:srcCompat="@drawable/streaming_yorkie" />
+
+    <TextView
+        android:id="@+id/streaming_yorkie_contact_Text"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:text="@string/steaming_yorkie_contact_text"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@+id/streaming_yorkie_contact_Logo"
+        app:layout_constraintStart_toStartOf="@+id/streaming_yorkie_contact_Logo"
+        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_contact_Logo" />
+
+    <ImageButton
+        android:id="@+id/github_Logo"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/github_logo"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Text"
         app:srcCompat="@drawable/github" />
 
     <TextView
@@ -90,15 +117,15 @@
         android:id="@+id/discord_Logo"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
         android:layout_weight="1"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         android:contentDescription="@string/discord_logo"
         android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_contact_Text"
         app:srcCompat="@drawable/discord" />
 
     <TextView
@@ -118,14 +145,14 @@
         android:id="@+id/twitch_Logo"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
         android:layout_weight="1"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         android:contentDescription="@string/twitch_logo"
         android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/github_Text"
         app:srcCompat="@drawable/twitch" />
 
@@ -143,34 +170,6 @@
         app:layout_constraintTop_toBottomOf="@+id/twitch_Logo" />
 
     <ImageButton
-        android:id="@+id/paypal_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/paypal_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/discord_Text"
-        app:srcCompat="@drawable/paypal" />
-
-    <TextView
-        android:id="@+id/paypal_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/paypal_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/paypal_Logo"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/paypal_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/paypal_Logo" />
-
-    <ImageButton
         android:id="@+id/patreon_Logo"
         android:layout_width="161dp"
         android:layout_height="60dp"
@@ -182,7 +181,7 @@
         android:contentDescription="@string/patreon_logo"
         android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/twitch_Text"
+        app:layout_constraintTop_toBottomOf="@+id/discord_Text"
         app:srcCompat="@drawable/patreon" />
 
     <TextView

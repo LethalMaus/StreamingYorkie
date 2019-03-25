@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.0.4-a](#104-a)
   + [1.0.3-a](#103-a)
   + [1.0.2-a](#102-a)
   + [1.0.1-a](#101-a)
@@ -192,6 +193,16 @@ If you run into problems with the AutoFollow Service, deactivate it & [contact](
 ---
 
 ## Updates
+
+### 1.0.4-a
+
+Patch for fixes listed below.
+
+Issues:
++	Follow/Unfollow all action implementation (was missing after recycler view)
++	Updates for Google Play Policies (code was not pushed)
+
+---
 
 ### 1.0.3-a
 

@@ -142,8 +142,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             } else {
                 weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
                 weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
-                progressBar.setVisibility(View.INVISIBLE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
             }
         }
         return this;
@@ -215,18 +214,22 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             case "FOLLOWED_NOTFOLLOWING":
                 usersPath = Globals.FOLLOWERS_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH).readFileNames();
+                actionAllButton(true, true);
                 break;
             case "FOLLOW4FOLLOW":
                 usersPath = Globals.FOLLOWERS_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH).readFileNames();
+                actionAllButton(false, true);
                 break;
             case "NOTFOLLOWED_FOLLOWING":
                 usersPath = Globals.FOLLOWING_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH).readFileNames();
+                actionAllButton(true, false);
                 break;
             case "F4F_EXCLUDED":
                 usersPath = Globals.FOLLOWING_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
+                actionAllButton(false, true);
                 break;
         }
         //To show the newest first
@@ -466,6 +469,59 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 });
             } catch (JSONException e) {
                 new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            }
+        }
+    }
+
+    /**
+     * Button for following / unfollowing all users within menu.
+     * @author LethalMaus
+     * @param active if button is active and visible
+     * @param followAll if true followAll, else unfollowAll
+     */
+    private void actionAllButton(boolean active, final boolean followAll) {
+        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+            if (active) {
+                final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
+                final int method;
+                if (followAll) {
+                    imageButton.setImageResource(R.drawable.follow);
+                    method = Request.Method.PUT;
+                } else {
+                    imageButton.setImageResource(R.drawable.unfollow);
+                    method = Request.Method.DELETE;
+                }
+                imageButton.setVisibility(View.VISIBLE);
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (followRequestHandler.networkIsAvailable()) {
+                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
+                            for (String userID : userDataset) {
+                                followRequestHandler.setRequestParameters(method, userID, false)
+                                        .requestFollow();
+                                if (followAll) {
+                                    pageCount1--;
+                                    pageCount2++;
+                                    new DeleteFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + userID).run();
+                                    new WriteFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + userID, null, null, false).run();
+                                } else {
+                                    pageCount3--;
+                                    new DeleteFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + userID).run();
+                                }
+                            }
+                            userDataset.clear();
+                            notifyDataSetChanged();
+                            setPageCountViews(weakActivity);
+                            imageButton.setVisibility(View.GONE);
+                            weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+                            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+            } else {
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
             }
         }
     }
