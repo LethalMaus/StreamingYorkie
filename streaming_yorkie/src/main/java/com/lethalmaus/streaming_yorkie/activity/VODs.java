@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
@@ -53,7 +52,8 @@ public class VODs extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vod);
         WorkManager.getInstance().cancelUniqueWork("AUTOFOLLOW_WORKER");
-        setSubtitle("VOD");
+        setSubtitle("VODs");
+
 
         progressBar = findViewById(R.id.progressbar);
         //This is to make sure its invisible (not necessary but wanted)
@@ -76,7 +76,7 @@ public class VODs extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pageButtonListenerAction(vodButton, "VOD", "NEW", "EXPORT");
+                        pageButtonListenerAction(vodButton, "VODs", "NEW", "EXPORT");
                     }
                 });
 

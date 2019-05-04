@@ -5,9 +5,12 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.adapter.VODAdapter;
@@ -18,8 +21,8 @@ import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
@@ -72,6 +75,17 @@ public class VODRequestHandler extends RequestHandler {
                 @Override
                 public Map<String, String> getHeaders() {
                     return getRequestHeaders();
+                }
+                @Override
+                protected Response<JSONObject> parseNetworkResponse (NetworkResponse response) {
+                    try {
+                        String utf8String = new String(response.data, Charset.forName("UTF-8"));
+                        
+                        return Response.success(new JSONObject(utf8String), HttpHeaderParser.parseCacheHeaders(response));
+                    } catch (JSONException e) {
+                        // log error
+                        return Response.error(new ParseError(e));
+                    }
                 }
             };
             jsObjRequest.setTag("VOD");

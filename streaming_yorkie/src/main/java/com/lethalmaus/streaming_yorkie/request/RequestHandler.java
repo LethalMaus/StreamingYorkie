@@ -190,7 +190,7 @@ public class RequestHandler {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/vnd.twitchtv.v5+json");
         headers.put("Client-ID", Globals.CLIENTID);
-        headers.put("Content-Type", "application/json");
+        headers.put("Content-Type", "application/json;charset=utf-8");
         headers.put("Authorization", "OAuth " + token);
         return headers;
     }

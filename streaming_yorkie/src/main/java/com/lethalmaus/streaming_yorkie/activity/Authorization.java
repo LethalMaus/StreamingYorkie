@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -75,6 +76,13 @@ public class Authorization extends AppCompatActivity {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                         if (url.contains("twitch.tv")) {
+                            if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
+                                new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
+                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                             view.loadUrl(url);
                             return false;
                         }
@@ -85,6 +93,13 @@ public class Authorization extends AppCompatActivity {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                         if (request.getUrl().toString().contains("twitch.tv")) {
+                            if (request.getUrl().toString().contains("https://www.twitch.tv/passport-callback#access_token")) {
+                                new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, request.getUrl().toString().substring(request.getUrl().toString().indexOf("access_token") + 13, request.getUrl().toString().indexOf("access_token") + 43), false).writeToFileOrPath();
+                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                             view.loadUrl(request.getUrl().toString());
                             return false;
                         }
@@ -108,13 +123,8 @@ public class Authorization extends AppCompatActivity {
                             timeoutHandler.cancel(true);
                         }
                         */
-                        if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
-                            new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
-                            Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
+                        if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
                             new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
-
                             new UserRequestHandler(weakActivity, weakContext, false, false, true) {
                                 @Override
                                 public void responseHandler(JSONObject response) {
@@ -156,8 +166,11 @@ public class Authorization extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                new DeleteFileHandler(weakContext, getFilesDir().toString()).run();
-                finish();
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath("TOKEN");
+                new DeleteFileHandler(weakContext, "").run();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

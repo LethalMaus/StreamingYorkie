@@ -35,6 +35,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="fontProviderRequests"
+            android:value="Noto Color Emoji Compat" />
         <!--
         <service android:name=".AutoFollowObserver" android:enabled="true" android:exported="false" ></service>
         -->
