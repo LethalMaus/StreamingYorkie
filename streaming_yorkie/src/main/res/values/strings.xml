@@ -65,4 +65,16 @@
     <string name="info">Info</string>
     <string name="settings">Settings</string>
     <string name="actionAll">Follow/Unfollow All</string>
+    <string name="vod_preview">VOD Preview</string>
+    <string name="created_at">Created at</string>
+    <string name="duration">Duration</string>
+    <string name="title">Title:</string>
+    <string name="tags">Tags:</string>
+    <string name="publish">Publish</string>
+    <string name="do_split">Split</string>
+    <string name="enter_title">Enter a title...</string>
+    <string name="enter_description">Enter a description...</string>
+    <string name="enter_tags">Enter tags...</string>
+    <string name="vods_menu">VODs Menu</string>
+    <string name="vod_action_button">VOD Action Button</string>
 </resources>

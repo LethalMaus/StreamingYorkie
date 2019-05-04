@@ -122,9 +122,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * Sets Display preferences
      * @author LethalMaus
      * @param usersToDisplay constant of which users are to be displayed
-     * @param actionButtonType1 constant of which button is required in relation to the usersToDisplay
-     * @param actionButtonType2 constant of which button is required in relation to the usersToDisplay
-     * @param actionButtonType3 constant of which button is required in relation to the usersToDisplay
+     * @param actionButtonType1 constant of which button is required in relation to the itemsToDisplay
+     * @param actionButtonType2 constant of which button is required in relation to the itemsToDisplay
+     * @param actionButtonType3 constant of which button is required in relation to the itemsToDisplay
      * @return an instance of itself for method building
      */
     public UserAdapter setDisplayPreferences(String usersToDisplay, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
@@ -151,7 +151,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     @NonNull
     public UserAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View userRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_tablerow, parent, false);
+        View userRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_parent_row, parent, false);
         return new UserViewHolder(userRow);
     }
 
@@ -169,7 +169,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
                 textView.setText(userObject.getString("display_name"));
 
-                ImageView imageView = userViewHolder.userRow.findViewById(R.id.emptyuserrow_logo);
+                ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
                 Glide.with(weakContext.get()).load(userObject.getString("logo")).into(imageView);
 
                 ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
@@ -194,7 +194,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Gets the Dataset (list of user ids) based on usersToDisplay
+     * Gets the Dataset (list of user ids) based on itemsToDisplay
      * @author LethalMaus
      */
     private void getUsers() {
@@ -481,7 +481,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void actionAllButton(boolean active, final boolean followAll) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            if (active) {
+            if (active && userDataset.size() > 1) {
                 final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
                 final int method;
                 if (followAll) {

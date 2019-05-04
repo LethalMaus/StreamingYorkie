@@ -43,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setIcon(R.drawable.streaming_yorkie);
+        }
+
         userLoggedIn();
         activateAutoFollow();
         createNotificationChannel();
@@ -73,6 +78,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(MainActivity.this, Follow4Follow.class);
+                        startActivity(intent);
+                    }
+                });
+
+        ImageButton vods = findViewById(R.id.vod_menu);
+        vods.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, VODs.class);
                         startActivity(intent);
                     }
                 });
@@ -121,9 +136,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(Globals.NOTIFICATION_CHANNEL_ID, Globals.NOTIFICATION_CHANNEL_NAME, importance);
-            channel.setDescription(Globals.NOTIFICATION_CHANNEL_DESCRIPTION);
+            NotificationChannel channel = new NotificationChannel(Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -138,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
         } else {
-            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext()), true, false, true).sendRequest(0);
+            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext()), true, false, false).sendRequest(0);
         }
     }
 

@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.FollowFileHandler;
 import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -17,6 +18,7 @@ import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
@@ -35,9 +37,9 @@ public class FollowersRequestHandler extends RequestHandler {
      * @param displayUsers constant of users to be displayed
      * @param commonFolders boolean as to whether its F4F or not
      */
-    public FollowersRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView, boolean displayUsers, boolean commonFolders) {
+    public FollowersRequestHandler(final WeakReference<Activity> weakActivity, final WeakReference<Context> weakContext, final WeakReference<RecyclerView> recyclerView, boolean displayUsers, final boolean commonFolders) {
         super(weakActivity, weakContext, recyclerView);
-        this.displayUsers = displayUsers;
+        this.displayRequest = displayUsers;
         this.commonFolders = commonFolders;
 
         this.currentUsersPath = Globals.FOLLOWERS_CURRENT_PATH;
@@ -47,14 +49,20 @@ public class FollowersRequestHandler extends RequestHandler {
         this.requestPath = Globals.FOLLOWERS_REQUEST_PATH;
         this.usersPath = Globals.FOLLOWERS_PATH;
 
-        followFileHandler = new FollowFileHandler(weakContext, usersPath, requestPath, null);
+        followFileHandler = new FollowFileHandler(weakContext, usersPath, requestPath, null) {
+            @Override
+            public void organizeFollowerFiles() {
+               responseAction();
+            }
+        };
     }
 
     @Override
     public void sendRequest(int offset) {
         this.offset = offset;
         if (networkIsAvailable()) {
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/channels/" + userID + "/follows" + "?limit=" + Globals.REQUEST_LIMIT + "&direction=asc&offset=" + this.offset, null,
+            new WriteFileHandler(weakContext, Globals.FLAG_PATH + File.separator + Globals.FOLLOW_REQUEST_RUNNING_FLAG, null, null, false).run();
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/channels/" + userID + "/follows" + "?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=asc&offset=" + this.offset, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -82,21 +90,24 @@ public class FollowersRequestHandler extends RequestHandler {
     @Override
     public void responseHandler(JSONObject response) {
         try {
-            offset += Globals.REQUEST_LIMIT;
+            followFileHandler.setResponse(response);
+            offset += Globals.USER_REQUEST_LIMIT;
             if (twitchTotal == 0) {
                 twitchTotal = response.getInt("_total");
             }
-            userCount += response.getJSONArray("follows").length();
-            followFileHandler.setResponse(response);
-            followFileHandler.run();
+            itemCount += response.getJSONArray("follows").length();
             if (response.getJSONArray("follows").length() > 0) {
+                followFileHandler.setOrganize(false);
+                followFileHandler.run();
                 sendRequest(offset);
             } else {
-                if (twitchTotal != userCount && weakContext != null && weakContext.get() != null) {
+                followFileHandler.setOrganize(true);
+                if (twitchTotal != itemCount && weakContext != null && weakContext.get() != null) {
                     Toast.makeText(weakContext.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal
-                            + "' but is only giving '" + userCount + "'", Toast.LENGTH_SHORT).show();
+                            + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show();
                 }
-                responseAction();
+                followFileHandler.run();
+                //responseAction();
             }
         } catch (JSONException e) {
             if (weakContext != null && weakContext.get() != null) {
@@ -111,9 +122,10 @@ public class FollowersRequestHandler extends RequestHandler {
      * @author LethalMaus
      */
     protected void responseAction() {
-        new OrganizeFileHandler(weakActivity, weakContext, recyclerView, displayUsers, commonFolders)
+        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_PATH + File.separator + Globals.FOLLOW_REQUEST_RUNNING_FLAG);
+        new OrganizeFileHandler(weakActivity, weakContext, recyclerView, displayRequest, commonFolders)
                 .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
-                .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
+                .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
                 .execute();
     }
 }

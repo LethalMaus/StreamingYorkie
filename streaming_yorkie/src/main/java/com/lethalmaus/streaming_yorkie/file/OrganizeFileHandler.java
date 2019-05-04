@@ -11,6 +11,7 @@ import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Async Task to organize Followers/Following/F4F to their correct path (eg. new, current, ...)
@@ -108,7 +109,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
      * Organizes the folders specific to Follower & Following
      * @author LethalMaus
      */
-    private void organizeFolders() {
+    void organizeFolders() {
 
         //each time it is called, the new folder is deleted
         boolean newUsersDirectoryNeedsRenewal = true;
@@ -117,7 +118,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of the previously current users
         ArrayList<String> currentUsers = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
 
-        if (!requestedUsers.isEmpty()) {
+        if (!requestedUsers.isEmpty() && !new File(appDirectory + File.separator + Globals.FOLLOW_REQUEST_RUNNING_FLAG).exists()) {
             //Iterate to find if a user has unfollowed
             for (int i = 0; i < currentUsers.size(); i++) {
                 if (!requestedUsers.contains(currentUsers.get(i)) &&
@@ -168,13 +169,13 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of current followers from common folders
         ArrayList<String> followers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
         //Adds all excluded from common folders to allow users to exclude again for preference
-        followers.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWERS_EXCLUDED_PATH + Globals.FOLLOWERS_CURRENT_PATH).readFileNames());
+        followers.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWERS_EXCLUDED_PATH + "_" + Globals.FOLLOWERS_CURRENT_PATH).readFileNames());
         //Removes F4F excluded
         followers.removeAll(excluded);
         //List of current following from common folders
         ArrayList<String> following = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
         //Adds all excluded from common folders to allow users to exclude again for preference
-        following.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWING_CURRENT_PATH).readFileNames());
+        following.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH).readFileNames());
         //Removes F4F excluded
         following.removeAll(excluded);
 

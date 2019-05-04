@@ -50,7 +50,7 @@ public class UserFileHandler implements Runnable {
             user.put("_id", response.getString("_id"));
             user.put("logo", response.getString("logo"));
             user.put("game", response.getString("game"));
-            user.put("created_at", response.getString("created_at").replace("T", " ").replace("Z", " "));
+            user.put("created_at", response.getString("created_at").replace("T", " ").replace("Z", ""));
             user.put("views", response.getInt("views"));
             user.put("followers", response.getInt("followers"));
             user.put("status", response.getString("status"));

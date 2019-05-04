@@ -16,8 +16,11 @@ public class Globals {
 
     //ID of the app registered by Twitch
     public static final String CLIENTID = "tjots3mhxunw0sj2a20ka3wz39p7bp";
+    //ID of Twitch
+    public static final String TWITCHID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
     //User Object limit per request. Gets added to offset
-    public static final int REQUEST_LIMIT = 25;
+    public static final int USER_REQUEST_LIMIT = 25;
+    public static final int VOD_REQUEST_LIMIT = 10;
 
     //Directories for Followers
     public static final String FOLLOWERS_PATH = "FOLLOWERS";
@@ -41,6 +44,14 @@ public class Globals {
     public static final String F4F_NOTFOLLOWED_FOLLOWING_PATH = "NOTFOLLOWED_FOLLOWING";
     public static final String F4F_EXCLUDED_PATH = "F4F_EXCLUDED";
 
+    //Flags to prevent errors
+    public static final String FLAG_PATH = "FLAGS";
+    public static final String FOLLOW_REQUEST_RUNNING_FLAG = "FOLLOW_REQUEST_RUNNING";
+
+    //Directories for VODs
+    public static final String VOD_PATH = "VODS";
+    public static final String VOD_EXPORTED_PATH = "VODS_EXPORTED";
+
     //AutoFollow settings object keys
     public static final String AUTOFOLLOW = "Auto-Follow";
     public static final String AUTOFOLLOW_INTERVAL = "Auto-FollowInterval";
@@ -62,10 +73,16 @@ public class Globals {
     public static final String NOTIFICATION_FOLLOW = "NOTIFICATION_FOLLOW";
     public static final String NOTIFICATION_UNFOLLOW = "NOTIFICATION_UNFOLLOW";
 
+    public static final String NOTIFICATION_VODEXPORT = "NOTIFICATION_VODEXPORT";
+
     //Notifications ID, Name & Description
-    public static final String NOTIFICATION_CHANNEL_ID = "AUTOFOLLOW_NOTIFICATION";
-    public static final String NOTIFICATION_CHANNEL_NAME = "AutoFollow";
-    public static final String NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new followers are followed and unfollowers that are unfollowed";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_ID = "AUTOFOLLOW_NOTIFICATION";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME = "AutoFollow";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new followers are followed and unfollowers that are unfollowed";
+
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID = "AUTOVODEXPORT_NOTIFICATION";
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME = "AutoVODExport";
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new VODs have been exported";
 
     /**
      * Options menu to be available throughout app

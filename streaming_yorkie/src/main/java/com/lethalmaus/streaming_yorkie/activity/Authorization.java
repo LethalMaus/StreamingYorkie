@@ -22,8 +22,6 @@ import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
-import com.lethalmaus.streaming_yorkie.request.FollowersRequestHandler;
-import com.lethalmaus.streaming_yorkie.request.FollowingRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
@@ -37,7 +35,7 @@ import java.lang.ref.WeakReference;
  * Activity for logging in & out of twitch & the app
  * @author LethalMaus
  */
-//This is needed to log into Twitch, even though its not recommended & is dangerous. Hence the Lint suppression
+//This is needed to log into Twitch, even though its not recommended & considered dangerous. Hence the Lint suppression
 @SuppressLint("SetJavaScriptEnabled")
 public class Authorization extends AppCompatActivity {
 
@@ -110,20 +108,21 @@ public class Authorization extends AppCompatActivity {
                             timeoutHandler.cancel(true);
                         }
                         */
-                        if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
-                            new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
+                        if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
+                            new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
                             Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
+                            new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
 
                             new UserRequestHandler(weakActivity, weakContext, false, false, true) {
                                 @Override
                                 public void responseHandler(JSONObject response) {
                                     super.responseHandler(response);
-                                    new FollowersRequestHandler(weakActivity, weakContext, null, false, true).sendRequest(0);
-                                    new FollowingRequestHandler(weakActivity, weakContext, null, false, true).sendRequest(0);
                                     createFolders();
-                                    finish();
                                 }
                             }.sendRequest(0);
+                            view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read");
                         } else if (!url.contains("twitch.tv")) {
                             setContentView(R.layout.error);
                         }
@@ -157,7 +156,7 @@ public class Authorization extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                new DeleteFileHandler(weakContext, "").run();
+                new DeleteFileHandler(weakContext, getFilesDir().toString()).run();
                 finish();
             }
         });
@@ -265,7 +264,7 @@ public class Authorization extends AppCompatActivity {
         }
     }
 
-    /*FIXME
+    /*FIXME connection timeout isn't working as it should. The page progress wasn't taken into consideration
     public class ConnectionTimeoutHandler extends AsyncTask<Void, Void, String> {
 
         private static final String PAGE_LOADED = "PAGE_LOADED";

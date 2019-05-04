@@ -25,7 +25,6 @@ public class UserRequestHandler extends RequestHandler {
 
     private UserFileHandler userFileHandler;
     //Whether the user should be displayed or just updated
-    private boolean displayUser;
     //Whether all the info or just the name & logo
     private boolean showAllInfo;
     //Whether a request should be sent or just the file to be accessed
@@ -43,7 +42,7 @@ public class UserRequestHandler extends RequestHandler {
     public UserRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUser, boolean showAllInfo, boolean requestUpdate) {
         super(weakActivity, weakContext, null);
         userFileHandler = new UserFileHandler(weakContext);
-        this.displayUser = displayUser;
+        this.displayRequest = displayUser;
         this.showAllInfo = showAllInfo;
         this.requestUpdate = requestUpdate;
     }
@@ -83,14 +82,14 @@ public class UserRequestHandler extends RequestHandler {
     public void responseHandler(JSONObject response) {
         userFileHandler.setResponse(response);
         userFileHandler.writeUser();
-        new UserView(weakActivity, weakContext, displayUser, showAllInfo).execute();
+        new UserView(weakActivity, weakContext, displayRequest, showAllInfo).execute();
     }
 
     @Override
     protected void offlineResponseHandler() {
         if (weakContext != null && weakContext.get() != null && requestUpdate) {
-            Toast.makeText(weakContext.get(), "OFFLINE: Showing saved User", Toast.LENGTH_SHORT).show();
+            Toast.makeText(weakContext.get(), "OFFLINE: Showing saved User Info", Toast.LENGTH_SHORT).show();
         }
-        new UserView(weakActivity, weakContext, displayUser, showAllInfo).execute();
+        new UserView(weakActivity, weakContext, displayRequest, showAllInfo).execute();
     }
 }

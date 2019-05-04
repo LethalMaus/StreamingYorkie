@@ -167,7 +167,7 @@ public class AutoFollowWorker extends Worker {
                 content += "You unfollowed '" + autoUnfollowCount + "' Unfollowers.";
             }
 
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(weakContext.get(), Globals.NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(weakContext.get(), Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.mipmap.streaming_yorkie)
                     .setContentTitle("AutoFollow")
                     .setContentText(content)

@@ -34,7 +34,7 @@ public class RequestHandler {
 
     int offset;
     int twitchTotal;
-    int userCount;
+    int itemCount;
     String userID;
 
     //Weak references to avoid memory leaks
@@ -53,13 +53,13 @@ public class RequestHandler {
     String requestPath;
 
     //Display preferences
-    protected String usersToDisplay;
+    protected String itemsToDisplay;
     protected String actionButtonType1;
     protected String actionButtonType2;
     protected String actionButtonType3;
 
     //Boolean whether to show updated files
-    boolean displayUsers;
+    boolean displayRequest;
     //Boolean whether to F4F files or not
     boolean commonFolders;
 
@@ -110,14 +110,14 @@ public class RequestHandler {
     /**
      * Sets display preferences
      * @author LethalMaus
-     * @param usersToDisplay constant of users to display
+     * @param itemsToDisplay constant of users to display
      * @param actionButtonType1 constant of which button type is required
      * @param actionButtonType2 constant of which button type is required
      * @param actionButtonType3 constant of which button type is required
      * @return instance of itself for method building
      */
-    public RequestHandler setDisplayPreferences(String usersToDisplay, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
-        this.usersToDisplay = usersToDisplay;
+    public RequestHandler setDisplayPreferences(String itemsToDisplay, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
+        this.itemsToDisplay = itemsToDisplay;
         this.actionButtonType1 = actionButtonType1;
         this.actionButtonType2 = actionButtonType2;
         this.actionButtonType3 = actionButtonType3;
@@ -132,7 +132,7 @@ public class RequestHandler {
      */
     public RequestHandler newRequest() {
         twitchTotal = 0;
-        userCount = 0;
+        itemCount = 0;
         return this;
     }
 
@@ -153,17 +153,17 @@ public class RequestHandler {
     public void responseHandler(JSONObject response) {}
 
     /**
-     * Method to display saved users when offline or when an error occurs
+     * Method to display saved items when offline or when an error occurs
      * @author LethalMaus
      */
     protected void offlineResponseHandler() {
-        if (displayUsers && recyclerView != null && recyclerView.get() != null) {
+        if (displayRequest && recyclerView != null && recyclerView.get() != null) {
             if (weakContext != null && weakContext.get() != null) {
-                Toast.makeText(weakContext.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
+                Toast.makeText(weakContext.get(), "OFFLINE: Showing saved items", Toast.LENGTH_SHORT).show();
             }
             recyclerView.get().setAdapter(new UserAdapter(weakActivity, weakContext)
                     .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
-                    .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3));
+                    .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3));
         }
     }
 
@@ -175,7 +175,7 @@ public class RequestHandler {
      */
     void errorHandler(VolleyError e) {
         if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "Error requesting Users", Toast.LENGTH_SHORT).show();
+            Toast.makeText(weakContext.get(), "Error requesting items", Toast.LENGTH_SHORT).show();
         }
         new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         offlineResponseHandler();
