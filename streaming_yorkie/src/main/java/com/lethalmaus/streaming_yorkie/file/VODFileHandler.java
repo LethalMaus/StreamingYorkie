@@ -45,7 +45,7 @@ public class VODFileHandler implements Runnable {
      * Method to write VOD object. Used in run, can also be called directly.
      * @author LethalMaus
      */
-    private void writeVOD() {
+    public void writeVOD() {
         JSONObject vodObject;
         try {
             if (response.has("videos")) {
@@ -53,11 +53,23 @@ public class VODFileHandler implements Runnable {
                     vodObject = new JSONObject();
                     vodObject.put("_id", response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""));
                     vodObject.put("title", response.getJSONArray("videos").getJSONObject(i).getString("title"));
-                    vodObject.put("description", response.getJSONArray("videos").getJSONObject(i).getString("description"));
-                    vodObject.put("tag_list", response.getJSONArray("videos").getJSONObject(i).getString("tag_list"));
                     vodObject.put("url", response.getJSONArray("videos").getJSONObject(i).getString("url"));
                     vodObject.put("created_at", response.getJSONArray("videos").getJSONObject(i).getString("created_at").replace("T", " ").replace("Z", ""));
-                    vodObject.put("game", response.getJSONArray("videos").getJSONObject(i).getString("game"));
+                    if (response.getJSONArray("videos").getJSONObject(i).isNull("description")) {
+                        vodObject.put("description", "");
+                    } else {
+                        vodObject.put("description", response.getJSONArray("videos").getJSONObject(i).getString("description"));
+                    }
+                    if (response.getJSONArray("videos").getJSONObject(i).isNull("tag_list")) {
+                        vodObject.put("tag_list", "");
+                    } else {
+                        vodObject.put("tag_list", response.getJSONArray("videos").getJSONObject(i).getString("tag_list"));
+                    }
+                    if (response.getJSONArray("videos").getJSONObject(i).isNull("game")) {
+                        vodObject.put("game", "");
+                    } else {
+                        vodObject.put("game", response.getJSONArray("videos").getJSONObject(i).getString("game"));
+                    }
                     String length = "";
                     int seconds = response.getJSONArray("videos").getJSONObject(i).getInt("length");
                     length += (seconds / 3600) + "h ";
@@ -65,7 +77,7 @@ public class VODFileHandler implements Runnable {
                     length += ((seconds % 3600) % 60) + "s";
                     vodObject.put("length", length);
                     vodObject.put("preview", response.getJSONArray("videos").getJSONObject(i).getJSONObject("preview").getString("medium"));
-                    new WriteFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id"), null, vodObject.toString(),false).run();
+                    new WriteFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id"), null, vodObject.toString(),false).writeToFileOrPath();
                 }
             }
         } catch (JSONException e) {

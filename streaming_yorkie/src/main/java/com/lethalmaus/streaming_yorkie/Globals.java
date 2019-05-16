@@ -6,7 +6,7 @@ import android.view.MenuItem;
 
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
-import com.lethalmaus.streaming_yorkie.activity.Settings;
+import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 
 /**
  * Globals contains centralized constants & variables that are used throughout the whole app.
@@ -51,28 +51,32 @@ public class Globals {
     //Directories for VODs
     public static final String VOD_PATH = "VODS";
     public static final String VOD_EXPORTED_PATH = "VODS_EXPORTED";
+    public static final String VOD_EXCLUDED_PATH = "VODS_EXCLUDED";
 
     //AutoFollow settings object keys
-    public static final String AUTOFOLLOW = "Auto-Follow";
-    public static final String AUTOFOLLOW_INTERVAL = "Auto-FollowInterval";
-    public static final String AUTOFOLLOW_INTERVAL_UNIT = "Auto-FollowIntervalUnit";
-    public static final String AUTOFOLLOW_NOTIFICATIONS = "Auto-FollowNotifications";
+    public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
+    public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";
+    public static final String SETTINGS_INTERVAL = "Interval";
+    public static final String SETTINGS_INTERVAL_UNIT = "IntervalUnit";
+    public static final String SETTINGS_NOTIFICATIONS = "Notifications";
+    public static final String SETTINGS_VISIBILITY = "Visibility";
+    public static final String SETTINGS_SPLIT = "Split";
 
     //AutoFollow settings AUTOFOLLOW values
-    public static final String AUTOFOLLOW_OFF = "OFF";
-    public static final String AUTOFOLLOW_FOLLOW = "FOLLOW";
-    public static final String AUTOFOLLOW_UNFOLLOW = "UNFOLLOW";
-    public static final String AUTOFOLLOW_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
+    public static final String SETTINGS_OFF = "OFF";
+    public static final String SETTINGS_FOLLOW = "FOLLOW";
+    public static final String SETTINGS_UNFOLLOW = "UNFOLLOW";
+    public static final String SETTINGS_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
+    public static final String SETTINGS_EXPORT = "EXPORT";
 
     //AutoFollow settings AUTOFOLLOW_INTERVAL_UNIT values
-    public static final String AUTOFOLLOW_INTERVAL_UNIT_MINUTES = "MINUTES";
-    public static final String AUTOFOLLOW_INTERVAL_UNIT_HOURS = "HOURS";
-    public static final String AUTOFOLLOW_INTERVAL_UNIT_DAYS = "DAYS";
+    public static final String SETTINGS_INTERVAL_UNIT_MINUTES = "MINUTES";
+    public static final String SETTINGS_INTERVAL_UNIT_HOURS = "HOURS";
+    public static final String SETTINGS_INTERVAL_UNIT_DAYS = "DAYS";
 
     //AutoFollow settings AUTOFOLLOW_NOTIFICATIONS values
     public static final String NOTIFICATION_FOLLOW = "NOTIFICATION_FOLLOW";
     public static final String NOTIFICATION_UNFOLLOW = "NOTIFICATION_UNFOLLOW";
-
     public static final String NOTIFICATION_VODEXPORT = "NOTIFICATION_VODEXPORT";
 
     //Notifications ID, Name & Description
@@ -99,7 +103,7 @@ public class Globals {
                 activity.startActivity(intent);
                 return true;
             case R.id.menu_settings:
-                intent = new Intent(activity, Settings.class);
+                intent = new Intent(activity, SettingsMenu.class);
                 activity.startActivity(intent);
                 return true;
             case R.id.menu_logout:

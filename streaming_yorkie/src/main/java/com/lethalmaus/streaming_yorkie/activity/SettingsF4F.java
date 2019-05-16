@@ -26,21 +26,20 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_FOLLOW;
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_FOLLOWUNFOLLOW;
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_INTERVAL_UNIT_DAYS;
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_INTERVAL_UNIT_HOURS;
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_INTERVAL_UNIT_MINUTES;
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_OFF;
-import static com.lethalmaus.streaming_yorkie.Globals.AUTOFOLLOW_UNFOLLOW;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_FOLLOW;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_FOLLOWUNFOLLOW;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_INTERVAL_UNIT_DAYS;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_INTERVAL_UNIT_HOURS;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_INTERVAL_UNIT_MINUTES;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_OFF;
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_UNFOLLOW;
 
 /**
- * Activity for Settings view that creates the settings when first opened.
+ * Activity for F4F settings that creates the settings only when first opened.
  * The settings are never needed unless the user tries to change them.
- * TODO this might need to be an async task once it starts getting bigger or broken into separate submenus
  * @author LethalMaus
  */
-public class Settings extends AppCompatActivity {
+public class SettingsF4F extends AppCompatActivity {
 
     //All contexts are weak referenced to avoid memory leaks
     protected WeakReference<Context> weakContext;
@@ -51,37 +50,37 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.weakContext = new WeakReference<>(getApplicationContext());
-        setContentView(R.layout.settings);
+        setContentView(R.layout.settings_f4f);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setSubtitle("F4F");
         }
 
         //This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
-        if (!new File(getFilesDir().toString() + File.separator + "SETTINGS").exists()) {
+        if (!new File(getFilesDir().toString() + File.separator + "SETTINGS_F4F").exists()) {
             settings = new JSONObject();
             try {
-                settings.put(Globals.AUTOFOLLOW, AUTOFOLLOW_OFF);
-                settings.put(Globals.AUTOFOLLOW_INTERVAL, 1);
-                settings.put(Globals.AUTOFOLLOW_INTERVAL_UNIT, AUTOFOLLOW_INTERVAL_UNIT_DAYS);
-                settings.put(Globals.AUTOFOLLOW_NOTIFICATIONS, false);
-                new WriteFileHandler(weakContext, "SETTINGS", null, settings.toString(), false).run();
+                settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
+                settings.put(Globals.SETTINGS_INTERVAL, 1);
+                settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
+                settings.put(Globals.SETTINGS_NOTIFICATIONS, false);
+                new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).writeToFileOrPath();
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Error creating Settings", Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
-            }
-        } else {
-            try {
-                settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS").readFile());
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Error reading Settings", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error creating VOD Settings", Toast.LENGTH_SHORT).show();
                 new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
             }
         }
+        try {
+            settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_F4F").readFile());
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+        }
 
-        autoFollowRadioGroup();
-        autoFollowIntervalValue();
-        autoFollowIntervalUnitRadioGroup();
-        autoFollowNotificationSwitch();
+        serviceActivation();
+        intervalValue();
+        intervalUnitRadioGroup();
+        notificationSwitch();
 
         ImageButton save = findViewById(R.id.settings_save);
         save.setOnClickListener(new View.OnClickListener() {
@@ -103,20 +102,20 @@ public class Settings extends AppCompatActivity {
      * Reads settings and changes the AutoFollow RadioGroup. Also adds the Listener
      * @author LethalMaus
      */
-    private void autoFollowRadioGroup() {
+    private void serviceActivation() {
         RadioGroup autoFollowRadioGroup = findViewById(R.id.settings_autoFollow);
         try {
-            switch (settings.getString(Globals.AUTOFOLLOW)) {
-                case AUTOFOLLOW_OFF:
+            switch (settings.getString(Globals.SETTINGS_AUTOFOLLOW)) {
+                case SETTINGS_OFF:
                     autoFollowRadioGroup.check(R.id.settings_autoFollow_off);
                     break;
-                case AUTOFOLLOW_FOLLOW:
+                case SETTINGS_FOLLOW:
                     autoFollowRadioGroup.check(R.id.settings_autoFollow_follow);
                     break;
-                case AUTOFOLLOW_UNFOLLOW:
+                case SETTINGS_UNFOLLOW:
                     autoFollowRadioGroup.check(R.id.settings_autoFollow_unfollow);
                     break;
-                case AUTOFOLLOW_FOLLOWUNFOLLOW:
+                case SETTINGS_FOLLOWUNFOLLOW:
                     autoFollowRadioGroup.check(R.id.settings_autoFollow_followUnfollow);
                     break;
                 default:
@@ -124,7 +123,7 @@ public class Settings extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading Settings, " + Globals.AUTOFOLLOW, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         }
         autoFollowRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -133,23 +132,23 @@ public class Settings extends AppCompatActivity {
                 try {
                     switch (checkedId) {
                         case R.id.settings_autoFollow_off:
-                            settings.put(Globals.AUTOFOLLOW, AUTOFOLLOW_OFF);
+                            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
                             break;
                         case R.id.settings_autoFollow_follow:
-                            settings.put(Globals.AUTOFOLLOW, AUTOFOLLOW_FOLLOW);
+                            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_FOLLOW);
                             break;
                         case R.id.settings_autoFollow_unfollow:
-                            settings.put(Globals.AUTOFOLLOW, AUTOFOLLOW_UNFOLLOW);
+                            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_UNFOLLOW);
                             break;
                         case R.id.settings_autoFollow_followUnfollow:
-                            settings.put(Globals.AUTOFOLLOW, AUTOFOLLOW_FOLLOWUNFOLLOW);
+                            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_FOLLOWUNFOLLOW);
                             break;
                         default:
-                            settings.put(Globals.AUTOFOLLOW, AUTOFOLLOW_OFF);
+                            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
                             break;
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing Settings, " + Globals.AUTOFOLLOW, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
                     new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
                 }
             }
@@ -157,17 +156,17 @@ public class Settings extends AppCompatActivity {
     }
 
     /**
-     * Reads settings and changes the AutoFollow Interval Slider. Also adds the Listener
+     * Reads settings and changes the Interval Slider. Also adds the Listener
      * @author LethalMaus
      */
-    private void autoFollowIntervalValue() {
+    private void intervalValue() {
         final SeekBar autoFollowIntervalValue = findViewById(R.id.settings_autoFollowInterval_value);
         final TextView autoFollowIntervalValueText = findViewById(R.id.settings_autoFollowInterval_value_text);
         try {
-            autoFollowIntervalValue.setProgress(settings.getInt(Globals.AUTOFOLLOW_INTERVAL) - 1);
-            autoFollowIntervalValueText.setText(String.valueOf(settings.getInt(Globals.AUTOFOLLOW_INTERVAL)));
+            autoFollowIntervalValue.setProgress(settings.getInt(Globals.SETTINGS_INTERVAL) - 1);
+            autoFollowIntervalValueText.setText(String.valueOf(settings.getInt(Globals.SETTINGS_INTERVAL)));
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading Settings, " + Globals.AUTOFOLLOW_INTERVAL, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         }
 
@@ -181,9 +180,9 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 try {
-                    settings.put(Globals.AUTOFOLLOW_INTERVAL, autoFollowIntervalValue.getProgress() + 1);
+                    settings.put(Globals.SETTINGS_INTERVAL, autoFollowIntervalValue.getProgress() + 1);
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing Settings, " + Globals.AUTOFOLLOW_INTERVAL, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
                     new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
                 }
             }
@@ -194,17 +193,17 @@ public class Settings extends AppCompatActivity {
      * Reads settings and changes the AutoFollow Interval Unit. Also adds the Listener
      * @author LethalMaus
      */
-    private void autoFollowIntervalUnitRadioGroup() {
+    private void intervalUnitRadioGroup() {
         RadioGroup autoFollowIntervalUnitRadioGroup = findViewById(R.id.settings_autoFollowIntervalUnit);
         try {
-            switch (settings.getString(Globals.AUTOFOLLOW_INTERVAL_UNIT)) {
-                case AUTOFOLLOW_INTERVAL_UNIT_MINUTES:
+            switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
+                case SETTINGS_INTERVAL_UNIT_MINUTES:
                     autoFollowIntervalUnitRadioGroup.check(R.id.settings_autoFollowIntervalUnit_minutes);
                     break;
-                case AUTOFOLLOW_INTERVAL_UNIT_HOURS:
+                case SETTINGS_INTERVAL_UNIT_HOURS:
                     autoFollowIntervalUnitRadioGroup.check(R.id.settings_autoFollowIntervalUnit_hours);
                     break;
-                case AUTOFOLLOW_INTERVAL_UNIT_DAYS:
+                case SETTINGS_INTERVAL_UNIT_DAYS:
                     autoFollowIntervalUnitRadioGroup.check(R.id.settings_autoFollowIntervalUnit_days);
                     break;
                 default:
@@ -212,7 +211,7 @@ public class Settings extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading Settings, " + Globals.AUTOFOLLOW_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         }
         autoFollowIntervalUnitRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -221,20 +220,20 @@ public class Settings extends AppCompatActivity {
                 try {
                     switch (checkedId) {
                         case R.id.settings_autoFollowIntervalUnit_minutes:
-                            settings.put(Globals.AUTOFOLLOW_INTERVAL_UNIT, AUTOFOLLOW_INTERVAL_UNIT_MINUTES);
+                            settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_MINUTES);
                             break;
                         case R.id.settings_autoFollowIntervalUnit_hours:
-                            settings.put(Globals.AUTOFOLLOW_INTERVAL_UNIT, AUTOFOLLOW_INTERVAL_UNIT_HOURS);
+                            settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_HOURS);
                             break;
                         case R.id.settings_autoFollowIntervalUnit_days:
-                            settings.put(Globals.AUTOFOLLOW_INTERVAL_UNIT, AUTOFOLLOW_INTERVAL_UNIT_DAYS);
+                            settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
                             break;
                         default:
-                            settings.put(Globals.AUTOFOLLOW_INTERVAL_UNIT, AUTOFOLLOW_INTERVAL_UNIT_DAYS);
+                            settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
                             break;
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing Settings, " + Globals.AUTOFOLLOW_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
                     new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
                 }
             }
@@ -245,21 +244,21 @@ public class Settings extends AppCompatActivity {
      * Reads settings and changes the AutoFollow Notification Preference Switch. Also adds the Listener
      * @author LethalMaus
      */
-    private void autoFollowNotificationSwitch() {
+    private void notificationSwitch() {
         Switch autoFollowNotifications = findViewById(R.id.settings_autoFollowNotifications);
         try {
-            autoFollowNotifications.setChecked(settings.getBoolean(Globals.AUTOFOLLOW_NOTIFICATIONS));
+            autoFollowNotifications.setChecked(settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS));
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading Settings, " + Globals.AUTOFOLLOW_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         }
         autoFollowNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 try {
-                    settings.put(Globals.AUTOFOLLOW_NOTIFICATIONS, isChecked);
+                    settings.put(Globals.SETTINGS_NOTIFICATIONS, isChecked);
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing Settings, " + Globals.AUTOFOLLOW_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
                     new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
                 }
             }
@@ -272,15 +271,15 @@ public class Settings extends AppCompatActivity {
      */
     private void saveSettings() {
         try {
-            JSONObject previousSettings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS").readFile());
+            JSONObject previousSettings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_F4F").readFile());
 
-            if (!previousSettings.getString(Globals.AUTOFOLLOW).equals(settings.getString(Globals.AUTOFOLLOW))||
-                    previousSettings.getInt(Globals.AUTOFOLLOW_INTERVAL) != settings.getInt(Globals.AUTOFOLLOW_INTERVAL) ||
-                    !previousSettings.getString(Globals.AUTOFOLLOW_INTERVAL_UNIT).equals(settings.getString(Globals.AUTOFOLLOW_INTERVAL_UNIT)) ||
-                    previousSettings.getBoolean(Globals.AUTOFOLLOW_NOTIFICATIONS) != settings.getBoolean(Globals.AUTOFOLLOW_NOTIFICATIONS)) {
-                if (!settings.getString(Globals.AUTOFOLLOW).equals(Globals.AUTOFOLLOW_OFF)) {
+            if (!previousSettings.getString(Globals.SETTINGS_AUTOFOLLOW).equals(settings.getString(Globals.SETTINGS_AUTOFOLLOW))||
+                    previousSettings.getInt(Globals.SETTINGS_INTERVAL) != settings.getInt(Globals.SETTINGS_INTERVAL) ||
+                    !previousSettings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) ||
+                    previousSettings.getBoolean(Globals.SETTINGS_NOTIFICATIONS) != settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS)) {
+                if (!settings.getString(Globals.SETTINGS_AUTOFOLLOW).equals(Globals.SETTINGS_OFF)) {
                     promptActivatingAutoFollow();
-                } else if (settings.getInt(Globals.AUTOFOLLOW_INTERVAL) < 15 && settings.getString(Globals.AUTOFOLLOW_INTERVAL_UNIT).equals(AUTOFOLLOW_INTERVAL_UNIT_MINUTES)) {
+                } else if (settings.getInt(Globals.SETTINGS_INTERVAL) < 15 && settings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(SETTINGS_INTERVAL_UNIT_MINUTES)) {
                     promptUserIntervalTooSmall();
                 } else {
                     promptUserSaveSettings();
@@ -290,7 +289,7 @@ public class Settings extends AppCompatActivity {
                 finish();
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading Settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
         }
     }
@@ -300,18 +299,18 @@ public class Settings extends AppCompatActivity {
      * @author LethalMaus
      */
     private void promptActivatingAutoFollow() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingsF4F.this, R.style.CustomDialog);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 try {
-                    if (settings.getInt(Globals.AUTOFOLLOW_INTERVAL) < 15 && settings.getString(Globals.AUTOFOLLOW_INTERVAL_UNIT).equals(AUTOFOLLOW_INTERVAL_UNIT_MINUTES)) {
+                    if (settings.getInt(Globals.SETTINGS_INTERVAL) < 15 && settings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(SETTINGS_INTERVAL_UNIT_MINUTES)) {
                         promptUserIntervalTooSmall();
                     } else {
                         promptUserSaveSettings();
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error reading Settings", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
                     new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
                 }
             }
@@ -323,8 +322,8 @@ public class Settings extends AppCompatActivity {
                 finish();
             }
         });
-        builder.setMessage("Make sure you have excluded Followers/Following/F4F from the AutoFollow Worker");
         builder.setTitle("WARNING: AutoFollow preparation is required");
+        builder.setMessage("Make sure you have excluded Followers/Following/F4F from the AutoFollow Worker");
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -335,7 +334,7 @@ public class Settings extends AppCompatActivity {
      * @author LethalMaus
      */
     private void promptUserIntervalTooSmall() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingsF4F.this, R.style.CustomDialog);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -343,8 +342,8 @@ public class Settings extends AppCompatActivity {
                 promptUserSaveSettings();
             }
         });
-        builder.setMessage("15 minutes is the smallest interval possible");
         builder.setTitle("Interval too small");
+        builder.setMessage("15 minutes is the smallest interval possible");
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -354,7 +353,7 @@ public class Settings extends AppCompatActivity {
      * @author LethalMaus
      */
     private void promptUserSaveSettings() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingsF4F.this, R.style.CustomDialog);
         builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -370,8 +369,8 @@ public class Settings extends AppCompatActivity {
                 finish();
             }
         });
-        builder.setMessage("Would you like to save your changes?");
         builder.setTitle("Save Settings");
+        builder.setMessage("Would you like to save your changes?");
         AlertDialog dialog = builder.create();
         dialog.show();
     }

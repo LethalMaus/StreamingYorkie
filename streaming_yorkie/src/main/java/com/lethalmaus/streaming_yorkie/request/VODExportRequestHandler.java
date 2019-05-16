@@ -31,6 +31,9 @@ import java.util.Map;
  */
 public class VODExportRequestHandler extends RequestHandler {
 
+    private String vodID;
+    private String title;
+
     /**
      * Constructor for VODExportRequestHandler for exporting a current VOD
      * @author LethalMaus
@@ -51,8 +54,10 @@ public class VODExportRequestHandler extends RequestHandler {
      * @param publish if VOD should be private(false) or public(true)
      * @param split if the video should be split
      */
-    public void export(final String vodID, final String title, final String description, final String tags, final boolean publish, final boolean split) {
+    public void export(String vodID, String title, String description, String tags, boolean publish, boolean split) {
         if (networkIsAvailable()) {
+            this.vodID = vodID;
+            this.title = title;
             try {
                 JSONObject params = new JSONObject();
                 params.put("title", title);
@@ -64,10 +69,7 @@ public class VODExportRequestHandler extends RequestHandler {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                if (weakContext != null && weakContext.get() != null) {
-                                    Toast.makeText(weakContext.get(), "Export successful for '" + title + "'", Toast.LENGTH_SHORT).show();
-                                }
-                                new WriteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodID, null, new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodID).readFile(), false).run();
+                                responseHandler(response);
                             }
                         }, new Response.ErrorListener() {
                     @Override
@@ -114,5 +116,13 @@ public class VODExportRequestHandler extends RequestHandler {
         } else if (weakContext != null && weakContext.get() != null) {
             Toast.makeText(weakContext.get(), "OFFLINE: Cannot export when offline", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void responseHandler(JSONObject response) {
+        if (weakContext != null && weakContext.get() != null) {
+            Toast.makeText(weakContext.get(), "Export successful for '" + title + "'", Toast.LENGTH_SHORT).show();
+        }
+        new WriteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodID, null, null, false).run();
     }
 }

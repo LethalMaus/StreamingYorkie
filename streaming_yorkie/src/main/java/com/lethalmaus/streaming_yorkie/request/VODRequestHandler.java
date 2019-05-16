@@ -104,7 +104,7 @@ public class VODRequestHandler extends RequestHandler {
             }
             itemCount += response.getJSONArray("videos").length();
             vodFileHandler.setResponse(response);
-            vodFileHandler.run();
+            vodFileHandler.writeVOD();
             if (response.getJSONArray("videos").length() > 0) {
                 sendRequest(offset);
             } else {
@@ -126,10 +126,10 @@ public class VODRequestHandler extends RequestHandler {
      * Method for performing an action after handling the request response
      * @author LethalMaus
      */
-    private void responseAction() {
+    public void responseAction() {
         if (displayRequest && recyclerView != null && recyclerView.get() != null) {
             recyclerView.get().setAdapter(new VODAdapter(weakActivity, weakContext)
-                    .setDisplayPreferences(itemsToDisplay, actionButtonType1));
+                    .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2));
         }
     }
 

@@ -2,8 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/user_Logo"
@@ -78,6 +77,16 @@
             android:scaleType="centerInside"
             app:srcCompat="@drawable/export" />
 
+        <ImageButton
+            android:id="@+id/page3"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/page3_symbol"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/excluded" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -110,6 +119,15 @@
             android:textAlignment="center"
             android:textSize="12sp" />
 
+        <TextView
+            android:id="@+id/count3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/count3"
+            android:textAlignment="center"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
     <ProgressBar
@@ -131,7 +149,6 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/emptyuserrow"
-        tools:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginStart="8dp"
@@ -183,17 +200,20 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/action_all_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressbar" />
 
     <ImageButton
-        android:id="@+id/export_delete_all"
-        android:layout_width="wrap_content"
+        android:id="@+id/action_all_button"
+        android:layout_width="0dp"
         android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@android:color/transparent"
+        android:background="#EDEDED"
         android:contentDescription="@string/actionAll"
         android:scaleType="centerInside"
         android:visibility="gone"

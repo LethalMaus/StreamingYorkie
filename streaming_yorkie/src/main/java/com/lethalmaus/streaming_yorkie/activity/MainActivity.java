@@ -1,8 +1,10 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
+import com.lethalmaus.streaming_yorkie.worker.AutoVODExportWorker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +33,7 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+import androidx.work.Worker;
 
 /**
  * Main Activity. If the user isn't logged in then the activity changes to Authorization.
@@ -48,9 +52,27 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setIcon(R.drawable.streaming_yorkie);
         }
 
+        /*FIXME
+        Delete after next update, this is to inform users of breaking changes
+         */
+        if (new File(getFilesDir().toString() + File.separator + "SETTINGS").exists()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.CustomDialog);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    new DeleteFileHandler(new WeakReference<>(getApplicationContext()), "SETTINGS").run();
+                    dialog.dismiss();
+                }
+            });
+            builder.setMessage("Auto-Follow settings have been reset due to the introduction of VOD Exports. Sorry for the inconvenience");
+            builder.setTitle("Breaking Changes");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
         userLoggedIn();
-        activateAutoFollow();
-        createNotificationChannel();
+        activateWorker("SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
+        activateWorker("SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
 
         ImageButton followers = findViewById(R.id.followers_menu);
         followers.setOnClickListener(
@@ -117,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(MainActivity.this, Settings.class);
+                        Intent intent = new Intent(MainActivity.this, SettingsMenu.class);
                         startActivity(intent);
                     }
                 });
@@ -127,17 +149,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         userLoggedIn();
-        activateAutoFollow();
+        activateWorker("SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
+        activateWorker("SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
     }
 
     /**
      * Opens a notification channel for the AutoFollower
      * @author LethalMaus
+     * @param channelID notification channel ID
+     * @param channelName notification channel name
+     * @param channelDescription notification channel description
      */
-    private void createNotificationChannel() {
+    private void createNotificationChannel(String channelID, String channelName, String channelDescription) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
+            NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(channelDescription);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
@@ -157,46 +183,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks if settings were ever made, then checks if AutoFollower has been activated & with which preferences.
-     * A PeriodicWorkRequest is activated to perform the AutoFollower
+     * Checks if settings were ever made for the Worker type, then checks if the Worker has been activated & with which preferences.
+     * A PeriodicWorkRequest is activated to perform the Worker process
      * @author LethalMaus
+     * @param settingsFileName name of settings files
+     * @param workerName name of worker process
+     * @param workerClass name of worker class
+     * @param channelID notification channel ID
+     * @param channelName notification channel name
+     * @param channelDescription notification channel description
      */
-    public void activateAutoFollow() {
-        if (new File(getFilesDir().toString() + File.separator + "SETTINGS").exists()) {
+    public void activateWorker(String settingsFileName, String workerName, Class<? extends Worker> workerClass, String channelID, String channelName, String channelDescription) {
+        if (new File(getFilesDir().toString() + File.separator + settingsFileName).exists()) {
             try {
-                JSONObject settings = new JSONObject(new ReadFileHandler(new WeakReference<>(getApplicationContext()), "SETTINGS").readFile());
-                if (!settings.getString(Globals.AUTOFOLLOW).equals(Globals.AUTOFOLLOW_OFF)) {
+                JSONObject settings = new JSONObject(new ReadFileHandler(new WeakReference<>(getApplicationContext()), settingsFileName).readFile());
+                if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF)) {
+                    createNotificationChannel(channelID, channelName, channelDescription);
                     TimeUnit intervalUnit;
-                    switch (settings.getString(Globals.AUTOFOLLOW_INTERVAL_UNIT)) {
-                        case Globals.AUTOFOLLOW_INTERVAL_UNIT_MINUTES:
+                    switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
+                        case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
                             intervalUnit = TimeUnit.MINUTES;
                             break;
-                        case Globals.AUTOFOLLOW_INTERVAL_UNIT_HOURS:
+                        case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
                             intervalUnit = TimeUnit.HOURS;
                             break;
-                        case Globals.AUTOFOLLOW_INTERVAL_UNIT_DAYS:
+                        case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
                             intervalUnit = TimeUnit.DAYS;
                             break;
                         default:
                             intervalUnit = TimeUnit.DAYS;
                             break;
                     }
-                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(AutoFollowWorker.class, settings.getInt(Globals.AUTOFOLLOW_INTERVAL), intervalUnit);
+                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, settings.getInt(Globals.SETTINGS_INTERVAL), intervalUnit);
                     Constraints constraints = new Constraints.Builder()
                             .setRequiresBatteryNotLow(true)
                             .setRequiresStorageNotLow(true)
                             .setRequiredNetworkType(NetworkType.NOT_ROAMING)
                             .build();
-                    PeriodicWorkRequest autoFollow = autoFollowBuilder.setConstraints(constraints).addTag("AUTOFOLLOW_WORKER").build();
-                    WorkManager.getInstance().enqueueUniquePeriodicWork("AUTOFOLLOW_WORKER", ExistingPeriodicWorkPolicy.KEEP, autoFollow);
-                    if (new File(getFilesDir().toString() + File.separator + Globals.FOLLOWERS_NEW_PATH).exists()) {
-                        new DeleteFileHandler(new WeakReference<>(getApplicationContext()), Globals.FOLLOWERS_NEW_PATH).run();
-                    }
+                    PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
+                    WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
                 } else {
-                    WorkManager.getInstance().cancelAllWorkByTag("AUTOFOLLOW_WORKER");
+                    WorkManager.getInstance().cancelAllWorkByTag(workerName);
                 }
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Error activating Auto-Follow", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error activating " + workerName, Toast.LENGTH_SHORT).show();
             }
         }
     }

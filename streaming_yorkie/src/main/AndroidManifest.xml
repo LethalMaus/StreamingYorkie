@@ -29,7 +29,9 @@
         <activity android:label="VODs" android:name="com.lethalmaus.streaming_yorkie.activity.VODs" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
         <activity android:label="User Info" android:name="com.lethalmaus.streaming_yorkie.activity.User" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
         <activity android:label="Info" android:name="com.lethalmaus.streaming_yorkie.activity.Info"/>
-        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.Settings" android:configChanges="orientation|screenSize"/>
+        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsMenu" />
+        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsF4F" android:configChanges="orientation|screenSize"/>
+        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsVOD" android:configChanges="orientation|screenSize"/>
         <activity android:label="Logs" android:name="com.lethalmaus.streaming_yorkie.activity.Logs" android:configChanges="orientation|screenSize"/>
 
         <meta-data

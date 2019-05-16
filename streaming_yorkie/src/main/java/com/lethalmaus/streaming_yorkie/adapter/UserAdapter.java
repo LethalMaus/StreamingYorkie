@@ -188,6 +188,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
     }
 
+    /**
+     * Takes action once a dataset has been changed then notifies UI
+     */
+    private void datasetChanged() {
+        if (userDataset != null && userDataset.size() > 0) {
+            if (userDataset.size() > 1) {
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
+            } else {
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+            }
+            weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
+            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
+        } else {
+            weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+            weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return userDataset != null ? userDataset.size() : 0;
@@ -282,7 +302,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 new DeleteFileHandler(weakContext, usersPath + File.separator + userID).run();
                 new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID).run();
                 userDataset.remove(userID);
-                notifyDataSetChanged();
+                datasetChanged();
                 pageCount3--;
                 setPageCountViews(weakActivity);
             }
@@ -303,7 +323,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onClick(View v) {
                 new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
                 userDataset.remove(userID);
-                notifyDataSetChanged();
+                datasetChanged();
                 if (new File(appDirectory + File.separator + newUsersPath + File.separator + userID).exists()) {
                     //When a user is excluded from new, it has not considered new anymore
                     if (!newUsersPath.contains("NEW")) {
@@ -343,7 +363,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onClick(View v) {
                 new DeleteFileHandler(weakContext, null).deleteFileOrPath(excludedUsersPath + File.separator + userID);
                 userDataset.remove(userID);
-                notifyDataSetChanged();
+                datasetChanged();
                 //Only for F4F exclusions is the newUsersPath needed
                 if (new File(appDirectory + File.separator + excludedUsersPath + "_" + newUsersPath + File.separator + userID).exists() && !newUsersPath.contains("NEW")) {
                     new WriteFileHandler(weakContext, newUsersPath + File.separator + userID, null, null, false).run();
@@ -391,13 +411,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 .requestFollow();
                         if (usersToDisplay.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
                             userDataset.remove(userID);
-                            notifyDataSetChanged();
+                            datasetChanged();
                             pageCount3--;
                             pageCount2++;
                             setPageCountViews(weakActivity);
                         } else if (usersToDisplay.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
                             userDataset.remove(userID);
-                            notifyDataSetChanged();
+                            datasetChanged();
                             pageCount2--;
                             pageCount1++;
                             setPageCountViews(weakActivity);
@@ -409,7 +429,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 .requestFollow();
                         if (usersToDisplay.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
                             userDataset.remove(userID);
-                            notifyDataSetChanged();
+                            datasetChanged();
                             pageCount1--;
                             pageCount2++;
                             setPageCountViews(weakActivity);
@@ -511,7 +531,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 }
                             }
                             userDataset.clear();
-                            notifyDataSetChanged();
+                            datasetChanged();
                             setPageCountViews(weakActivity);
                             imageButton.setVisibility(View.GONE);
                             weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);

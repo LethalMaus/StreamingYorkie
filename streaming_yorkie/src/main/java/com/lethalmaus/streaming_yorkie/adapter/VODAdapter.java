@@ -12,7 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,18 +46,20 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     //Display preferences
     private String vodsToDisplay;
     private ArrayList<String> vodDataset;
-    private String actionButtonType;
+    private String actionButtonType1;
+    private String actionButtonType2;
     private String vodPath;
 
     //Page counts
     private int pageCount1;
     private int pageCount2;
+    private int pageCount3;
 
     //VOD export properties
     private String title;
     private String description;
     private String tags;
-    private boolean publish;
+    private boolean visibility;
     private boolean split;
 
     /**
@@ -96,14 +98,15 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * Sets Display preferences
      * @author LethalMaus
      * @param vodsToDisplay constant of which users are to be displayed
-     * @param actionButtonType constant of which button is required in relation to the itemsToDisplay
+     * @param actionButtonType1 constant of which button is required in relation to the itemsToDisplay
+     * @param actionButtonType2 constant of which button is required in relation to the itemsToDisplay
      * @return an instance of itself for method building
      */
-    public VODAdapter setDisplayPreferences(String vodsToDisplay, String actionButtonType) {
+    public VODAdapter setDisplayPreferences(String vodsToDisplay, String actionButtonType1, String actionButtonType2) {
         this.vodsToDisplay = vodsToDisplay;
-        this.actionButtonType = actionButtonType;
+        this.actionButtonType1 = actionButtonType1;
+        this.actionButtonType2 = actionButtonType2;
         getVODs();
-        actionAllButton(actionButtonType);
         setPageCounts();
         setPageCountViews(weakActivity);
         //An empty row or table can be displayed based on if the dataset is empty or not
@@ -131,7 +134,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     public void onBindViewHolder(@NonNull VODAdapter.VODViewHolder vodViewHolder, int position) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
             try {
-                JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, vodPath + File.separator + vodDataset.get(position)).readFile());
+                JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodDataset.get(position)).readFile());
 
                 TextView title = vodViewHolder.vodRow.findViewById(R.id.vod_title);
                 title.setText(vodObject.getString("title"));
@@ -148,16 +151,38 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 ImageView preview = vodViewHolder.vodRow.findViewById(R.id.vod_preview);
                 Glide.with(weakContext.get()).load(vodObject.getString("preview")).into(preview);
 
-                ImageButton action = vodViewHolder.vodRow.findViewById(R.id.vod_action_button);
-                editButton(action, actionButtonType, vodObject.getString("_id"));
+                ImageButton action1 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button1);
+                editButton(action1, actionButtonType1, vodObject.getString("_id"));
 
-                ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
-                progressBar.setVisibility(View.GONE);
+                ImageButton action2 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button2);
+                editButton(action2, actionButtonType2, vodObject.getString("_id"));
+
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
 
             } catch (JSONException e) {
                 new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
             }
         }
+    }
+
+    /**
+     * Takes action once a dataset has been changed then notifies UI
+     */
+    private void datasetChanged() {
+        if (vodDataset != null && vodDataset.size() > 0) {
+            if (vodDataset.size() > 1) {
+                weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.VISIBLE);
+            } else {
+                weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
+            }
+            weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
+            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
+        } else {
+            weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
+            weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+        }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -170,12 +195,26 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      */
     private void getVODs() {
+        String actionAllButtonType = "";
         if (vodsToDisplay.contains("NEW")) {
             vodPath = Globals.VOD_PATH;
+            actionAllButtonType = "EXPORT";
         } else if (vodsToDisplay.contains("EXPORTED")) {
             vodPath = Globals.VOD_EXPORTED_PATH;
+            actionAllButtonType = "DELETE";
+        } else if (vodsToDisplay.contains("EXCLUDED")) {
+            vodPath = Globals.VOD_EXCLUDED_PATH;
+            actionAllButtonType = "INCLUDE";
         }
         vodDataset = new ReadFileHandler(weakContext, vodPath).readFileNames();
+        if (!vodPath.contains(Globals.VOD_EXCLUDED_PATH)) {
+            vodDataset.removeAll(new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).readFileNames());
+        }
+        if (vodDataset.size() > 1) {
+            actionAllButton(actionAllButtonType);
+        } else {
+            weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -186,11 +225,15 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @param vodID the user id which is related to the button
      */
     private void editButton(ImageButton button, String actionButtonType, String vodID) {
-        if (actionButtonType.contentEquals("EXPORT") && !new File(appDirectory + File.separator + Globals.VOD_EXPORTED_PATH + File.separator + vodID).exists()) {
+        if (actionButtonType != null && actionButtonType.contentEquals("EXPORT") && !new File(appDirectory + File.separator + Globals.VOD_EXPORTED_PATH + File.separator + vodID).exists()) {
             exportButton(button, vodID);
-        } else if (actionButtonType.contentEquals("DELETE") && !new File(appDirectory + File.separator + Globals.VOD_PATH + File.separator + vodID).exists()) {
+        } else if (actionButtonType != null && actionButtonType.contentEquals("DELETE")) {
             deleteButton(button, vodID);
-        } else {
+        } else if (actionButtonType != null && actionButtonType.contentEquals("EXCLUDE")) {
+            excludeButton(button, vodID);
+        } else if (actionButtonType != null && actionButtonType.contentEquals("INCLUDE")) {
+            includeButton(button, vodID);
+        }  else {
             button.setVisibility(View.GONE);
         }
     }
@@ -211,7 +254,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 vodDataset.remove(vodID);
                 pageCount2--;
                 setPageCountViews(weakActivity);
-                notifyDataSetChanged();
+                datasetChanged();
             }
         });
     }
@@ -247,11 +290,11 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                     final EditText exportDialogTags = dialog.findViewById(R.id.vod_export_dialog_tags_text);
                     exportDialogTags.setText(tags);
 
-                    final Switch exportDialogPublish = dialog.findViewById(R.id.vod_export_dialog_publish);
-                    exportDialogPublish.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    RadioGroup radioGroup = dialog.findViewById(R.id.vod_export_dialog_visibility);
+                    radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                         @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            publish = isChecked;
+                        public void onCheckedChanged(RadioGroup group, int checkedId) {
+                            visibility = (checkedId == R.id.vod_export_dialog_visibility_public);
                         }
                     });
 
@@ -262,6 +305,19 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             split = isChecked;
                         }
                     });
+
+                    if (new File(appDirectory + File.separator + "SETTINGS_VOD").exists()) {
+                        JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
+                        if (settings.getBoolean(Globals.SETTINGS_VISIBILITY)) {
+                            radioGroup.check(R.id.vod_export_dialog_visibility_public);
+                        } else {
+                            radioGroup.check(R.id.vod_export_dialog_visibility_private);
+                        }
+                        exportDialogSplit.setChecked(settings.getBoolean(Globals.SETTINGS_SPLIT));
+                    } else {
+                        radioGroup.check(R.id.vod_export_dialog_visibility_private);
+                        exportDialogSplit.setChecked(false);
+                    }
 
                     ImageButton cancelButton = dialog.findViewById(R.id.vod_export_dialog_cancel);
                     cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -285,7 +341,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             if (!exportDialogTags.getText().toString().isEmpty()) {
                                 tags = exportDialogTags.getText().toString();
                             }
-                            new VODExportRequestHandler(weakActivity, weakContext).export(vodID, title, description, tags, publish, split);
+                            new VODExportRequestHandler(weakActivity, weakContext).export(vodID, title, description, tags, visibility, split);
                             imageButton.setVisibility(View.GONE);
                             Toast.makeText(weakContext.get(), "Starting export", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
@@ -302,13 +358,58 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         });
     }
 
-    /** TODO this needs to be finished or removed
-     * Button for exporting/deleting all VODS within menu, that can be exported/deleted.
+    /**
+     * Button for excluding a VOD from automation and other views
+     * @author LethalMaus
+     * @param imageButton button view
+     * @param vodID user to be excluded
+     */
+    private void excludeButton(ImageButton imageButton, final String vodID) {
+        imageButton.setImageResource(R.drawable.excluded);
+        imageButton.setTag("EXCLUDE_BUTTON");
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new WriteFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH + File.separator + vodID, null, null, false).run();
+                vodDataset.remove(vodID);
+                datasetChanged();
+                pageCount1--;
+                pageCount3++;
+                setPageCountViews(weakActivity);
+            }
+        });
+    }
+
+    /**
+     * Button for including a VOD to automation and other views
+     * @author LethalMaus
+     * @param imageButton button view
+     * @param vodID VOD to be included
+     */
+    private void includeButton(ImageButton imageButton, final String vodID) {
+        imageButton.setImageResource(R.drawable.include);
+        imageButton.setTag("INCLUDE_BUTTON");
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.VOD_EXCLUDED_PATH + File.separator + vodID);
+                vodDataset.remove(vodID);
+                datasetChanged();
+                pageCount1++;
+                pageCount3--;
+                setPageCountViews(weakActivity);
+            }
+        });
+    }
+
+    /**
+     * Button for exporting/deleting/including all VODS within menu.
      * @author LethalMaus
      * @param actionButtonType type of button the actionAll should contain
      */
     private void actionAllButton(String actionButtonType) {
-        final ImageButton imageButton = weakActivity.get().findViewById(R.id.export_delete_all);
+        final ImageButton imageButton = weakActivity.get().findViewById(R.id.action_all_button);
+        imageButton.setVisibility(View.VISIBLE);
         if (actionButtonType.contentEquals("EXPORT")) {
             imageButton.setImageResource(R.drawable.export);
             imageButton.setTag("EXPORT_ALL_BUTTON");
@@ -318,8 +419,15 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                     for (String vodID : vodDataset) {
                         if (!new File(appDirectory + File.separator + Globals.VOD_EXPORTED_PATH + File.separator + vodID).exists()) {
                             try {
+                                boolean visibility = false;
+                                boolean split = false;
+                                if (new File(appDirectory + File.separator + "SETTINGS_VOD").exists()) {
+                                    JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
+                                    visibility = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
+                                    split = settings.getBoolean(Globals.SETTINGS_SPLIT);
+                                }
                                 JSONObject vod = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodID).readFile());
-                                new VODExportRequestHandler(weakActivity, weakContext).export(vodID, vod.getString("title"), vod.getString("description"), vod.getString("tag_list"), false, false);
+                                new VODExportRequestHandler(weakActivity, weakContext).export(vodID, vod.getString("title"), vod.getString("description"), vod.getString("tag_list"), visibility, split);
                                 pageCount1--;
                             } catch (JSONException e) {
                                 if (weakContext != null && weakContext.get() != null) {
@@ -330,7 +438,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                         }
                     }
                     setPageCountViews(weakActivity);
-                    notifyDataSetChanged();
+                    datasetChanged();
                 }
             });
         } else if (actionButtonType.contentEquals("DELETE")) {
@@ -340,14 +448,27 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 @Override
                 public void onClick(View v) {
                     for (String vodID : vodDataset) {
-                        if (!new File(appDirectory + File.separator + Globals.VOD_PATH + File.separator + vodID).exists()) {
-                            new DeleteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodID).run();
-                            vodDataset.remove(vodID);
-                            pageCount2--;
-                        }
+                        new DeleteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodID).run();
+                        vodDataset.remove(vodID);
+                        pageCount2--;
                     }
                     setPageCountViews(weakActivity);
-                    notifyDataSetChanged();
+                    datasetChanged();
+                }
+            });
+        }  else if (actionButtonType.contentEquals("INCLUDE")) {
+            imageButton.setImageResource(R.drawable.include);
+            imageButton.setTag("INCLUDE_ALL_BUTTON");
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    for (String vodID : vodDataset) {
+                        new DeleteFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH + File.separator + vodID).run();
+                        vodDataset.remove(vodID);
+                        pageCount3--;
+                    }
+                    setPageCountViews(weakActivity);
+                    datasetChanged();
                 }
             });
         }
@@ -358,8 +479,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      */
     private void setPageCounts() {
-        pageCount1 = new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles();
         pageCount2 = new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles();
+        pageCount3 = new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).countFiles();
+        pageCount1 = new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles() - pageCount3;
     }
 
     /**
@@ -371,8 +493,10 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
             TextView page1 = weakActivity.get().findViewById(R.id.count1);
             TextView page2 = weakActivity.get().findViewById(R.id.count2);
+            TextView page3 = weakActivity.get().findViewById(R.id.count3);
             page1.setText(String.valueOf(pageCount1));
             page2.setText(String.valueOf(pageCount2));
+            page3.setText(String.valueOf(pageCount3));
         }
     }
 }

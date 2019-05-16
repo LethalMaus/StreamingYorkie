@@ -11,7 +11,6 @@ import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Async Task to organize Followers/Following/F4F to their correct path (eg. new, current, ...)

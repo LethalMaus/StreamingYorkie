@@ -32,6 +32,12 @@ import androidx.work.WorkManager;
  */
 public class VODs extends AppCompatActivity {
 
+    /*Todo
+    finish readme
+    screenshots for all activities
+    check listing desc.
+     */
+
     //All activities & contexts are weak referenced to avoid memory leaks
     protected WeakReference<Activity> weakActivity;
     protected WeakReference<Context> weakContext;
@@ -54,7 +60,6 @@ public class VODs extends AppCompatActivity {
         WorkManager.getInstance().cancelUniqueWork("AUTOFOLLOW_WORKER");
         setSubtitle("VODs");
 
-
         progressBar = findViewById(R.id.progressbar);
         //This is to make sure its invisible (not necessary but wanted)
         progressBar.setVisibility(View.GONE);
@@ -76,7 +81,7 @@ public class VODs extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pageButtonListenerAction(vodButton, "VODs", "NEW", "EXPORT");
+                        pageButtonListenerAction(vodButton, "VODs", "NEW", "EXPORT", "EXCLUDE");
                     }
                 });
 
@@ -85,11 +90,20 @@ public class VODs extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pageButtonListenerAction(exportedButton, "Exported", "EXPORTED", "DELETE");
+                        pageButtonListenerAction(exportedButton, "Exported", "EXPORTED", "DELETE", null);
+                    }
+                });
+        final ImageButton excludedButton = findViewById(R.id.page3);
+        excludedButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pageButtonListenerAction(excludedButton, "Excluded", "EXCLUDED", "INCLUDE", null);
                     }
                 });
         deleteNotifications();
-        new UserRequestHandler(weakActivity, weakContext,true, false, false).sendRequest(0);
+        new UserRequestHandler(weakActivity, weakContext,true, false, true).sendRequest(0);
+        highlightButton(vodButton);
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -97,7 +111,7 @@ public class VODs extends AppCompatActivity {
         recyclerView.setAdapter(new VODAdapter(weakActivity, weakContext));
         progressBar.setVisibility(View.VISIBLE);
         requestHandler = new VODRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true);
-        requestHandler.setDisplayPreferences("NEW", "EXPORT", null, null).newRequest().sendRequest(0);
+        requestHandler.setDisplayPreferences("NEW", "EXPORT", "EXCLUDE", null).newRequest().sendRequest(0);
     }
 
     @Override
@@ -164,6 +178,7 @@ public class VODs extends AppCompatActivity {
     protected void highlightButton(ImageButton imageButton) {
         findViewById(R.id.page1).setBackgroundResource(0);
         findViewById(R.id.page2).setBackgroundResource(0);
+        findViewById(R.id.page3).setBackgroundResource(0);
         imageButton.setBackgroundResource(R.drawable.highlight_page_button);
     }
 
@@ -173,16 +188,17 @@ public class VODs extends AppCompatActivity {
      * @param button image button that has been selected
      * @param subtitle explains where the user is
      * @param vodsToDisplay vod that are to be displayed (eg. new, exported)
-     * @param actionButtonType action button belonging to vod to be displayed
+     * @param actionButtonType1 first action button belonging to vod to be displayed
+     * @param actionButtonType2 second action button belonging to vod to be displayed
      */
-    protected void pageButtonListenerAction(ImageButton button, String subtitle, String vodsToDisplay, String actionButtonType) {
+    protected void pageButtonListenerAction(ImageButton button, String subtitle, String vodsToDisplay, String actionButtonType1, String actionButtonType2) {
         if (progressBar.getVisibility() != View.VISIBLE) {
             progressBar.setVisibility(View.VISIBLE);
             highlightButton(button);
             setSubtitle(subtitle);
-            requestHandler.setDisplayPreferences(vodsToDisplay, actionButtonType, null, null);
+            requestHandler.setDisplayPreferences(vodsToDisplay, actionButtonType1, actionButtonType2, null);
             recyclerView.setAdapter(new VODAdapter(weakActivity, weakContext)
-                    .setDisplayPreferences(vodsToDisplay, actionButtonType));
+                    .setDisplayPreferences(vodsToDisplay, actionButtonType1, actionButtonType2));
         }
     }
 }

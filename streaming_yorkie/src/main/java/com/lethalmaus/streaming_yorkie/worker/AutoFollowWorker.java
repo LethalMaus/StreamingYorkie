@@ -50,9 +50,9 @@ public class AutoFollowWorker extends Worker {
         super(context, params);
         this.weakContext = new WeakReference<>(context);
         try {
-            JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS").readFile());
-            autoFollow = settings.getString(Globals.AUTOFOLLOW);
-            autoFollowNotifications = settings.getBoolean(Globals.AUTOFOLLOW_NOTIFICATIONS);
+            JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_F4F").readFile());
+            autoFollow = settings.getString(Globals.SETTINGS_AUTOFOLLOW);
+            autoFollowNotifications = settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS);
         } catch(JSONException e) {
             new WriteFileHandler(weakContext, "ERROR", null, e.toString()+"\n", true).run();
         }

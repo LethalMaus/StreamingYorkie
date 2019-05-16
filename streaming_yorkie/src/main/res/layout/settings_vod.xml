@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ScrollView
         android:id="@+id/scrollView3"
@@ -17,41 +16,41 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="163dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="163dp">
+            android:orientation="vertical">
 
             <LinearLayout
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="32dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="16dp">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/settings_autoFollow_text"
+                    android:id="@+id/settings_autoVODExport_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/auto_follow_service"
+                    android:text="@string/auto_vod_export_service"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <RadioGroup
-                    android:id="@+id/settings_autoFollow"
+                    android:id="@+id/settings_autoVODExport"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <RadioButton
-                        android:id="@+id/settings_autoFollow_off"
+                        android:id="@+id/settings_autoVODExport_off"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -59,26 +58,13 @@
                         android:text="@string/off" />
 
                     <RadioButton
-                        android:id="@+id/settings_autoFollow_follow"
+                        android:id="@+id/settings_autoVODExport_export"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:checked="false"
-                        android:text="@string/follow" />
+                        android:text="@string/export" />
 
-                    <RadioButton
-                        android:id="@+id/settings_autoFollow_unfollow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/unfollow" />
-
-                    <RadioButton
-                        android:id="@+id/settings_autoFollow_followUnfollow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/follow_unfollow" />
                 </RadioGroup>
             </LinearLayout>
 
@@ -93,15 +79,15 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/settings_autoFollowInterval_text"
+                    android:id="@+id/settings_autoVODExport_interval_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/autofollow_interval"
+                    android:text="@string/interval"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <SeekBar
-                    android:id="@+id/settings_autoFollowInterval_value"
+                    android:id="@+id/settings_autoVODExport_interval_value"
                     style="@style/Widget.AppCompat.SeekBar.Discrete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -111,49 +97,84 @@
                     android:progress="0" />
 
                 <TextView
-                    android:id="@+id/settings_autoFollowInterval_value_text"
+                    android:id="@+id/settings_autoVODExport_interval_value_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/autofollow_interval_amount"
+                    android:text="@string/interval_amount"
                     android:textAlignment="center"
                     android:textSize="12sp" />
 
                 <RadioGroup
-                    android:id="@+id/settings_autoFollowIntervalUnit"
+                    android:id="@+id/settings_autoVODExport_interval_unit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                     <RadioButton
-                        android:id="@+id/settings_autoFollowIntervalUnit_minutes"
+                        android:id="@+id/settings_autoVODExport_interval_unit_hours"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/autofollow_interval_minutes" />
+                        android:text="@string/interval_hours" />
 
                     <RadioButton
-                        android:id="@+id/settings_autoFollowIntervalUnit_hours"
+                        android:id="@+id/settings_autoVODExport_interval_unit_days"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/autofollow_interval_hours" />
+                        android:text="@string/interval_days" />
 
-                    <RadioButton
-                        android:id="@+id/settings_autoFollowIntervalUnit_days"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/autofollow_interval_days" />
                 </RadioGroup>
             </LinearLayout>
 
-            <Switch
-                android:id="@+id/settings_autoFollowNotifications"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 android:layout_weight="1"
-                android:text="@string/autofollow_notifications"
-                android:textSize="16sp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/settings_autoVODExport_visibility_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/visibility"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/settings_autoVODExport_visibilty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/settings_autoVODExport_private"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="false"
+                        android:text="@string/visibility_private" />
+
+                    <RadioButton
+                        android:id="@+id/settings_autoVODExport_public"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="false"
+                        android:text="@string/visibility_public" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/settings_autoVODExport_split"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_weight="1"
+                android:text="@string/split"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>
@@ -175,5 +196,4 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/save" />
-
 </android.support.constraint.ConstraintLayout>

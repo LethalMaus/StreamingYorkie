@@ -1,6 +1,6 @@
 ﻿<h2><b>Introduction</b></h2>
-Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers as well as offering a better overview of <i>Followers & Following</i>.
-Automatically <i>Follow, Unfollow & F4F</i> simply by just installing and configuring Streaming Yorkie.
+Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers & <i>export VODS</i> as well as offering a better overview of <i>Followers & Following</i>.
+Automatically <i>Follow, Unfollow, F4F & Export VODs</i> simply by just installing and configuring Streaming Yorkie.
 Helps build a bigger community by simplifying communication & freeing time to stream more.
 
 <b>Guide</b>
@@ -9,8 +9,8 @@ https://github.com/LethalMaus/StreamingYorkie#guide
 The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved.
 Streaming Yorkie is a gift back to a great community who I will continue to support for free.
 
-Streaming Yorkie communicates exclusively with the <i>Twitch API</i>.
-A login is required to be able to edit your <i>Followers & Following</i>.
+Streaming Yorkie communicates exclusively with the <i>Twitch API</i> & <i>Twitch Website</i>.
+A login is required to be able to edit & see your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved.
 This ensures that your account is as safe as can be.
 
@@ -26,6 +26,7 @@ See something inefficient? Let me know. I'm always trying to improve my code & l
 
 Currently it is in an <b>Alpha</b> state. 
 It could be that a <i>Bug</i> may appear or the app behaves in an unexpected manner.
+The logic has been tested, however not every view could be tested due to time constraints.
 Please report any problems or suspicions to help improve Streaming Yorkie for everyone.
 
 <b>Open Source Code</b>
@@ -34,28 +35,23 @@ https://github.com/LethalMaus/StreamingYorkie
 <h2><b>Roadmap</b></h2>
 The following tasks and features are currently on the Roadmap & some of which are likely to be within the next release.
 
- • Unit tests
- • Implement JaCoCo code coverage
+ • Unit tests until 100% code coverage
  • Data backup & recovery
- • Apply Themes, Color, Fonts & Logo throughout app
- • Extend Settings for Wifi only, user pic size, theme choice
- • File Observer to renew changes when in User view
+ • Extend Settings for general (Wifi only, user pic size, theme choice)
  • Stream Scheduler (for past, current & future streams)
  • Quick Tap host
  • Offline App Guide
- • Auto VOD Exporter
  • Host for Host
- • Follow 4 Follow Group (in App)
- • Status, Game, Tags & Description update 
+ • Follow 4 Follow Group (in App or link to Discord)
+ • Status, Game, Tags & Description editing option
  • Reusable Activities (Go Live text, game, tags)
- • Instant AutoFollow & AutoUnfollow
- • Stream Info (views, hosts, followers, chats)
+ • Instant AutoFollow & AutoUnfollow (based on webhooks)
+ • Stream Info/Event tracker (views, hosts, followers, chats)
  • Stream Lurker (audio only mode)
  • Streaming tips (obs settings, camera & green screen, networking, chat interactions)
- • Handle Multiple accounts
+ • Handle Multiple/Dual accounts (eg. one for following, one for followers)
  • i18n (Internationalization)
-
-They are ordered in priority. If you would prefer something to be higher on the list, let me know
+ • Follower/Following search
 
 <h2><b>Contact</b></h2>
 <b>Discord</b>
@@ -72,5 +68,5 @@ https://github.com/LethalMaus/StreamingYorkie#contact
 
 <small><i>
 Tags:
-StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Automatic Follow F4F Followers Bigger Steamer Community Free Open Source 
+StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Helper Automatic Follow F4F Followers VOD VODs Export Youtube Bigger Streamer Community Free Open Source 
 </i></small>
