@@ -53,19 +53,19 @@ Please report any problems, suspicions or confirmations to help improve Streamin
 
 ## Guide
 
-+ [Login & Logout](#login--logout-)
-+ [Symbols & Icons](#symbols--icons-)
++ [Login & Logout](#-login--logout)
++ [Symbols & Icons](#symbols--icons)
   + [Menu](#menu)
   + [Categories](#categories)
   + [Actions](#actions)
-+ [Followers, Following & F4F](#followers--following---f4f-)
-+ [VODs](#vods)
-+ [User Info](#user-info-)
-+ [Info](#info)
++ [Followers, Following & F4F](#followers-following--f4f)
++ [VODs](#-vods)
++ [User Info](#-user-info)
++ [Info](#-info)
   + [Logs](#logs)
-+ [Settings](#settings)
-  + [AutoFollow](#autofollow)
-  + [AutoVODExport](#autovodexport)
++ [Settings](#-settings)
+  + [AutoFollow](#-autofollow)
+  + [AutoVODExport](#-autovodexport)
 
 ### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="30" width="30"> Login & Logout
 
