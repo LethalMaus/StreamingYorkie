@@ -66,6 +66,7 @@ public class AutoVODExportWorker extends Worker {
             @Override
             public void responseAction() {
                 ArrayList<String> vods = new ReadFileHandler(weakContext, Globals.VOD_PATH).readFileNames();
+                vods.removeAll(new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).readFileNames());
                 for (int i = 0; i < vods.size(); i++) {
                     if (!new File(weakContext.get().getFilesDir() + File.separator + Globals.VOD_EXPORTED_PATH + File.separator + vods.get(i)).exists()) {
                         try {
@@ -116,7 +117,7 @@ public class AutoVODExportWorker extends Worker {
                     .setAutoCancel(true);
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(weakContext.get());
-            notificationManager.notify(1, mBuilder.build());
+            notificationManager.notify(2, mBuilder.build());
         }
     }
 }

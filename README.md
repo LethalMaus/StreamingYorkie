@@ -276,11 +276,13 @@ Features:
 Issues:
 +	Request & file writing synchronization
 +   Login/Logout correction fix
++	Encoding issues fix (UTF-8)
++	Action button issue fix
 
 Other:
 +   Styling updated
 +   Logout option in Settings
-+   JUnit tests for file package done
++   JUnit tests for package:file
 +	DRY Principle enforcements improved
 +   New screenshots for Google Play
 

@@ -207,10 +207,14 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
             actionAllButtonType = "INCLUDE";
         }
         vodDataset = new ReadFileHandler(weakContext, vodPath).readFileNames();
-        if (!vodPath.contains(Globals.VOD_EXCLUDED_PATH)) {
+        if (vodPath.contentEquals(Globals.VOD_PATH)) {
             vodDataset.removeAll(new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).readFileNames());
-        }
-        if (vodDataset.size() > 1) {
+            if (new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles() - new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles() > 1) {
+                actionAllButton(actionAllButtonType);
+            } else {
+                weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
+            }
+        } else if (vodDataset.size() > 1) {
             actionAllButton(actionAllButtonType);
         } else {
             weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
@@ -449,9 +453,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 public void onClick(View v) {
                     for (String vodID : vodDataset) {
                         new DeleteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodID).run();
-                        vodDataset.remove(vodID);
-                        pageCount2--;
                     }
+                    vodDataset.clear();
+                    pageCount2 = 0;
                     setPageCountViews(weakActivity);
                     datasetChanged();
                 }
@@ -464,9 +468,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 public void onClick(View v) {
                     for (String vodID : vodDataset) {
                         new DeleteFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH + File.separator + vodID).run();
-                        vodDataset.remove(vodID);
-                        pageCount3--;
                     }
+                    vodDataset.clear();
+                    pageCount2 = 0;
                     setPageCountViews(weakActivity);
                     datasetChanged();
                 }

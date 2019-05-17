@@ -127,7 +127,7 @@ public class SettingsVOD extends AppCompatActivity {
                         case R.id.settings_autoVODExport_off:
                             settings.put(Globals.SETTINGS_AUTOVODEXPORT, SETTINGS_OFF);
                             break;
-                        case R.id.settings_autoFollow_follow:
+                        case R.id.settings_autoVODExport_export:
                             settings.put(Globals.SETTINGS_AUTOVODEXPORT, SETTINGS_EXPORT);
                             break;
                         default:
@@ -191,7 +191,7 @@ public class SettingsVOD extends AppCompatActivity {
                     radioGroup.check(R.id.settings_autoVODExport_interval_unit_days);
                     break;
                 default:
-                    radioGroup.check(R.id.settings_autoFollowIntervalUnit_days);
+                    radioGroup.check(R.id.settings_autoVODExport_interval_unit_days);
                     break;
             }
         } catch(JSONException e) {
@@ -308,7 +308,7 @@ public class SettingsVOD extends AppCompatActivity {
     }
 
     /**
-     * Notifies user to prepare before activating the AutoFollow Worker
+     * Notifies user to prepare before activating the AutoVODExport Worker
      * @author LethalMaus
      */
     private void promptActivatingAutoVODExport() {

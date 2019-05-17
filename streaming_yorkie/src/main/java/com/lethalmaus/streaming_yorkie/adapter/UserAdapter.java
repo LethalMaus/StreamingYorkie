@@ -141,6 +141,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
             } else {
                 weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
                 weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
                 weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
             }
@@ -193,7 +194,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void datasetChanged() {
         if (userDataset != null && userDataset.size() > 0) {
-            if (userDataset.size() > 1) {
+            if (userDataset.size() > 1 && (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING") || usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING"))) {
                 weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
             } else {
                 weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
@@ -234,22 +235,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             case "FOLLOWED_NOTFOLLOWING":
                 usersPath = Globals.FOLLOWERS_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH).readFileNames();
-                actionAllButton(true, true);
+                actionAllButton(true);
                 break;
             case "FOLLOW4FOLLOW":
                 usersPath = Globals.FOLLOWERS_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH).readFileNames();
-                actionAllButton(false, true);
                 break;
             case "NOTFOLLOWED_FOLLOWING":
                 usersPath = Globals.FOLLOWING_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH).readFileNames();
-                actionAllButton(true, false);
+                actionAllButton(false);
                 break;
             case "F4F_EXCLUDED":
                 usersPath = Globals.FOLLOWING_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
-                actionAllButton(false, true);
                 break;
         }
         //To show the newest first
@@ -395,7 +394,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void followButton(final ImageButton imageButton, final String userID) {
         if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
+                new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
             imageButton.setImageResource(R.drawable.unfollow);
         } else {
             imageButton.setImageResource(R.drawable.follow);
@@ -406,7 +405,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onClick(View v) {
                 if (followRequestHandler.networkIsAvailable()) {
                     if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                            new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
+                            new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
                         followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
                                 .requestFollow();
                         if (usersToDisplay.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
@@ -496,13 +495,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     /**
      * Button for following / unfollowing all users within menu.
      * @author LethalMaus
-     * @param active if button is active and visible
      * @param followAll if true followAll, else unfollowAll
      */
-    private void actionAllButton(boolean active, final boolean followAll) {
+    private void actionAllButton(final boolean followAll) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            if (active && userDataset.size() > 1) {
-                final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
+            final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
+            if (userDataset.size() > 1) {
                 final int method;
                 if (followAll) {
                     imageButton.setImageResource(R.drawable.follow);
@@ -541,7 +539,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     }
                 });
             } else {
-                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                imageButton.setVisibility(View.GONE);
             }
         }
     }

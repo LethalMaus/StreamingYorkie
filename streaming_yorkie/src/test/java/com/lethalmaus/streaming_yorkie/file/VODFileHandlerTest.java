@@ -56,5 +56,6 @@ public class VODFileHandlerTest {
 
         //Cleanup
         assertTrue(new File(Globals.VOD_PATH + File.separator + "12345").delete());
+        assertTrue(new File(Globals.VOD_PATH).delete());
     }
 }
