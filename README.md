@@ -93,7 +93,7 @@ Several menus are available to divide StreamingYorkie into each feature it offer
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.png" height="20" width="20"> Quick overview about your Twitch account
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="20" width="20"> Shows different platforms for further information such as a *User Manual* & *Contact*
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.png" height="20" width="20"> The settings menu is split up into further features below
-  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/autofollow.png" height="20" width="20"> Settings for activating & configuring the AutoFollow Service
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.png" height="20" width="20"> Settings for activating & configuring the AutoFollow Service
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.png" height="20" width="20"> Settings for activating & configuring the AutoVODExport Service
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account
 
