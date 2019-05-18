@@ -91,7 +91,9 @@ public class Follow4Follow extends FollowParent {
         requestHandler = new FollowersRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView) ,false, true) {
             @Override
             protected void responseAction() {
-                super.responseAction();
+                new OrganizeFileHandler(weakActivity, weakContext, null, false, true)
+                        .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
+                        .execute();
                 followingRequestHandler.newRequest().sendRequest(0);
             }
             @Override
@@ -105,7 +107,7 @@ public class Follow4Follow extends FollowParent {
                 Toast.makeText(weakContext.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
                 new OrganizeFileHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true, false)
                         .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
-                        .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
+                        .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
                         .execute();
             }
         };

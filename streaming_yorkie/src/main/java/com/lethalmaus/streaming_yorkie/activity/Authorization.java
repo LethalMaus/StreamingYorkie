@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -22,8 +23,6 @@ import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
-import com.lethalmaus.streaming_yorkie.request.FollowersRequestHandler;
-import com.lethalmaus.streaming_yorkie.request.FollowingRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
@@ -37,7 +36,7 @@ import java.lang.ref.WeakReference;
  * Activity for logging in & out of twitch & the app
  * @author LethalMaus
  */
-//This is needed to log into Twitch, even though its not recommended & is dangerous. Hence the Lint suppression
+//This is needed to log into Twitch, even though its not recommended & considered dangerous. Hence the Lint suppression
 @SuppressLint("SetJavaScriptEnabled")
 public class Authorization extends AppCompatActivity {
 
@@ -77,6 +76,13 @@ public class Authorization extends AppCompatActivity {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                         if (url.contains("twitch.tv")) {
+                            if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
+                                new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
+                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                             view.loadUrl(url);
                             return false;
                         }
@@ -87,6 +93,13 @@ public class Authorization extends AppCompatActivity {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                         if (request.getUrl().toString().contains("twitch.tv")) {
+                            if (request.getUrl().toString().contains("https://www.twitch.tv/passport-callback#access_token")) {
+                                new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, request.getUrl().toString().substring(request.getUrl().toString().indexOf("access_token") + 13, request.getUrl().toString().indexOf("access_token") + 43), false).writeToFileOrPath();
+                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
                             view.loadUrl(request.getUrl().toString());
                             return false;
                         }
@@ -112,18 +125,14 @@ public class Authorization extends AppCompatActivity {
                         */
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
                             new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
-                            Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-
                             new UserRequestHandler(weakActivity, weakContext, false, false, true) {
                                 @Override
                                 public void responseHandler(JSONObject response) {
                                     super.responseHandler(response);
-                                    new FollowersRequestHandler(weakActivity, weakContext, null, false, true).sendRequest(0);
-                                    new FollowingRequestHandler(weakActivity, weakContext, null, false, true).sendRequest(0);
                                     createFolders();
-                                    finish();
                                 }
                             }.sendRequest(0);
+                            view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read");
                         } else if (!url.contains("twitch.tv")) {
                             setContentView(R.layout.error);
                         }
@@ -157,8 +166,11 @@ public class Authorization extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath("TOKEN");
                 new DeleteFileHandler(weakContext, "").run();
-                finish();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -265,7 +277,7 @@ public class Authorization extends AppCompatActivity {
         }
     }
 
-    /*FIXME
+    /*FIXME connection timeout isn't working as it should. The page progress wasn't taken into consideration
     public class ConnectionTimeoutHandler extends AsyncTask<Void, Void, String> {
 
         private static final String PAGE_LOADED = "PAGE_LOADED";

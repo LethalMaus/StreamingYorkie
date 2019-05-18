@@ -1,200 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/developer_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/user_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/lethalmaus" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/developer_Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/developer_text"
-        app:layout_constraintEnd_toEndOf="@+id/developer_Logo"
-        app:layout_constraintStart_toStartOf="@+id/developer_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/developer_Logo" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/streaming_yorkie_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/github_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/developer_Text"
-        app:srcCompat="@drawable/streaming_yorkie" />
+            <ImageButton
+                android:id="@+id/discord_Logo"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/discord_logo"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_contact_Text"
+                app:srcCompat="@drawable/discord" />
 
-    <TextView
-        android:id="@+id/streaming_yorkie_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/steaming_yorkie_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/streaming_yorkie_Logo"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/streaming_yorkie_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Logo" />
+            <TextView
+                android:id="@+id/patreon_Text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/patreon_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/patreon_Logo"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/patreon_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/patreon_Logo" />
 
-    <ImageButton
-        android:id="@+id/streaming_yorkie_contact_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/github_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/developer_Text"
-        app:srcCompat="@drawable/streaming_yorkie" />
+            <TextView
+                android:id="@+id/discord_Text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/discord_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/discord_Logo"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/discord_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/discord_Logo" />
 
-    <TextView
-        android:id="@+id/streaming_yorkie_contact_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/steaming_yorkie_contact_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/streaming_yorkie_contact_Logo"
-        app:layout_constraintStart_toStartOf="@+id/streaming_yorkie_contact_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_contact_Logo" />
+            <ImageButton
+                android:id="@+id/streaming_yorkie_contact_Logo"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/github_logo"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/developer_Text"
+                app:srcCompat="@drawable/streaming_yorkie_banner" />
 
-    <ImageButton
-        android:id="@+id/github_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/github_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Text"
-        app:srcCompat="@drawable/github" />
+            <ImageButton
+                android:id="@+id/twitch_Logo"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/twitch_logo"
+                android:scaleType="centerInside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/github_Text"
+                app:srcCompat="@drawable/twitch" />
 
-    <TextView
-        android:id="@+id/github_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/github_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/github_Logo"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/github_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/github_Logo" />
+            <TextView
+                android:id="@+id/developer_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/developer_text"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/developer_Logo"
+                app:layout_constraintStart_toStartOf="@+id/developer_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/developer_Logo" />
 
-    <ImageButton
-        android:id="@+id/discord_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/discord_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_contact_Text"
-        app:srcCompat="@drawable/discord" />
+            <ImageButton
+                android:id="@+id/streaming_yorkie_Logo"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/github_logo"
+                android:scaleType="centerInside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/developer_Text"
+                app:srcCompat="@drawable/streaming_yorkie_banner" />
 
-    <TextView
-        android:id="@+id/discord_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/discord_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/discord_Logo"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/discord_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/discord_Logo" />
+            <ImageView
+                android:id="@+id/developer_Logo"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/user_logo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/lethalmaus" />
 
-    <ImageButton
-        android:id="@+id/twitch_Logo"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/twitch_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/github_Text"
-        app:srcCompat="@drawable/twitch" />
+            <TextView
+                android:id="@+id/streaming_yorkie_contact_Text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/steaming_yorkie_contact_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/streaming_yorkie_contact_Logo"
+                app:layout_constraintStart_toStartOf="@+id/streaming_yorkie_contact_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_contact_Logo" />
 
-    <TextView
-        android:id="@+id/twitch_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/twitch_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/twitch_Logo"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/twitch_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/twitch_Logo" />
+            <TextView
+                android:id="@+id/streaming_yorkie_Text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/steaming_yorkie_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/streaming_yorkie_Logo"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/streaming_yorkie_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Logo" />
 
-    <ImageButton
-        android:id="@+id/patreon_Logo"
-        android:layout_width="161dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/patreon_logo"
-        android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/discord_Text"
-        app:srcCompat="@drawable/patreon" />
+            <TextView
+                android:id="@+id/twitch_Text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/twitch_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/twitch_Logo"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/twitch_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/twitch_Logo" />
 
-    <TextView
-        android:id="@+id/patreon_Text"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:text="@string/patreon_text"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/patreon_Logo"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/patreon_Logo"
-        app:layout_constraintTop_toBottomOf="@+id/patreon_Logo" />
+            <TextView
+                android:id="@+id/github_Text"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:text="@string/github_text"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/github_Logo"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/github_Logo"
+                app:layout_constraintTop_toBottomOf="@+id/github_Logo" />
+
+            <ImageButton
+                android:id="@+id/patreon_Logo"
+                android:layout_width="161dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/patreon_logo"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/discord_Text"
+                app:srcCompat="@drawable/patreon" />
+
+            <ImageButton
+                android:id="@+id/github_Logo"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/github_logo"
+                android:scaleType="centerInside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/streaming_yorkie_Text"
+                app:srcCompat="@drawable/github" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

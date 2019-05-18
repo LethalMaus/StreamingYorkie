@@ -122,9 +122,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * Sets Display preferences
      * @author LethalMaus
      * @param usersToDisplay constant of which users are to be displayed
-     * @param actionButtonType1 constant of which button is required in relation to the usersToDisplay
-     * @param actionButtonType2 constant of which button is required in relation to the usersToDisplay
-     * @param actionButtonType3 constant of which button is required in relation to the usersToDisplay
+     * @param actionButtonType1 constant of which button is required in relation to the itemsToDisplay
+     * @param actionButtonType2 constant of which button is required in relation to the itemsToDisplay
+     * @param actionButtonType3 constant of which button is required in relation to the itemsToDisplay
      * @return an instance of itself for method building
      */
     public UserAdapter setDisplayPreferences(String usersToDisplay, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
@@ -141,6 +141,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
             } else {
                 weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
                 weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
                 weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
             }
@@ -151,7 +152,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     @NonNull
     public UserAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View userRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_tablerow, parent, false);
+        View userRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.follow_parent_row, parent, false);
         return new UserViewHolder(userRow);
     }
 
@@ -169,7 +170,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
                 textView.setText(userObject.getString("display_name"));
 
-                ImageView imageView = userViewHolder.userRow.findViewById(R.id.emptyuserrow_logo);
+                ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
                 Glide.with(weakContext.get()).load(userObject.getString("logo")).into(imageView);
 
                 ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
@@ -188,13 +189,33 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
     }
 
+    /**
+     * Takes action once a dataset has been changed then notifies UI
+     */
+    private void datasetChanged() {
+        if (userDataset != null && userDataset.size() > 0) {
+            if (userDataset.size() > 1 && (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING") || usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING"))) {
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
+            } else {
+                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+            }
+            weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
+            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
+        } else {
+            weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+            weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return userDataset != null ? userDataset.size() : 0;
     }
 
     /**
-     * Gets the Dataset (list of user ids) based on usersToDisplay
+     * Gets the Dataset (list of user ids) based on itemsToDisplay
      * @author LethalMaus
      */
     private void getUsers() {
@@ -214,22 +235,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             case "FOLLOWED_NOTFOLLOWING":
                 usersPath = Globals.FOLLOWERS_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH).readFileNames();
-                actionAllButton(true, true);
+                actionAllButton(true);
                 break;
             case "FOLLOW4FOLLOW":
                 usersPath = Globals.FOLLOWERS_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH).readFileNames();
-                actionAllButton(false, true);
                 break;
             case "NOTFOLLOWED_FOLLOWING":
                 usersPath = Globals.FOLLOWING_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH).readFileNames();
-                actionAllButton(true, false);
+                actionAllButton(false);
                 break;
             case "F4F_EXCLUDED":
                 usersPath = Globals.FOLLOWING_PATH;
                 userDataset = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
-                actionAllButton(false, true);
                 break;
         }
         //To show the newest first
@@ -282,7 +301,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 new DeleteFileHandler(weakContext, usersPath + File.separator + userID).run();
                 new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID).run();
                 userDataset.remove(userID);
-                notifyDataSetChanged();
+                datasetChanged();
                 pageCount3--;
                 setPageCountViews(weakActivity);
             }
@@ -303,7 +322,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onClick(View v) {
                 new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
                 userDataset.remove(userID);
-                notifyDataSetChanged();
+                datasetChanged();
                 if (new File(appDirectory + File.separator + newUsersPath + File.separator + userID).exists()) {
                     //When a user is excluded from new, it has not considered new anymore
                     if (!newUsersPath.contains("NEW")) {
@@ -343,7 +362,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onClick(View v) {
                 new DeleteFileHandler(weakContext, null).deleteFileOrPath(excludedUsersPath + File.separator + userID);
                 userDataset.remove(userID);
-                notifyDataSetChanged();
+                datasetChanged();
                 //Only for F4F exclusions is the newUsersPath needed
                 if (new File(appDirectory + File.separator + excludedUsersPath + "_" + newUsersPath + File.separator + userID).exists() && !newUsersPath.contains("NEW")) {
                     new WriteFileHandler(weakContext, newUsersPath + File.separator + userID, null, null, false).run();
@@ -375,7 +394,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void followButton(final ImageButton imageButton, final String userID) {
         if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
+                new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
             imageButton.setImageResource(R.drawable.unfollow);
         } else {
             imageButton.setImageResource(R.drawable.follow);
@@ -386,18 +405,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             public void onClick(View v) {
                 if (followRequestHandler.networkIsAvailable()) {
                     if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                            new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
+                            new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
                         followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
                                 .requestFollow();
                         if (usersToDisplay.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
                             userDataset.remove(userID);
-                            notifyDataSetChanged();
+                            datasetChanged();
                             pageCount3--;
                             pageCount2++;
                             setPageCountViews(weakActivity);
                         } else if (usersToDisplay.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
                             userDataset.remove(userID);
-                            notifyDataSetChanged();
+                            datasetChanged();
                             pageCount2--;
                             pageCount1++;
                             setPageCountViews(weakActivity);
@@ -409,7 +428,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 .requestFollow();
                         if (usersToDisplay.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
                             userDataset.remove(userID);
-                            notifyDataSetChanged();
+                            datasetChanged();
                             pageCount1--;
                             pageCount2++;
                             setPageCountViews(weakActivity);
@@ -476,13 +495,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     /**
      * Button for following / unfollowing all users within menu.
      * @author LethalMaus
-     * @param active if button is active and visible
      * @param followAll if true followAll, else unfollowAll
      */
-    private void actionAllButton(boolean active, final boolean followAll) {
+    private void actionAllButton(final boolean followAll) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            if (active) {
-                final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
+            final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
+            if (userDataset.size() > 1) {
                 final int method;
                 if (followAll) {
                     imageButton.setImageResource(R.drawable.follow);
@@ -511,7 +529,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 }
                             }
                             userDataset.clear();
-                            notifyDataSetChanged();
+                            datasetChanged();
                             setPageCountViews(weakActivity);
                             imageButton.setVisibility(View.GONE);
                             weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
@@ -521,7 +539,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     }
                 });
             } else {
-                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                imageButton.setVisibility(View.GONE);
             }
         }
     }

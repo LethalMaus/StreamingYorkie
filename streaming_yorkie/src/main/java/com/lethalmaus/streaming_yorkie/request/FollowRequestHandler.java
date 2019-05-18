@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
 import java.util.Map;
 
 /**
@@ -93,7 +94,7 @@ public class FollowRequestHandler extends RequestHandler {
 
                 @Override
                 protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                    if (response.data != null && response.data.length > 0) {
+                    if (response.data != null && response.data.length > 0 && response.statusCode == HttpURLConnection.HTTP_NO_CONTENT) {
                         try {
                             String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
                             return Response.success(

@@ -60,7 +60,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie#guide");
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide");
                     }
                 });
 
@@ -70,7 +70,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie#contact");
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact");
                     }
                 });
 

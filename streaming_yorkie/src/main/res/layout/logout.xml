@@ -24,6 +24,8 @@
         android:layout_marginTop="16dp"
         android:gravity="center_vertical"
         android:text="@string/username"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/user_Logo"
         app:layout_constraintTop_toTopOf="parent" />
 

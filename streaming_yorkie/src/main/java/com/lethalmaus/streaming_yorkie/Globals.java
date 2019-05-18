@@ -6,7 +6,7 @@ import android.view.MenuItem;
 
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
-import com.lethalmaus.streaming_yorkie.activity.Settings;
+import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 
 /**
  * Globals contains centralized constants & variables that are used throughout the whole app.
@@ -16,8 +16,11 @@ public class Globals {
 
     //ID of the app registered by Twitch
     public static final String CLIENTID = "tjots3mhxunw0sj2a20ka3wz39p7bp";
+    //ID of Twitch
+    public static final String TWITCHID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
     //User Object limit per request. Gets added to offset
-    public static final int REQUEST_LIMIT = 25;
+    public static final int USER_REQUEST_LIMIT = 25;
+    public static final int VOD_REQUEST_LIMIT = 10;
 
     //Directories for Followers
     public static final String FOLLOWERS_PATH = "FOLLOWERS";
@@ -41,31 +44,49 @@ public class Globals {
     public static final String F4F_NOTFOLLOWED_FOLLOWING_PATH = "NOTFOLLOWED_FOLLOWING";
     public static final String F4F_EXCLUDED_PATH = "F4F_EXCLUDED";
 
+    //Flags to prevent errors
+    public static final String FLAG_PATH = "FLAGS";
+    public static final String FOLLOW_REQUEST_RUNNING_FLAG = "FOLLOW_REQUEST_RUNNING";
+
+    //Directories for VODs
+    public static final String VOD_PATH = "VODS";
+    public static final String VOD_EXPORTED_PATH = "VODS_EXPORTED";
+    public static final String VOD_EXCLUDED_PATH = "VODS_EXCLUDED";
+
     //AutoFollow settings object keys
-    public static final String AUTOFOLLOW = "Auto-Follow";
-    public static final String AUTOFOLLOW_INTERVAL = "Auto-FollowInterval";
-    public static final String AUTOFOLLOW_INTERVAL_UNIT = "Auto-FollowIntervalUnit";
-    public static final String AUTOFOLLOW_NOTIFICATIONS = "Auto-FollowNotifications";
+    public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
+    public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";
+    public static final String SETTINGS_INTERVAL = "Interval";
+    public static final String SETTINGS_INTERVAL_UNIT = "IntervalUnit";
+    public static final String SETTINGS_NOTIFICATIONS = "Notifications";
+    public static final String SETTINGS_VISIBILITY = "Visibility";
+    public static final String SETTINGS_SPLIT = "Split";
 
     //AutoFollow settings AUTOFOLLOW values
-    public static final String AUTOFOLLOW_OFF = "OFF";
-    public static final String AUTOFOLLOW_FOLLOW = "FOLLOW";
-    public static final String AUTOFOLLOW_UNFOLLOW = "UNFOLLOW";
-    public static final String AUTOFOLLOW_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
+    public static final String SETTINGS_OFF = "OFF";
+    public static final String SETTINGS_FOLLOW = "FOLLOW";
+    public static final String SETTINGS_UNFOLLOW = "UNFOLLOW";
+    public static final String SETTINGS_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
+    public static final String SETTINGS_EXPORT = "EXPORT";
 
     //AutoFollow settings AUTOFOLLOW_INTERVAL_UNIT values
-    public static final String AUTOFOLLOW_INTERVAL_UNIT_MINUTES = "MINUTES";
-    public static final String AUTOFOLLOW_INTERVAL_UNIT_HOURS = "HOURS";
-    public static final String AUTOFOLLOW_INTERVAL_UNIT_DAYS = "DAYS";
+    public static final String SETTINGS_INTERVAL_UNIT_MINUTES = "MINUTES";
+    public static final String SETTINGS_INTERVAL_UNIT_HOURS = "HOURS";
+    public static final String SETTINGS_INTERVAL_UNIT_DAYS = "DAYS";
 
     //AutoFollow settings AUTOFOLLOW_NOTIFICATIONS values
     public static final String NOTIFICATION_FOLLOW = "NOTIFICATION_FOLLOW";
     public static final String NOTIFICATION_UNFOLLOW = "NOTIFICATION_UNFOLLOW";
+    public static final String NOTIFICATION_VODEXPORT = "NOTIFICATION_VODEXPORT";
 
     //Notifications ID, Name & Description
-    public static final String NOTIFICATION_CHANNEL_ID = "AUTOFOLLOW_NOTIFICATION";
-    public static final String NOTIFICATION_CHANNEL_NAME = "AutoFollow";
-    public static final String NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new followers are followed and unfollowers that are unfollowed";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_ID = "AUTOFOLLOW_NOTIFICATION";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME = "AutoFollow";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new followers are followed and unfollowers that are unfollowed";
+
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID = "AUTOVODEXPORT_NOTIFICATION";
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME = "AutoVODExport";
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new VODs have been exported";
 
     /**
      * Options menu to be available throughout app
@@ -82,7 +103,7 @@ public class Globals {
                 activity.startActivity(intent);
                 return true;
             case R.id.menu_settings:
-                intent = new Intent(activity, Settings.class);
+                intent = new Intent(activity, SettingsMenu.class);
                 activity.startActivity(intent);
                 return true;
             case R.id.menu_logout:

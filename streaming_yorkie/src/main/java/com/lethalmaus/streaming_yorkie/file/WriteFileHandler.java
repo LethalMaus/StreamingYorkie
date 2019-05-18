@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
@@ -90,7 +91,7 @@ public class WriteFileHandler implements Runnable {
             }
             if (data != null) {
                 FileOutputStream fileOutputStream = new FileOutputStream(file, append);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
                 BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
