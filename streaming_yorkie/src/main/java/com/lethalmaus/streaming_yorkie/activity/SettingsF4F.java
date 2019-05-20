@@ -357,7 +357,7 @@ public class SettingsF4F extends AppCompatActivity {
         builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                new WriteFileHandler(weakContext, "SETTINGS", null, settings.toString(), false).run();
+                new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).run();
                 Toast.makeText(getApplicationContext(), "Changes saved", Toast.LENGTH_SHORT).show();
                 finish();
             }

@@ -50,34 +50,36 @@ public class VODFileHandler implements Runnable {
         try {
             if (response.has("videos")) {
                 for (int i = 0; i < response.getJSONArray("videos").length(); i++) {
-                    vodObject = new JSONObject();
-                    vodObject.put("_id", response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""));
-                    vodObject.put("title", response.getJSONArray("videos").getJSONObject(i).getString("title"));
-                    vodObject.put("url", response.getJSONArray("videos").getJSONObject(i).getString("url"));
-                    vodObject.put("created_at", response.getJSONArray("videos").getJSONObject(i).getString("created_at").replace("T", " ").replace("Z", ""));
-                    if (response.getJSONArray("videos").getJSONObject(i).isNull("description")) {
-                        vodObject.put("description", "");
-                    } else {
-                        vodObject.put("description", response.getJSONArray("videos").getJSONObject(i).getString("description"));
+                    if (!response.getJSONArray("videos").getJSONObject(i).getString("status").contentEquals("recording")) {
+                        vodObject = new JSONObject();
+                        vodObject.put("_id", response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""));
+                        vodObject.put("title", response.getJSONArray("videos").getJSONObject(i).getString("title"));
+                        vodObject.put("url", response.getJSONArray("videos").getJSONObject(i).getString("url"));
+                        vodObject.put("created_at", response.getJSONArray("videos").getJSONObject(i).getString("created_at").replace("T", " ").replace("Z", ""));
+                        if (response.getJSONArray("videos").getJSONObject(i).isNull("description")) {
+                            vodObject.put("description", "");
+                        } else {
+                            vodObject.put("description", response.getJSONArray("videos").getJSONObject(i).getString("description"));
+                        }
+                        if (response.getJSONArray("videos").getJSONObject(i).isNull("tag_list")) {
+                            vodObject.put("tag_list", "");
+                        } else {
+                            vodObject.put("tag_list", response.getJSONArray("videos").getJSONObject(i).getString("tag_list"));
+                        }
+                        if (response.getJSONArray("videos").getJSONObject(i).isNull("game")) {
+                            vodObject.put("game", "");
+                        } else {
+                            vodObject.put("game", response.getJSONArray("videos").getJSONObject(i).getString("game"));
+                        }
+                        String length = "";
+                        int seconds = response.getJSONArray("videos").getJSONObject(i).getInt("length");
+                        length += (seconds / 3600) + "h ";
+                        length += ((seconds % 3600) / 60) + "m ";
+                        length += ((seconds % 3600) % 60) + "s";
+                        vodObject.put("length", length);
+                        vodObject.put("preview", response.getJSONArray("videos").getJSONObject(i).getJSONObject("preview").getString("medium"));
+                        new WriteFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id"), null, vodObject.toString(), false).writeToFileOrPath();
                     }
-                    if (response.getJSONArray("videos").getJSONObject(i).isNull("tag_list")) {
-                        vodObject.put("tag_list", "");
-                    } else {
-                        vodObject.put("tag_list", response.getJSONArray("videos").getJSONObject(i).getString("tag_list"));
-                    }
-                    if (response.getJSONArray("videos").getJSONObject(i).isNull("game")) {
-                        vodObject.put("game", "");
-                    } else {
-                        vodObject.put("game", response.getJSONArray("videos").getJSONObject(i).getString("game"));
-                    }
-                    String length = "";
-                    int seconds = response.getJSONArray("videos").getJSONObject(i).getInt("length");
-                    length += (seconds / 3600) + "h ";
-                    length += ((seconds % 3600) / 60) + "m ";
-                    length += ((seconds % 3600) % 60) + "s";
-                    vodObject.put("length", length);
-                    vodObject.put("preview", response.getJSONArray("videos").getJSONObject(i).getJSONObject("preview").getString("medium"));
-                    new WriteFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id"), null, vodObject.toString(),false).writeToFileOrPath();
                 }
             }
         } catch (JSONException e) {

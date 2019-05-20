@@ -134,33 +134,40 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     public void onBindViewHolder(@NonNull VODAdapter.VODViewHolder vodViewHolder, int position) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
             try {
-                JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodDataset.get(position)).readFile());
+                if (new File(weakContext.get().getFilesDir() + File.separator + Globals.VOD_PATH + File.separator + vodDataset.get(position)).exists()) {
+                    JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodDataset.get(position)).readFile());
 
-                TextView title = vodViewHolder.vodRow.findViewById(R.id.vod_title);
-                title.setText(vodObject.getString("title"));
+                    TextView title = vodViewHolder.vodRow.findViewById(R.id.vod_title);
+                    title.setText(vodObject.getString("title"));
 
-                TextView game = vodViewHolder.vodRow.findViewById(R.id.vod_game);
-                game.setText(vodObject.getString("game"));
+                    TextView game = vodViewHolder.vodRow.findViewById(R.id.vod_game);
+                    game.setText(vodObject.getString("game"));
 
-                TextView duration = vodViewHolder.vodRow.findViewById(R.id.vod_duration);
-                duration.setText(vodObject.getString("length"));
+                    TextView duration = vodViewHolder.vodRow.findViewById(R.id.vod_duration);
+                    duration.setText(vodObject.getString("length"));
 
-                TextView createdAt = vodViewHolder.vodRow.findViewById(R.id.vod_createdAt);
-                createdAt.setText(vodObject.getString("created_at"));
+                    TextView createdAt = vodViewHolder.vodRow.findViewById(R.id.vod_createdAt);
+                    createdAt.setText(vodObject.getString("created_at"));
 
-                ImageView preview = vodViewHolder.vodRow.findViewById(R.id.vod_preview);
-                Glide.with(weakContext.get()).load(vodObject.getString("preview")).into(preview);
+                    ImageView preview = vodViewHolder.vodRow.findViewById(R.id.vod_preview);
+                    Glide.with(weakContext.get()).load(vodObject.getString("preview")).into(preview);
 
-                ImageButton action1 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button1);
-                editButton(action1, actionButtonType1, vodObject.getString("_id"));
+                    ImageButton action1 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button1);
+                    editButton(action1, actionButtonType1, vodObject.getString("_id"));
 
-                ImageButton action2 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button2);
-                editButton(action2, actionButtonType2, vodObject.getString("_id"));
+                    ImageButton action2 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button2);
+                    editButton(action2, actionButtonType2, vodObject.getString("_id"));
 
-                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
-
-            } catch (JSONException e) {
+                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                } else {
+                    new DeleteFileHandler(weakContext, vodPath + File.separator + vodDataset.get(position)).run();
+                    vodDataset.remove(vodDataset.get(position));
+                    setPageCountViews(weakActivity);
+                    datasetChanged();
+                }
+            } catch(JSONException e){
                 new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
+
             }
         }
     }
@@ -195,29 +202,31 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      */
     private void getVODs() {
-        String actionAllButtonType = "";
-        if (vodsToDisplay.contains("NEW")) {
-            vodPath = Globals.VOD_PATH;
-            actionAllButtonType = "EXPORT";
-        } else if (vodsToDisplay.contains("EXPORTED")) {
-            vodPath = Globals.VOD_EXPORTED_PATH;
-            actionAllButtonType = "DELETE";
-        } else if (vodsToDisplay.contains("EXCLUDED")) {
-            vodPath = Globals.VOD_EXCLUDED_PATH;
-            actionAllButtonType = "INCLUDE";
-        }
-        vodDataset = new ReadFileHandler(weakContext, vodPath).readFileNames();
-        if (vodPath.contentEquals(Globals.VOD_PATH)) {
-            vodDataset.removeAll(new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).readFileNames());
-            if (new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles() - new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles() > 1) {
+        if (new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles() > 0) {
+            String actionAllButtonType = "";
+            if (vodsToDisplay.contains("NEW")) {
+                vodPath = Globals.VOD_PATH;
+                actionAllButtonType = "EXPORT";
+            } else if (vodsToDisplay.contains("EXPORTED")) {
+                vodPath = Globals.VOD_EXPORTED_PATH;
+                actionAllButtonType = "DELETE";
+            } else if (vodsToDisplay.contains("EXCLUDED")) {
+                vodPath = Globals.VOD_EXCLUDED_PATH;
+                actionAllButtonType = "INCLUDE";
+            }
+            vodDataset = new ReadFileHandler(weakContext, vodPath).readFileNames();
+            if (vodPath.contentEquals(Globals.VOD_PATH)) {
+                vodDataset.removeAll(new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).readFileNames());
+                if (new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles() - new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles() > 1) {
+                    actionAllButton(actionAllButtonType);
+                } else {
+                    weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
+                }
+            } else if (vodDataset.size() > 1) {
                 actionAllButton(actionAllButtonType);
             } else {
                 weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
             }
-        } else if (vodDataset.size() > 1) {
-            actionAllButton(actionAllButtonType);
-        } else {
-            weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
         }
     }
 
@@ -483,9 +492,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      */
     private void setPageCounts() {
-        pageCount2 = new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles();
-        pageCount3 = new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).countFiles();
-        pageCount1 = new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles() - pageCount3;
+        pageCount1 = new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles();
+        if (pageCount1 > 0) {
+            pageCount2 = new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles();
+            pageCount3 = new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).countFiles();
+            pageCount1 = pageCount1 - pageCount3 < 0 ? 0 : pageCount1 - pageCount3;
+        }
     }
 
     /**
