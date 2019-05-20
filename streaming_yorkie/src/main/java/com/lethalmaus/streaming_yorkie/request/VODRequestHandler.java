@@ -50,20 +50,20 @@ public class VODRequestHandler extends RequestHandler {
     @Override
     public VODRequestHandler newRequest() {
         super.newRequest();
-        if (networkIsAvailable()) {
-            new DeleteFileHandler(weakContext, Globals.VOD_PATH).run();
-        }
         return this;
     }
 
     @Override
-    public void sendRequest(int offset) {
+    public void sendRequest(final int offset) {
         this.offset = offset;
         if (networkIsAvailable()) {
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/channels/" + userID + "/videos" + "?limit=" + Globals.VOD_REQUEST_LIMIT + "&offset=" + this.offset, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
+                            if (offset == 0) {
+                                new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.VOD_PATH);
+                            }
                             responseHandler(response);
                         }
                     }, new Response.ErrorListener() {

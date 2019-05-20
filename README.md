@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.1.1-a](#111-a)
   + [1.1.0-a](#110-a)
   + [1.0.4-a](#104-a)
   + [1.0.3-a](#103-a)
@@ -263,6 +264,23 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 ---
 
 ## Updates
+
+### 1.1.1-a
+
+Patch for fixing issues below
+
+Features:
++   VOD Overview
++   VOD Export
++   VOD Export Automation
+
+Issues:
++	F4F Settings fix
++   WriteFile append with line break
++	VOD Export while streaming fix
++	VOD count and removal when offline / non-existent
+
+---
 
 ### 1.1.0-a
 

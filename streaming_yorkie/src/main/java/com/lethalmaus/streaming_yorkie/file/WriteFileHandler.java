@@ -94,6 +94,9 @@ public class WriteFileHandler implements Runnable {
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
                 BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
                 bufferedWriter.write(data);
+                if (append) {
+                    bufferedWriter.newLine();
+                }
                 bufferedWriter.flush();
                 bufferedWriter.close();
                 outputStreamWriter.close();
