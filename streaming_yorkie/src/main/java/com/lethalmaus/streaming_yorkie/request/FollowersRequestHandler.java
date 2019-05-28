@@ -10,15 +10,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.FollowFileHandler;
-import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
@@ -35,12 +32,10 @@ public class FollowersRequestHandler extends RequestHandler {
      * @param weakContext weak referenced context
      * @param recyclerView weak referenced recycler view
      * @param displayUsers constant of users to be displayed
-     * @param commonFolders boolean as to whether its F4F or not
      */
-    public FollowersRequestHandler(final WeakReference<Activity> weakActivity, final WeakReference<Context> weakContext, final WeakReference<RecyclerView> recyclerView, boolean displayUsers, final boolean commonFolders) {
+    public FollowersRequestHandler(final WeakReference<Activity> weakActivity, final WeakReference<Context> weakContext, final WeakReference<RecyclerView> recyclerView, boolean displayUsers) {
         super(weakActivity, weakContext, recyclerView);
         this.displayRequest = displayUsers;
-        this.commonFolders = commonFolders;
 
         this.currentUsersPath = Globals.FOLLOWERS_CURRENT_PATH;
         this.newUsersPath = Globals.FOLLOWERS_NEW_PATH;
@@ -61,7 +56,6 @@ public class FollowersRequestHandler extends RequestHandler {
     public void sendRequest(int offset) {
         this.offset = offset;
         if (networkIsAvailable()) {
-            new WriteFileHandler(weakContext, Globals.FLAG_PATH + File.separator + Globals.FOLLOW_REQUEST_RUNNING_FLAG, null, null, false).run();
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/channels/" + userID + "/follows" + "?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=asc&offset=" + this.offset, null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -80,7 +74,6 @@ public class FollowersRequestHandler extends RequestHandler {
                 }
             };
             jsObjRequest.setTag("FOLLOWERS");
-            VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("AUTO-FOLLOWER");
             VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
         } else {
             offlineResponseHandler();
@@ -102,18 +95,17 @@ public class FollowersRequestHandler extends RequestHandler {
                 sendRequest(offset);
             } else {
                 followFileHandler.setOrganize(true);
-                if (twitchTotal != itemCount && weakContext != null && weakContext.get() != null) {
-                    Toast.makeText(weakContext.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal
+                if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+                    Toast.makeText(weakActivity.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal
                             + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show();
                 }
                 followFileHandler.run();
-                //responseAction();
             }
         } catch (JSONException e) {
-            if (weakContext != null && weakContext.get() != null) {
-                Toast.makeText(weakContext.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
+            if (weakActivity != null && weakActivity.get() != null) {
+                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
             }
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Followers response error | " + e.toString(), true).run();
         }
     }
 
@@ -121,11 +113,5 @@ public class FollowersRequestHandler extends RequestHandler {
      * Method for performing an action after handling the request response. Separated to be overridden when needed
      * @author LethalMaus
      */
-    protected void responseAction() {
-        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_PATH + File.separator + Globals.FOLLOW_REQUEST_RUNNING_FLAG);
-        new OrganizeFileHandler(weakActivity, weakContext, recyclerView, displayRequest, commonFolders)
-                .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
-                .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
-                .execute();
-    }
+    protected void responseAction() {}
 }

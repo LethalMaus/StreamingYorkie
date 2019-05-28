@@ -88,11 +88,11 @@ public class Follow4Follow extends FollowParent {
                         }
                     }
                 });
-        requestHandler = new FollowersRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView) ,false, true) {
+        requestHandler = new FollowersRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView) ,false) {
             @Override
             protected void responseAction() {
-                new OrganizeFileHandler(weakActivity, weakContext, null, false, true)
-                        .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
+                new OrganizeFileHandler(weakActivity, weakContext, null, false)
+                        .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
                         .execute();
                 followingRequestHandler.newRequest().sendRequest(0);
             }
@@ -101,11 +101,11 @@ public class Follow4Follow extends FollowParent {
                 followingRequestHandler.newRequest().sendRequest(0);
             }
         };
-        followingRequestHandler = new FollowingRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true, false) {
+        followingRequestHandler = new FollowingRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true) {
             @Override
             protected void offlineResponseHandler() {
-                Toast.makeText(weakContext.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
-                new OrganizeFileHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true, false)
+                Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
+                new OrganizeFileHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true)
                         .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
                         .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
                         .execute();

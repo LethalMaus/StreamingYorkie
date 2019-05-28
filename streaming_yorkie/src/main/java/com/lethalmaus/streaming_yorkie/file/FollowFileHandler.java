@@ -108,7 +108,7 @@ public class FollowFileHandler implements Runnable {
                     new WriteFileHandler(weakContext, requestDestinationPath + File.separator + userObject.getString("_id"), null, null, false).writeToFileOrPath();
                 }
             } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                new WriteFileHandler(weakContext, "ERROR", null, "Error writing FollowFile | " + e.toString(), true).run();
             }
         }
     }

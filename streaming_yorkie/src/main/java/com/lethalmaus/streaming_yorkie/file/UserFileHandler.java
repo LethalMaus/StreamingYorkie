@@ -6,7 +6,13 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.URL;
 
 /**
  * Class specific to Users own Twitch Info. Can be used as a runnable.
@@ -16,14 +22,17 @@ public class UserFileHandler implements Runnable {
 
     private WeakReference<Context> weakContext;
     private JSONObject response;
+    private boolean downloadUserLogo;
 
     /**
      * Constructor with weak reference to a context, needed to display the user info
      * @author LethalMaus
      * @param weakContext weak reference context
+     * @param downloadUserLogo bool if user logo is to be downloaded, linked with requestUpdate
      */
-    public UserFileHandler(WeakReference<Context> weakContext) {
+    public UserFileHandler(WeakReference<Context> weakContext, boolean downloadUserLogo) {
         this.weakContext = weakContext;
+        this.downloadUserLogo = downloadUserLogo;
     }
 
     /**
@@ -45,6 +54,29 @@ public class UserFileHandler implements Runnable {
      */
     public void writeUser() {
         try {
+            if (downloadUserLogo) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            URL url = new URL(response.getString("logo"));
+                            InputStream in = new BufferedInputStream(url.openStream());
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            byte[] buf = new byte[1024];
+                            int n;
+                            while (-1 != (n = in.read(buf))) {
+                                out.write(buf, 0, n);
+                            }
+                            out.close();
+                            in.close();
+                            FileOutputStream fos = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/")+1));
+                            fos.write(out.toByteArray());
+                            fos.close();
+                        } catch (Exception e) {
+                            new WriteFileHandler(weakContext, "ERROR", null, "Cannot download user logo | " + e.toString(),true).run();
+                        }
+                    }
+                }).start();
+            }
             JSONObject user = new JSONObject();
             user.put("display_name", response.getString("display_name"));
             user.put("_id", response.getString("_id"));
@@ -64,7 +96,7 @@ public class UserFileHandler implements Runnable {
             new WriteFileHandler(weakContext, "USER", null, user.toString(), false).run();
         } catch (JSONException e) {
             Toast.makeText(weakContext.get(), "User can't be saved", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n",true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error writing UserFile | " + e.toString(),true).run();
         }
     }
 }

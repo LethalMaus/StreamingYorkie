@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
-import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 
 import java.io.File;
@@ -38,7 +37,6 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
     private String actionButtonType2;
     private String actionButtonType3;
     private boolean displayUsers;
-    private boolean commonFolders;
 
     /**
      * Constructor is kept small to keep clarity.
@@ -48,9 +46,8 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
      * @param weakContext weak reference of the context
      * @param recyclerView weak reference of the recycler view
      * @param displayUsers bool if users need to be displayed or not
-     * @param commonFolders bool if folders are for Followers/Following or F4F
      */
-    public OrganizeFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView, boolean displayUsers, boolean commonFolders) {
+    public OrganizeFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView, boolean displayUsers) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
         this.recyclerView = recyclerView;
@@ -58,7 +55,6 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
             this.appDirectory = weakContext.get().getFilesDir().toString();
         }
         this.displayUsers = displayUsers;
-        this.commonFolders = commonFolders;
     }
 
     /**
@@ -117,13 +113,13 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of the previously current users
         ArrayList<String> currentUsers = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
 
-        if (!requestedUsers.isEmpty() && !new File(appDirectory + File.separator + Globals.FOLLOW_REQUEST_RUNNING_FLAG).exists()) {
+        if (!requestedUsers.isEmpty()) {
             //Iterate to find if a user has unfollowed
             for (int i = 0; i < currentUsers.size(); i++) {
                 if (!requestedUsers.contains(currentUsers.get(i)) &&
                         !new File(appDirectory + File.separator + excludedUsersPath + File.separator + currentUsers.get(i)).exists()) {
-                    new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + currentUsers.get(i), null, null, false).run();
-                    new DeleteFileHandler(weakContext, currentUsersPath + File.separator + currentUsers.get(i)).run();
+                    new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + currentUsers.get(i), null, null, false).writeToFileOrPath();
+                    new DeleteFileHandler(weakContext, null).deleteFileOrPath(currentUsersPath + File.separator + currentUsers.get(i));
                 }
             }
             //Iterate to find new users and add them
@@ -134,63 +130,15 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
                         newUsersDirectoryNeedsRenewal = false;
                         new DeleteFileHandler(weakContext, null).deleteFileOrPath(newUsersPath);
                     }
-                    new WriteFileHandler(weakContext, newUsersPath + File.separator + requestedUsers.get(i), null, null, false).run();
-                    new WriteFileHandler(weakContext, currentUsersPath + File.separator + requestedUsers.get(i), null, null, false).run();
+                    new WriteFileHandler(weakContext, newUsersPath + File.separator + requestedUsers.get(i), null, null, false).writeToFileOrPath();
+                    new WriteFileHandler(weakContext, currentUsersPath + File.separator + requestedUsers.get(i), null, null, false).writeToFileOrPath();
                     if (new File(appDirectory + File.separator + unfollowedUsersPath + File.separator + requestedUsers.get(i)).exists()) {
-                        new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + requestedUsers.get(i)).run();
+                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(unfollowedUsersPath + File.separator + requestedUsers.get(i));
                     }
                 }
             }
             //Deletes the requested users that are no longer needed
             new DeleteFileHandler(weakContext, requestPath).run();
-        }
-        if (!commonFolders) {
-            organizeF4FFolders();
-        }
-    }
-
-    /**
-     * Organizes Folder specific to F4F
-     * @author LethalMaus
-     */
-    private void organizeF4FFolders() {
-        currentUsersPath = Globals.F4F_FOLLOW4FOLLOW_PATH;
-        newUsersPath = Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH;
-        unfollowedUsersPath = Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH;
-        excludedUsersPath = Globals.F4F_EXCLUDED_PATH;
-        //Previous users are not needed as they are combined from common folders
-        new DeleteFileHandler(weakContext, null).deleteFileOrPath(newUsersPath);
-        new DeleteFileHandler(weakContext, null).deleteFileOrPath(currentUsersPath);
-        new DeleteFileHandler(weakContext, null).deleteFileOrPath(unfollowedUsersPath);
-
-        //List of excluded users
-        ArrayList<String> excluded = new ReadFileHandler(weakContext, excludedUsersPath).readFileNames();
-        //List of current followers from common folders
-        ArrayList<String> followers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
-        //Adds all excluded from common folders to allow users to exclude again for preference
-        followers.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWERS_EXCLUDED_PATH + "_" + Globals.FOLLOWERS_CURRENT_PATH).readFileNames());
-        //Removes F4F excluded
-        followers.removeAll(excluded);
-        //List of current following from common folders
-        ArrayList<String> following = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
-        //Adds all excluded from common folders to allow users to exclude again for preference
-        following.addAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH).readFileNames());
-        //Removes F4F excluded
-        following.removeAll(excluded);
-
-        for (String user : following) {
-            //if user is in both follower & following, they are added to F4F(current), else they are added to Followers, Not-Following-Back(unfollowed)
-            if (followers.contains(user)) {
-                new WriteFileHandler(weakContext, currentUsersPath + File.separator + user, null, null, false).run();
-            } else {
-                new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + user, null, null, false).run();
-            }
-        }
-        for (String user : followers) {
-            //if user is in followers but not following, then they are added to Followers, Not-Being-Followed-Back(new)
-            if (!following.contains(user)) {
-                new WriteFileHandler(weakContext, newUsersPath + File.separator + user, null, null, false).run();
-            }
         }
     }
 

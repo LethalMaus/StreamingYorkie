@@ -67,7 +67,7 @@ public class Following extends FollowParent {
                 });
         highlightButton(newButton);
         setSubtitle("New");
-        requestHandler = new FollowingRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView),true, true)
+        requestHandler = new FollowingRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView),true)
                 .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
                 .setDisplayPreferences("NEW", "EXCLUDE_BUTTON", "NOTIFICATIONS_BUTTON", "FOLLOW_BUTTON");
         progressBar.setVisibility(View.VISIBLE);

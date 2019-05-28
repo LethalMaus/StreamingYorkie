@@ -4,14 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -21,6 +17,7 @@ import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
+import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
 import com.lethalmaus.streaming_yorkie.worker.AutoVODExportWorker;
@@ -30,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import androidx.work.Constraints;
@@ -181,6 +179,10 @@ public class MainActivity extends AppCompatActivity {
         if (!new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
+        } else if ((new Date().getTime() - new File(getFilesDir().toString() + File.separator + "TOKEN").lastModified()) > 5184000000L) {
+            new DeleteFileHandler(new WeakReference<>(getApplicationContext()), null).deleteFileOrPath("TOKEN");
+            Intent intent = new Intent(MainActivity.this, Authorization.class);
+            startActivity(intent);
         } else {
             new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext()), true, false, false).sendRequest(0);
         }
@@ -225,12 +227,14 @@ public class MainActivity extends AppCompatActivity {
                             .setRequiredNetworkType(NetworkType.NOT_ROAMING)
                             .build();
                     PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
+
                     WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
                 } else {
                     WorkManager.getInstance().cancelAllWorkByTag(workerName);
                 }
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Error activating " + workerName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error activating " + workerName, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(new WeakReference<>(getApplicationContext()), "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
             }
         }
     }

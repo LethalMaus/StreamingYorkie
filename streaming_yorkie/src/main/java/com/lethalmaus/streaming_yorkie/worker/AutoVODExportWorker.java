@@ -36,7 +36,7 @@ public class AutoVODExportWorker extends Worker {
     private boolean split;
 
     /**
-     * Constructor for AutoFollowWorker for automating Following & Unfollowing
+     * Constructor for AutoVODExportWorker for automating VOD Exports
      * @author LethalMaus
      * @param context app context
      * @param params parameters for worker.super()
@@ -56,7 +56,7 @@ public class AutoVODExportWorker extends Worker {
                 split = false;
             }
         } catch(JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString()+"\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error reading settings | " + e.toString(), true).run();
         }
     }
 
@@ -78,12 +78,12 @@ public class AutoVODExportWorker extends Worker {
                                         new WriteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodObject.getString("_id"), null, new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id")).readFile(), false).run();
                                         new WriteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + vodObject.getString("_id"), null, null, false).writeToFileOrPath();
                                     } catch (JSONException e) {
-                                        new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
+                                        new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error writing VOD response | " + e.toString(), true);
                                     }
                                 }
                             }.export(vods.get(i), vodObject.getString("title"), vodObject.getString("description"), vodObject.getString("tag_list"), publicize, split);
                         } catch (JSONException e) {
-                            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
+                            new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error reading VOD object | " + e.toString(), true);
                         }
                     }
                 }

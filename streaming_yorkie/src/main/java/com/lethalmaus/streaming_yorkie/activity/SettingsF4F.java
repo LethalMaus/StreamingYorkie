@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -56,25 +57,19 @@ public class SettingsF4F extends AppCompatActivity {
             getSupportActionBar().setSubtitle("F4F");
         }
 
-        //This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
         if (!new File(getFilesDir().toString() + File.separator + "SETTINGS_F4F").exists()) {
-            settings = new JSONObject();
-            try {
-                settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
-                settings.put(Globals.SETTINGS_INTERVAL, 1);
-                settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
-                settings.put(Globals.SETTINGS_NOTIFICATIONS, false);
-                new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).writeToFileOrPath();
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Error creating VOD Settings", Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
-            }
+            createSettingsFile();
         }
         try {
             settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_F4F").readFile());
+            //Ensures settings integrity
+            if (!settings.has(Globals.SETTINGS_AUTOFOLLOW) || !settings.has(Globals.SETTINGS_INTERVAL) || !settings.has(Globals.SETTINGS_INTERVAL_UNIT) || !settings.has(Globals.SETTINGS_NOTIFICATIONS)) {
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath("SETTINGS_F4F");
+                createSettingsFile();
+            }
         } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading F4F Settings | " + e.toString(), true).run();
         }
 
         serviceActivation();
@@ -96,6 +91,24 @@ public class SettingsF4F extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         saveSettings();
         return true;
+    }
+
+    /**
+     * This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
+     * @author LethalMaus
+     */
+    private void createSettingsFile() {
+        settings = new JSONObject();
+        try {
+            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
+            settings.put(Globals.SETTINGS_INTERVAL, 1);
+            settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
+            settings.put(Globals.SETTINGS_NOTIFICATIONS, false);
+            new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).writeToFileOrPath();
+        } catch (JSONException e) {
+            Toast.makeText(SettingsF4F.this, "Error creating F4F Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error creating F4F Settings | " + e.toString(), true).run();
+        }
     }
 
     /**
@@ -123,8 +136,8 @@ public class SettingsF4F extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW + " | " + e.toString(), true).run();
         }
         autoFollowRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -148,8 +161,8 @@ public class SettingsF4F extends AppCompatActivity {
                             break;
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -166,8 +179,8 @@ public class SettingsF4F extends AppCompatActivity {
             autoFollowIntervalValue.setProgress(settings.getInt(Globals.SETTINGS_INTERVAL) - 1);
             autoFollowIntervalValueText.setText(String.valueOf(settings.getInt(Globals.SETTINGS_INTERVAL)));
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL + " | " + e.toString(), true).run();
         }
 
         autoFollowIntervalValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -182,8 +195,8 @@ public class SettingsF4F extends AppCompatActivity {
                 try {
                     settings.put(Globals.SETTINGS_INTERVAL, autoFollowIntervalValue.getProgress() + 1);
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -211,8 +224,8 @@ public class SettingsF4F extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT + " | " + e.toString(), true).run();
         }
         autoFollowIntervalUnitRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -233,8 +246,8 @@ public class SettingsF4F extends AppCompatActivity {
                             break;
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing F4F Settings, " + Globals.SETTINGS_INTERVAL_UNIT + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -249,8 +262,8 @@ public class SettingsF4F extends AppCompatActivity {
         try {
             autoFollowNotifications.setChecked(settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS));
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null,"Error reading F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS + " | " + e.toString(), true).run();
         }
         autoFollowNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -258,8 +271,8 @@ public class SettingsF4F extends AppCompatActivity {
                 try {
                     settings.put(Globals.SETTINGS_NOTIFICATIONS, isChecked);
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing F4F Settings, " + Globals.SETTINGS_NOTIFICATIONS + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -285,12 +298,12 @@ public class SettingsF4F extends AppCompatActivity {
                     promptUserSaveSettings();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "No changes made", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsF4F.this, "No changes made", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading F4F Settings | " + e.toString(), true).run();
         }
     }
 
@@ -310,15 +323,15 @@ public class SettingsF4F extends AppCompatActivity {
                         promptUserSaveSettings();
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsF4F.this, "Error reading F4F Settings", Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error reading F4F Settings | " + e.toString(), true).run();
                 }
             }
         });
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getApplicationContext(), "Changes discarded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsF4F.this, "Changes discarded", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -358,14 +371,14 @@ public class SettingsF4F extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).run();
-                Toast.makeText(getApplicationContext(), "Changes saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsF4F.this, "Changes saved", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getApplicationContext(), "Changes discarded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsF4F.this, "Changes discarded", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

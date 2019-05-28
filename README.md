@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.1.2-a](#112-a)
   + [1.1.1-a](#111-a)
   + [1.1.0-a](#110-a)
   + [1.0.4-a](#104-a)
@@ -264,6 +265,26 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 ---
 
 ## Updates
+
+### 1.1.2-a
+
+Patch for fixing issues below
+
+Issues:
++	Removed Auth custom timeout
++   Offline User Logo
++   60 Day token refresh
++   Log view line break fix
+
+Improvements:
++   Error Handling
++   Toasts across App
++   Increased MinSdk to 19
++   Updated Glide Library
++   App icon resolution fix
++   Dynamic F4F objects
+
+---
 
 ### 1.1.1-a
 

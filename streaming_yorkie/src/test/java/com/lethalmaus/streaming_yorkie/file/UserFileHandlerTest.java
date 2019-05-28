@@ -33,7 +33,7 @@ public class UserFileHandlerTest {
         JSONObject response = new JSONObject();
         response.put("display_name", "TEST1");
         response.put("_id", "12345");
-        response.put("logo", "localhost");
+        response.put("logo", "/localhost");
         response.put("game", "TEST1");
         response.put("created_at", "1970-01-04T17:03:55Z");
         response.put("views", 1);
@@ -42,7 +42,7 @@ public class UserFileHandlerTest {
         response.put("description", "TEST1");
         response.put("broadcaster_type", affiliateOrNonAffiliate);
         //Test
-        UserFileHandler userFileHandler = new UserFileHandler(new WeakReference<>(context));
+        UserFileHandler userFileHandler = new UserFileHandler(new WeakReference<>(context), false);
         userFileHandler.setResponse(response);
         userFileHandler.writeUser();
         assertTrue(new File("USER" ).exists());

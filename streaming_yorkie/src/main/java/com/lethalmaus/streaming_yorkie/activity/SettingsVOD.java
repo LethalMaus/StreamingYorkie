@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -53,26 +54,19 @@ public class SettingsVOD extends AppCompatActivity {
             getSupportActionBar().setSubtitle("VOD Export");
         }
 
-        //This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
         if (!new File(getFilesDir().toString() + File.separator + "SETTINGS_VOD").exists()) {
-            settings = new JSONObject();
-            try {
-                settings.put(Globals.SETTINGS_AUTOVODEXPORT, SETTINGS_OFF);
-                settings.put(Globals.SETTINGS_INTERVAL, 1);
-                settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
-                settings.put(Globals.SETTINGS_VISIBILITY, false);
-                settings.put(Globals.SETTINGS_SPLIT, false);
-                new WriteFileHandler(weakContext, "SETTINGS_VOD", null, settings.toString(), false).writeToFileOrPath();
-            } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "Error creating VOD Settings", Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
-            }
+            createSettingsFile();
         }
         try {
             settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
+            //Ensures settings integrity
+            if (!settings.has(Globals.SETTINGS_AUTOVODEXPORT) || !settings.has(Globals.SETTINGS_INTERVAL) || !settings.has(Globals.SETTINGS_INTERVAL_UNIT) || !settings.has(Globals.SETTINGS_VISIBILITY)  || !settings.has(Globals.SETTINGS_SPLIT)) {
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath("SETTINGS_VOD");
+                createSettingsFile();
+            }
         } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings" + e.toString(), true).run();
         }
 
         serviceActivation();
@@ -98,6 +92,25 @@ public class SettingsVOD extends AppCompatActivity {
     }
 
     /**
+     * This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
+     * @author LethalMaus
+     */
+    private void createSettingsFile() {
+        settings = new JSONObject();
+        try {
+            settings.put(Globals.SETTINGS_AUTOVODEXPORT, SETTINGS_OFF);
+            settings.put(Globals.SETTINGS_INTERVAL, 1);
+            settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
+            settings.put(Globals.SETTINGS_VISIBILITY, false);
+            settings.put(Globals.SETTINGS_SPLIT, false);
+            new WriteFileHandler(weakContext, "SETTINGS_VOD", null, settings.toString(), false).writeToFileOrPath();
+        } catch (JSONException e) {
+            Toast.makeText(SettingsVOD.this, "Error creating VOD Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error creating VOD Settings" + e.toString(), true).run();
+        }
+    }
+
+    /**
      * Reads settings and changes the Auto-VOD-Export RadioGroup. Also adds the Listener
      * @author LethalMaus
      */
@@ -116,8 +129,8 @@ public class SettingsVOD extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings, " + Globals.SETTINGS_AUTOVODEXPORT, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings, " + Globals.SETTINGS_AUTOVODEXPORT, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings, " + Globals.SETTINGS_AUTOVODEXPORT + " | " + e.toString(), true).run();
         }
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -135,8 +148,8 @@ public class SettingsVOD extends AppCompatActivity {
                             break;
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing VOD Settings, " + Globals.SETTINGS_AUTOVODEXPORT, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsVOD.this, "Error changing VOD Settings, " + Globals.SETTINGS_AUTOVODEXPORT, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing VOD Settings, " + Globals.SETTINGS_AUTOVODEXPORT + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -153,8 +166,8 @@ public class SettingsVOD extends AppCompatActivity {
             intervalValue.setProgress(settings.getInt(Globals.SETTINGS_INTERVAL) - 1);
             intervalValueText.setText(String.valueOf(settings.getInt(Globals.SETTINGS_INTERVAL)));
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings, " + Globals.SETTINGS_INTERVAL + " | " + e.toString(), true).run();
         }
 
         intervalValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -169,8 +182,8 @@ public class SettingsVOD extends AppCompatActivity {
                 try {
                     settings.put(Globals.SETTINGS_INTERVAL, intervalValue.getProgress() + 1);
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing VOD Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsVOD.this, "Error changing VOD Settings, " + Globals.SETTINGS_INTERVAL, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing VOD Settings, " + Globals.SETTINGS_INTERVAL + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -195,8 +208,8 @@ public class SettingsVOD extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings, " + Globals.SETTINGS_INTERVAL_UNIT + " | " + e.toString(), true).run();
         }
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -214,8 +227,8 @@ public class SettingsVOD extends AppCompatActivity {
                             break;
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing VOD Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsVOD.this, "Error changing VOD Settings, " + Globals.SETTINGS_INTERVAL_UNIT, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing VOD Settings, " + Globals.SETTINGS_INTERVAL_UNIT + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -234,8 +247,8 @@ public class SettingsVOD extends AppCompatActivity {
                 radioGroup.check(R.id.settings_autoVODExport_private);
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings, " + Globals.SETTINGS_VISIBILITY, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings, " + Globals.SETTINGS_VISIBILITY, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings, " + Globals.SETTINGS_VISIBILITY + " | " + e.toString(), true).run();
         }
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -247,8 +260,8 @@ public class SettingsVOD extends AppCompatActivity {
                         settings.put(Globals.SETTINGS_VISIBILITY, false);
                     }
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing VOD Settings, " + Globals.SETTINGS_VISIBILITY, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsVOD.this, "Error changing VOD Settings, " + Globals.SETTINGS_VISIBILITY, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing VOD Settings, " + Globals.SETTINGS_VISIBILITY + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -263,8 +276,8 @@ public class SettingsVOD extends AppCompatActivity {
         try {
             splitSwitch.setChecked(settings.getBoolean(Globals.SETTINGS_SPLIT));
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings, " + Globals.SETTINGS_SPLIT, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings, " + Globals.SETTINGS_SPLIT, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings, " + Globals.SETTINGS_SPLIT + " | " + e.toString(), true).run();
         }
         splitSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -272,8 +285,8 @@ public class SettingsVOD extends AppCompatActivity {
                 try {
                     settings.put(Globals.SETTINGS_SPLIT, isChecked);
                 } catch(JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error changing VOD Settings, " + Globals.SETTINGS_SPLIT, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    Toast.makeText(SettingsVOD.this, "Error changing VOD Settings, " + Globals.SETTINGS_SPLIT, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing VOD Settings, " + Globals.SETTINGS_SPLIT + " | " + e.toString(), true).run();
                 }
             }
         });
@@ -298,12 +311,12 @@ public class SettingsVOD extends AppCompatActivity {
                     promptUserSaveSettings();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "No changes made", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsVOD.this, "No changes made", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } catch(JSONException e) {
-            Toast.makeText(getApplicationContext(), "Error reading VOD Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            Toast.makeText(SettingsVOD.this, "Error reading VOD Settings", Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD Settings | " + e.toString(), true).run();
         }
     }
 
@@ -322,7 +335,7 @@ public class SettingsVOD extends AppCompatActivity {
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getApplicationContext(), "Changes discarded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsVOD.this, "Changes discarded", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
@@ -342,14 +355,14 @@ public class SettingsVOD extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 new WriteFileHandler(weakContext, "SETTINGS_VOD", null, settings.toString(), false).run();
-                Toast.makeText(getApplicationContext(), "Changes saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsVOD.this, "Changes saved", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(getApplicationContext(), "Changes discarded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SettingsVOD.this, "Changes discarded", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

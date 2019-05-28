@@ -40,11 +40,6 @@ import java.lang.ref.WeakReference;
 @SuppressLint("SetJavaScriptEnabled")
 public class Authorization extends AppCompatActivity {
 
-    /*FIXME connection timeout isn't working as it should. The page progress wasn't taken into consideration
-    private ConnectionTimeoutHandler timeoutHandler = null;
-    protected static int PAGE_LOAD_PROGRESS = 0;
-    */
-
     //All activities & contexts are weak referenced to avoid memory leaks
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
@@ -78,7 +73,7 @@ public class Authorization extends AppCompatActivity {
                         if (url.contains("twitch.tv")) {
                             if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
                                 new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
-                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Authorization.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
@@ -95,7 +90,7 @@ public class Authorization extends AppCompatActivity {
                         if (request.getUrl().toString().contains("twitch.tv")) {
                             if (request.getUrl().toString().contains("https://www.twitch.tv/passport-callback#access_token")) {
                                 new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, request.getUrl().toString().substring(request.getUrl().toString().indexOf("access_token") + 13, request.getUrl().toString().indexOf("access_token") + 43), false).writeToFileOrPath();
-                                Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Authorization.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
@@ -108,21 +103,12 @@ public class Authorization extends AppCompatActivity {
 
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        /*FIXME
-                        timeoutHandler = new ConnectionTimeoutHandler(view);
-                        timeoutHandler.execute();
-                        */
                         super.onPageStarted(view, url, favicon);
                     }
 
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
-                        /*FIXME
-                        if (timeoutHandler != null) {
-                            timeoutHandler.cancel(true);
-                        }
-                        */
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
                             new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
                             new UserRequestHandler(weakActivity, weakContext, false, false, true) {
@@ -166,7 +152,6 @@ public class Authorization extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                new DeleteFileHandler(weakContext, null).deleteFileOrPath("TOKEN");
                 new DeleteFileHandler(weakContext, "").run();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -204,12 +189,9 @@ public class Authorization extends AppCompatActivity {
                         !new File(appDirectory + File.separator +  Globals.FOLLOWING_CURRENT_PATH).mkdir() ||
                         !new File(appDirectory + File.separator +  Globals.FOLLOWING_UNFOLLOWED_PATH).mkdir() ||
                         !new File(appDirectory + File.separator +  Globals.FOLLOWING_EXCLUDED_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.F4F_FOLLOW4FOLLOW_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH).mkdir() ||
                         !new File(appDirectory + File.separator +  Globals.F4F_EXCLUDED_PATH).mkdir()
                 ) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Cannot create initial folder structure" + "\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Auth: Cannot create initial folder structure.", true).run();
         }
     }
 
@@ -276,52 +258,5 @@ public class Authorization extends AppCompatActivity {
             errorMessage.setText(message);
         }
     }
-
-    /*FIXME connection timeout isn't working as it should. The page progress wasn't taken into consideration
-    public class ConnectionTimeoutHandler extends AsyncTask<Void, Void, String> {
-
-        private static final String PAGE_LOADED = "PAGE_LOADED";
-        private static final String CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT";
-        private static final long CONNECTION_TIMEOUT_UNIT = 20000L;
-
-        private WebView webView;
-        private Time startTime = new Time();
-        private Time currentTime = new Time();
-        private Boolean loaded = false;
-
-        public ConnectionTimeoutHandler(WebView webView) {
-            this.webView = webView;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            this.startTime.setToNow();
-            PAGE_LOAD_PROGRESS = 0;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (CONNECTION_TIMEOUT.equalsIgnoreCase(result)) {
-                showError(WebViewClient.ERROR_TIMEOUT);
-                this.webView.stopLoading();
-            }
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            while (! loaded) {
-                currentTime.setToNow();
-                if (PAGE_LOAD_PROGRESS != 100
-                        && (currentTime.toMillis(true) - startTime.toMillis(true)) > CONNECTION_TIMEOUT_UNIT) {
-                    return CONNECTION_TIMEOUT;
-                } else if (PAGE_LOAD_PROGRESS == 100) {
-                    loaded = true;
-                }
-            }
-            return PAGE_LOADED;
-        }
-    }
-    */
 }
 

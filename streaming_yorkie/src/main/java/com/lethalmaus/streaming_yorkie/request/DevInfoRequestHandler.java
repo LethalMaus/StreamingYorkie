@@ -54,12 +54,12 @@ public class DevInfoRequestHandler extends RequestHandler {
                                     Glide.with(weakActivity.get()).load(response.getString("logo")).into(developer_Logo);
                                 }
                             } catch (JSONException e) {
-                                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();                            }
+                                new WriteFileHandler(weakContext, "ERROR", null, "DevInfo response cant be read | " + e.toString(), true).run();                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    new WriteFileHandler(weakContext, "ERROR", null, error.toString() + "\n", true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "DevInfo Error response | " + error.toString(), true).run();
                 }
             }) {
                 @Override
@@ -85,13 +85,13 @@ public class DevInfoRequestHandler extends RequestHandler {
                     weakActivity.get().startActivity(intent);
                 }
             } catch (ActivityNotFoundException e) {
-                if (weakContext != null && weakContext.get() != null) {
-                    Toast.makeText(weakContext.get(), "No browser can be found", Toast.LENGTH_SHORT).show();
+                if (weakActivity != null && weakActivity.get() != null) {
+                    Toast.makeText(weakActivity.get(), "No browser can be found", Toast.LENGTH_SHORT).show();
                 }
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                new WriteFileHandler(weakContext, "ERROR", null, "DevInfo error opening link | " + e.toString(), true).run();
             }
-        } else if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "OFFLINE: Can't open link", Toast.LENGTH_SHORT).show();
+        } else if (weakActivity != null && weakActivity.get() != null) {
+            Toast.makeText(weakActivity.get(), "OFFLINE: Can't open link", Toast.LENGTH_SHORT).show();
         }
     }
 }

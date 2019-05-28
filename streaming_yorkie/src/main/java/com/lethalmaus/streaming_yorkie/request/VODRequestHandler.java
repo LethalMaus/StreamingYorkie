@@ -108,17 +108,17 @@ public class VODRequestHandler extends RequestHandler {
             if (response.getJSONArray("videos").length() > 0) {
                 sendRequest(offset);
             } else {
-                if (twitchTotal != itemCount && weakContext != null && weakContext.get() != null) {
-                    Toast.makeText(weakContext.get(), "Twitch Data for 'VODs' is out of sync. Total should be '" + twitchTotal
+                if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+                    Toast.makeText(weakActivity.get(), "Twitch Data for 'VODs' is out of sync. Total should be '" + twitchTotal
                             + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show();
                 }
                 responseAction();
             }
         } catch (JSONException e) {
-            if (weakContext != null && weakContext.get() != null) {
-                Toast.makeText(weakContext.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
+            if (weakActivity != null && weakActivity.get() != null) {
+                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
             }
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD response | " + e.toString(), true).run();
         }
     }
 
@@ -135,8 +135,8 @@ public class VODRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "OFFLINE: Showing saved items", Toast.LENGTH_SHORT).show();
+        if (weakActivity != null && weakActivity.get() != null) {
+            Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved items", Toast.LENGTH_SHORT).show();
         }
         responseAction();
     }

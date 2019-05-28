@@ -2,6 +2,7 @@ package com.lethalmaus.streaming_yorkie.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -64,6 +66,9 @@ public class UserView extends AsyncTask<Void, View, Void> {
             displayName = user.getString("display_name");
             userID = user.getString("_id");
             logo = user.getString("logo");
+            if (new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+                logo = weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1);
+            }
             game = user.getString("game");
             createdAt = user.getString("created_at");
             views = user.getInt("views");
@@ -72,7 +77,7 @@ public class UserView extends AsyncTask<Void, View, Void> {
             description = user.getString("description");
             broadcasterType = user.getString("broadcaster_type");
         } catch (JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading USER file | " + e.toString(), true);
         }
         return null;
     }
@@ -83,7 +88,11 @@ public class UserView extends AsyncTask<Void, View, Void> {
             Activity activity = weakActivity.get();
             if (displayUser && showAllInfo) {
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
-                Glide.with(activity).load(logo).into(user_Logo);
+                if (new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+                    user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(logo).getAbsolutePath()));
+                } else {
+                    Glide.with(activity).load(new File(logo)).into(user_Logo);
+                }
 
                 TextView user_Username = activity.findViewById(R.id.user_Username);
                 user_Username.setText(displayName);
@@ -113,7 +122,11 @@ public class UserView extends AsyncTask<Void, View, Void> {
                 user_Description.setText(description);
             } else if (displayUser) {
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
-                Glide.with(activity).load(logo).into(user_Logo);
+                if (new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+                    user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(logo).getAbsolutePath()));
+                } else {
+                    Glide.with(activity).load(new File(logo)).into(user_Logo);
+                }
 
                 TextView user_Username = activity.findViewById(R.id.user_Username);
                 user_Username.setText(displayName);

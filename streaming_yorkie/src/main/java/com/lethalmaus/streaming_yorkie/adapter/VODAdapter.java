@@ -162,12 +162,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 } else {
                     new DeleteFileHandler(weakContext, vodPath + File.separator + vodDataset.get(position)).run();
                     vodDataset.remove(vodDataset.get(position));
-                    setPageCountViews(weakActivity);
-                    datasetChanged();
                 }
             } catch(JSONException e){
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
-
+                new WriteFileHandler(weakContext, "ERROR", null, "VAda: Error reading JSON | " + e.toString(), true);
             }
         }
     }
@@ -336,7 +333,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                     cancelButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(weakContext.get(), "Export cancelled", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(weakActivity.get(), "Export cancelled", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     });
@@ -356,16 +353,16 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             }
                             new VODExportRequestHandler(weakActivity, weakContext).export(vodID, title, description, tags, visibility, split);
                             imageButton.setVisibility(View.GONE);
-                            Toast.makeText(weakContext.get(), "Starting export", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(weakActivity.get(), "Starting export", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     });
                     dialog.show();
                 } catch (JSONException e) {
-                    if (weakContext != null && weakContext.get() != null) {
-                        Toast.makeText(weakContext.get(), "Twitch export could not be initiated.", Toast.LENGTH_SHORT).show();
+                    if (weakActivity != null && weakActivity.get() != null) {
+                        Toast.makeText(weakActivity.get(), "Twitch export could not be initiated.", Toast.LENGTH_SHORT).show();
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Twitch export could not be initiated. | " + e.toString(), true).run();
                 }
             }
         });
@@ -443,10 +440,10 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new VODExportRequestHandler(weakActivity, weakContext).export(vodID, vod.getString("title"), vod.getString("description"), vod.getString("tag_list"), visibility, split);
                                 pageCount1--;
                             } catch (JSONException e) {
-                                if (weakContext != null && weakContext.get() != null) {
-                                    Toast.makeText(weakContext.get(), "Twitch export could not be initiated.", Toast.LENGTH_SHORT).show();
+                                if (weakActivity != null && weakActivity.get() != null) {
+                                    Toast.makeText(weakActivity.get(), "All Twitch exports could not be initiated.", Toast.LENGTH_SHORT).show();
                                 }
-                                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                                new WriteFileHandler(weakContext, "ERROR", null, "All Twitch exports could not be initiated. | " + e.toString(), true).run();
                             }
                         }
                     }
