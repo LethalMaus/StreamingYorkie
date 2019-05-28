@@ -271,14 +271,18 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 Patch for fixing issues below
 
 Issues:
-+	F4F Settings fix
-+   WriteFile append with line break
-+	VOD Export while streaming fix
-+	VOD count and removal when offline / non-existent
++	Removed Auth custom timeout
++   Offline User Logo
++   60 Day token refresh
++   Log view line break fix
 
 Improvements:
 +   Error Handling
 +   Toasts across App
++   Increased MinSdk to 19
++   Updated Glide Library
++   App icon resolution fix
++   Dynamic F4F objects
 
 ---
 
