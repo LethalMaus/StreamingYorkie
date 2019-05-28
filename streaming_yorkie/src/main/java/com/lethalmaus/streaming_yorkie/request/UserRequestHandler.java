@@ -41,7 +41,7 @@ public class UserRequestHandler extends RequestHandler {
      */
     public UserRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUser, boolean showAllInfo, boolean requestUpdate) {
         super(weakActivity, weakContext, null);
-        userFileHandler = new UserFileHandler(weakContext);
+        userFileHandler = new UserFileHandler(weakContext, requestUpdate);
         this.displayRequest = displayUser;
         this.showAllInfo = showAllInfo;
         this.requestUpdate = requestUpdate;
@@ -59,10 +59,10 @@ public class UserRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if (weakContext != null && weakContext.get() != null) {
-                        Toast.makeText(weakContext.get(), "Error requesting User", Toast.LENGTH_SHORT).show();
+                    if (weakActivity != null && weakActivity.get() != null) {
+                        Toast.makeText(weakActivity.get(), "Error requesting User", Toast.LENGTH_SHORT).show();
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, error.toString() + "\n", true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error requesting User | " + error.toString(), true).run();
                     offlineResponseHandler();
                 }
             }) {
@@ -87,8 +87,8 @@ public class UserRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (weakContext != null && weakContext.get() != null && requestUpdate) {
-            Toast.makeText(weakContext.get(), "OFFLINE: Showing saved User Info", Toast.LENGTH_SHORT).show();
+        if (weakActivity != null && weakActivity.get() != null && requestUpdate) {
+            Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved User Info", Toast.LENGTH_SHORT).show();
         }
         new UserView(weakActivity, weakContext, displayRequest, showAllInfo).execute();
     }

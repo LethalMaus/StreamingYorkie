@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class VODFileHandlerTest {
@@ -33,6 +34,7 @@ public class VODFileHandlerTest {
         vod.put("created_at", "1970-01-04T17:03:55Z");
         vod.put("game", "TEST");
         vod.put("length", 3600);
+        vod.put("status", "recorded");
         JSONObject preview = new JSONObject();
         preview.put("medium", "URL");
         vod.put("preview", preview);
@@ -57,5 +59,33 @@ public class VODFileHandlerTest {
         //Cleanup
         assertTrue(new File(Globals.VOD_PATH + File.separator + "12345").delete());
         assertTrue(new File(Globals.VOD_PATH).delete());
+    }
+
+    @Test
+    public void shouldNotWriteVODFile() throws JSONException {
+        //Setup
+        JSONObject response = new JSONObject();
+        JSONArray videos = new JSONArray();
+        JSONObject vod = new JSONObject();
+        vod.put("_id", "v12345");
+        vod.put("title", "TITLE");
+        vod.put("description", "DESCRIPTION");
+        vod.put("tag_list", "TAG_LIST");
+        vod.put("url", "URL");
+        vod.put("created_at", "1970-01-04T17:03:55Z");
+        vod.put("game", "TEST");
+        vod.put("length", 3600);
+        vod.put("status", "recording");
+        JSONObject preview = new JSONObject();
+        preview.put("medium", "URL");
+        vod.put("preview", preview);
+        videos.put(0, vod);
+        response.put("videos", videos);
+
+        //Test
+        VODFileHandler vodFileHandler = new VODFileHandler(new WeakReference<>(context));
+        vodFileHandler.setResponse(response);
+        vodFileHandler.writeVOD();
+        assertFalse(new File(Globals.VOD_PATH + File.separator + "12345").exists());
     }
 }

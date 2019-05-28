@@ -76,13 +76,14 @@ public class FollowParent extends AppCompatActivity {
                     }
                 });
         deleteNotifications();
-        new UserRequestHandler(weakActivity, weakContext,true, false, true).sendRequest(0);
+        new UserRequestHandler(weakActivity, weakContext,true, false, false).sendRequest(0);
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new UserAdapter(weakActivity, weakContext));
     }
+
     @Override
     protected void onPause() {
         cancelRequests();

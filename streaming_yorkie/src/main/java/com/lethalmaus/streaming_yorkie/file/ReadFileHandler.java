@@ -50,9 +50,15 @@ public class ReadFileHandler {
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 StringBuilder stringBuilder = new StringBuilder();
+                //Appends new lines to error log
+                String newLine = "";
+                if (filename.contains("ERROR")) {
+                    newLine = "\n";
+                }
                 String temp;
                 while ((temp = bufferedReader.readLine()) != null) {
                     stringBuilder.append(temp);
+                    stringBuilder.append(newLine);
                 }
                 bufferedReader.close();
                 inputStreamReader.close();
@@ -60,9 +66,9 @@ public class ReadFileHandler {
                 return stringBuilder.toString();
             }
         } catch (FileNotFoundException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Errors opening file '" + filename + "'\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error finding file '" + filename + "' | " + e.toString(), true).run();
         } catch (IOException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Errors reading from file '" + filename + "'\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Errors reading from file '" + filename + "' | " + e.toString(), true).run();
         }
         return "";
     }

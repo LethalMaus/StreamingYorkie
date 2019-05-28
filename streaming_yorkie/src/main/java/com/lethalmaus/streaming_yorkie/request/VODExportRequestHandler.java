@@ -108,20 +108,20 @@ public class VODExportRequestHandler extends RequestHandler {
                 jsObjRequest.setTag("VOD_EXPORT");
                 VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
             } catch (JSONException e) {
-                if (weakContext != null && weakContext.get() != null) {
-                    Toast.makeText(weakContext.get(), "Twitch export could not be sent.", Toast.LENGTH_SHORT).show();
+                if (weakActivity != null && weakActivity.get() != null) {
+                    Toast.makeText(weakActivity.get(), "Twitch export could not be sent.", Toast.LENGTH_SHORT).show();
                 }
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                new WriteFileHandler(weakContext, "ERROR", null, "Twitch export could not be sent | " + e.toString(), true).run();
             }
-        } else if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "OFFLINE: Cannot export when offline", Toast.LENGTH_SHORT).show();
+        } else if (weakActivity != null && weakActivity.get() != null) {
+            Toast.makeText(weakActivity.get(), "OFFLINE: Cannot export when offline", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void responseHandler(JSONObject response) {
-        if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "Export successful for '" + title + "'", Toast.LENGTH_SHORT).show();
+        if (weakActivity != null && weakActivity.get() != null) {
+            Toast.makeText(weakActivity.get(), "Export successful for '" + title + "'", Toast.LENGTH_SHORT).show();
         }
         new WriteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodID, null, null, false).run();
     }

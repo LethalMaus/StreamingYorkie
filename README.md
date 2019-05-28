@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.1.2-a](#112-a)
   + [1.1.1-a](#111-a)
   + [1.1.0-a](#110-a)
   + [1.0.4-a](#104-a)
@@ -264,6 +265,22 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 ---
 
 ## Updates
+
+### 1.1.2-a
+
+Patch for fixing issues below
+
+Issues:
++	F4F Settings fix
++   WriteFile append with line break
++	VOD Export while streaming fix
++	VOD count and removal when offline / non-existent
+
+Improvements:
++   Error Handling
++   Toasts across App
+
+---
 
 ### 1.1.1-a
 

@@ -112,9 +112,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.unfollowedUsersPath = unfollowedUsersPath;
         this.excludedUsersPath = excludedUsersPath;
         this.usersPath = usersPath;
-        //As soon as we know the paths, the counts can be set
-        setPageCounts();
-        setPageCountViews(weakActivity);
         return this;
     }
 
@@ -184,7 +181,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 progressBar.setVisibility(View.INVISIBLE);
 
             } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true);
+                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error binding user | " + e.toString(), true);
             }
         }
     }
@@ -234,16 +231,22 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 break;
             case "FOLLOWED_NOTFOLLOWING":
                 usersPath = Globals.FOLLOWERS_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH).readFileNames();
+                userDataset = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
+                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames());
+                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames());
                 actionAllButton(true);
                 break;
             case "FOLLOW4FOLLOW":
                 usersPath = Globals.FOLLOWERS_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH).readFileNames();
+                userDataset = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
+                userDataset.retainAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames());
+                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames());
                 break;
             case "NOTFOLLOWED_FOLLOWING":
                 usersPath = Globals.FOLLOWING_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH).readFileNames();
+                userDataset = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
+                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames());
+                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames());
                 actionAllButton(false);
                 break;
             case "F4F_EXCLUDED":
@@ -253,6 +256,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
         //To show the newest first
         Collections.reverse(userDataset);
+        //As soon as we know the paths, the counts can be set
+        setPageCounts();
+        setPageCountViews(weakActivity);
     }
 
     /**
@@ -436,8 +442,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             imageButton.setImageResource(R.drawable.unfollow);
                         }
                     }
-                } else if (weakContext != null && weakContext.get() != null) {
-                    Toast.makeText(weakContext.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
+                } else if (weakActivity != null && weakActivity.get() != null) {
+                    Toast.makeText(weakActivity.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -455,7 +461,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             imageButton.setVisibility(View.INVISIBLE);
         } else {
             try {
-                JSONObject user = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userID).readFile());
+                final JSONObject user = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userID).readFile());
                 if (user.getBoolean("notifications")) {
                     imageButton.setImageResource(R.drawable.deactivate_notifications);
                 } else {
@@ -468,7 +474,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     public void onClick(View v) {
                         if (followRequestHandler.networkIsAvailable()) {
                             try {
-                                JSONObject user = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userID).readFile());
                                 if (user.getBoolean("notifications")) {
                                     followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
                                             .requestFollow();
@@ -479,15 +484,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                     imageButton.setImageResource(R.drawable.deactivate_notifications);
                                 }
                             } catch (JSONException e) {
-                                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error reading JSON key | " + e.toString(), true).run();
                             }
-                        } else if (weakContext != null && weakContext.get() != null) {
-                            Toast.makeText(weakContext.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show();
+                        } else if (weakActivity != null && weakActivity.get() != null) {
+                            Toast.makeText(weakActivity.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
             } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error reading JSON | " + e.toString(), true).run();
             }
         }
     }
@@ -549,10 +554,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @author LethalMaus
      */
     private void setPageCounts() {
-        pageCount1 = new ReadFileHandler(weakContext, newUsersPath).countFiles();
-        pageCount2 = new ReadFileHandler(weakContext, currentUsersPath).countFiles();
-        pageCount3 = new ReadFileHandler(weakContext, unfollowedUsersPath).countFiles();
-        pageCount4 = new ReadFileHandler(weakContext, excludedUsersPath).countFiles();
+        if (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING") || usersToDisplay.contentEquals("FOLLOW4FOLLOW") || usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING") || usersToDisplay.contentEquals("F4F_EXCLUDED")) {
+            ArrayList<String> followers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
+            ArrayList<String> following = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
+            ArrayList<String> excluded = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
+            followers.removeAll(excluded);
+            following.removeAll(excluded);
+            ArrayList<String> f4f = new ArrayList<>(followers);
+            f4f.retainAll(following);
+            pageCount1 = followers.size() - f4f.size();
+            pageCount2 = f4f.size();
+            pageCount3 = following.size() - f4f.size();
+            pageCount4 = excluded.size();
+        } else {
+            pageCount1 = new ReadFileHandler(weakContext, newUsersPath).countFiles();
+            pageCount2 = new ReadFileHandler(weakContext, currentUsersPath).countFiles();
+            pageCount3 = new ReadFileHandler(weakContext, unfollowedUsersPath).countFiles();
+            pageCount4 = new ReadFileHandler(weakContext, excludedUsersPath).countFiles();
+        }
     }
 
     /**

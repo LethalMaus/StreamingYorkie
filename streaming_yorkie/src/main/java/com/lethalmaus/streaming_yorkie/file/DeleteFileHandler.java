@@ -45,7 +45,7 @@ public class DeleteFileHandler implements Runnable {
                 }
             }
             if (!pathOrFile.delete()) {
-                new WriteFileHandler(weakContext, "ERROR", null, "Error deleting file: '" + pathOrFileName + "'\n", true).run();
+                new WriteFileHandler(weakContext, "ERROR", null, "Error deleting file: '" + pathOrFileName + "'", true).run();
             }
         }
     }

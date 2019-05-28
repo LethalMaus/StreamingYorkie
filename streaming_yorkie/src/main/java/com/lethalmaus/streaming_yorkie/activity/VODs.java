@@ -32,12 +32,6 @@ import androidx.work.WorkManager;
  */
 public class VODs extends AppCompatActivity {
 
-    /*Todo
-    finish readme
-    screenshots for all activities
-    check listing desc.
-     */
-
     //All activities & contexts are weak referenced to avoid memory leaks
     protected WeakReference<Activity> weakActivity;
     protected WeakReference<Context> weakContext;
@@ -102,7 +96,7 @@ public class VODs extends AppCompatActivity {
                     }
                 });
         deleteNotifications();
-        new UserRequestHandler(weakActivity, weakContext,true, false, true).sendRequest(0);
+        new UserRequestHandler(weakActivity, weakContext,true, false, false).sendRequest(0);
         highlightButton(vodButton);
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);

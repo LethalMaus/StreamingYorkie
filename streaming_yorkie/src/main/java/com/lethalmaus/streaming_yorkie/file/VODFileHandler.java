@@ -83,7 +83,7 @@ public class VODFileHandler implements Runnable {
                 }
             }
         } catch (JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n",true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error writing VODFile | " + e.toString(),true).run();
         }
     }
 }

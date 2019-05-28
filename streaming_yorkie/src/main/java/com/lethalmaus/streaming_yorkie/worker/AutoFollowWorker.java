@@ -54,16 +54,16 @@ public class AutoFollowWorker extends Worker {
             autoFollow = settings.getString(Globals.SETTINGS_AUTOFOLLOW);
             autoFollowNotifications = settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS);
         } catch(JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString()+"\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "AuFo: Error reading settings | " + e.toString(), true).run();
         }
     }
 
     @Override
     public @NonNull Result doWork() {
-        new FollowersRequestHandler(null, weakContext, null, false, true) {
+        new FollowersRequestHandler(null, weakContext, null, false) {
             @Override
             protected void responseAction() {
-                new autoFollowOrganizeFileHandler(null, weakContext, false, true)
+                new autoFollowOrganizeFileHandler(null, weakContext, false)
                         .setPreferences(autoFollow, autoFollowNotifications)
                         .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
                         .execute();
@@ -89,10 +89,9 @@ public class AutoFollowWorker extends Worker {
          * @param weakActivity weak referenced activity
          * @param weakContext weak referenced context
          * @param displayUsers boolean whether user is to be displayed
-         * @param commonFolders constant for F4F folders or not
          */
-        autoFollowOrganizeFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUsers, boolean commonFolders) {
-            super(weakActivity, weakContext, null, displayUsers, commonFolders);
+        autoFollowOrganizeFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUsers) {
+            super(weakActivity, weakContext, null, displayUsers);
         }
 
         /**
@@ -154,7 +153,7 @@ public class AutoFollowWorker extends Worker {
     private static void notifyUser(WeakReference<Context> weakContext) {
         int autoFollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();
         int autoUnfollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).countFiles();
-        if (autoFollowCount > 0 || autoUnfollowCount > 0 && weakContext != null && weakContext.get() != null) {
+        if ((autoFollowCount > 0 || autoUnfollowCount > 0) && weakContext != null && weakContext.get() != null) {
             Intent intent = new Intent(weakContext.get(), Follow4Follow.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(weakContext.get(), 0, intent, 0);

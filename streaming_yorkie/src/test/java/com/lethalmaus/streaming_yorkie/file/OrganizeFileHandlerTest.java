@@ -35,7 +35,7 @@ public class OrganizeFileHandlerTest {
         new WriteFileHandler(new WeakReference<>(context), requestPath + File.separator + "REQUESTED_TO_NEW_AND_CURRENT2_USER_TEST", null, null, false).writeToFileOrPath();
         new WriteFileHandler(new WeakReference<>(context), requestPath + File.separator + "REQUESTED_BUT_EXCLUDED_USER_TEST", null, null, false).writeToFileOrPath();
         //Test
-        organizeFileHandler = new OrganizeFileHandler(null, new WeakReference<>(context), null, false, true);
+        organizeFileHandler = new OrganizeFileHandler(null, new WeakReference<>(context), null, false);
         organizeFileHandler.setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath);
         organizeFileHandler.setDisplayPreferences(null, null, null, null);
         organizeFileHandler.organizeFolders();
@@ -67,7 +67,7 @@ public class OrganizeFileHandlerTest {
         assertTrue(new File(excludedUsersPath).delete());
         assertTrue(new File(unfollowedUsersPath).delete());
     }
-
+/*
     @Test
     public void shouldOrganizeF4FFolders() {
         //Setup
@@ -79,7 +79,7 @@ public class OrganizeFileHandlerTest {
         new WriteFileHandler(new WeakReference<>(context), Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + "FOLLOWING_EXCLUDED_IN_F4F_TEST", null, null, false).writeToFileOrPath();
         new WriteFileHandler(new WeakReference<>(context), Globals.F4F_EXCLUDED_PATH + File.separator + "FOLLOWING_EXCLUDED_IN_F4F_TEST", null, null, false).writeToFileOrPath();
         //Test
-        organizeFileHandler = new OrganizeFileHandler(null, new WeakReference<>(context), null, false, false);
+        organizeFileHandler = new OrganizeFileHandler(null, new WeakReference<>(context), null, false);
         organizeFileHandler.setPaths(Globals.F4F_FOLLOW4FOLLOW_PATH, Globals.F4F_FOLLOW4FOLLOW_PATH, Globals.F4F_FOLLOW4FOLLOW_PATH, Globals.F4F_FOLLOW4FOLLOW_PATH, Globals.F4F_FOLLOW4FOLLOW_PATH, Globals.F4F_FOLLOW4FOLLOW_PATH);
         organizeFileHandler.setDisplayPreferences(null, null, null, null);
         organizeFileHandler.organizeFolders();
@@ -124,6 +124,5 @@ public class OrganizeFileHandlerTest {
         assertTrue(new File(Globals.FOLLOWERS_EXCLUDED_PATH + "_" + Globals.FOLLOWERS_CURRENT_PATH).delete());
         assertTrue(new File(Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH).delete());
     }
-
-
+*/
 }

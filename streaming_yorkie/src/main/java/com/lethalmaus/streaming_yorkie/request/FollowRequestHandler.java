@@ -81,10 +81,10 @@ public class FollowRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if (weakContext != null && weakContext.get() != null) {
-                        Toast.makeText(weakContext.get(), "Error changing Following preference", Toast.LENGTH_SHORT).show();
+                    if (weakActivity != null && weakActivity.get() != null) {
+                        Toast.makeText(weakActivity.get(), "Error changing Following preference", Toast.LENGTH_SHORT).show();
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, error.toString() + "\n", true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing Following preference | " + error.toString(), true).run();
                 }
             }) {
                 @Override
@@ -111,8 +111,8 @@ public class FollowRequestHandler extends RequestHandler {
             };
             jsObjRequest.setTag("FOLLOW");
             VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
-        } else if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
+        } else if (weakActivity != null && weakActivity.get() != null) {
+            Toast.makeText(weakActivity.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
         }
     }
 

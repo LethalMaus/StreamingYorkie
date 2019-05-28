@@ -60,8 +60,6 @@ public class RequestHandler {
 
     //Boolean whether to show updated files
     boolean displayRequest;
-    //Boolean whether to F4F files or not
-    boolean commonFolders;
 
     /**
      * Constructor for RequestHandler. Parent class for all request handlers
@@ -82,7 +80,7 @@ public class RequestHandler {
             JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
             userID = user.getString("_id");
         } catch (JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "Error reading user for request | " + e.toString(), true).run();
         }
     }
 
@@ -158,8 +156,8 @@ public class RequestHandler {
      */
     protected void offlineResponseHandler() {
         if (displayRequest && recyclerView != null && recyclerView.get() != null) {
-            if (weakContext != null && weakContext.get() != null) {
-                Toast.makeText(weakContext.get(), "OFFLINE: Showing saved items", Toast.LENGTH_SHORT).show();
+            if (weakActivity != null && weakActivity.get() != null) {
+                Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved items", Toast.LENGTH_SHORT).show();
             }
             recyclerView.get().setAdapter(new UserAdapter(weakActivity, weakContext)
                     .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
@@ -174,10 +172,10 @@ public class RequestHandler {
      * @param e Volley Error
      */
     void errorHandler(VolleyError e) {
-        if (weakContext != null && weakContext.get() != null) {
-            Toast.makeText(weakContext.get(), "Error requesting items", Toast.LENGTH_SHORT).show();
+        if (weakActivity != null && weakActivity.get() != null) {
+            Toast.makeText(weakActivity.get(), "Error requesting items", Toast.LENGTH_SHORT).show();
         }
-        new WriteFileHandler(weakContext, "ERROR", null, e.toString() + "\n", true).run();
+        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting items" + e.toString(), true).run();
         offlineResponseHandler();
     }
 
