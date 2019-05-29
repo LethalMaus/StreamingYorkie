@@ -168,7 +168,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 textView.setText(userObject.getString("display_name"));
 
                 ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
-                Glide.with(weakContext.get()).load(userObject.getString("logo")).into(imageView);
+                Glide.with(weakContext.get()).load(userObject.getString("logo")).placeholder(R.drawable.user).into(imageView);
 
                 ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
                 editButton(button1, actionButtonType1, userObject.getString("_id"));
@@ -326,28 +326,36 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
                 userDataset.remove(userID);
                 datasetChanged();
-                if (new File(appDirectory + File.separator + newUsersPath + File.separator + userID).exists()) {
-                    //When a user is excluded from new, it has not considered new anymore
-                    if (!newUsersPath.contains("NEW")) {
-                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + newUsersPath + File.separator + userID, null, null, false).run();
+                if (usersToDisplay.contentEquals("NEW") || usersToDisplay.contentEquals("CURRENT") || usersToDisplay.contentEquals("UNFOLLOWED")) {
+                    new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
+                    if (usersToDisplay.contentEquals("NEW")) {
+                        new DeleteFileHandler(weakContext, newUsersPath + File.separator + userID).run();
+                        new DeleteFileHandler(weakContext, currentUsersPath + File.separator + userID).run();
+                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID, null, null, false).run();
+                        pageCount1--;
+                        pageCount2--;
+                    } else if (usersToDisplay.contentEquals("CURRENT")) {
+                        new DeleteFileHandler(weakContext, currentUsersPath + File.separator + userID).run();
+                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID, null, null, false).run();
+                        pageCount2--;
+                    } else if (usersToDisplay.contentEquals("UNFOLLOWED")) {
+                        new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID).run();
+                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID, null, null, false).run();
+                        pageCount3--;
                     }
-                    new DeleteFileHandler(weakContext, newUsersPath + File.separator + userID).run();
-                    pageCount1--;
+                } else {
+                    new WriteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + File.separator + userID, null, null, false).run();
+                    new WriteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + usersToDisplay + File.separator + userID, null, null, false).run();
+                    if (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+                        pageCount1--;
+                    } else if (usersToDisplay.contentEquals("FOLLOW4FOLLOW")) {
+                        pageCount2--;
+                    } else if (usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+                        pageCount3--;
+                    }
                 }
-                if (new File(appDirectory + File.separator + currentUsersPath + File.separator + userID).exists()) {
-                    new WriteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID, null, null, false).run();
-                    new DeleteFileHandler(weakContext, currentUsersPath + File.separator + userID).run();
-                    pageCount2--;
-                }
-                if (new File(appDirectory + File.separator + unfollowedUsersPath + File.separator + userID).exists()) {
-                    new WriteFileHandler(weakContext, excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID, null, null, false).run();
-                    new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID).run();
-                    pageCount3--;
-                }
-                new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
                 pageCount4++;
                 setPageCountViews(weakActivity);
             }
@@ -366,26 +374,32 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DeleteFileHandler(weakContext, null).deleteFileOrPath(excludedUsersPath + File.separator + userID);
                 userDataset.remove(userID);
                 datasetChanged();
-                //Only for F4F exclusions is the newUsersPath needed
-                if (new File(appDirectory + File.separator + excludedUsersPath + "_" + newUsersPath + File.separator + userID).exists() && !newUsersPath.contains("NEW")) {
-                    new WriteFileHandler(weakContext, newUsersPath + File.separator + userID, null, null, false).run();
-                    new DeleteFileHandler(weakContext, excludedUsersPath + "_" + newUsersPath + File.separator + userID).run();
-                    pageCount1++;
+                if (usersToDisplay.contentEquals("EXCLUDED")) {
+                    new DeleteFileHandler(weakContext, excludedUsersPath + File.separator + userID).run();
+                    if (new File(appDirectory + File.separator + excludedUsersPath + "_" + currentUsersPath + File.separator + userID).exists()) {
+                        new DeleteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID).run();
+                        new WriteFileHandler(weakContext, currentUsersPath + File.separator + userID, null, null, false).run();
+                        pageCount2++;
+                    } else if (new File(appDirectory + File.separator + excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID).exists()) {
+                        new DeleteFileHandler(weakContext, excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID).run();
+                        new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID, null, null, false).run();
+                        pageCount3++;
+                    }
+                } else {
+                    new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + File.separator + userID).run();
+                    if (new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + userID).exists()) {
+                        new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + userID).run();
+                        pageCount1++;
+                    } else if (new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + userID).exists()) {
+                        new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + userID).run();
+                        pageCount2++;
+                    } else if (new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + userID).exists()) {
+                        new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + userID).run();
+                        pageCount3++;
+                    }
                 }
-                if (new File(appDirectory + File.separator + excludedUsersPath + "_" + currentUsersPath + File.separator + userID).exists()) {
-                    new WriteFileHandler(weakContext, currentUsersPath + File.separator + userID, null, null, false).run();
-                    new DeleteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID).run();
-                    pageCount2++;
-                }
-                if (new File(appDirectory + File.separator + excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID).exists()) {
-                    new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID, null, null, false).run();
-                    new DeleteFileHandler(weakContext, excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID).run();
-                    pageCount3++;
-                }
-                new DeleteFileHandler(weakContext, excludedUsersPath + File.separator + userID).run();
                 pageCount4--;
                 setPageCountViews(weakActivity);
             }
@@ -523,15 +537,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             for (String userID : userDataset) {
                                 followRequestHandler.setRequestParameters(method, userID, false)
                                         .requestFollow();
-                                if (followAll) {
-                                    pageCount1--;
-                                    pageCount2++;
-                                    new DeleteFileHandler(weakContext, Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + userID).run();
-                                    new WriteFileHandler(weakContext, Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + userID, null, null, false).run();
-                                } else {
-                                    pageCount3--;
-                                    new DeleteFileHandler(weakContext, Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + userID).run();
-                                }
+                            }
+                            if (followAll) {
+                                pageCount1 = 0;
+                                pageCount2 = userDataset.size();
+                            } else {
+                                pageCount3 = 0;
                             }
                             userDataset.clear();
                             datasetChanged();

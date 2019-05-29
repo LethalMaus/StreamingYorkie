@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/userrow_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
         android:layout_marginStart="8dp"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
@@ -40,8 +40,8 @@
 
     <ImageButton
         android:id="@+id/userrow_button1"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
@@ -56,8 +56,8 @@
 
     <ImageButton
         android:id="@+id/userrow_button2"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="4dp"
@@ -74,8 +74,8 @@
 
     <ImageButton
         android:id="@+id/userrow_button3"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="30dp"
+        android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="4dp"

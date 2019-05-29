@@ -148,7 +148,7 @@ public class Authorization extends AppCompatActivity {
      * @author LethalMaus
      */
     protected void promptUser() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Authorization.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Authorization.this, R.style.CustomDialog);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
