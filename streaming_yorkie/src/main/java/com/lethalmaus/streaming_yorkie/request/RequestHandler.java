@@ -53,10 +53,10 @@ public class RequestHandler {
     String requestPath;
 
     //Display preferences
-    protected String itemsToDisplay;
-    protected String actionButtonType1;
-    protected String actionButtonType2;
-    protected String actionButtonType3;
+    String itemsToDisplay;
+    String actionButtonType1;
+    String actionButtonType2;
+    String actionButtonType3;
 
     //Boolean whether to show updated files
     boolean displayRequest;
@@ -80,6 +80,9 @@ public class RequestHandler {
             JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
             userID = user.getString("_id");
         } catch (JSONException e) {
+            if (weakActivity != null && weakActivity.get() != null) {
+                Toast.makeText(weakActivity.get(), "Error reading user for request.", Toast.LENGTH_SHORT).show();
+            }
             new WriteFileHandler(weakContext, "ERROR", null, "Error reading user for request | " + e.toString(), true).run();
         }
     }

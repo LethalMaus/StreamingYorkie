@@ -92,7 +92,7 @@ public class Follow4Follow extends FollowParent {
             @Override
             protected void responseAction() {
                 new OrganizeFileHandler(weakActivity, weakContext, null, false)
-                        .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
+                        .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
                         .execute();
                 followingRequestHandler.newRequest().sendRequest(0);
             }
@@ -101,16 +101,7 @@ public class Follow4Follow extends FollowParent {
                 followingRequestHandler.newRequest().sendRequest(0);
             }
         };
-        followingRequestHandler = new FollowingRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true) {
-            @Override
-            protected void offlineResponseHandler() {
-                Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved Users", Toast.LENGTH_SHORT).show();
-                new OrganizeFileHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true)
-                        .setPaths(currentUsersPath, newUsersPath, unfollowedUsersPath, excludedUsersPath, requestPath, usersPath)
-                        .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
-                        .execute();
-            }
-        };
+        followingRequestHandler = new FollowingRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true);
         followingRequestHandler.setDisplayPreferences("FOLLOWED_NOTFOLLOWING", "EXCLUDE_BUTTON", null, "FOLLOW_BUTTON");
         highlightButton(notFollowing_FollowersButton);
         setSubtitle("Followers not being Followed");

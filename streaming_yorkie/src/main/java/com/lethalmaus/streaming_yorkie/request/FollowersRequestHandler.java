@@ -11,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.file.FollowFileHandler;
+import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import org.json.JSONException;
@@ -113,5 +114,10 @@ public class FollowersRequestHandler extends RequestHandler {
      * Method for performing an action after handling the request response. Separated to be overridden when needed
      * @author LethalMaus
      */
-    protected void responseAction() {}
+    protected void responseAction() {
+        new OrganizeFileHandler(weakActivity, weakContext, recyclerView, displayRequest)
+                .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
+                .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3)
+                .execute();
+    }
 }
