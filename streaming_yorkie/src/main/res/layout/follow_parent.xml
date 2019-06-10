@@ -36,14 +36,14 @@
     <ImageButton
         android:id="@+id/refresh"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="30dp"
         android:layout_marginEnd="16dp"
         android:adjustViewBounds="true"
-        android:background="@drawable/refresh"
+        android:background="@drawable/update"
         android:contentDescription="@string/refresh_symbol"
+        app:layout_constraintBottom_toBottomOf="@+id/user_Username"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/user_Username"
         app:srcCompat="@android:color/transparent" />
 
     <LinearLayout
@@ -64,7 +64,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/page1_symbol"
+            android:contentDescription="@string/category"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/new_button" />
 
@@ -74,7 +74,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/page2_symbol"
+            android:contentDescription="@string/category"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/follow" />
 
@@ -84,7 +84,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/page3_symbol"
+            android:contentDescription="@string/category"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/unfollow" />
 
@@ -94,7 +94,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/page4_symbol"
+            android:contentDescription="@string/category"
             android:scaleType="centerInside"
             android:visibility="visible"
             app:srcCompat="@drawable/excluded" />
@@ -117,7 +117,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/count1"
+            android:text="@string/count"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -126,7 +126,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/count2"
+            android:text="@string/count"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -135,7 +135,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/count3"
+            android:text="@string/count"
             android:textAlignment="center"
             android:textSize="12sp" />
 
@@ -144,7 +144,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/count4"
+            android:text="@string/count"
             android:textAlignment="center"
             android:textSize="12sp" />
     </LinearLayout>

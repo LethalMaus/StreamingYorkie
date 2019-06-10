@@ -28,22 +28,9 @@
         android:paddingRight="10dp"
         android:text="@string/username"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/user_refresh"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/user_Logo"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/user_refresh"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/refresh_symbol"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:color/transparent" />
 
     <LinearLayout
         android:id="@+id/menu1"
@@ -59,32 +46,32 @@
         app:layout_constraintTop_toBottomOf="@+id/user_Username">
 
         <ImageButton
-            android:id="@+id/f4f_settings"
+            android:id="@+id/menu_settings_f4f"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/f4f_menu"
+            android:contentDescription="@string/menu_f4f"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/f4f_menu" />
 
         <ImageButton
-            android:id="@+id/vod_settings"
+            android:id="@+id/menu_settings_vod"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/vods_menu"
+            android:contentDescription="@string/menu_vods"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/vod_menu" />
 
         <ImageButton
-            android:id="@+id/logout"
+            android:id="@+id/menu_settings_logout"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/f4f_menu"
+            android:contentDescription="@string/menu_f4f"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/authorization" />
     </LinearLayout>

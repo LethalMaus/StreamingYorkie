@@ -29,7 +29,7 @@ public class SettingsMenu extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        ImageButton f4f = findViewById(R.id.f4f_settings);
+        ImageButton f4f = findViewById(R.id.menu_settings_f4f);
         f4f.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -39,7 +39,7 @@ public class SettingsMenu extends AppCompatActivity {
                     }
                 });
 
-        ImageButton vod = findViewById(R.id.vod_settings);
+        ImageButton vod = findViewById(R.id.menu_settings_vod);
         vod.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -49,7 +49,7 @@ public class SettingsMenu extends AppCompatActivity {
                     }
                 });
 
-        ImageButton logout = findViewById(R.id.logout);
+        ImageButton logout = findViewById(R.id.menu_settings_logout);
         logout.setOnClickListener(
                 new View.OnClickListener() {
                     @Override

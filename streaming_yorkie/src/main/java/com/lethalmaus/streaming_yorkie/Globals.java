@@ -6,6 +6,7 @@ import android.view.MenuItem;
 
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
+import com.lethalmaus.streaming_yorkie.activity.InfoGuide;
 import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 
 /**
@@ -43,10 +44,6 @@ public class Globals {
     public static final String F4F_FOLLOW4FOLLOW_PATH = "FOLLOW4FOLLOW";
     public static final String F4F_NOTFOLLOWED_FOLLOWING_PATH = "NOTFOLLOWED_FOLLOWING";
     public static final String F4F_EXCLUDED_PATH = "F4F_EXCLUDED";
-
-    //Flags to prevent errors
-    public static final String FLAG_PATH = "FLAGS";
-    public static final String FOLLOW_REQUEST_RUNNING_FLAG = "FOLLOW_REQUEST_RUNNING";
 
     //Directories for VODs
     public static final String VOD_PATH = "VODS";
@@ -88,6 +85,10 @@ public class Globals {
     public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME = "AutoVODExport";
     public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new VODs have been exported";
 
+    //Flag Files
+    public static final String FLAG_FOLLOWERS_REQUEST_RUNNING = "FLAG_FOLLOWERS_REQUEST_RUNNING";
+    public static final String FLAG_FOLLOWING_REQUEST_RUNNING = "FLAG_FOLLOWING_REQUEST_RUNNING";
+
     /**
      * Options menu to be available throughout app
      * @author LethalMaus
@@ -98,6 +99,10 @@ public class Globals {
     public static boolean onOptionsItemsSelected(Activity activity, MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case R.id.menu_info_guide:
+                intent = new Intent(activity, InfoGuide.class);
+                activity.startActivity(intent);
+                return true;
             case R.id.menu_info:
                 intent = new Intent(activity, Info.class);
                 activity.startActivity(intent);

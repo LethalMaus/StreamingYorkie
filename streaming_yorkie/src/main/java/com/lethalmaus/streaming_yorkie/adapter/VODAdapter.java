@@ -111,7 +111,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         setPageCountViews(weakActivity);
         //An empty row or table can be displayed based on if the dataset is empty or not
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            if (vodDataset.size() > 0) {
+            if (vodDataset != null && vodDataset.size() > 0) {
                 weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
                 weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
             } else {

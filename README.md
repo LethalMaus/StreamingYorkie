@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.2.0-a](#120-a)
   + [1.1.3-a](#113-a)
   + [1.1.2-a](#112-a)
   + [1.1.1-a](#111-a)
@@ -30,15 +31,17 @@
 ## Introduction
 
 Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers & *export VODS* as well as offering a better overview of *Followers & Following*.
-Automatically *Follow, Unfollow, F4F & Export VODs* simply by just installing and configuring Streaming Yorkie.
+**Automatically Follow, Unfollow, F4F & Export VODs** simply by just installing and configuring Streaming Yorkie.
 Helps build a bigger community by simplifying communication & freeing time to stream more.
+Watch multiple streams at once on one screen with **MultiView**.
 Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
-Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/) & [Twitch Website](https://twitch.tv). A login is required to be able to edit your Twitch data.
+Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv) and [TwitchMultiView](https://github.com/LethalMaus/TwitchMultiView).
+A login is required to be able to view and edit your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
 
-Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality code & the code itself is documented with *JavaDocs* & comments.
+Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality standardized code & the code itself is documented with *JavaDocs* & comments.
 **DRY** *(Don't Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible. Variable naming conventions are in place. 
 
 > The variable name must explain what it is or what it does, clearly, for any developer to understand.
@@ -63,6 +66,7 @@ Please report any problems, suspicions or confirmations to help improve Streamin
   + [Actions](#actions)
 + [Followers, Following & F4F](#followers-following--f4f)
 + [VODs](#-vods)
++ [MultiView](#-multiview)
 + [User Info](#-user-info)
 + [Info](#-info)
   + [Logs](#logs)
@@ -93,8 +97,17 @@ Several menus are available to divide StreamingYorkie into each feature it offer
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_menu.png" height="20" width="20"> Shows all *Following* from Twitch including who you have unfollowed
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.png" height="20" width="20"> Overview & simplification users who *F4F (Follow for Follow)*
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.png" height="20" width="20"> Overview for VODs (Videos On Demand) & exporting VODs
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi_menu.png" height="20" width="20"> Watch multiple streams at once on one screen
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.png" height="20" width="20"> Quick overview about your Twitch account
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="20" width="20"> Shows different platforms for further information such as a *User Manual* & *Contact*
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="20" width="20"> Shows different platforms for further information such as a *Twitch* & *Contact*
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/guide.png" height="20" width="20"> Github link to ReadMe guide
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/help.png" height="20" width="20"> Offline help guide
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20"> Github link to Updates
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/sourcecode.png" height="20" width="20"> Github link to the source code
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/contact.png" height="20" width="20"> Github link to Contact
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch_icon.png" height="20" width="20"> Link to developers stream
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="20" width="20"> Membership
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.png" height="20" width="20"> Projects
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.png" height="20" width="20"> The settings menu is split up into further features below
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/autofollow.png" height="20" width="20"> Settings for activating & configuring the AutoFollow Service
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.png" height="20" width="20"> Settings for activating & configuring the AutoVODExport Service
@@ -105,7 +118,7 @@ Each Menu is split into 3-4 of the following categories:
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/new_button.png" height="20" width="20"> All new Followers/Following
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/follow.png" height="20" width="20"> All current Followers/Following (including New)
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollow.png" height="20" width="20"> All Followers who Unfollowed you or Following you Unfollowed
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.png" height="20" width="20"> Users that are excluded from AutoFollow as well as being excluded from the other menus
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.png" height="20" width="20"> Users/VODs that are excluded from AutoFollow/AutoExport as well as being excluded from the other menus
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.png" height="20" width="20"> Users who Follow you, but you dont Follow them back
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/follow4follow.png" height="20" width="20"> Followers who also Follow you
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.png" height="20" width="20"> Users you Follow, who dont Follow you back
@@ -118,10 +131,11 @@ Each category contains up to 3 of the following actions:
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollow.png" height="20" width="20"> Unfollows the chosen User
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notifications.png" height="20" width="20"> Activates notifications received from the User
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/deactivate_notifications.png" height="20" width="20"> Deactivates notifications received from the User
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.png" height="20" width="20"> Excludes Users from other categories & from AutoFollow
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/include.png" height="20" width="20"> Includes Users from other categories & from AutoFollow
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/delete.png" height="20" width="20"> Deletes User from the Device (all users, even the unfollowed ones are saved until otherwise)
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.png" height="20" width="20"> Excludes Users/VODs from other categories & from AutoFollow
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/include.png" height="20" width="20"> Includes Users/VODs from other categories & from AutoFollow
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/delete.png" height="20" width="20"> Deletes User/VOD from the Device (not Twitch)
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/export.png" height="20" width="20"> Exports a VOD from Twitch to Youtube
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi.png" height="20" width="20"> Start watching multiple streams at once on one screen
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/cancel.png" height="20" width="20"> Cancels the current action being taken
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account
@@ -164,6 +178,17 @@ Exported VODs will be visible under the *Exported* menu category.
 VODs that are unavailable on Twitch & have been exported can be deleted.
 
 To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20">
+
+---
+
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi_menu.png" height="30" width="30"> MultiView 
+
+Here you can watch multiple streams at once on one screen.
+
+Enter up to 4 channel names that are currently online and press the MultiView start button.
+The view has been optimized to fit any screen and utilize as much space as it can.
+
+The soft keys can be seen either by swiping from the bottom up, or from the top down.
 
 ---
 
@@ -266,6 +291,26 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 ---
 
 ## Updates
+
+### 1.2.0-a
+
+Second minor release for new features.
+
+Features:
++   MultiView
++   Guides, Help & Links
+
+Issues:
++	Follow Requests fix
++   User view fix
++	VOD exports during stream
++	Autofollow & UserView crashes fix
+
+Other:
++   Dynamic notification button on follow
++   Reimplemented flag files
+
+---
 
 ### 1.1.3-a
 
@@ -430,7 +475,6 @@ The following tasks and features are currently on the roadmap & some of which ar
 + Extend Settings for general (Wifi only, user pic size, theme choice)
 + Stream Scheduler (for past, current & future streams)
 + Quick Tap host
-+ Offline App Guide
 + Host for Host
 + Follow 4 Follow Group (in App or link to Discord)
 + Status, Game, Tags & Description editing option 
@@ -442,6 +486,7 @@ The following tasks and features are currently on the roadmap & some of which ar
 + Handle Multiple/Dual accounts (eg. one for following, one for followers)
 + i18n (Internationalization)
 + Follower/Following search
++ Cast MultiView
 
 ---
 
@@ -503,5 +548,7 @@ Any support or donations are highly appreciated (but not expected) & go towards 
 <a href="https://paypal.me/JamesCullimore/2,50">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
 </a><br><br>
+
+Email: <DescriptiveAnimals@gmail.com>
 
 I'm on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my development preferences & experiences.

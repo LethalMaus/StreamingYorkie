@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         activateWorker("SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
         activateWorker("SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
 
-        ImageButton followers = findViewById(R.id.followers_menu);
+        ImageButton followers = findViewById(R.id.menu_followers);
         followers.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton following = findViewById(R.id.following_menu);
+        ImageButton following = findViewById(R.id.menu_following);
         following.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton f4f = findViewById(R.id.f4f_menu);
+        ImageButton f4f = findViewById(R.id.menu_f4f);
         f4f.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton vods = findViewById(R.id.vod_menu);
+        ImageButton vods = findViewById(R.id.menu_vod);
         vods.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -116,7 +116,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton user = findViewById(R.id.userinfo_menu);
+        ImageButton multi = findViewById(R.id.menu_multi);
+        multi.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, MultiView.class);
+                        startActivity(intent);
+                    }
+                });
+
+        ImageButton user = findViewById(R.id.menu_userinfo);
         user.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -126,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton info = findViewById(R.id.info_menu);
+        ImageButton info = findViewById(R.id.menu_info);
         info.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -136,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        ImageButton settings = findViewById(R.id.settings_menu);
+        ImageButton settings = findViewById(R.id.menu_settings);
         settings.setOnClickListener(
                 new View.OnClickListener() {
                     @Override

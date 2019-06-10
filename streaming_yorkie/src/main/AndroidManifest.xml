@@ -27,11 +27,13 @@
         <activity android:label="Followers" android:name="com.lethalmaus.streaming_yorkie.activity.Followers" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:configChanges="orientation|screenSize"/>
         <activity android:label="Following" android:name="com.lethalmaus.streaming_yorkie.activity.Following" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:configChanges="orientation|screenSize"/>
         <activity android:label="VODs" android:name="com.lethalmaus.streaming_yorkie.activity.VODs" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
+        <activity android:label="Multi View" android:name="com.lethalmaus.streaming_yorkie.activity.MultiView" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
         <activity android:label="User Info" android:name="com.lethalmaus.streaming_yorkie.activity.User" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
         <activity android:label="Info" android:name="com.lethalmaus.streaming_yorkie.activity.Info"/>
+        <activity android:label="Info Guide" android:name="com.lethalmaus.streaming_yorkie.activity.InfoGuide" android:configChanges="orientation|screenSize"/>
         <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsMenu" />
-        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsF4F" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsVOD" android:configChanges="orientation|screenSize"/>
+        <activity android:label="Settings F4F" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsF4F" android:configChanges="orientation|screenSize"/>
+        <activity android:label="Settings VODs" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsVOD" android:configChanges="orientation|screenSize"/>
         <activity android:label="Logs" android:name="com.lethalmaus.streaming_yorkie.activity.Logs" android:configChanges="orientation|screenSize"/>
 
         <meta-data

@@ -1,7 +1,8 @@
 ﻿<h2><b>Introduction</b></h2>
 Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers & <i>export VODS</i> as well as offering a better overview of <i>Followers & Following</i>.
-Automatically <i>Follow, Unfollow, F4F & Export VODs</i> simply by just installing and configuring Streaming Yorkie.
+<b>Automatically Follow, Unfollow, F4F & Export VODs</b> simply by just installing and configuring Streaming Yorkie.
 Helps build a bigger community by simplifying communication & freeing time to stream more.
+Watch multiple streams at once on one screen with <b>MultiView</b>.
 
 <b>Guide</b>
 https://github.com/LethalMaus/StreamingYorkie#guide
@@ -9,7 +10,7 @@ https://github.com/LethalMaus/StreamingYorkie#guide
 The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved.
 Streaming Yorkie is a gift back to a great community who I will continue to support for free.
 
-Streaming Yorkie communicates exclusively with the <i>Twitch API</i> & <i>Twitch Website</i>.
+Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i> & TwitchMultiView.
 A login is required to be able to edit & see your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved.
 This ensures that your account is as safe as can be.
@@ -40,7 +41,6 @@ The following tasks and features are currently on the Roadmap & some of which ar
  • Extend Settings for general (Wifi only, user pic size, theme choice)
  • Stream Scheduler (for past, current & future streams)
  • Quick Tap host
- • Offline App Guide
  • Host for Host
  • Follow 4 Follow Group (in App or link to Discord)
  • Status, Game, Tags & Description editing option
@@ -52,6 +52,7 @@ The following tasks and features are currently on the Roadmap & some of which ar
  • Handle Multiple/Dual accounts (eg. one for following, one for followers)
  • i18n (Internationalization)
  • Follower/Following search
+ • Cast MultiView
 
 <h2><b>Contact</b></h2>
 <b>Discord</b>
@@ -68,5 +69,5 @@ https://github.com/LethalMaus/StreamingYorkie#contact
 
 <small><i>
 Tags:
-StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Helper Automatic Follow F4F Followers VOD VODs Export Youtube Bigger Streamer Community Free Open Source 
+StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Helper Automatic Follow F4F Followers VOD VODs Export Youtube Multi View Bigger Streamer Community Free Open Source
 </i></small>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 
 import java.io.File;
@@ -113,7 +114,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of the previously current users
         ArrayList<String> currentUsers = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
 
-        if (!requestedUsers.isEmpty()) {
+        if (!requestedUsers.isEmpty() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWERS_REQUEST_RUNNING).exists() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWING_REQUEST_RUNNING).exists()) {
             //Iterate to find if a user has unfollowed
             for (int i = 0; i < currentUsers.size(); i++) {
                 if (!requestedUsers.contains(currentUsers.get(i)) &&

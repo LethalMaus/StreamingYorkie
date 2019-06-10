@@ -41,7 +41,7 @@ public class Info extends AppCompatActivity {
         final DevInfoRequestHandler devInfoRequestHandler = new DevInfoRequestHandler(weakActivity, weakContext);
         devInfoRequestHandler.requestDevLogo();
 
-        ImageView developer_Logo = findViewById(R.id.developer_Logo);
+        ImageView developer_Logo = findViewById(R.id.info_developer);
         developer_Logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,8 +55,8 @@ public class Info extends AppCompatActivity {
         });
 
         //Link to StreamingYorkie Guide on Github
-        ImageButton streaming_yorkie = findViewById(R.id.streaming_yorkie_Logo);
-        streaming_yorkie.setOnClickListener(
+        ImageButton readme = findViewById(R.id.info_readme);
+        readme.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -64,9 +64,39 @@ public class Info extends AppCompatActivity {
                     }
                 });
 
-        //Link to Paypal for donations
-        ImageButton streaming_yorkie_contact = findViewById(R.id.streaming_yorkie_contact_Logo);
-        streaming_yorkie_contact.setOnClickListener(
+        //Offline help/guide
+        ImageView help = findViewById(R.id.info_help);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Info.this, InfoGuide.class);
+                startActivity(intent);
+            }
+        });
+
+        //Link to Updates done available on Github
+        ImageButton updates = findViewById(R.id.info_updates);
+        updates.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates");
+                    }
+                });
+
+        //Link to Source Code on Github
+        ImageButton source_code = findViewById(R.id.info_source_code);
+        source_code.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie?files=1");
+                    }
+                });
+
+        //Link to Contact options on Github for donations
+        ImageButton contact = findViewById(R.id.info_contact);
+        contact.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -74,28 +104,8 @@ public class Info extends AppCompatActivity {
                     }
                 });
 
-        //Link to Github for Open Source Projects
-        ImageButton github = findViewById(R.id.github_Logo);
-        github.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/");
-                    }
-                });
-
-        //Link to Discord for contact & support
-        ImageButton discord = findViewById(R.id.discord_Logo);
-        discord.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://discord.gg/uG97jTj");
-                    }
-                });
-
         //Link to Twitch for entertainment
-        ImageButton twitch = findViewById(R.id.twitch_Logo);
+        ImageButton twitch = findViewById(R.id.info_twitch);
         twitch.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -104,13 +114,23 @@ public class Info extends AppCompatActivity {
                     }
                 });
 
-        //Link to Patreon for donations
-        ImageButton patreon = findViewById(R.id.patreon_Logo);
+        //Link to Patreon for membership
+        ImageButton patreon = findViewById(R.id.info_patreon);
         patreon.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         devInfoRequestHandler.requestDevLink("https://patreon.com/LethalMaus");
+                    }
+                });
+
+        //Link to Github for Open Source Projects
+        ImageButton github = findViewById(R.id.info_github);
+        github.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/");
                     }
                 });
 
