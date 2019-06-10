@@ -50,7 +50,7 @@ public class DevInfoRequestHandler extends RequestHandler {
                         public void onResponse(JSONObject response) {
                             try {
                                 if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                    ImageView developer_Logo = weakActivity.get().findViewById(R.id.developer_Logo);
+                                    ImageView developer_Logo = weakActivity.get().findViewById(R.id.info_developer);
                                     Glide.with(weakActivity.get()).load(response.getString("logo")).into(developer_Logo);
                                 }
                             } catch (JSONException e) {

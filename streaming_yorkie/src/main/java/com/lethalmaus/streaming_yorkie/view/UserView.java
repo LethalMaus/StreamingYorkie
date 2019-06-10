@@ -66,7 +66,7 @@ public class UserView extends AsyncTask<Void, View, Void> {
             displayName = user.getString("display_name");
             userID = user.getString("_id");
             logo = user.getString("logo");
-            if (new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+            if (logo.contains("/") && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
                 logo = weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1);
             }
             game = user.getString("game");
@@ -88,7 +88,7 @@ public class UserView extends AsyncTask<Void, View, Void> {
             Activity activity = weakActivity.get();
             if (displayUser && showAllInfo) {
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
-                if (new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+                if (new File(logo).exists()) {
                     user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(logo).getAbsolutePath()));
                 } else {
                     Glide.with(activity).load(new File(logo)).into(user_Logo);
@@ -122,7 +122,7 @@ public class UserView extends AsyncTask<Void, View, Void> {
                 user_Description.setText(description);
             } else if (displayUser) {
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
-                if (new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+                if (new File(logo).exists()) {
                     user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(logo).getAbsolutePath()));
                 } else {
                     Glide.with(activity).load(new File(logo)).into(user_Logo);

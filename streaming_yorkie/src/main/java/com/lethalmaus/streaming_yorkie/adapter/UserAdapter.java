@@ -428,6 +428,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
                         followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
                                 .requestFollow();
+                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FOLLOWING_CURRENT_PATH + File.separator + userID);
+                        new WriteFileHandler(weakContext, Globals.FOLLOWING_UNFOLLOWED_PATH + File.separator + userID, null, null, false).writeToFileOrPath();
                         if (usersToDisplay.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
                             userDataset.remove(userID);
                             datasetChanged();
@@ -442,18 +444,31 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             setPageCountViews(weakActivity);
                         } else {
                             imageButton.setImageResource(R.drawable.follow);
+                            ViewGroup row = (ViewGroup) imageButton.getParent();
+                            row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
                         }
                     } else {
                         followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
                                 .requestFollow();
+                        new WriteFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH + File.separator + userID, null, null, false).writeToFileOrPath();
+                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FOLLOWING_UNFOLLOWED_PATH + File.separator + userID);
                         if (usersToDisplay.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
                             userDataset.remove(userID);
                             datasetChanged();
                             pageCount1--;
                             pageCount2++;
                             setPageCountViews(weakActivity);
+                        } else if (usersToDisplay.contains(Globals.FOLLOWING_UNFOLLOWED_PATH)) {
+                            userDataset.remove(userID);
+                            datasetChanged();
+                            pageCount3--;
+                            pageCount2++;
+                            setPageCountViews(weakActivity);
                         } else {
                             imageButton.setImageResource(R.drawable.unfollow);
+                            ViewGroup row = (ViewGroup) imageButton.getParent();
+                            ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
+                            notificationsButton(imageButton2, userID);
                         }
                     }
                 } else if (weakActivity != null && weakActivity.get() != null) {

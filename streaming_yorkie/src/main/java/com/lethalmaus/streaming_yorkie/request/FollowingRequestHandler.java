@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.FollowFileHandler;
 import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -58,6 +59,7 @@ public class FollowingRequestHandler extends RequestHandler {
     public void sendRequest(int offset) {
         this.offset = offset;
         if (networkIsAvailable()) {
+            new WriteFileHandler(weakContext, Globals.FLAG_FOLLOWING_REQUEST_RUNNING, null, null, false).writeToFileOrPath();
             JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels" + "?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=asc&offset=" + this.offset, null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -96,6 +98,7 @@ public class FollowingRequestHandler extends RequestHandler {
                 followFileHandler.run();
                 sendRequest(offset);
             } else {
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_FOLLOWING_REQUEST_RUNNING);
                 followFileHandler.setOrganize(true);
                 if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
                     Toast.makeText(weakActivity.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal

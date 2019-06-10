@@ -25,8 +25,7 @@
                 android:paddingRight="10dp"
                 android:text="@string/username"
                 android:textSize="18sp"
-                app:layout_constraintEnd_toStartOf="@+id/user_refresh"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/user_Logo"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,18 +39,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/user" />
-
-            <ImageButton
-                android:id="@+id/user_refresh"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/refresh_symbol"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:color/transparent" />
 
             <LinearLayout
                 android:id="@+id/menu1"
@@ -67,32 +54,32 @@
                 app:layout_constraintTop_toBottomOf="@+id/user_Username">
 
                 <ImageButton
-                    android:id="@+id/followers_menu"
+                    android:id="@+id/menu_followers"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/followers_menu"
+                    android:contentDescription="@string/menu_followers"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/followers_menu" />
 
                 <ImageButton
-                    android:id="@+id/following_menu"
+                    android:id="@+id/menu_following"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/following_menu"
+                    android:contentDescription="@string/menu_following"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/following_menu" />
 
                 <ImageButton
-                    android:id="@+id/f4f_menu"
+                    android:id="@+id/menu_f4f"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/f4f_menu"
+                    android:contentDescription="@string/menu_f4f"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/f4f_menu" />
             </LinearLayout>
@@ -111,35 +98,34 @@
                 app:layout_constraintTop_toBottomOf="@+id/menu1">
 
                 <ImageButton
-                    android:id="@+id/vod_menu"
+                    android:id="@+id/menu_vod"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/vods_menu"
+                    android:contentDescription="@string/menu_vods"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/vod_menu" />
 
                 <ImageButton
-                    android:id="@+id/userinfo_menu"
+                    android:id="@+id/menu_multi"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/userinfo_menu"
+                    android:contentDescription="@string/menu_multi"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/userinfo" />
+                    app:srcCompat="@drawable/mutli_menu" />
 
                 <ImageButton
-                    android:id="@+id/info_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/menu_userinfo"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/info_menu"
+                    android:contentDescription="@string/menu_userinfo"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/info" />
+                    app:srcCompat="@drawable/userinfo" />
 
             </LinearLayout>
 
@@ -158,13 +144,24 @@
                 app:layout_constraintTop_toBottomOf="@+id/menu2">
 
                 <ImageButton
-                    android:id="@+id/settings_menu"
+                    android:id="@+id/menu_info"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/settings_menu"
+                    android:contentDescription="@string/menu_info"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/info" />
+
+                <ImageButton
+                    android:id="@+id/menu_settings"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu_settings"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/settings" />
             </LinearLayout>
