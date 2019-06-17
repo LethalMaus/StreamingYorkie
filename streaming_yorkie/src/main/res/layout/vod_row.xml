@@ -35,15 +35,16 @@
     <TextView
         android:id="@+id/vod_game"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/game"
         android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/vod_createdAt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/vod_preview"
-        app:layout_constraintTop_toBottomOf="@+id/vod_title" />
+        app:layout_constraintTop_toTopOf="@+id/vod_preview" />
 
     <TextView
         android:id="@+id/vod_duration"
@@ -51,10 +52,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/duration"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/vod_action_button1"
+        app:layout_constraintBottom_toBottomOf="@+id/vod_preview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/vod_preview" />
 

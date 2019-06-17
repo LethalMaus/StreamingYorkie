@@ -30,14 +30,14 @@
 
 ## Introduction
 
-Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers & *export VODS* as well as offering a better overview of *Followers & Following*.
+Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers, *export VODS* as well as offering a better overview of *Followers & Following*.
 **Automatically Follow, Unfollow, F4F & Export VODs** simply by just installing and configuring Streaming Yorkie.
-Helps build a bigger community by simplifying communication & freeing time to stream more.
-Watch multiple streams at once on one screen with **MultiView**.
+Helps build a bigger community, simplifies/automates communication & helps free up time to stream more.
+Watch multiple streams at once on one screen with **Multi View**.
 Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
-Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv) and [TwitchMultiView](https://github.com/LethalMaus/TwitchMultiView).
+Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv) and [Twitch Multi View](https://github.com/LethalMaus/TwitchMultiView).
 A login is required to be able to view and edit your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
 
@@ -52,7 +52,6 @@ See something inefficient? [Let me know](#contact). I'm always trying to improve
 
 Currently it is in an **Alpha** state. 
 It could be that a *Bug* may appear or the app behaves in an unexpected manner.
-The logic has been tested, however not every view could be tested due to time constraints.
 Please report any problems, suspicions or confirmations to help improve Streaming Yorkie for everyone.
 
 ---
@@ -137,7 +136,7 @@ Each category contains up to 3 of the following actions:
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/export.png" height="20" width="20"> Exports a VOD from Twitch to Youtube
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi.png" height="20" width="20"> Start watching multiple streams at once on one screen
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/cancel.png" height="20" width="20"> Cancels the current action being taken
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.png" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.png" height="20" width="20"> Saves the current changes (if any have been made)
 
@@ -147,7 +146,7 @@ Each category contains up to 3 of the following actions:
 
 Here you can see who you follow (a.k.a. *Following*), who follows you (a.k.a. *Followers*), who unfollowed you & an excluded list from the AutoFollow.
 
-To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20">
+To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20">
 
 > Each Menu has its own exclusion list for view customization that do **not** reflect in other lists.
 >
@@ -177,7 +176,7 @@ A dialog will appear to edit any information such as:
 Exported VODs will be visible under the *Exported* menu category.
 VODs that are unavailable on Twitch & have been exported can be deleted.
 
-To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20">
+To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20">
 
 ---
 
@@ -187,6 +186,8 @@ Here you can watch multiple streams at once on one screen.
 
 Enter up to 4 channel names that are currently online and press the MultiView start button.
 The view has been optimized to fit any screen and utilize as much space as it can.
+
+The MultiView uses an external website [TwitchMultiView](https://lethalmaus.github.io/TwitchMultiView?channels=lethalmaus), designed and hosted by the same developer.
 
 The soft keys can be seen either by swiping from the bottom up, or from the top down.
 
@@ -206,7 +207,7 @@ This is an overview of the *User* who is currently logged in, that shows the fol
 + **Status:** Your Go Live status
 + **Description:** Your profile description
 
-To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/refresh.png" height="20" width="20">
+To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20">
 
 If you would like anything else to be displayed, or have the info display differently, [let me know](#contact).
 
@@ -214,37 +215,18 @@ If you would like anything else to be displayed, or have the info display differ
 
 ### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.png" height="30" width="30"> Info
 
-Here you can find external links in relation to the Streaming Yorkie & its developer.
+Here you can find external links, offline guides and more in relation to the Streaming Yorkie & its developer:
  
-Source Code & Documentation
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/guide.png" height="20" width="20"> Github link to ReadMe guide
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/help.png" height="20" width="20"> Offline help guide
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20"> Github link to Updates
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/sourcecode.png" height="20" width="20"> Github link to the source code
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/contact.png" height="20" width="20"> Github link to Contact
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch_icon.png" height="20" width="20"> Link to developers stream
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="20" width="20"> Membership
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.png" height="20" width="20"> Projects
 
-<a href="https://github.com/LethalMaus/StreamingYorkie">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.png" height="60">
-</a><br><br>
-
-Support & Descriptive Animals Community
-
-<a href="https://discord.gg/asZsz2F">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.png" height="60"> 
-</a><br><br>
-
-Live Streams & Entertainment
-
-<a href="https://www.twitch.tv/lethalmaus">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.png" height="60">
-</a><br><br>
-
-Membership & Partnership
-
-<a href="https://www.patreon.com/LethalMaus/creators">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="60">
-</a><br><br>
-
-Donations (not expected, but welcomed)
-
-<a href="https://paypal.me/JamesCullimore/2,50">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
-</a><br><br>
+On the bottom of the screen, the current app version should be shown.
 
 #### Logs
 
@@ -527,13 +509,13 @@ Please try to use the following template to help resolve the issue quicker.
 
 ## Contact
 
-For any issues, request for changes or questions, feel free to ask. I will get back to you as soon as I can.
+For any issues, questions or change requests, feel free to ask. I will get back to you as soon as I can
 
 <a href="https://discord.gg/asZsz2F">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.png" height="60"> 
 </a><br><br>
 
-I also love to entertain, game & stream as a hobby. If you're interested, come & say 'Hi'
+I also love to entertain, game & stream as a hobby on Twitch. If you're interested, come & say 'Hi'
 
 <a href="https://www.twitch.tv/lethalmaus">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.png" height="60">
@@ -541,13 +523,15 @@ I also love to entertain, game & stream as a hobby. If you're interested, come &
 
 Any support or donations are highly appreciated (but not expected) & go towards improving development & entertainment.
 
-<a href="https://www.patreon.com/LethalMaus/creators">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="60">
-</a><br>
-
 <a href="https://paypal.me/JamesCullimore/2,50">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.png" height="60">
 </a><br><br>
+
+Become a Patreon and decide what my main focus should be.
+
+<a href="https://www.patreon.com/LethalMaus/creators">
+  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="60">
+</a><br>
 
 Email: <DescriptiveAnimals@gmail.com>
 

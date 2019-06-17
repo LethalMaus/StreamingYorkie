@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.activity.VODs;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.VODExportRequestHandler;
@@ -77,6 +78,7 @@ public class AutoVODExportWorker extends Worker {
                                     try {
                                         new WriteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodObject.getString("_id"), null, new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id")).readFile(), false).run();
                                         new WriteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + vodObject.getString("_id"), null, null, false).writeToFileOrPath();
+                                        new WriteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
                                     } catch (JSONException e) {
                                         new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error writing VOD response | " + e.toString(), true);
                                     }
@@ -100,7 +102,10 @@ public class AutoVODExportWorker extends Worker {
      */
     private static void notifyUser(WeakReference<Context> weakContext) {
         int autoVODExportCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles();
-        if (autoVODExportCount > 0 && weakContext != null && weakContext.get() != null) {
+        if (weakContext != null && weakContext.get() != null
+                && new File(weakContext.get().getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()
+                && autoVODExportCount > 0) {
+            new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE);
             Intent intent = new Intent(weakContext.get(), VODs.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(weakContext.get(), 0, intent, 0);

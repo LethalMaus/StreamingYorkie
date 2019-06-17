@@ -1,8 +1,8 @@
 ﻿<h2><b>Introduction</b></h2>
-Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers & <i>export VODS</i> as well as offering a better overview of <i>Followers & Following</i>.
+Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers, <i>export VODs</i>, as well as offering a better overview of <i>Followers & Following</i>.
 <b>Automatically Follow, Unfollow, F4F & Export VODs</b> simply by just installing and configuring Streaming Yorkie.
-Helps build a bigger community by simplifying communication & freeing time to stream more.
-Watch multiple streams at once on one screen with <b>MultiView</b>.
+Helps build a bigger community, simplifies communication & helps free up time to stream more.
+Watch multiple streams at once on one screen with <b>Multi View</b>.
 
 <b>Guide</b>
 https://github.com/LethalMaus/StreamingYorkie#guide
@@ -10,7 +10,7 @@ https://github.com/LethalMaus/StreamingYorkie#guide
 The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved.
 Streaming Yorkie is a gift back to a great community who I will continue to support for free.
 
-Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i> & TwitchMultiView.
+Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i> & <i>Twitch Multi View</i>.
 A login is required to be able to edit & see your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved.
 This ensures that your account is as safe as can be.
@@ -27,7 +27,6 @@ See something inefficient? Let me know. I'm always trying to improve my code & l
 
 Currently it is in an <b>Alpha</b> state. 
 It could be that a <i>Bug</i> may appear or the app behaves in an unexpected manner.
-The logic has been tested, however not every view could be tested due to time constraints.
 Please report any problems or suspicions to help improve Streaming Yorkie for everyone.
 
 <b>Open Source Code</b>
@@ -56,11 +55,11 @@ The following tasks and features are currently on the Roadmap & some of which ar
 
 <h2><b>Contact</b></h2>
 <b>Discord</b>
-For any issues, request for changes or questions, feel free to ask. I will get back to you as soon as I can.
+For any issues, questions or change requests, feel free to ask. I will get back to you as soon as I can
 https://discord.gg/asZsz2F
 
 <b>Twitch</b>
-I also love to entertain, game & stream as a hobby. If you're interested, come & say 'Hi'
+I also love to entertain, game & stream as a hobby on Twitch. If you're interested, come & say 'Hi'
 https://www.twitch.tv/lethalmaus
 
 <b>GitHub</b>
@@ -69,5 +68,5 @@ https://github.com/LethalMaus/StreamingYorkie#contact
 
 <small><i>
 Tags:
-StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Helper Automatic Follow F4F Followers VOD VODs Export Youtube Multi View Bigger Streamer Community Free Open Source
+StreamingYorkie Streaming Yorkie Twitch Stream Follower Following Tool Helper Automatic Follow F4F Followers VOD VODs Videos Export Youtube Multi View Affiliate Streamer Community Free Open Source
 </i></small>

@@ -9,7 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.lethalmaus.streaming_yorkie.BuildConfig;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.request.DevInfoRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
@@ -134,6 +136,8 @@ public class Info extends AppCompatActivity {
                     }
                 });
 
+        TextView appVersion = findViewById(R.id.info_app_version);
+        appVersion.setText(BuildConfig.VERSION_NAME);
     }
     //Cancels the Dev Logo request when it is not needed
     @Override
