@@ -12,6 +12,7 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
+  + [1.2.1-a](#121-a)
   + [1.2.0-a](#120-a)
   + [1.1.3-a](#113-a)
   + [1.1.2-a](#112-a)
@@ -273,6 +274,28 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 ---
 
 ## Updates
+
+### 1.2.1-a
+
+Patch for fixing issues below
+
+Issues:
++	Empty VOD Crash fix
++   Following toast typo
++   Changed min api to 21 due to WebView restrictions
++   UserView crash fix
++   Autofollow crash fix
+
+Improvements:
++   In-app version display
++   Notification repetition & cancellation 
++   Updated offline icon guide
++   Updated & fixed Github readme
++   Improved play store search
++   VOD preview links
++   Twitch sync message clarification
+
+---
 
 ### 1.2.0-a
 
