@@ -34,7 +34,7 @@
 Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers as well as offering a better overview of *Followers & Following*.
 After your stream any *VOD (Video On Demand)* can be seen & exported to *Youtube* in our VOD Overview.
 **Automatically Follow, Unfollow, F4F & export VODs to Youtube** simply by installing and configuring Streaming Yorkie.
-Helps build a bigger community, simplifies/automates communication, become an <i>affiliate<i> sooner & helps free up time to stream more.
+Helps build a bigger community, simplifies/automates communication, become an *affiliate* sooner & helps free up time to stream more.
 Watch multiple streams at once on one screen with **Multi View**.
 Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
@@ -106,7 +106,7 @@ Several menus are available to divide StreamingYorkie into each feature it offer
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20"> Github link to Updates
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/sourcecode.png" height="20" width="20"> Github link to the source code
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/contact.png" height="20" width="20"> Github link to Contact
-  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch_icon.png" height="20" width="20"> Link to developers stream
+  + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.png" height="20" width="20"> Link to developers stream
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="20" width="20"> Membership
   + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.png" height="20" width="20"> Projects
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.png" height="20" width="20"> The settings menu is split up into further features below
@@ -224,7 +224,7 @@ Here you can find external links, offline guides and more in relation to the Str
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.png" height="20" width="20"> Github link to Updates
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/sourcecode.png" height="20" width="20"> Github link to the source code
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/contact.png" height="20" width="20"> Github link to Contact
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch_icon.png" height="20" width="20"> Link to developers stream
++ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.png" height="20" width="20"> Link to developers stream
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.png" height="20" width="20"> Membership
 + <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.png" height="20" width="20"> Projects
 
