@@ -2,7 +2,7 @@
 Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers as well as offering a better overview of <i>Followers & Following</i>.
 After your stream any <i>VOD (Video On Demand)</i> can be seen & exported to <i>Youtube</i> in our VOD Overview.
 <b>Automatically Follow, Unfollow, F4F & export VODs to Youtube</b> simply by installing and configuring Streaming Yorkie.
-Helps build a bigger community, simplifies/automates communication, become an <i>affiliate<i> sooner & helps free up time to stream more.
+Helps build a bigger community, simplifies/automates communication, become an <i>affiliate</i> sooner & helps free up time to stream more.
 Watch multiple streams at once on one screen with <b>Multi View</b>.
 
 <b>Guide</b>
