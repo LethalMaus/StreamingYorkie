@@ -9,10 +9,10 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId 'com.lethalmaus.streaming_yorkie'
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10
-        versionName "1.2.0-a"
+        versionCode 11
+        versionName "1.2.1-a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

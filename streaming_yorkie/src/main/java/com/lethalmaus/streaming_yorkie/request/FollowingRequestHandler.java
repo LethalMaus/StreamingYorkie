@@ -101,7 +101,7 @@ public class FollowingRequestHandler extends RequestHandler {
                 new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_FOLLOWING_REQUEST_RUNNING);
                 followFileHandler.setOrganize(true);
                 if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
-                    Toast.makeText(weakActivity.get(), "Twitch Data for 'Followers' is out of sync. Total should be '" + twitchTotal
+                    Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'Following' is out of sync. Total should be '" + twitchTotal
                             + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show();
                 }
                 followFileHandler.run();

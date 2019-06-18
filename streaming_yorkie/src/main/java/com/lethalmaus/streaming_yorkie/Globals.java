@@ -50,7 +50,7 @@ public class Globals {
     public static final String VOD_EXPORTED_PATH = "VODS_EXPORTED";
     public static final String VOD_EXCLUDED_PATH = "VODS_EXCLUDED";
 
-    //AutoFollow settings object keys
+    //Settings object keys
     public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
     public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";
     public static final String SETTINGS_INTERVAL = "Interval";
@@ -59,19 +59,19 @@ public class Globals {
     public static final String SETTINGS_VISIBILITY = "Visibility";
     public static final String SETTINGS_SPLIT = "Split";
 
-    //AutoFollow settings AUTOFOLLOW values
+    //Settings
     public static final String SETTINGS_OFF = "OFF";
     public static final String SETTINGS_FOLLOW = "FOLLOW";
     public static final String SETTINGS_UNFOLLOW = "UNFOLLOW";
     public static final String SETTINGS_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
     public static final String SETTINGS_EXPORT = "EXPORT";
 
-    //AutoFollow settings AUTOFOLLOW_INTERVAL_UNIT values
+    //Settings interval unit
     public static final String SETTINGS_INTERVAL_UNIT_MINUTES = "MINUTES";
     public static final String SETTINGS_INTERVAL_UNIT_HOURS = "HOURS";
     public static final String SETTINGS_INTERVAL_UNIT_DAYS = "DAYS";
 
-    //AutoFollow settings AUTOFOLLOW_NOTIFICATIONS values
+    //Notification Folders
     public static final String NOTIFICATION_FOLLOW = "NOTIFICATION_FOLLOW";
     public static final String NOTIFICATION_UNFOLLOW = "NOTIFICATION_UNFOLLOW";
     public static final String NOTIFICATION_VODEXPORT = "NOTIFICATION_VODEXPORT";
@@ -88,6 +88,8 @@ public class Globals {
     //Flag Files
     public static final String FLAG_FOLLOWERS_REQUEST_RUNNING = "FLAG_FOLLOWERS_REQUEST_RUNNING";
     public static final String FLAG_FOLLOWING_REQUEST_RUNNING = "FLAG_FOLLOWING_REQUEST_RUNNING";
+    public static final String FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE = "FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE";
+    public static final String FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE = "FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE";
 
     /**
      * Options menu to be available throughout app

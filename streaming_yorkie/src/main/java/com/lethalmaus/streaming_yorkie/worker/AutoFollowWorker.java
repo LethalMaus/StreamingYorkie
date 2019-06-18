@@ -12,6 +12,7 @@ import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.activity.Follow4Follow;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -109,7 +110,7 @@ public class AutoFollowWorker extends Worker {
 
         @Override
         protected void onPostExecute(Void v) {
-            if (autoFollow.equals("FOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW")) {
+            if (autoFollow != null && (autoFollow.equals("FOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
                 ArrayList<String> newUsers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_NEW_PATH).readFileNames();
                 for (final String user : newUsers) {
                     if (!new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + user).exists() &&
@@ -119,13 +120,14 @@ public class AutoFollowWorker extends Worker {
                             @Override
                             public void responseHandler(JSONObject response) {
                                 super.responseHandler(response);
-                                new WriteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + user, null, null, false).run();
+                                new WriteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + user, null, null, false).writeToFileOrPath();
+                                new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
                             }
                         }.setRequestParameters(Request.Method.PUT, user, autoFollowNotifications).requestFollow();
                     }
                 }
             }
-            if (autoFollow.equals("UNFOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW")) {
+            if (autoFollow != null && (autoFollow.equals("UNFOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
                 ArrayList<String> unfollowedUsers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_UNFOLLOWED_PATH).readFileNames();
                 for (final String user : unfollowedUsers) {
                     if (!new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + user).exists() &&
@@ -135,7 +137,8 @@ public class AutoFollowWorker extends Worker {
                             @Override
                             public void responseHandler(JSONObject response) {
                                 super.responseHandler(response);
-                                new WriteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + user, null, null, false).run();
+                                new WriteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + user, null, null, false).writeToFileOrPath();
+                                new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
                             }
                         }.setRequestParameters(Request.Method.DELETE, user, autoFollowNotifications).requestFollow();
                     }
@@ -153,7 +156,10 @@ public class AutoFollowWorker extends Worker {
     private static void notifyUser(WeakReference<Context> weakContext) {
         int autoFollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();
         int autoUnfollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).countFiles();
-        if ((autoFollowCount > 0 || autoUnfollowCount > 0) && weakContext != null && weakContext.get() != null) {
+        if (weakContext != null && weakContext.get() != null
+                && new File(weakContext.get().getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()
+                && (autoFollowCount > 0 || autoUnfollowCount > 0)) {
+            new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE);
             Intent intent = new Intent(weakContext.get(), Follow4Follow.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(weakContext.get(), 0, intent, 0);

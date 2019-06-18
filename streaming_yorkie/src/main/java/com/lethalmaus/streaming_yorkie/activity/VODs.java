@@ -132,6 +132,9 @@ public class VODs extends AppCompatActivity {
         if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_VODEXPORT).exists()) {
             new DeleteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).run();
         }
+        if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()) {
+            new DeleteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
+        }
     }
 
     /**

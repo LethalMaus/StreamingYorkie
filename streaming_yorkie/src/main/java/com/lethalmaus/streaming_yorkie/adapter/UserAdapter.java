@@ -434,7 +434,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             userDataset.remove(userID);
                             datasetChanged();
                             pageCount3--;
-                            pageCount2++;
                             setPageCountViews(weakActivity);
                         } else if (usersToDisplay.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
                             userDataset.remove(userID);

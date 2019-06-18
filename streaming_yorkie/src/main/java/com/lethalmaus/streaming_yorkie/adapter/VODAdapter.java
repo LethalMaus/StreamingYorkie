@@ -3,6 +3,8 @@ package com.lethalmaus.streaming_yorkie.adapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -134,8 +136,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     public void onBindViewHolder(@NonNull VODAdapter.VODViewHolder vodViewHolder, int position) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
             try {
-                if (new File(weakContext.get().getFilesDir() + File.separator + Globals.VOD_PATH + File.separator + vodDataset.get(position)).exists()) {
-                    JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodDataset.get(position)).readFile());
+                    final JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodDataset.get(position)).readFile());
 
                     TextView title = vodViewHolder.vodRow.findViewById(R.id.vod_title);
                     title.setText(vodObject.getString("title"));
@@ -151,6 +152,16 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
 
                     ImageView preview = vodViewHolder.vodRow.findViewById(R.id.vod_preview);
                     Glide.with(weakContext.get()).load(vodObject.getString("preview")).into(preview);
+                    preview.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                weakActivity.get().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(vodObject.getString("url"))));
+                            } catch(JSONException e) {
+                                new WriteFileHandler(weakContext, "ERROR", null, "VAda: Error reading URL in JSON | " + e.toString(), true);
+                            }
+                        }
+                    });
 
                     ImageButton action1 = vodViewHolder.vodRow.findViewById(R.id.vod_action_button1);
                     editButton(action1, actionButtonType1, vodObject.getString("_id"));
@@ -159,10 +170,6 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                     editButton(action2, actionButtonType2, vodObject.getString("_id"));
 
                     weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
-                } else {
-                    new DeleteFileHandler(weakContext, vodPath + File.separator + vodDataset.get(position)).run();
-                    vodDataset.remove(vodDataset.get(position));
-                }
             } catch(JSONException e){
                 new WriteFileHandler(weakContext, "ERROR", null, "VAda: Error reading JSON | " + e.toString(), true);
             }
@@ -221,6 +228,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 }
             } else if (vodDataset.size() > 1) {
                 actionAllButton(actionAllButtonType);
+                for (int i = 0; i < vodDataset.size(); i++) {
+                    if (!new File(weakContext.get().getFilesDir() + File.separator + Globals.VOD_PATH + File.separator + vodDataset.get(i)).exists()) {
+                        new DeleteFileHandler(weakContext, vodPath + File.separator + vodDataset.get(i)).run();
+                        vodDataset.remove(vodDataset.get(i));
+                    }
+                }
             } else {
                 weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
             }
@@ -491,9 +504,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     private void setPageCounts() {
         pageCount1 = new ReadFileHandler(weakContext, Globals.VOD_PATH).countFiles();
         if (pageCount1 > 0) {
-            pageCount2 = new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles();
             pageCount3 = new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).countFiles();
             pageCount1 = pageCount1 - pageCount3 < 0 ? 0 : pageCount1 - pageCount3;
+            pageCount2 = new ReadFileHandler(weakContext, Globals.VOD_EXPORTED_PATH).countFiles();
+            if (pageCount2 > pageCount1) {
+                pageCount2 = pageCount1;
+            }
         }
     }
 

@@ -115,7 +115,7 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/menu_multi"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/mutli_menu" />
+                    app:srcCompat="@drawable/multi_menu" />
 
                 <ImageButton
                     android:id="@+id/menu_userinfo"

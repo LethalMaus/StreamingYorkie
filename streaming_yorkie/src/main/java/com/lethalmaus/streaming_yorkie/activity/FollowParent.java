@@ -111,6 +111,9 @@ public class FollowParent extends AppCompatActivity {
         if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_UNFOLLOW).exists()) {
             new DeleteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
         }
+        if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()) {
+            new DeleteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
+        }
     }
 
     /**

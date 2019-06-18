@@ -81,8 +81,17 @@
     <string name="guide_menu_following">Shows all <b>Following</b> from Twitch including who you have unfollowed</string>
     <string name="guide_menu_f4f">Overview &amp; simplification users who <b>F4F (Follow for Follow)</b></string>
     <string name="guide_menu_vods">Overview for VODs (Videos On Demand) &amp; exporting VODs</string>
+    <string name="guide_menu_multi">Watch multiple streams at once on one screen</string>
     <string name="guide_menu_userinfo">Quick overview about your Twitch account</string>
     <string name="guide_menu_info">Shows different platforms for further information such as a <b>Twitch</b> &amp; <b>Contact</b></string>
+    <string name="guide_menu_github_readme">Github link to ReadMe guide</string>
+    <string name="guide_menu_help">Offline help guide</string>
+    <string name="guide_menu_updates">Github link to Updates</string>
+    <string name="guide_menu_sourcecode">Github link to the source code</string>
+    <string name="guide_menu_contact">Github link to Contact</string>
+    <string name="guide_menu_twitch">Link to developers stream</string>
+    <string name="guide_menu_patreon">Membership</string>
+    <string name="guide_menu_github">Projects</string>
     <string name="guide_menu_settings">The settings menu is split up into further features below</string>
     <string name="guide_menu_autofollow">Settings for activating &amp; configuring the AutoFollow Service</string>
     <string name="guide_menu_autovodexport">Settings for activating &amp; configuring the AutoVODExport Service</string>
@@ -108,6 +117,7 @@
     <string name="guide_actions_include">Includes Users/VODs from other categories &amp; from AutoFollow</string>
     <string name="guide_actions_delete">Deletes User/VOD from the Device (not Twitch)</string>
     <string name="guide_actions_export">Exports a VOD from Twitch to Youtube</string>
+    <string name="guide_actions_multi">Start watching multiple streams at once on one screen</string>
     <string name="guide_actions_cancel">Cancels the current action being taken</string>
     <string name="guide_actions_refresh">Refreshes the current view (if internet is available)</string>
     <string name="guide_actions_authorization">Logs out of StreamingYorkie &amp; Twitch as well as deleting all device data</string>
