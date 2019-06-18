@@ -31,13 +31,14 @@
 
 ## Introduction
 
-Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers, *export VODS* as well as offering a better overview of *Followers & Following*.
-**Automatically Follow, Unfollow, F4F & Export VODs** simply by just installing and configuring Streaming Yorkie.
-Helps build a bigger community, simplifies/automates communication & helps free up time to stream more.
+Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers as well as offering a better overview of *Followers & Following*.
+After your stream any *VOD (Video On Demand)* can be seen & exported to *Youtube* in our VOD Overview.
+**Automatically Follow, Unfollow, F4F & export VODs to Youtube** simply by installing and configuring Streaming Yorkie.
+Helps build a bigger community, simplifies/automates communication, become an <i>affiliate<i> sooner & helps free up time to stream more.
 Watch multiple streams at once on one screen with **Multi View**.
 Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
-The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for free.
+The code is **Open Source**, contains **no costs & no advertisements** are involved. Streaming Yorkie is a gift back to a great community who I will continue to support for **free**.
 Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv) and [Twitch Multi View](https://github.com/LethalMaus/TwitchMultiView).
 A login is required to be able to view and edit your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved. This ensures that your account is as safe as can be.
