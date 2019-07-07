@@ -1,5 +1,6 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +21,7 @@ import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
+import com.lethalmaus.streaming_yorkie.request.ShareF4FStatusRequestHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,6 +78,7 @@ public class SettingsF4F extends AppCompatActivity {
         intervalValue();
         intervalUnitRadioGroup();
         notificationSwitch();
+        shareF4FStatusSwitch();
 
         ImageButton save = findViewById(R.id.settings_save);
         save.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +107,7 @@ public class SettingsF4F extends AppCompatActivity {
             settings.put(Globals.SETTINGS_INTERVAL, 1);
             settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
             settings.put(Globals.SETTINGS_NOTIFICATIONS, false);
+            settings.put(Globals.SETTINGS_SHARE_F4F_STATUS, false);
             new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).writeToFileOrPath();
         } catch (JSONException e) {
             Toast.makeText(SettingsF4F.this, "Error creating F4F Settings", Toast.LENGTH_SHORT).show();
@@ -279,6 +283,38 @@ public class SettingsF4F extends AppCompatActivity {
     }
 
     /**
+     * Reads settings and changes the AutoFollow Share F4F Status Preference Switch. Also adds the Listener
+     * @author LethalMaus
+     */
+    private void shareF4FStatusSwitch() {
+        Switch autoFollowShareF4FStatus = findViewById(R.id.settings_autoFollow_share_f4f_status);
+        try {
+            if (settings.has(Globals.SETTINGS_SHARE_F4F_STATUS)) {
+                autoFollowShareF4FStatus.setChecked(settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS));
+            } else {
+                autoFollowShareF4FStatus.setChecked(false);
+            }
+        } catch(JSONException e) {
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakContext, "ERROR", null,"Error reading F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS + " | " + e.toString(), true).run();
+        }
+        autoFollowShareF4FStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                try {
+                    settings.put(Globals.SETTINGS_SHARE_F4F_STATUS, isChecked);
+                    if (isChecked) {
+                        Toast.makeText(SettingsF4F.this, "You will be sharing your F4F status to Discord for others to follow you. There you can find other users who have AutoFollow activated", Toast.LENGTH_LONG).show();
+                    }
+                } catch(JSONException e) {
+                    Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS + " | " + e.toString(), true).run();
+                }
+            }
+        });
+    }
+
+    /**
      * Checks if changes were made anywhere and prompts user to save.
      * @author LethalMaus
      */
@@ -289,7 +325,8 @@ public class SettingsF4F extends AppCompatActivity {
             if (!previousSettings.getString(Globals.SETTINGS_AUTOFOLLOW).equals(settings.getString(Globals.SETTINGS_AUTOFOLLOW))||
                     previousSettings.getInt(Globals.SETTINGS_INTERVAL) != settings.getInt(Globals.SETTINGS_INTERVAL) ||
                     !previousSettings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) ||
-                    previousSettings.getBoolean(Globals.SETTINGS_NOTIFICATIONS) != settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS)) {
+                    previousSettings.getBoolean(Globals.SETTINGS_NOTIFICATIONS) != settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS) ||
+                    (previousSettings.has(Globals.SETTINGS_SHARE_F4F_STATUS) && previousSettings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) != settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS))) {
                 if (!settings.getString(Globals.SETTINGS_AUTOFOLLOW).equals(Globals.SETTINGS_OFF)) {
                     promptActivatingAutoFollow();
                 } else if (settings.getInt(Globals.SETTINGS_INTERVAL) < 15 && settings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(SETTINGS_INTERVAL_UNIT_MINUTES)) {
@@ -372,6 +409,17 @@ public class SettingsF4F extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 new WriteFileHandler(weakContext, "SETTINGS_F4F", null, settings.toString(), false).run();
                 Toast.makeText(SettingsF4F.this, "Changes saved", Toast.LENGTH_SHORT).show();
+                try {
+                    if (settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOW) || settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOWUNFOLLOW))) {
+                        JSONObject postBody = new JSONObject();
+                        String username = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile()).getString("display_name");
+                        postBody.put("content", username + " is doing F4F automatically with AutoFollow every " + settings.getString(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + ". Follow them here https://www.twitch.tv/" + username);
+                        new ShareF4FStatusRequestHandler(new WeakReference<Activity>(SettingsF4F.this), weakContext).shareF4FStatus(postBody);
+                    }
+                } catch(JSONException e) {
+                    Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakContext, "ERROR", null,"Error reading F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS + " | " + e.toString(), true).run();
+                }
                 finish();
             }
         });

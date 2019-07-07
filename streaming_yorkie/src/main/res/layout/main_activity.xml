@@ -99,7 +99,7 @@
 
                 <ImageButton
                     android:id="@+id/menu_vod"
-                    android:layout_width="80dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
@@ -109,7 +109,7 @@
 
                 <ImageButton
                     android:id="@+id/menu_multi"
-                    android:layout_width="80dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
@@ -118,14 +118,14 @@
                     app:srcCompat="@drawable/multi_menu" />
 
                 <ImageButton
-                    android:id="@+id/menu_userinfo"
-                    android:layout_width="80dp"
+                    android:id="@+id/menu_lurk"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu_userinfo"
+                    android:contentDescription="@string/menu_lurk"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/userinfo" />
+                    app:srcCompat="@drawable/lurk_menu" />
 
             </LinearLayout>
 
@@ -142,6 +142,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/menu2">
+
+                <ImageButton
+                    android:id="@+id/menu_userinfo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu_userinfo"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/userinfo" />
 
                 <ImageButton
                     android:id="@+id/menu_info"

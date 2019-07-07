@@ -178,6 +178,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
 
     /**
      * Takes action once a dataset has been changed then notifies UI
+     * @author LethalMaus
      */
     private void datasetChanged() {
         if (vodDataset != null && vodDataset.size() > 0) {

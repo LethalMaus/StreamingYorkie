@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
 import com.lethalmaus.streaming_yorkie.activity.InfoGuide;
+import com.lethalmaus.streaming_yorkie.activity.MainActivity;
 import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 
 /**
@@ -50,6 +51,9 @@ public class Globals {
     public static final String VOD_EXPORTED_PATH = "VODS_EXPORTED";
     public static final String VOD_EXCLUDED_PATH = "VODS_EXCLUDED";
 
+    //Directories for Lurks
+    public static final String LURK_PATH = "LURKS";
+
     //Settings object keys
     public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
     public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";
@@ -64,6 +68,7 @@ public class Globals {
     public static final String SETTINGS_FOLLOW = "FOLLOW";
     public static final String SETTINGS_UNFOLLOW = "UNFOLLOW";
     public static final String SETTINGS_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
+    public static final String SETTINGS_SHARE_F4F_STATUS = "SHARE_F4F_STATUS";
     public static final String SETTINGS_EXPORT = "EXPORT";
 
     //Settings interval unit
@@ -85,6 +90,10 @@ public class Globals {
     public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME = "AutoVODExport";
     public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new VODs have been exported";
 
+    public static final String LURKSERVICE_NOTIFICATION_CHANNEL_ID = "LURKSERVICE_NOTIFICATION";
+    public static final String LURKSERVICE_NOTIFICATION_CHANNEL_NAME = "LurkService";
+    public static final String LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if lurking is activated";
+
     //Flag Files
     public static final String FLAG_FOLLOWERS_REQUEST_RUNNING = "FLAG_FOLLOWERS_REQUEST_RUNNING";
     public static final String FLAG_FOLLOWING_REQUEST_RUNNING = "FLAG_FOLLOWING_REQUEST_RUNNING";
@@ -101,6 +110,11 @@ public class Globals {
     public static boolean onOptionsItemsSelected(Activity activity, MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
+            case android.R.id.home:
+                intent = new Intent(activity, MainActivity.class);
+                activity.startActivity(intent);
+                activity.finish();
+                return true;
             case R.id.menu_info_guide:
                 intent = new Intent(activity, InfoGuide.class);
                 activity.startActivity(intent);
