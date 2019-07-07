@@ -30,6 +30,7 @@
     <string name="interval_hours">Hour(s)</string>
     <string name="interval_days">Day(s)</string>
     <string name="interval_weeks">Weeks(s)</string>
+    <string name="settings_share_f4f_status">Share F4F Status</string>
     <string name="save_symbol">Save Symbol</string>
     <string name="blank_text">_____</string>
     <string name="description">Description:</string>
@@ -45,6 +46,7 @@
     <string name="action_button_1">Action Button 1</string>
     <string name="logout">Logout</string>
     <string name="info">Info</string>
+    <string name="cast">Cast</string>
     <string name="settings">Settings</string>
     <string name="actionAll">Follow/Unfollow All</string>
     <string name="vod_preview">VOD Preview</string>
@@ -63,6 +65,7 @@
     <string name="menu_f4f">F4F Menu</string>
     <string name="menu_vods">VODs Menu</string>
     <string name="menu_multi">Multi Menu</string>
+    <string name="menu_lurk">Lurk</string>
     <string name="menu_userinfo">UserInfo Menu</string>
     <string name="menu_info">Info Menu</string>
     <string name="menu_settings">Settings Menu</string>
@@ -82,6 +85,7 @@
     <string name="guide_menu_f4f">Overview &amp; simplification users who <b>F4F (Follow for Follow)</b></string>
     <string name="guide_menu_vods">Overview for VODs (Videos On Demand) &amp; exporting VODs</string>
     <string name="guide_menu_multi">Watch multiple streams at once on one screen</string>
+    <string name="guide_menu_lurk">Lurk streamers and add to their view count</string>
     <string name="guide_menu_userinfo">Quick overview about your Twitch account</string>
     <string name="guide_menu_info">Shows different platforms for further information such as a <b>Twitch</b> &amp; <b>Contact</b></string>
     <string name="guide_menu_github_readme">Github link to ReadMe guide</string>
@@ -118,6 +122,8 @@
     <string name="guide_actions_delete">Deletes User/VOD from the Device (not Twitch)</string>
     <string name="guide_actions_export">Exports a VOD from Twitch to Youtube</string>
     <string name="guide_actions_multi">Start watching multiple streams at once on one screen</string>
+    <string name="guide_actions_lurk">Initiate lurking given streamer</string>
+    <string name="guide_actions_unlurk">Stop lurking chosen streamer</string>
     <string name="guide_actions_cancel">Cancels the current action being taken</string>
     <string name="guide_actions_refresh">Refreshes the current view (if internet is available)</string>
     <string name="guide_actions_authorization">Logs out of StreamingYorkie &amp; Twitch as well as deleting all device data</string>
@@ -125,4 +131,6 @@
     <string name="multi_channel">Channel:</string>
     <string name="multi_channel_enter">Enter a Twitch channel name&#8230;</string>
     <string name="multi_start">Start Multi Twitch</string>
+    <string name="lurk_start">Start Lurk</string>
+    <string name="lurk_input">Enter a Twitch channel name&#8230;</string>
 </resources>

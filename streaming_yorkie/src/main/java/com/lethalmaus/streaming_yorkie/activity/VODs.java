@@ -51,7 +51,7 @@ public class VODs extends AppCompatActivity {
         this.weakContext = new WeakReference<>(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vod);
-        WorkManager.getInstance().cancelUniqueWork("AUTOFOLLOW_WORKER");
+        WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOVODEXPORT);
         setSubtitle("VODs");
 
         progressBar = findViewById(R.id.progressbar);

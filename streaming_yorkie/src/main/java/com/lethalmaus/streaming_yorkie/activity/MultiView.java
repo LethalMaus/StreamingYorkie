@@ -1,8 +1,11 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -27,9 +30,6 @@ public class MultiView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        /*TODO
-        single tap toggle ui
-         */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.multi_view);
 
@@ -55,6 +55,35 @@ public class MultiView extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.cast, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.cast) {
+            startActivity(new Intent("android.settings.CAST_SETTINGS"));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (findViewById(R.id.multi_view).getVisibility() == View.VISIBLE) {
+            findViewById(R.id.multi_view).setVisibility(View.GONE);
+            findViewById(R.id.multi_input).setVisibility(View.VISIBLE);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().show();
+            }
+            showSystemUI();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**
@@ -87,20 +116,6 @@ public class MultiView extends AppCompatActivity {
                 channels += ",";
             }
             channels += channelInput4.getText().toString();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (findViewById(R.id.multi_view).getVisibility() == View.VISIBLE) {
-            findViewById(R.id.multi_view).setVisibility(View.GONE);
-            findViewById(R.id.multi_input).setVisibility(View.VISIBLE);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().show();
-            }
-            showSystemUI();
-        } else {
-            super.onBackPressed();
         }
     }
 

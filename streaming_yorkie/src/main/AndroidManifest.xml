@@ -2,39 +2,116 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lethalmaus.streaming_yorkie">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/streaming_yorkie"
-        android:logo="@mipmap/streaming_yorkie_foreground"
         android:label="@string/app_name"
+        android:logo="@mipmap/streaming_yorkie_foreground"
         android:roundIcon="@mipmap/streaming_yorkie_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.lethalmaus.streaming_yorkie.activity.MainActivity">
+        <service
+            android:name=".service.LurkService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:label="Authorization" android:name="com.lethalmaus.streaming_yorkie.activity.Authorization" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Follow Parent" android:name="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity"/>
-        <activity android:label="Follow4Follow" android:name="com.lethalmaus.streaming_yorkie.activity.Follow4Follow" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Followers" android:name="com.lethalmaus.streaming_yorkie.activity.Followers" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Following" android:name="com.lethalmaus.streaming_yorkie.activity.Following" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.FollowParent" android:configChanges="orientation|screenSize"/>
-        <activity android:label="VODs" android:name="com.lethalmaus.streaming_yorkie.activity.VODs" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Multi View" android:name="com.lethalmaus.streaming_yorkie.activity.MultiView" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
-        <activity android:label="User Info" android:name="com.lethalmaus.streaming_yorkie.activity.User" android:parentActivityName="com.lethalmaus.streaming_yorkie.activity.MainActivity" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Info" android:name="com.lethalmaus.streaming_yorkie.activity.Info"/>
-        <activity android:label="Info Guide" android:name="com.lethalmaus.streaming_yorkie.activity.InfoGuide" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Settings" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsMenu" />
-        <activity android:label="Settings F4F" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsF4F" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Settings VODs" android:name="com.lethalmaus.streaming_yorkie.activity.SettingsVOD" android:configChanges="orientation|screenSize"/>
-        <activity android:label="Logs" android:name="com.lethalmaus.streaming_yorkie.activity.Logs" android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".activity.Authorization"
+            android:configChanges="orientation|screenSize"
+            android:label="Authorization"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.FollowParent"
+            android:label="Follow Parent"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Follow4Follow"
+            android:configChanges="orientation|screenSize"
+            android:label="Follow4Follow"
+            android:parentActivityName=".activity.FollowParent"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Followers"
+            android:configChanges="orientation|screenSize"
+            android:label="Followers"
+            android:parentActivityName=".activity.FollowParent"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Following"
+            android:configChanges="orientation|screenSize"
+            android:label="Following"
+            android:parentActivityName=".activity.FollowParent"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.VODs"
+            android:configChanges="orientation|screenSize"
+            android:label="VODs"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.MultiView"
+            android:configChanges="orientation|screenSize"
+            android:label="Multi View"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Lurk"
+            android:configChanges="orientation|screenSize"
+            android:label="Lurk"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.User"
+            android:configChanges="orientation|screenSize"
+            android:label="User Info"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Info"
+            android:label="Info"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.InfoGuide"
+            android:configChanges="orientation|screenSize"
+            android:label="Info Guide"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.SettingsMenu"
+            android:label="Settings"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.SettingsF4F"
+            android:configChanges="orientation|screenSize"
+            android:label="Settings F4F"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.SettingsVOD"
+            android:configChanges="orientation|screenSize"
+            android:label="Settings VODs"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Logs"
+            android:configChanges="orientation|screenSize"
+            android:label="Logs"
+            android:launchMode="singleInstance"/>
 
         <meta-data
             android:name="preloaded_fonts"
@@ -42,9 +119,6 @@
         <meta-data
             android:name="fontProviderRequests"
             android:value="Noto Color Emoji Compat" />
-        <!--
-        <service android:name=".AutoFollowObserver" android:enabled="true" android:exported="false" ></service>
-        -->
     </application>
 
 </manifest>

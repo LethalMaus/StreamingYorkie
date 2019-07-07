@@ -57,7 +57,7 @@ public class FollowParent extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.follow_parent);
-        WorkManager.getInstance().cancelUniqueWork("AUTOFOLLOW_WORKER");
+        WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOFOLLOW);
 
         progressBar = findViewById(R.id.progressbar);
         //This is to make sure its invisible (not necessary but wanted)

@@ -66,7 +66,8 @@ public class UserView extends AsyncTask<Void, View, Void> {
             displayName = user.getString("display_name");
             userID = user.getString("_id");
             logo = user.getString("logo");
-            if (logo.contains("/") && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+            if (logo.contains("/")
+                    && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
                 logo = logo.substring(logo.lastIndexOf("/")+1);
             }
             game = user.getString("game");
@@ -84,11 +85,12 @@ public class UserView extends AsyncTask<Void, View, Void> {
 
     @Override
     protected void onPostExecute(Void v) {
-        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+        if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
             Activity activity = weakActivity.get();
             if (displayUser && showAllInfo) {
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
-                if (!logo.contains("/") && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
+                if (!logo.contains("/")
+                        && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
                     user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(weakContext.get().getFilesDir() + File.separator + logo).getAbsolutePath()));
                 } else {
                     Glide.with(activity).load(new File(logo)).into(user_Logo);
@@ -122,7 +124,8 @@ public class UserView extends AsyncTask<Void, View, Void> {
                 user_Description.setText(description);
             } else if (displayUser) {
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
-                if (!logo.contains("/") && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
+                if (!logo.contains("/")
+                        && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
                     user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(weakContext.get().getFilesDir() + File.separator + logo).getAbsolutePath()));
                 } else {
                     Glide.with(activity).load(new File(logo)).into(user_Logo);

@@ -155,6 +155,15 @@
                 android:text="@string/enable_notifications"
                 android:textSize="16sp" />
 
+            <Switch
+                android:id="@+id/settings_autoFollow_share_f4f_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_weight="1"
+                android:text="@string/settings_share_f4f_status"
+                android:textSize="16sp" />
+
         </LinearLayout>
     </ScrollView>
 

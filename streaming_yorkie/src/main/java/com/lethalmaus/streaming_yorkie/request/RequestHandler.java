@@ -30,7 +30,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 public class RequestHandler {
 
     //User token for authorization
-    private String token;
+    String token;
 
     int offset;
     int twitchTotal;
