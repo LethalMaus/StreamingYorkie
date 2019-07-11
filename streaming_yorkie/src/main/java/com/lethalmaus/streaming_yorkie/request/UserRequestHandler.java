@@ -24,9 +24,6 @@ import java.util.Map;
 public class UserRequestHandler extends RequestHandler {
 
     private UserFileHandler userFileHandler;
-    //Whether the user should be displayed or just updated
-    //Whether all the info or just the name & logo
-    private boolean showAllInfo;
     //Whether a request should be sent or just the file to be accessed
     private boolean requestUpdate;
 
@@ -35,22 +32,20 @@ public class UserRequestHandler extends RequestHandler {
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
-     * @param displayUser boolean whether user is to be displayed
-     * @param showAllInfo boolean whether to show all the info or just the name & logo
+     * @param displayUser boolean whether channel is to be displayed
      * @param requestUpdate boolean whether a request should be sent or just the file to be accessed
      */
-    public UserRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUser, boolean showAllInfo, boolean requestUpdate) {
+    public UserRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUser, boolean requestUpdate) {
         super(weakActivity, weakContext, null);
         userFileHandler = new UserFileHandler(weakContext, requestUpdate);
         this.displayRequest = displayUser;
-        this.showAllInfo = showAllInfo;
         this.requestUpdate = requestUpdate;
     }
 
     @Override
     public void sendRequest(int offset) {
         if (networkIsAvailable() && requestUpdate) {
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/channel", null,
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/user", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -82,7 +77,7 @@ public class UserRequestHandler extends RequestHandler {
     public void responseHandler(JSONObject response) {
         userFileHandler.setResponse(response);
         userFileHandler.writeUser();
-        new UserView(weakActivity, weakContext, displayRequest, showAllInfo).execute();
+        new UserView(weakActivity, weakContext, displayRequest).execute();
     }
 
     @Override
@@ -90,6 +85,6 @@ public class UserRequestHandler extends RequestHandler {
         if (weakActivity != null && weakActivity.get() != null && requestUpdate) {
             Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved User Info", Toast.LENGTH_SHORT).show();
         }
-        new UserView(weakActivity, weakContext, displayRequest, showAllInfo).execute();
+        new UserView(weakActivity, weakContext, displayRequest).execute();
     }
 }

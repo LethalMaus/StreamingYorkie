@@ -54,7 +54,7 @@ public class Lurk extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lurk);
 
-        new UserRequestHandler(weakActivity, weakContext,true, false, false).sendRequest(0);
+        new UserRequestHandler(weakActivity, weakContext,true, false).sendRequest(0);
         recyclerView = findViewById(R.id.lurk_list);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);

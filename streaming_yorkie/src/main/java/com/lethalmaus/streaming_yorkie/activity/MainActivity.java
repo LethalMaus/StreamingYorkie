@@ -38,7 +38,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 
 /**
- * Main Activity. If the user isn't logged in then the activity changes to Authorization.
+ * Main Activity. If the channel isn't logged in then the activity changes to Authorization.
  * Otherwise it shows the menu.
  * @author LethalMaus
  */
@@ -71,10 +71,6 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-
-        userLoggedIn();
-        activateWorker("SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
-        activateWorker("SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
         createNotificationChannel(Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
 
         ImageButton followers = findViewById(R.id.menu_followers);
@@ -142,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(MainActivity.this, User.class);
+                        Intent intent = new Intent(MainActivity.this, Channel.class);
                         startActivity(intent);
                     }
                 });
@@ -193,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks if a User has logged in before then it updates & displays the Username & Logo. Otherwise it starts a login process.
+     * Checks if a Channel has logged in before then it updates & displays the Username & Logo. Otherwise it starts a login process.
      * @author LethalMaus
      */
     private void userLoggedIn() {
@@ -205,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
         } else {
-            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext()), true, false, false).sendRequest(0);
+            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext()), true, true).sendRequest(0);
         }
     }
 

@@ -15,7 +15,7 @@ import com.lethalmaus.streaming_yorkie.request.DevInfoRequestHandler;
 import java.lang.ref.WeakReference;
 
 /**
- * Activity for showing User Guide
+ * Activity for showing Channel Guide
  * @author LethalMaus
  */
 public class InfoGuide extends AppCompatActivity {

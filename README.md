@@ -12,18 +12,6 @@
 + [Introduction](#introduction)
 + [Guide](#guide)
 + [Updates](#updates)
-  + [1.3.0-a](#130-a)
-  + [1.2.1-a](#121-a)
-  + [1.2.0-a](#120-a)
-  + [1.1.3-a](#113-a)
-  + [1.1.2-a](#112-a)
-  + [1.1.1-a](#111-a)
-  + [1.1.0-a](#110-a)
-  + [1.0.4-a](#104-a)
-  + [1.0.3-a](#103-a)
-  + [1.0.2-a](#102-a)
-  + [1.0.1-a](#101-a)
-  + [1.0.0-a](#100-a)
 + [Release Prerequisites](#release-prerequisites)
 + [Roadmap](#roadmap)
 + [Issues](#issues)
@@ -314,6 +302,38 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 ---
 
 ## Updates
+
++ [1.3.1-a](#131-a)
++ [1.3.0-a](#130-a)
++ [1.2.1-a](#121-a)
++ [1.2.0-a](#120-a)
++ [1.1.3-a](#113-a)
++ [1.1.2-a](#112-a)
++ [1.1.1-a](#111-a)
++ [1.1.0-a](#110-a)
++ [1.0.4-a](#104-a)
++ [1.0.3-a](#103-a)
++ [1.0.2-a](#102-a)
++ [1.0.1-a](#101-a)
++ [1.0.0-a](#100-a)
+
+### 1.3.1-a
+
+Patch for fixing issues below
+
+Features:
++   MultiView Cast
++   Lurk Service
++   Share F4F to Discord
+
+Issues:
++	Login Crash due to 2FA
+
+Other:
++   Release prerequisites
++   Minor refactoring
+
+---
 
 ### 1.3.0-a
 

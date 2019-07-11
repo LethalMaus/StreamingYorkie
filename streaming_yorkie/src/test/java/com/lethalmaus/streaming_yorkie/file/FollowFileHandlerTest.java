@@ -56,7 +56,7 @@ public class FollowFileHandlerTest {
 
     @Test
     public void shouldWriteMultipleFollowersFile() throws JSONException {
-        shouldWriteMultipleFollowFiles("user");
+        shouldWriteMultipleFollowFiles("channel");
     }
 
     private void shouldWriteMultipleFollowFiles(String channelOrUser) throws JSONException {

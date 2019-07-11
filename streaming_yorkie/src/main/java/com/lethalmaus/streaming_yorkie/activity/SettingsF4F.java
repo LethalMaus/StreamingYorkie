@@ -39,7 +39,7 @@ import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_UNFOLLOW;
 
 /**
  * Activity for F4F settings that creates the settings only when first opened.
- * The settings are never needed unless the user tries to change them.
+ * The settings are never needed unless the channel tries to change them.
  * @author LethalMaus
  */
 public class SettingsF4F extends AppCompatActivity {
@@ -97,7 +97,7 @@ public class SettingsF4F extends AppCompatActivity {
     }
 
     /**
-     * This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
+     * This creates the setting first time. It is done here because it is only ever needed if the channel wants to change settings. Otherwise its never needed.
      * @author LethalMaus
      */
     private void createSettingsFile() {
@@ -315,7 +315,7 @@ public class SettingsF4F extends AppCompatActivity {
     }
 
     /**
-     * Checks if changes were made anywhere and prompts user to save.
+     * Checks if changes were made anywhere and prompts channel to save.
      * @author LethalMaus
      */
     private void saveSettings() {
@@ -345,7 +345,7 @@ public class SettingsF4F extends AppCompatActivity {
     }
 
     /**
-     * Notifies user to prepare before activating the AutoFollow Worker
+     * Notifies channel to prepare before activating the AutoFollow Worker
      * @author LethalMaus
      */
     private void promptActivatingAutoFollow() {
@@ -379,7 +379,7 @@ public class SettingsF4F extends AppCompatActivity {
     }
 
     /**
-     * Notifies User if the AutoFollow Interval is less than 15 Minutes.
+     * Notifies Channel if the AutoFollow Interval is less than 15 Minutes.
      * Android only allows Periodic Requests from 15 Minutes onwards
      * @author LethalMaus
      */
@@ -399,7 +399,7 @@ public class SettingsF4F extends AppCompatActivity {
     }
 
     /**
-     * Prompts user if these settings are wanted, or if they should be discard.
+     * Prompts channel if these settings are wanted, or if they should be discard.
      * @author LethalMaus
      */
     private void promptUserSaveSettings() {

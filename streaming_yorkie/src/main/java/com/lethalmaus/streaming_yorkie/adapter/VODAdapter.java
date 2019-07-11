@@ -246,7 +246,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      * @param button which button is to be changed
      * @param actionButtonType a constant of the action button type
-     * @param vodID the user id which is related to the button
+     * @param vodID the channel id which is related to the button
      */
     private void editButton(ImageButton button, String actionButtonType, String vodID) {
         if (actionButtonType != null && actionButtonType.contentEquals("EXPORT") && !new File(appDirectory + File.separator + Globals.VOD_EXPORTED_PATH + File.separator + vodID).exists()) {
@@ -386,7 +386,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * Button for excluding a VOD from automation and other views
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID user to be excluded
+     * @param vodID channel to be excluded
      */
     private void excludeButton(ImageButton imageButton, final String vodID) {
         imageButton.setImageResource(R.drawable.excluded);
@@ -499,7 +499,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Method for counting files within user directories
+     * Method for counting files within channel directories
      * @author LethalMaus
      */
     private void setPageCounts() {

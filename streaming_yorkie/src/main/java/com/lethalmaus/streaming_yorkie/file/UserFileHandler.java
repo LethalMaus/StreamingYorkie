@@ -28,7 +28,7 @@ public class UserFileHandler implements Runnable {
      * Constructor with weak reference to a context, needed to display the user info
      * @author LethalMaus
      * @param weakContext weak reference context
-     * @param downloadUserLogo bool if user logo is to be downloaded, linked with requestUpdate
+     * @param downloadUserLogo bool if channel logo is to be downloaded, linked with requestUpdate
      */
     public UserFileHandler(WeakReference<Context> weakContext, boolean downloadUserLogo) {
         this.weakContext = weakContext;
@@ -59,20 +59,20 @@ public class UserFileHandler implements Runnable {
                     public void run() {
                         try {
                             URL url = new URL(response.getString("logo"));
-                            InputStream in = new BufferedInputStream(url.openStream());
-                            ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            byte[] buf = new byte[1024];
-                            int n;
-                            while (-1 != (n = in.read(buf))) {
-                                out.write(buf, 0, n);
+                            InputStream inputStream = new BufferedInputStream(url.openStream());
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            byte[] buffer = new byte[1024];
+                            int byteNumber;
+                            while (-1 != (byteNumber = inputStream.read(buffer))) {
+                                byteArrayOutputStream.write(buffer, 0, byteNumber);
                             }
-                            out.close();
-                            in.close();
+                            byteArrayOutputStream.close();
+                            inputStream.close();
                             FileOutputStream fos = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/")+1));
-                            fos.write(out.toByteArray());
+                            fos.write(byteArrayOutputStream.toByteArray());
                             fos.close();
                         } catch (Exception e) {
-                            new WriteFileHandler(weakContext, "ERROR", null, "Cannot download user logo | " + e.toString(),true).run();
+                            new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(),true).run();
                         }
                     }
                 }).start();
@@ -81,18 +81,8 @@ public class UserFileHandler implements Runnable {
             user.put("display_name", response.getString("display_name"));
             user.put("_id", response.getString("_id"));
             user.put("logo", response.getString("logo"));
-            user.put("game", response.getString("game"));
             user.put("created_at", response.getString("created_at").replace("T", " ").replace("Z", ""));
-            user.put("views", response.getInt("views"));
-            user.put("followers", response.getInt("followers"));
-            user.put("status", response.getString("status"));
-            user.put("description", response.getString("description"));
-            //Broadcaster type is empty for non affiliates, so a custom one is given
-            if (response.getString("broadcaster_type").equals("")) {
-                user.put("broadcaster_type","streamer");
-            } else {
-                user.put("broadcaster_type",  response.getString("broadcaster_type"));
-            }
+            user.put("bio", response.getString("bio"));
             new WriteFileHandler(weakContext, "USER", null, user.toString(), false).run();
         } catch (JSONException e) {
             Toast.makeText(weakContext.get(), "User can't be saved", Toast.LENGTH_SHORT).show();

@@ -29,7 +29,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
  */
 public class RequestHandler {
 
-    //User token for authorization
+    //Channel token for authorization
     String token;
 
     int offset;
@@ -76,14 +76,16 @@ public class RequestHandler {
         if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
             token = new ReadFileHandler(weakContext,"TOKEN").readFile();
         }
-        try {
-            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
-            userID = user.getString("_id");
-        } catch (JSONException e) {
-            if (weakActivity != null && weakActivity.get() != null) {
-                Toast.makeText(weakActivity.get(), "Error reading user for request.", Toast.LENGTH_SHORT).show();
+        if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + "USER").exists()) {
+            try {
+                JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
+                userID = user.getString("_id");
+            } catch (JSONException e) {
+                if (weakActivity != null && weakActivity.get() != null) {
+                    Toast.makeText(weakActivity.get(), "Error reading channel for request.", Toast.LENGTH_SHORT).show();
+                }
+                new WriteFileHandler(weakContext, "ERROR", null, "Error reading channel for request | " + e.toString(), true).run();
             }
-            new WriteFileHandler(weakContext, "ERROR", null, "Error reading user for request | " + e.toString(), true).run();
         }
     }
 
@@ -95,7 +97,7 @@ public class RequestHandler {
      * @param unfollowedUsersPath constant directory of unfollowed users
      * @param excludedUsersPath constant directory of excluded users
      * @param requestPath constant directory of to temporarily store requested users before being organized
-     * @param usersPath constant directory of user objects
+     * @param usersPath constant directory of channel objects
      * @return instance of itself for method building
      */
     public RequestHandler setPaths(String currentUsersPath, String newUsersPath, String unfollowedUsersPath, String excludedUsersPath, String requestPath, String usersPath) {
@@ -126,7 +128,7 @@ public class RequestHandler {
     }
 
     /**
-     * Sets the total & user count to '0' for new requests.
+     * Sets the total & channel count to '0' for new requests.
      * This variables are dynamic & reused during multiple request firing
      * @author LethalMaus
      * @return instance of itself for method building
@@ -191,7 +193,7 @@ public class RequestHandler {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/vnd.twitchtv.v5+json");
         headers.put("Client-ID", Globals.CLIENTID);
-        headers.put("Content-Type", "application/json;charset=utf-8");
+        headers.put("Content-Type", "application/json; charset=utf-8");
         headers.put("Authorization", "OAuth " + token);
         return headers;
     }

@@ -58,7 +58,7 @@ public class SettingsMenu extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-        new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<Context>(this),true, false, false).sendRequest(0);
+        new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<Context>(this),true, false).sendRequest(0);
     }
 
     //Back to Settings Menu

@@ -96,7 +96,7 @@ public class AutoVODExportWorker extends Worker {
     }
 
     /**
-     * Method for pushing notifications to inform user if VOD has been exported
+     * Method for pushing notifications to inform channel if VOD has been exported
      * @author LethalMaus
      * @param weakContext weak reference context
      */

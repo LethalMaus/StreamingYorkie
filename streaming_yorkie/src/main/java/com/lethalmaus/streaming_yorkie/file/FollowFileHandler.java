@@ -26,8 +26,8 @@ public class FollowFileHandler implements Runnable {
      * Constructor for FollowFileHandler
      * @author LethalMaus
      * @param weakContext to avoid memory leaks. Needed to display followers/following once task is complete
-     * @param userPath directory path to store the user object
-     * @param requestDestinationPath directory path to store 'current' user ids
+     * @param userPath directory path to store the channel object
+     * @param requestDestinationPath directory path to store 'current' channel ids
      * @param response Volley JSON response
      */
     public FollowFileHandler(WeakReference<Context> weakContext, String userPath, String requestDestinationPath, JSONObject response) {
@@ -70,13 +70,13 @@ public class FollowFileHandler implements Runnable {
         } else {
             JSONObject userObject;
             try {
-                //Follow Request sends back a single user, Follower/Following request sends and array back.
+                //Follow Request sends back a single channel, Follower/Following request sends and array back.
                 if (response.has("follows")) {
                     ArrayList<String> userIDs = new ArrayList<>();
                     String arrayPath;
                     //The twitch api has different ways to request Followers/Following & the response is slightly different
-                    if (response.getJSONArray("follows").getJSONObject(0).has("user")) {
-                        arrayPath = "user";
+                    if (response.getJSONArray("follows").getJSONObject(0).has("channel")) {
+                        arrayPath = "channel";
                     } else {
                         arrayPath = "channel";
                     }
