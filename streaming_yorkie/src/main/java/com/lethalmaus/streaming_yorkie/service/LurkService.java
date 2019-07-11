@@ -139,12 +139,12 @@ public class LurkService extends Service {
         String contentText;
         if (webView == null) {
             startPauseLurkIntent.setAction("START_LURK");
-            startPauseLurkDrawable = R.drawable.lurk;
+            startPauseLurkDrawable = android.R.drawable.ic_media_play;
             startPauseLurkTitle = "Start";
             contentText = "Service paused for '" + videos.size() + "' streamers...";
         } else {
             startPauseLurkIntent.setAction("PAUSE_LURK");
-            startPauseLurkDrawable = R.drawable.unlurk;
+            startPauseLurkDrawable = android.R.drawable.ic_media_pause;
             startPauseLurkTitle = "Pause";
             contentText = "Service starting for '" + videos.size() + "' streamers...";
         }
@@ -161,7 +161,7 @@ public class LurkService extends Service {
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .addAction(startPauseLurkDrawable,startPauseLurkTitle, startPauseLurk)
-                .addAction(R.drawable.cancel,"Stop", stopLurk);
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", stopLurk);
 
         if (!paused && !networkUsageMonitorRunning) {
             networkUsageMonitorRunning = true;

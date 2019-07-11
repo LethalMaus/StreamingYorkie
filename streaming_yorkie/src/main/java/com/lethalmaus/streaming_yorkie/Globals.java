@@ -20,7 +20,7 @@ public class Globals {
     public static final String CLIENTID = "tjots3mhxunw0sj2a20ka3wz39p7bp";
     //ID of Twitch
     public static final String TWITCHID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
-    //User Object limit per request. Gets added to offset
+    //Channel Object limit per request. Gets added to offset
     public static final int USER_REQUEST_LIMIT = 25;
     public static final int VOD_REQUEST_LIMIT = 10;
 
@@ -84,15 +84,15 @@ public class Globals {
     //Notifications ID, Name & Description
     public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_ID = "AUTOFOLLOW_NOTIFICATION";
     public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME = "AutoFollow";
-    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new followers are followed and unfollowers that are unfollowed";
+    public static final String AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify channel if new followers are followed and unfollowers that are unfollowed";
 
     public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID = "AUTOVODEXPORT_NOTIFICATION";
     public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME = "AutoVODExport";
-    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if new VODs have been exported";
+    public static final String AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify channel if new VODs have been exported";
 
     public static final String LURKSERVICE_NOTIFICATION_CHANNEL_ID = "LURKSERVICE_NOTIFICATION";
     public static final String LURKSERVICE_NOTIFICATION_CHANNEL_NAME = "LurkService";
-    public static final String LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify user if lurking is activated";
+    public static final String LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify channel if lurking is activated";
 
     //Flag Files
     public static final String FLAG_FOLLOWERS_REQUEST_RUNNING = "FLAG_FOLLOWERS_REQUEST_RUNNING";

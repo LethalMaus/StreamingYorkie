@@ -79,9 +79,9 @@
             android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleInstance"/>
         <activity
-            android:name=".activity.User"
+            android:name=".activity.Channel"
             android:configChanges="orientation|screenSize"
-            android:label="User Info"
+            android:label="Channel Info"
             android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleInstance"/>
         <activity

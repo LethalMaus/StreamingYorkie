@@ -72,8 +72,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         View userRow;
 
         /**
-         * Holder for User View
-         * @param userRow View for User Row
+         * Holder for Channel View
+         * @param userRow View for Channel Row
          */
         UserViewHolder(View userRow) {
             super(userRow);
@@ -82,7 +82,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Adapter for displaying a User Dataset
+     * Adapter for displaying a Channel Dataset
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
@@ -99,11 +99,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     /**
      * Sets the paths where the data files can be found
      * @author LethalMaus
-     * @param newUsersPath directory of new user ids
-     * @param currentUsersPath directory of current user ids
-     * @param unfollowedUsersPath directory of unfollowed user ids
-     * @param excludedUsersPath directory of excluded user ids
-     * @param usersPath directory of user objects
+     * @param newUsersPath directory of new channel ids
+     * @param currentUsersPath directory of current channel ids
+     * @param unfollowedUsersPath directory of unfollowed channel ids
+     * @param excludedUsersPath directory of excluded channel ids
+     * @param usersPath directory of channel objects
      * @return an instance of itself for method building
      */
     public UserAdapter setPaths(String newUsersPath, String currentUsersPath, String unfollowedUsersPath, String excludedUsersPath, String usersPath) {
@@ -129,7 +129,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.actionButtonType1 = actionButtonType1;
         this.actionButtonType2 = actionButtonType2;
         this.actionButtonType3 = actionButtonType3;
-        //As soon as we know how to display the users, we get the user Dataset
+        //As soon as we know how to display the users, we get the channel Dataset
         getUsers();
         //An empty row or table can be displayed based on if the dataset is empty or not
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
@@ -181,7 +181,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 progressBar.setVisibility(View.INVISIBLE);
 
             } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error binding user | " + e.toString(), true);
+                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error binding channel | " + e.toString(), true);
             }
         }
     }
@@ -212,7 +212,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Gets the Dataset (list of user ids) based on itemsToDisplay
+     * Gets the Dataset (list of channel ids) based on itemsToDisplay
      * @author LethalMaus
      */
     private void getUsers() {
@@ -266,7 +266,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @author LethalMaus
      * @param button which button is to be changed
      * @param actionButtonType a constant of the action button type
-     * @param userID the user id which is related to the button
+     * @param userID the channel id which is related to the button
      */
     private void editButton(ImageButton button, String actionButtonType, String userID) {
         if (actionButtonType != null) {
@@ -293,10 +293,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Button for deleting a user
+     * Button for deleting a channel
      * @author LethalMaus
      * @param imageButton button view
-     * @param userID user to be deleted
+     * @param userID channel to be deleted
      */
     private void deleteButton(ImageButton imageButton, final String userID) {
         imageButton.setImageResource(R.drawable.delete);
@@ -315,10 +315,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Button for excluding a user from automation and other views
+     * Button for excluding a channel from automation and other views
      * @author LethalMaus
      * @param imageButton button view
-     * @param userID user to be excluded
+     * @param userID channel to be excluded
      */
     private void excludeButton(ImageButton imageButton, final String userID) {
         imageButton.setImageResource(R.drawable.excluded);
@@ -363,10 +363,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Button for including a user to automation and other views
+     * Button for including a channel to automation and other views
      * @author LethalMaus
      * @param imageButton button view
-     * @param userID user to be included
+     * @param userID channel to be included
      */
     private void includeButton(ImageButton imageButton, final String userID) {
         imageButton.setImageResource(R.drawable.include);
@@ -407,10 +407,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Button for following/unfollowing a user
+     * Button for following/unfollowing a channel
      * @author LethalMaus
      * @param imageButton button view
-     * @param userID user to be followed/unfollowed
+     * @param userID channel to be followed/unfollowed
      */
     private void followButton(final ImageButton imageButton, final String userID) {
         if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
@@ -481,7 +481,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * Button for activating/deactivating notifications of users
      * @author LethalMaus
      * @param imageButton button view
-     * @param userID user to have notifications activated/deactivated
+     * @param userID channel to have notifications activated/deactivated
      */
     private void notificationsButton(final ImageButton imageButton, final String userID) {
         if (!new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() &&
@@ -575,7 +575,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Method for counting files within user directories
+     * Method for counting files within channel directories
      * @author LethalMaus
      */
     private void setPageCounts() {

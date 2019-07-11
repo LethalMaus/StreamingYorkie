@@ -17,7 +17,7 @@ public class DeleteFileHandler implements Runnable {
     private String pathOrFileName;
 
     /**
-     * Constructor to setup the handler. Needs a path or file (which is within the Apps directory) & a weak reference for Toasts to inform the user
+     * Constructor to setup the handler. Needs a path or file (which is within the Apps directory) & a weak reference for Toasts to inform the channel
      * @author LethalMaus
      * @param weakContext weak reference of the context which called this constructor
      * @param pathOrFileName path or file within apps directory

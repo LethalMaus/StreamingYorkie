@@ -33,9 +33,9 @@ public class FollowRequestHandler extends RequestHandler {
 
     //Can be PUT or DELETE
     private int requestMethod;
-    //ID of the user to be changed
+    //ID of the channel to be changed
     private String followingID;
-    //Whether the user would like activate/deactivate notifications
+    //Whether the channel would like activate/deactivate notifications
     private Boolean notifications;
     //File handler for Following users
     private FollowFileHandler followFileHandler;
@@ -55,7 +55,7 @@ public class FollowRequestHandler extends RequestHandler {
      * Sets request parameters
      * @author LethalMaus
      * @param requestMethod either PUT or DELETE
-     * @param followingID ID of user to be changed
+     * @param followingID ID of channel to be changed
      * @param notifications bool for activating/deactivating notifications
      * @return instance of itself for method building
      */

@@ -89,7 +89,7 @@ public class AutoFollowWorker extends Worker {
          * @author LethalMaus
          * @param weakActivity weak referenced activity
          * @param weakContext weak referenced context
-         * @param displayUsers boolean whether user is to be displayed
+         * @param displayUsers boolean whether channel is to be displayed
          */
         autoFollowOrganizeFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUsers) {
             super(weakActivity, weakContext, null, displayUsers);
@@ -149,7 +149,7 @@ public class AutoFollowWorker extends Worker {
     }
 
     /**
-     * Method for pushing notifications to inform user if someone has followed, unfollowed or both
+     * Method for pushing notifications to inform channel if someone has followed, unfollowed or both
      * @author LethalMaus
      * @param weakContext weak reference context
      */

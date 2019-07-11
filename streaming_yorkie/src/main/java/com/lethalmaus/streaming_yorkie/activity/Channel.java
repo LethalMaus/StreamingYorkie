@@ -11,35 +11,35 @@ import android.widget.ImageButton;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.ChannelRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
 
 import java.lang.ref.WeakReference;
 
 /**
- * Activity for User Info view that displays the info from the Users Twitch account
+ * Activity for Channel Info view that displays the info from the Users Twitch account
  * @author LethalMaus
  */
-public class User extends AppCompatActivity {
+public class Channel extends AppCompatActivity {
 
     //All contexts are weak referenced to avoid memory leaks
     protected WeakReference<Context> weakContext;
-    private UserRequestHandler userRequestHandler;
+    private ChannelRequestHandler channelRequestHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.weakContext = new WeakReference<>(getApplicationContext());
-        setContentView(R.layout.user);
-        userRequestHandler = new UserRequestHandler(new WeakReference<Activity>(this), weakContext, true, true, true);
-        userRequestHandler.sendRequest(0);
+        setContentView(R.layout.channel);
+        channelRequestHandler = new ChannelRequestHandler(new WeakReference<Activity>(this), weakContext);
+        channelRequestHandler.sendRequest(0);
 
         ImageButton refreshPage = findViewById(R.id.user_refresh);
         refreshPage.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        userRequestHandler.sendRequest(0);
+                        channelRequestHandler.sendRequest(0);
                     }
                 });
     }
@@ -55,20 +55,20 @@ public class User extends AppCompatActivity {
         return Globals.onOptionsItemsSelected(this, item);
     }
 
-    //Cancels User requests as they are not needed without this activity
+    //Cancels Channel requests as they are not needed without this activity
     @Override
     protected void onPause() {
         super.onPause();
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("USER");
+        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("CHANNEL");
     }
     @Override
     protected void onStop() {
         super.onStop();
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("USER");
+        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("CHANNEL");
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("USER");
+        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("CHANNEL");
     }
 }

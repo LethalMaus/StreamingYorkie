@@ -34,7 +34,7 @@ import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_OFF;
 
 /**
  * Activity for VOD Export settings that creates the settings only when first opened.
- * The settings are never needed unless the user tries to change them.
+ * The settings are never needed unless the channel tries to change them.
  * @author LethalMaus
  */
 public class SettingsVOD extends AppCompatActivity {
@@ -92,7 +92,7 @@ public class SettingsVOD extends AppCompatActivity {
     }
 
     /**
-     * This creates the setting first time. It is done here because it is only ever needed if the user wants to change settings. Otherwise its never needed.
+     * This creates the setting first time. It is done here because it is only ever needed if the channel wants to change settings. Otherwise its never needed.
      * @author LethalMaus
      */
     private void createSettingsFile() {
@@ -293,7 +293,7 @@ public class SettingsVOD extends AppCompatActivity {
     }
 
     /**
-     * Checks if changes were made anywhere and prompts user to save.
+     * Checks if changes were made anywhere and prompts channel to save.
      * @author LethalMaus
      */
     private void saveSettings() {
@@ -321,7 +321,7 @@ public class SettingsVOD extends AppCompatActivity {
     }
 
     /**
-     * Notifies user to prepare before activating the AutoVODExport Worker
+     * Notifies channel to prepare before activating the AutoVODExport Worker
      * @author LethalMaus
      */
     private void promptActivatingAutoVODExport() {
@@ -346,7 +346,7 @@ public class SettingsVOD extends AppCompatActivity {
     }
 
     /**
-     * Prompts user if these settings are wanted, or if they should be discard.
+     * Prompts channel if these settings are wanted, or if they should be discard.
      * @author LethalMaus
      */
     private void promptUserSaveSettings() {

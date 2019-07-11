@@ -76,7 +76,7 @@ public class FollowParent extends AppCompatActivity {
                     }
                 });
         deleteNotifications();
-        new UserRequestHandler(weakActivity, weakContext,true, false, false).sendRequest(0);
+        new UserRequestHandler(weakActivity, weakContext,true, false).sendRequest(0);
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -137,9 +137,9 @@ public class FollowParent extends AppCompatActivity {
     }
 
     /**
-     * Used to set subtitle in Action bar, helps explain where the user is
+     * Used to set subtitle in Action bar, helps explain where the channel is
      * @author LethalMaus
-     * @param subtitle explains where the user is
+     * @param subtitle explains where the channel is
      */
     protected void setSubtitle(String subtitle) {
         if (getSupportActionBar() != null) {
@@ -163,7 +163,7 @@ public class FollowParent extends AppCompatActivity {
      * The action performed when a menu button is pressed.
      * @author LethalMaus
      * @param button image button that has been selected
-     * @param subtitle explains where the user is
+     * @param subtitle explains where the channel is
      * @param usersToDisplay users that are to be displayed (eg. new, current)
      * @param actionButtonType1 action button belonging to users to be displayed, can be null
      * @param actionButtonType2 action button belonging to users to be displayed, can be null

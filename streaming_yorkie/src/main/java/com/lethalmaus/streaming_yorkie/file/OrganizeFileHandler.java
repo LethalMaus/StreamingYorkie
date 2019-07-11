@@ -66,7 +66,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
      * @param unfollowedUsersPath path of unfollowed users
      * @param excludedUsersPath path of excluded users
      * @param requestPath path of previous users
-     * @param usersPath path of user objects
+     * @param usersPath path of channel objects
      * @return class instance for method building
      */
     public OrganizeFileHandler setPaths(String currentUsersPath, String newUsersPath, String unfollowedUsersPath, String excludedUsersPath, String requestPath, String usersPath) {
@@ -115,7 +115,7 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         ArrayList<String> currentUsers = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
 
         if (!requestedUsers.isEmpty() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWERS_REQUEST_RUNNING).exists() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWING_REQUEST_RUNNING).exists()) {
-            //Iterate to find if a user has unfollowed
+            //Iterate to find if a channel has unfollowed
             for (int i = 0; i < currentUsers.size(); i++) {
                 if (!requestedUsers.contains(currentUsers.get(i)) &&
                         !new File(appDirectory + File.separator + excludedUsersPath + File.separator + currentUsers.get(i)).exists()) {

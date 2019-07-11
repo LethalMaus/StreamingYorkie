@@ -34,13 +34,8 @@ public class UserFileHandlerTest {
         response.put("display_name", "TEST1");
         response.put("_id", "12345");
         response.put("logo", "/localhost");
-        response.put("game", "TEST1");
         response.put("created_at", "1970-01-04T17:03:55Z");
-        response.put("views", 1);
-        response.put("followers", 1);
-        response.put("status", "TEST1");
-        response.put("description", "TEST1");
-        response.put("broadcaster_type", affiliateOrNonAffiliate);
+        response.put("bio", "TEST1");
         //Test
         UserFileHandler userFileHandler = new UserFileHandler(new WeakReference<>(context), false);
         userFileHandler.setResponse(response);
@@ -50,13 +45,8 @@ public class UserFileHandlerTest {
         assertTrue(user.getString("display_name").contentEquals(response.getString("display_name")));
         assertTrue(user.getString("_id").contentEquals(response.getString("_id")));
         assertTrue(user.getString("logo").contentEquals(response.getString("logo")));
-        assertTrue(user.getString("game").contentEquals(response.getString("game")));
         assertTrue(user.getString("created_at").contentEquals(response.getString("created_at").replace("T", " ").replace("Z", "")));
-        assertEquals(user.getInt("views"), response.getInt("views"));
-        assertEquals(user.getInt("followers"), response.getInt("followers"));
-        assertTrue(user.getString("status").contentEquals(response.getString("status")));
-        assertTrue(user.getString("description").contentEquals(response.getString("description")));
-        assertTrue(user.getString("broadcaster_type").contentEquals(response.getString("broadcaster_type")) || user.getString("broadcaster_type").contentEquals("streamer"));
+        assertTrue(user.getString("bio").contentEquals(response.getString("bio")));
         //Cleanup
         assertTrue(new File("USER").delete());
     }

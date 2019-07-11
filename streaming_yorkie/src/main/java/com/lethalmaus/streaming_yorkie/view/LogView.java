@@ -39,16 +39,16 @@ public class LogView extends AsyncTask<Void, Button, Void> {
     }
 
     /**
-     * Sets the directory where the user currently is
+     * Sets the directory where the channel currently is
      * @author LethalMaus
-     * @param currentDirectory directory where the user currently is
+     * @param currentDirectory directory where the channel currently is
      */
     public void setCurrentDirectory(String currentDirectory) {
         this.currentDirectory = currentDirectory;
     }
 
     /**
-     * Gets the directory where the user currently is
+     * Gets the directory where the channel currently is
      * @author LethalMaus
      * @return String currentDirectory
      */
