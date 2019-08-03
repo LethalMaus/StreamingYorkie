@@ -64,6 +64,7 @@ public class LurkService extends Service {
         } else if (intent != null && intent.getAction() != null && intent.getAction().contentEquals("PAUSE_LURK")) {
             networkUsageHandler.removeCallbacks(networkUsageRunnable);
             networkUsageMonitorRunning = false;
+            windowManager.removeView(webView);
             webView.destroy();
             webView = null;
             showNotification(true);
@@ -86,20 +87,17 @@ public class LurkService extends Service {
                 params.width = 0;
                 params.height = 0;
 
-                if (webView != null) {
-                    windowManager.removeView(webView);
-                    webView.destroy();
-                }
                 webView = new WebView(this);
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setDomStorageEnabled(true);
                 webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+
                 StringBuilder htmlInjection = new StringBuilder();
                 for (int i = 0; i < videos.size(); i++) {
                     htmlInjection.append(videos.get(i));
                 }
-
-                webView.loadDataWithBaseURL(null, htmlInjection.toString(), "html/text", "UTF-8", null);
+                new WriteFileHandler(new WeakReference<>(getApplicationContext()), "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
+                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
                 windowManager.addView(webView, params);
             }
             showNotification(false);
@@ -129,10 +127,7 @@ public class LurkService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, Lurk.class), 0);
 
-        Intent stopLurkIntent = new Intent(this, LurkService.class);
-        stopLurkIntent.setAction("STOP_LURK");
-        PendingIntent stopLurk = PendingIntent.getService(this, 0, stopLurkIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
+        PendingIntent stopLurk = null;
         Intent startPauseLurkIntent = new Intent(this, LurkService.class);
         int startPauseLurkDrawable;
         String startPauseLurkTitle;
@@ -142,6 +137,10 @@ public class LurkService extends Service {
             startPauseLurkDrawable = android.R.drawable.ic_media_play;
             startPauseLurkTitle = "Start";
             contentText = "Service paused for '" + videos.size() + "' streamers...";
+
+            Intent stopLurkIntent = new Intent(this, LurkService.class);
+            stopLurkIntent.setAction("STOP_LURK");
+            stopLurk = PendingIntent.getService(this, 0, stopLurkIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         } else {
             startPauseLurkIntent.setAction("PAUSE_LURK");
             startPauseLurkDrawable = android.R.drawable.ic_media_pause;
@@ -160,8 +159,10 @@ public class LurkService extends Service {
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .addAction(startPauseLurkDrawable,startPauseLurkTitle, startPauseLurk)
-                .addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", stopLurk);
+                .addAction(startPauseLurkDrawable,startPauseLurkTitle, startPauseLurk);
+        if (stopLurk != null) {
+            mBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", stopLurk);
+        }
 
         if (!paused && !networkUsageMonitorRunning) {
             networkUsageMonitorRunning = true;
@@ -183,6 +184,10 @@ public class LurkService extends Service {
             };
             networkUsageHandler.postDelayed(networkUsageRunnable, 3000);
         }
-        notificationManager.notify(3, mBuilder.build());
+        if (Build.VERSION.SDK_INT < 28) {
+            notificationManager.notify(3, mBuilder.build());
+        } else {
+            startForeground(3, mBuilder.build());
+        }
     }
 }

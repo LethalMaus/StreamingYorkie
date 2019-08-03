@@ -114,7 +114,9 @@ public class OrganizeFileHandler extends AsyncTask<Void, Void, Void> {
         //List of the previously current users
         ArrayList<String> currentUsers = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
 
-        if (!requestedUsers.isEmpty() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWERS_REQUEST_RUNNING).exists() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWING_REQUEST_RUNNING).exists()) {
+        //FIXME flag files need a different solution
+        //if (!requestedUsers.isEmpty() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWERS_REQUEST_RUNNING).exists() && !new File(appDirectory + File.separator + Globals.FLAG_FOLLOWING_REQUEST_RUNNING).exists()) {
+        if (!requestedUsers.isEmpty()) {
             //Iterate to find if a channel has unfollowed
             for (int i = 0; i < currentUsers.size(); i++) {
                 if (!requestedUsers.contains(currentUsers.get(i)) &&

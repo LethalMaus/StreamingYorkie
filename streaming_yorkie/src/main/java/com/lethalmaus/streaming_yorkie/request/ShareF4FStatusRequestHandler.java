@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class to share F4F status to Discord
@@ -54,7 +55,11 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    new WriteFileHandler(weakContext, "ERROR", null, "Share F4F Status Error response | " + error.toString(), true).run();
+                    String errorMessage = error.toString();
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    }
+                    new WriteFileHandler(weakContext, "ERROR", null, "Share F4F Status Error response | " + errorMessage, true).run();
                 }
             }) {
                 @Override

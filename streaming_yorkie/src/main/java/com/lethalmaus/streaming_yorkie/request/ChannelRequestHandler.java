@@ -54,15 +54,24 @@ public class ChannelRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    String body = new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                    if (error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN && body.toLowerCase().contains("not allowed to broadcast")) {
-                        Toast.makeText(weakActivity.get(), "Twitch Two-Factor Authentication is required for all info", Toast.LENGTH_SHORT).show();
-                        new ChannelView(weakActivity, weakContext).execute();
+                    String errorMessage = "";
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                        if (error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN && errorMessage.toLowerCase().contains("not allowed to broadcast")) {
+                            Toast.makeText(weakActivity.get(), "Twitch Two-Factor Authentication is required for all info", Toast.LENGTH_SHORT).show();
+                            new ChannelView(weakActivity, weakContext).execute();
+                        } else if (weakActivity != null && weakActivity.get() != null) {
+                            Toast.makeText(weakActivity.get(), "Error requesting Channel", Toast.LENGTH_SHORT).show();
+                            offlineResponseHandler();
+                        }
                     } else if (weakActivity != null && weakActivity.get() != null) {
                         Toast.makeText(weakActivity.get(), "Error requesting Channel", Toast.LENGTH_SHORT).show();
                         offlineResponseHandler();
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error requesting Channel | " + error.toString(), true).run();
+                    if (errorMessage.isEmpty()) {
+                        errorMessage = error.toString();
+                    }
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error requesting Channel | " + errorMessage, true).run();
                 }
             }) {
                 @Override

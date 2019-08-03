@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -59,7 +60,11 @@ public class DevInfoRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    new WriteFileHandler(weakContext, "ERROR", null, "DevInfo Error response | " + error.toString(), true).run();
+                    String errorMessage = error.toString();
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    }
+                    new WriteFileHandler(weakContext, "ERROR", null, "DevInfo Error response | " + errorMessage, true).run();
                 }
             }) {
                 @Override

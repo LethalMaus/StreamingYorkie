@@ -15,6 +15,7 @@ import com.lethalmaus.streaming_yorkie.view.UserView;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -57,7 +58,11 @@ public class UserRequestHandler extends RequestHandler {
                     if (weakActivity != null && weakActivity.get() != null) {
                         Toast.makeText(weakActivity.get(), "Error requesting User", Toast.LENGTH_SHORT).show();
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error requesting User | " + error.toString(), true).run();
+                    String errorMessage = error.toString();
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    }
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error requesting User | " + errorMessage, true).run();
                     offlineResponseHandler();
                 }
             }) {

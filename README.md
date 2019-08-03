@@ -216,7 +216,9 @@ This then adds to the view count for the channel being lurked.
 The service will display a notification saying how many channels are being lurked and the apps **total** network usage.
 The network usage includes other requests within the app irrelevant from lurking.
 The service can be paused, stopped & started from the notification.
-The notification only disappears once the service has eneded.
+The notification only disappears once the service has ended.
+
+> Using the Twitch App will disable the lurk service. Use MultiView or another device to watch while lurking.
 
 ---
 
@@ -328,10 +330,13 @@ Features:
 
 Issues:
 +	Login Crash due to 2FA
++   Twitch APIv3 Shutdown
 
 Other:
 +   Release prerequisites
 +   Minor refactoring
++   Improved RequestHandler error handling
++   Improved Navigation handling
 
 ---
 

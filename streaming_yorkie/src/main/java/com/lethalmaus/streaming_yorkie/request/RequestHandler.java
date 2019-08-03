@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
@@ -174,13 +175,17 @@ public class RequestHandler {
      * Method for handling a request error response.
      * Provokes offlineResponseHandler
      * @author LethalMaus
-     * @param e Volley Error
+     * @param error Volley Error
      */
-    void errorHandler(VolleyError e) {
+    void errorHandler(VolleyError error) {
         if (weakActivity != null && weakActivity.get() != null) {
             Toast.makeText(weakActivity.get(), "Error requesting items", Toast.LENGTH_SHORT).show();
         }
-        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting items" + e.toString(), true).run();
+        String errorMessage = error.toString();
+        if (error.networkResponse != null) {
+            errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+        }
+        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting items" + errorMessage, true).run();
         offlineResponseHandler();
     }
 

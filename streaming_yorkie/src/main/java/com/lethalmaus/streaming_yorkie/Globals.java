@@ -111,8 +111,6 @@ public class Globals {
         Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
-                intent = new Intent(activity, MainActivity.class);
-                activity.startActivity(intent);
                 activity.finish();
                 return true;
             case R.id.menu_info_guide:
