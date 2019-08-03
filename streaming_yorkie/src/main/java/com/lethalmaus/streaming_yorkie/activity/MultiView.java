@@ -40,9 +40,9 @@ public class MultiView extends AppCompatActivity {
                 if (new RequestHandler(null, new WeakReference<>(getApplicationContext()), null).networkIsAvailable()) {
                     getChannels();
                     if (!channels.isEmpty()) {
-                        findViewById(R.id.multi_view).setVisibility(View.VISIBLE);
                         findViewById(R.id.multi_input).setVisibility(View.GONE);
                         WebView multi_view = findViewById(R.id.multi_view);
+                        multi_view.setVisibility(View.VISIBLE);
                         multi_view.getSettings().setJavaScriptEnabled(true);
                         multi_view.loadUrl("https://lethalmaus.github.io/TwitchMultiView/?channels=" + channels.replaceAll("\\s", ""));
                         if (getSupportActionBar() != null) {
@@ -74,15 +74,17 @@ public class MultiView extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (findViewById(R.id.multi_view).getVisibility() == View.VISIBLE) {
-            findViewById(R.id.multi_view).setVisibility(View.GONE);
+        WebView multi_view = findViewById(R.id.multi_view);
+        if (multi_view.getVisibility() == View.VISIBLE) {
+            multi_view.setVisibility(View.GONE);
+            multi_view.loadUrl("about:blank");
             findViewById(R.id.multi_input).setVisibility(View.VISIBLE);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().show();
             }
             showSystemUI();
         } else {
-            super.onBackPressed();
+            finish();
         }
     }
 

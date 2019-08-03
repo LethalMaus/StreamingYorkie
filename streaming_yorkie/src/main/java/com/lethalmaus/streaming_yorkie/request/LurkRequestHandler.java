@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import com.lethalmaus.streaming_yorkie.Globals;
+import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.LurkAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -23,6 +25,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class for getting lurk Urls
@@ -74,7 +77,11 @@ public class LurkRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error getting first Lurk Url | " + error.toString(), true).run();
+                    String errorMessage = error.toString();
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    }
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error getting first Lurk Url | " + errorMessage, true).run();
                 }
             });
             jsObjRequest.setTag("LURK1");
@@ -108,15 +115,28 @@ public class LurkRequestHandler extends RequestHandler {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND || error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
-                        Toast.makeText(weakActivity.get(), "Stream from '" + channel + "' has ended", Toast.LENGTH_SHORT).show();
-                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
-                        if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
-                            recyclerView.get().setAdapter(new LurkAdapter(weakActivity, weakContext, recyclerView));
+                    String errorMessage = "";
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                        if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND || error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
+                            Toast.makeText(weakActivity.get(), "Stream from '" + channel + "' has ended", Toast.LENGTH_SHORT).show();
+                            new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
+                            if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
+                                recyclerView.get().setAdapter(new LurkAdapter(weakActivity, weakContext, recyclerView));
+                            }
+                        } else {
+                            if (errorMessage.isEmpty()) {
+                                errorMessage = error.toString();
+                            }
+                            new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                         }
                     } else {
-                        new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + error.toString(), true).run();
+                        if (errorMessage.isEmpty()) {
+                            errorMessage = error.toString();
+                        }
+                        new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                     }
+
                 }
             });
             stringRequest.setTag("LURK2");

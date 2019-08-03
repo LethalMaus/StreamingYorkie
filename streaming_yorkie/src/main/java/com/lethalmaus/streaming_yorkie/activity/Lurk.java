@@ -89,12 +89,6 @@ public class Lurk extends AppCompatActivity {
         return Globals.onOptionsItemsSelected(this, item);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(weakActivity.get(), MainActivity.class);
-        weakActivity.get().startActivity(intent);
-    }
-
     public final static int REQUEST_CODE = 6421;
 
     /**

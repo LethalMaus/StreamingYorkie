@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowersRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowingRequestHandler;
@@ -90,9 +91,8 @@ public class Follow4Follow extends FollowParent {
         requestHandler = new FollowersRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView) ,false) {
             @Override
             protected void responseAction() {
-                new OrganizeFileHandler(weakActivity, weakContext, null, false)
-                        .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
-                        .execute();
+                new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_FOLLOWERS_REQUEST_RUNNING);
+                super.responseAction();
                 followingRequestHandler.newRequest().sendRequest(0);
             }
             @Override

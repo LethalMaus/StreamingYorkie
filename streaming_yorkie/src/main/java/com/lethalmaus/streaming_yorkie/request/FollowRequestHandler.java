@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -84,7 +85,11 @@ public class FollowRequestHandler extends RequestHandler {
                     if (weakActivity != null && weakActivity.get() != null) {
                         Toast.makeText(weakActivity.get(), "Error changing Following preference", Toast.LENGTH_SHORT).show();
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing Following preference | " + error.toString(), true).run();
+                    String errorMessage = error.toString();
+                    if (error.networkResponse != null) {
+                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                    }
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error changing Following preference | " + errorMessage, true).run();
                     if (requestMethod == Request.Method.DELETE) {
                         new WriteFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH + File.separator + followingID, null, null, false).run();
                     } else {

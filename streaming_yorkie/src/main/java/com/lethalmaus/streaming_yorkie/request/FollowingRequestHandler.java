@@ -60,7 +60,7 @@ public class FollowingRequestHandler extends RequestHandler {
         this.offset = offset;
         if (networkIsAvailable()) {
             new WriteFileHandler(weakContext, Globals.FLAG_FOLLOWING_REQUEST_RUNNING, null, null, false).writeToFileOrPath();
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels" + "?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=asc&offset=" + this.offset, null,
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=asc&offset=" + this.offset, null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {

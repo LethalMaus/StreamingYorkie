@@ -89,16 +89,6 @@ public class FollowParent extends AppCompatActivity {
         cancelRequests();
         super.onPause();
     }
-    @Override
-    protected void onStop() {
-        cancelRequests();
-        super.onStop();
-    }
-    @Override
-    protected void onDestroy() {
-        cancelRequests();
-        super.onDestroy();
-    }
 
     /**
      * Deletes any notification files when the activity is started

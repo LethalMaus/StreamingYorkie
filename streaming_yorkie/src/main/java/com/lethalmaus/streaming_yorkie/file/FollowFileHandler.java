@@ -78,7 +78,7 @@ public class FollowFileHandler implements Runnable {
                     if (response.getJSONArray("follows").getJSONObject(0).has("channel")) {
                         arrayPath = "channel";
                     } else {
-                        arrayPath = "channel";
+                        arrayPath = "user";
                     }
                     for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
                         userObject = new JSONObject();

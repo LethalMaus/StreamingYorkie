@@ -145,16 +145,6 @@ public class Info extends AppCompatActivity {
         super.onPause();
         VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("DEV");
     }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("DEV");
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("DEV");
-    }
     //The only option is the back button for finishing the activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
