@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebResourceRequest;
@@ -19,6 +17,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
@@ -26,8 +28,6 @@ import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -54,7 +54,7 @@ public class Authorization extends AppCompatActivity {
             if(getSupportActionBar() != null) {
                 getSupportActionBar().setTitle("Logout");
             }
-            new UserView(weakActivity, weakContext, true).execute();
+            new UserView(weakActivity, weakContext).execute();
             ImageButton logout = findViewById(R.id.authorization_logout);
             logout.setOnClickListener(
                     new View.OnClickListener() {
@@ -65,7 +65,7 @@ public class Authorization extends AppCompatActivity {
                     });
         } else {
             setContentView(R.layout.authorization);
-            if (new RequestHandler(weakActivity, weakContext, null).networkIsAvailable()) {
+            if (RequestHandler.networkIsAvailable(weakContext)) {
                 final WebView webView = findViewById(R.id.authWebView);
                 webView.setWebViewClient(new WebViewClient() {
                     @Override
@@ -117,13 +117,7 @@ public class Authorization extends AppCompatActivity {
                         super.onPageFinished(view, url);
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
                             new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
-                            new UserRequestHandler(weakActivity, weakContext, false, true) {
-                                @Override
-                                public void responseHandler(JSONObject response) {
-                                    super.responseHandler(response);
-                                    createFolders();
-                                }
-                            }.sendRequest(0);
+                            new UserRequestHandler(weakActivity, weakContext).sendRequest();
                             view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read");
                         } else if (!url.contains("twitch.tv")) {
                             setContentView(R.layout.error);
@@ -144,7 +138,7 @@ public class Authorization extends AppCompatActivity {
         }
     }
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
     }
@@ -175,31 +169,6 @@ public class Authorization extends AppCompatActivity {
         builder.setTitle("Logout");
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    /**
-     * Creates all necessary folders for future use
-     * @author LethalMaus
-     */
-    private void createFolders() {
-        String appDirectory = Authorization.this.getFilesDir().toString();
-        if (
-                !new File(appDirectory + File.separator + Globals.FOLLOWERS_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWERS_REQUEST_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWERS_NEW_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWERS_CURRENT_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWERS_UNFOLLOWED_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWERS_EXCLUDED_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWING_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWING_REQUEST_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWING_NEW_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWING_CURRENT_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWING_UNFOLLOWED_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.FOLLOWING_EXCLUDED_PATH).mkdir() ||
-                        !new File(appDirectory + File.separator +  Globals.F4F_EXCLUDED_PATH).mkdir()
-                ) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Auth: Cannot create initial folder structure.", true).run();
-        }
     }
 
     /**

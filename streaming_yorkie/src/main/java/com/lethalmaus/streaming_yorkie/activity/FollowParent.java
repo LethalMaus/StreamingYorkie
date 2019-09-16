@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,11 +16,15 @@ import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
-import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
+import com.lethalmaus.streaming_yorkie.view.UserView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkManager;
 
 /**
@@ -42,14 +44,6 @@ public class FollowParent extends AppCompatActivity {
     //Timer between clicks to prevent multiple requests
     private long mLastClickTime = 0;
 
-    //Paths that each sub class uses to write files locally
-    protected String currentUsersPath;
-    protected String newUsersPath;
-    protected String unfollowedUsersPath;
-    protected String excludedUsersPath;
-    protected String requestPath;
-    protected String usersPath;
-
     //Each sub class has at least one sub class of the RequestHandler
     protected RequestHandler requestHandler;
 
@@ -57,6 +51,7 @@ public class FollowParent extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.follow_parent);
+        new UserView(weakActivity, weakContext).execute();
         WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOFOLLOW);
 
         progressBar = findViewById(R.id.progressbar);
@@ -71,12 +66,11 @@ public class FollowParent extends AppCompatActivity {
                         if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
                             mLastClickTime = SystemClock.elapsedRealtime();
                             progressBar.setVisibility(View.VISIBLE);
-                            requestHandler.newRequest().sendRequest(0);
+                            requestHandler.initiate().sendRequest();
                         }
                     }
                 });
         deleteNotifications();
-        new UserRequestHandler(weakActivity, weakContext,true, false).sendRequest(0);
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -95,15 +89,19 @@ public class FollowParent extends AppCompatActivity {
      * @author LethalMaus
      */
     private void deleteNotifications() {
-        if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_FOLLOW).exists()) {
-            new DeleteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).run();
-        }
-        if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_UNFOLLOW).exists()) {
-            new DeleteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
-        }
-        if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()) {
-            new DeleteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_FOLLOW).exists()) {
+                    new DeleteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).run();
+                }
+                if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_UNFOLLOW).exists()) {
+                    new DeleteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
+                }
+                if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()) {
+                    new DeleteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
+                }
+            }
+        });
     }
 
     /**
@@ -111,7 +109,7 @@ public class FollowParent extends AppCompatActivity {
      * @author LethalMaus
      */
     protected void cancelRequests() {
-        requestHandler.cancelAllRequests();
+        requestHandler.cancelRequest();
         progressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -122,7 +120,7 @@ public class FollowParent extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return Globals.onOptionsItemsSelected(this, item);
     }
 
@@ -154,19 +152,23 @@ public class FollowParent extends AppCompatActivity {
      * @author LethalMaus
      * @param button image button that has been selected
      * @param subtitle explains where the channel is
-     * @param usersToDisplay users that are to be displayed (eg. new, current)
+     * @param daoType DAO Type (eg. Follower, Following, ...)
+     * @param entityStatus entity status (eg. new, current)
      * @param actionButtonType1 action button belonging to users to be displayed, can be null
      * @param actionButtonType2 action button belonging to users to be displayed, can be null
      */
-    protected void pageButtonListenerAction(ImageButton button, String subtitle, String usersToDisplay, String actionButtonType1, String actionButtonType2) {
-        if (progressBar.getVisibility() != View.VISIBLE) {
+    protected void pageButtonListenerAction(ImageButton button, String subtitle, String daoType, String entityStatus, String actionButtonType1, String actionButtonType2) {
+        if ((SystemClock.elapsedRealtime() - mLastClickTime > 500 && progressBar.getVisibility() != View.VISIBLE) || SystemClock.elapsedRealtime() - mLastClickTime > 10000) {
+            mLastClickTime = SystemClock.elapsedRealtime();
             progressBar.setVisibility(View.VISIBLE);
             highlightButton(button);
             setSubtitle(subtitle);
-            requestHandler.setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON");
-            recyclerView.setAdapter(new UserAdapter(weakActivity, weakContext)
-                    .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
-                    .setDisplayPreferences(usersToDisplay, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON"));
+            recyclerView.stopScroll();
+            recyclerView.getRecycledViewPool().clear();
+            UserAdapter userAdapter = (UserAdapter) recyclerView.getAdapter();
+            if (userAdapter != null) {
+                userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged();
+            }
         }
     }
 }

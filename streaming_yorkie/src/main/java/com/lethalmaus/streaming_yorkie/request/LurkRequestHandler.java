@@ -3,18 +3,16 @@ package com.lethalmaus.streaming_yorkie.request;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
-import android.webkit.WebView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.LurkAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -37,6 +35,16 @@ public class LurkRequestHandler extends RequestHandler {
     private String lurkToken;
     private String signature;
 
+    @Override
+    public String url() {
+        return "https://api.twitch.tv/api/channels/" + channel.toLowerCase() + "/access_token?need_https=true&oauth_token=" + token + "&platform=web&player_backend=mediaplayer&player_type=embed";
+    }
+
+    @Override
+    public int method() {
+        return Request.Method.GET;
+    }
+
     /**
      * Constructor for LurkRequestHandler for requesting lurk Urls
      * @author LethalMaus
@@ -46,6 +54,7 @@ public class LurkRequestHandler extends RequestHandler {
      */
     public LurkRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView) {
         super(weakActivity, weakContext, recyclerView);
+        requestType = "LURK";
     }
 
     /**
@@ -60,35 +69,18 @@ public class LurkRequestHandler extends RequestHandler {
     }
 
     @Override
-    public void sendRequest(final int offset) {
-        if (networkIsAvailable()) {
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/api/channels/" + channel.toLowerCase() + "/access_token?need_https=true&oauth_token=" + token + "&platform=web&player_backend=mediaplayer&player_type=embed", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                lurkToken = response.getString("token");
-                                signature = response.getString("sig");
-                                getLurkUrl(new JSONObject(lurkToken).getString("channel_id"));
-                            } catch (JSONException e) {
-                                new WriteFileHandler(weakContext, "ERROR", null, "Error reading first Lurk Url JSON | " + e.toString(), true).run();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    String errorMessage = error.toString();
-                    if (error.networkResponse != null) {
-                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                    }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error getting first Lurk Url | " + errorMessage, true).run();
+    public void responseHandler(final JSONObject response) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    lurkToken = response.getString("token");
+                    signature = response.getString("sig");
+                    getLurkUrl(new JSONObject(lurkToken).getString("channel_id"));
+                } catch (JSONException e) {
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error reading first Lurk Url JSON | " + e.toString(), true).run();
                 }
-            });
-            jsObjRequest.setTag("LURK1");
-            VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
-        } else {
-            offlineResponseHandler();
-        }
+            }
+        }).start();
     }
 
     /**
@@ -97,7 +89,7 @@ public class LurkRequestHandler extends RequestHandler {
      * @param channelId String of channel ID
      */
     private void getLurkUrl(final String channelId) {
-        if (networkIsAvailable()) {
+        if (networkIsAvailable(weakContext)) {
             StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://usher.ttvnw.net/api/channel/hls/" + channel.toLowerCase() + ".m3u8?allow_source=true&allow_audio_only=true&baking_bread=true&baking_brownies=true&baking_brownies_timeout=1050&fast_bread=true&p=9293905&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&sig=" + signature + "&token=" + Uri.encode(lurkToken),
                     new Response.Listener<String>() {
                         @Override
@@ -139,7 +131,7 @@ public class LurkRequestHandler extends RequestHandler {
 
                 }
             });
-            stringRequest.setTag("LURK2");
+            stringRequest.setTag(requestType);
             VolleySingleton.getInstance(weakContext).addToRequestQueue(stringRequest);
         } else {
             offlineResponseHandler();
@@ -148,8 +140,14 @@ public class LurkRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (weakActivity != null && weakActivity.get() != null) {
-            Toast.makeText(weakActivity.get(), "OFFLINE: Cannot lurk when offline", Toast.LENGTH_SHORT).show();
+        if (recyclerView != null && recyclerView.get() != null && weakActivity.get() != null) {
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            Toast.makeText(weakActivity.get(), "OFFLINE: Cannot lurk when offline", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         }
     }
 }

@@ -1,18 +1,20 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
-import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.request.DevInfoRequestHandler;
 
-import java.lang.ref.WeakReference;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.lethalmaus.streaming_yorkie.R;
 
 /**
  * Activity for showing Channel Guide
@@ -85,14 +87,15 @@ public class InfoGuide extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new DevInfoRequestHandler(new WeakReference<Activity>(InfoGuide.this), new WeakReference<>(getApplicationContext())).requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide"));
+                        startActivity(intent);
                     }
                 });
     }
 
     //The only option is the back button for finishing the activity
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
     }

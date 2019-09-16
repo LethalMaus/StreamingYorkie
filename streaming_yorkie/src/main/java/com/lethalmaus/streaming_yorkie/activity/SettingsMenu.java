@@ -1,16 +1,17 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
+import com.lethalmaus.streaming_yorkie.view.UserView;
 
 import java.lang.ref.WeakReference;
 
@@ -58,12 +59,12 @@ public class SettingsMenu extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-        new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<Context>(this),true, false).sendRequest(0);
+        new UserView(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext())).execute();
     }
 
     //Back to Settings Menu
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
     }

@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -16,8 +15,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -91,7 +94,7 @@ public class SettingsF4F extends AppCompatActivity {
 
     //The only option is the back button for saving settings
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         saveSettings();
         return true;
     }
@@ -411,10 +414,20 @@ public class SettingsF4F extends AppCompatActivity {
                 Toast.makeText(SettingsF4F.this, "Changes saved", Toast.LENGTH_SHORT).show();
                 try {
                     if (settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOW) || settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOWUNFOLLOW))) {
-                        JSONObject postBody = new JSONObject();
-                        String username = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile()).getString("display_name");
-                        postBody.put("content", username + " is doing F4F automatically with AutoFollow every " + settings.getString(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + ". Follow them here https://www.twitch.tv/" + username);
-                        new ShareF4FStatusRequestHandler(new WeakReference<Activity>(SettingsF4F.this), weakContext).shareF4FStatus(postBody);
+                        new Thread(new Runnable() {
+                            public void run() {
+                                try {
+                                    JSONObject postBody = new JSONObject();
+                                    StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
+                                    String username = streamingYorkieDB.channelDAO().getChannel().getDisplay_name();
+                                    postBody.put("content", username + " is doing F4F automatically with AutoFollow every " + settings.getString(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + ". Follow them here https://www.twitch.tv/" + username);
+                                    new ShareF4FStatusRequestHandler(new WeakReference<>(SettingsF4F.this), weakContext).setPostBody(postBody).sendRequest();
+                                } catch(JSONException e) {
+                                    Toast.makeText(SettingsF4F.this, "Error sharing F4F status", Toast.LENGTH_SHORT).show();
+                                    new WriteFileHandler(weakContext, "ERROR", null,"Error reading F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS + " | " + e.toString(), true).run();
+                                }
+                            }
+                        }).start();
                     }
                 } catch(JSONException e) {
                     Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_SHARE_F4F_STATUS, Toast.LENGTH_SHORT).show();

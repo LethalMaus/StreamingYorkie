@@ -3,18 +3,22 @@ package com.lethalmaus.streaming_yorkie.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.BuildConfig;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.request.DevInfoRequestHandler;
-import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
+import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 
 import java.lang.ref.WeakReference;
 
@@ -30,6 +34,8 @@ public class Info extends AppCompatActivity {
     //hidden count on Dev Logo to display all files in the same directory as the App
     private int showDevLogs;
 
+    private RequestHandler requestHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +46,8 @@ public class Info extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         showDevLogs = 7;
-        final DevInfoRequestHandler devInfoRequestHandler = new DevInfoRequestHandler(weakActivity, weakContext);
-        devInfoRequestHandler.requestDevLogo();
+        requestHandler = new DevInfoRequestHandler(weakActivity, weakContext);
+        requestHandler.sendRequest();
 
         ImageView developer_Logo = findViewById(R.id.info_developer);
         developer_Logo.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +68,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide");
+                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide");
                     }
                 });
 
@@ -82,7 +88,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates");
+                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates");
                     }
                 });
 
@@ -92,7 +98,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie?files=1");
+                        openLink("https://github.com/LethalMaus/StreamingYorkie?files=1");
                     }
                 });
 
@@ -102,7 +108,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact");
+                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact");
                     }
                 });
 
@@ -112,7 +118,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://twitch.tv/LethalMaus");
+                        openLink("https://twitch.tv/LethalMaus");
                     }
                 });
 
@@ -122,7 +128,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://patreon.com/LethalMaus");
+                        openLink("https://patreon.com/LethalMaus");
                     }
                 });
 
@@ -132,7 +138,7 @@ public class Info extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        devInfoRequestHandler.requestDevLink("https://github.com/LethalMaus/");
+                        openLink("https://github.com/LethalMaus/");
                     }
                 });
 
@@ -143,12 +149,26 @@ public class Info extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("DEV");
+        requestHandler.cancelRequest();
     }
     //The only option is the back button for finishing the activity
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
+    }
+
+    /**
+     * Method for opening a link in relation to the developer
+     * @author LethalMaus
+     * @param url a link to eg. Github
+     */
+    private void openLink(String url) {
+        if (RequestHandler.networkIsAvailable(weakContext)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        } else {
+            Toast.makeText(weakActivity.get(), "OFFLINE: Can't open link", Toast.LENGTH_SHORT).show();
+        }
     }
 }

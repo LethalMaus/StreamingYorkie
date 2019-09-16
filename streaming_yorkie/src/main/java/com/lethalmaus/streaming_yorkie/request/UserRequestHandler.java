@@ -5,18 +5,20 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.lethalmaus.streaming_yorkie.file.UserFileHandler;
+import com.lethalmaus.streaming_yorkie.entity.Channel;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
+import java.net.URL;
 
 /**
  * Class for requesting current user info
@@ -24,72 +26,75 @@ import java.util.Map;
  */
 public class UserRequestHandler extends RequestHandler {
 
-    private UserFileHandler userFileHandler;
-    //Whether a request should be sent or just the file to be accessed
-    private boolean requestUpdate;
+    @Override
+    public String url() {
+        return "https://api.twitch.tv/kraken/user";
+    }
+
+    @Override
+    public int method() {
+        return Request.Method.GET;
+    }
 
     /**
      * Constructor for UserRequestHandler for requesting current user info
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
-     * @param displayUser boolean whether channel is to be displayed
-     * @param requestUpdate boolean whether a request should be sent or just the file to be accessed
      */
-    public UserRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUser, boolean requestUpdate) {
+    public UserRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         super(weakActivity, weakContext, null);
-        userFileHandler = new UserFileHandler(weakContext, requestUpdate);
-        this.displayRequest = displayUser;
-        this.requestUpdate = requestUpdate;
+        this.requestType = "USER";
     }
 
     @Override
-    public void sendRequest(int offset) {
-        if (networkIsAvailable() && requestUpdate) {
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, "https://api.twitch.tv/kraken/user", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            responseHandler(response);
+    public void responseHandler(final JSONObject response) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    try {
+                        URL url = new URL(response.getString("logo"));
+                        InputStream inputStream = new BufferedInputStream(url.openStream());
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        byte[] buffer = new byte[1024];
+                        int byteNumber;
+                        while (-1 != (byteNumber = inputStream.read(buffer))) {
+                            byteArrayOutputStream.write(buffer, 0, byteNumber);
                         }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+                        byteArrayOutputStream.close();
+                        inputStream.close();
+                        FileOutputStream fos = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/") + 1));
+                        fos.write(byteArrayOutputStream.toByteArray());
+                        fos.close();
+                    } catch (Exception e) {
+                        new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
+                    }
+                    Channel existingChannel = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
+                    if (existingChannel != null) {
+                        existingChannel.setDisplay_name(response.getString("display_name"));
+                        existingChannel.setLogo(response.getString("logo"));
+                        existingChannel.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
+                        existingChannel.setDescription(response.getString("bio"));
+                        streamingYorkieDB.channelDAO().updateChannel(existingChannel);
+                    } else {
+                        Channel channel = new Channel(Integer.parseInt(response.getString("_id")), response.getString("display_name"), response.getString("logo"), "", response.getString("created_at").replace("T", " ").replace("Z", ""), 0, 0, "", response.getString("bio"), "");
+                        streamingYorkieDB.channelDAO().insertChannel(channel);
+                    }
+                    new UserView(weakActivity, weakContext).execute();
+                } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
-                        Toast.makeText(weakActivity.get(), "Error requesting User", Toast.LENGTH_SHORT).show();
+                        weakActivity.get().runOnUiThread(
+                                new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(weakContext.get(), "User can't be saved", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                        );
                     }
-                    String errorMessage = error.toString();
-                    if (error.networkResponse != null) {
-                        errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                    }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error requesting User | " + errorMessage, true).run();
-                    offlineResponseHandler();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving User | " + e.toString(), true).run();
                 }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() {
-                    return getRequestHeaders();
-                }
-            };
-            jsObjRequest.setTag("USER");
-            VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
-        } else {
-            offlineResponseHandler();
-        }
+            }
+        }).start();
     }
 
-    @Override
-    public void responseHandler(JSONObject response) {
-        userFileHandler.setResponse(response);
-        userFileHandler.writeUser();
-        new UserView(weakActivity, weakContext, displayRequest).execute();
-    }
-
-    @Override
-    protected void offlineResponseHandler() {
-        if (weakActivity != null && weakActivity.get() != null && requestUpdate) {
-            Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved User Info", Toast.LENGTH_SHORT).show();
-        }
-        new UserView(weakActivity, weakContext, displayRequest).execute();
-    }
 }

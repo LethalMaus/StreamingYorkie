@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
 import com.lethalmaus.streaming_yorkie.activity.InfoGuide;
-import com.lethalmaus.streaming_yorkie.activity.MainActivity;
 import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 
 /**
@@ -20,36 +19,10 @@ public class Globals {
     public static final String CLIENTID = "tjots3mhxunw0sj2a20ka3wz39p7bp";
     //ID of Twitch
     public static final String TWITCHID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
-    //Channel Object limit per request. Gets added to offset
+    //Object limit per request. Gets added to offset
     public static final int USER_REQUEST_LIMIT = 25;
+    public static final int USER_UPDATE_REQUEST_LIMIT = 3;
     public static final int VOD_REQUEST_LIMIT = 10;
-
-    //Directories for Followers
-    public static final String FOLLOWERS_PATH = "FOLLOWERS";
-    public static final String FOLLOWERS_REQUEST_PATH = "FOLLOWERS_REQUESTED";
-    public static final String FOLLOWERS_NEW_PATH = "FOLLOWERS_NEW";
-    public static final String FOLLOWERS_CURRENT_PATH = "FOLLOWERS_CURRENT";
-    public static final String FOLLOWERS_UNFOLLOWED_PATH = "FOLLOWERS_UNFOLLOWED";
-    public static final String FOLLOWERS_EXCLUDED_PATH = "FOLLOWERS_EXCLUDED";
-
-    //Directories for Following
-    public static final String FOLLOWING_PATH = "FOLLOWING";
-    public static final String FOLLOWING_REQUEST_PATH = "FOLLOWING_REQUESTED";
-    public static final String FOLLOWING_NEW_PATH = "FOLLOWING_NEW";
-    public static final String FOLLOWING_CURRENT_PATH = "FOLLOWING_CURRENT";
-    public static final String FOLLOWING_UNFOLLOWED_PATH = "FOLLOWING_UNFOLLOWED";
-    public static final String FOLLOWING_EXCLUDED_PATH = "FOLLOWING_EXCLUDED";
-
-    //Directories for F4F
-    public static final String F4F_FOLLOWED_NOTFOLLOWING_PATH = "FOLLOWED_NOTFOLLOWING";
-    public static final String F4F_FOLLOW4FOLLOW_PATH = "FOLLOW4FOLLOW";
-    public static final String F4F_NOTFOLLOWED_FOLLOWING_PATH = "NOTFOLLOWED_FOLLOWING";
-    public static final String F4F_EXCLUDED_PATH = "F4F_EXCLUDED";
-
-    //Directories for VODs
-    public static final String VOD_PATH = "VODS";
-    public static final String VOD_EXPORTED_PATH = "VODS_EXPORTED";
-    public static final String VOD_EXCLUDED_PATH = "VODS_EXCLUDED";
 
     //Directories for Lurks
     public static final String LURK_PATH = "LURKS";
@@ -95,8 +68,6 @@ public class Globals {
     public static final String LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify channel if lurking is activated";
 
     //Flag Files
-    public static final String FLAG_FOLLOWERS_REQUEST_RUNNING = "FLAG_FOLLOWERS_REQUEST_RUNNING";
-    public static final String FLAG_FOLLOWING_REQUEST_RUNNING = "FLAG_FOLLOWING_REQUEST_RUNNING";
     public static final String FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE = "FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE";
     public static final String FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE = "FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE";
 

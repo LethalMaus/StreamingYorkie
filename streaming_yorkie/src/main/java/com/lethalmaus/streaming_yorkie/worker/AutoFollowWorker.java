@@ -1,31 +1,31 @@
 package com.lethalmaus.streaming_yorkie.worker;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
 import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.activity.Follow4Follow;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.User;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
-import com.lethalmaus.streaming_yorkie.file.OrganizeFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowRequestHandler;
-import com.lethalmaus.streaming_yorkie.request.FollowersRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.FollowersUpdateRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.FollowingUpdateRequestHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -55,97 +55,68 @@ public class AutoFollowWorker extends Worker {
             autoFollow = settings.getString(Globals.SETTINGS_AUTOFOLLOW);
             autoFollowNotifications = settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS);
         } catch(JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "AuFo: Error reading settings | " + e.toString(), true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "AutoFollow: Error reading settings | " + e.toString(), true).run();
         }
     }
 
     @Override
     public @NonNull Result doWork() {
-        new FollowersRequestHandler(null, weakContext, null, false) {
+        final FollowingUpdateRequestHandler followingUpdateRequestHandler = new FollowingUpdateRequestHandler(null, weakContext, null) {
             @Override
-            protected void responseAction() {
-                new autoFollowOrganizeFileHandler(null, weakContext, false)
-                        .setPreferences(autoFollow, autoFollowNotifications)
-                        .setPaths(Globals.FOLLOWERS_CURRENT_PATH, Globals.FOLLOWERS_NEW_PATH, Globals.FOLLOWERS_UNFOLLOWED_PATH, Globals.FOLLOWERS_EXCLUDED_PATH, Globals.FOLLOWERS_REQUEST_PATH, Globals.FOLLOWERS_PATH)
-                        .execute();
+            public void onCompletion() {
+                final StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
+                if (autoFollow != null && (autoFollow.equals("FOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
+                    FollowRequestHandler followRequestHandler =  new FollowRequestHandler(null, weakContext) {
+                        @Override
+                        public void onCompletion() {
+                            User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserForAutoFollow();
+                            if (user != null) {
+                            new WriteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + user.getId(), null, null, false).writeToFileOrPath();
+                                setRequestParameters(Request.Method.PUT, user.getId(), autoFollowNotifications)
+                                        .sendRequest();
+                            } else {
+                                notifyUser(weakContext);
+                            }
+                        }
+                    };
+                    User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserForAutoFollow();
+                    if (user != null) {
+                        new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
+                        followRequestHandler.setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                .sendRequest();
+                    }
+                }
+                if (autoFollow != null && (autoFollow.equals("UNFOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
+                    FollowRequestHandler followRequestHandler =  new FollowRequestHandler(null, weakContext) {
+                        @Override
+                        public void onCompletion() {
+                            User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserForAutoFollow();
+                            if (user != null) {
+                            new WriteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + user.getId(), null, null, false).writeToFileOrPath();
+                                setRequestParameters(Request.Method.DELETE, user.getId(), autoFollowNotifications)
+                                        .sendRequest();
+                            } else {
+                                notifyUser(weakContext);
+                            }
+                        }
+                    };
+                    User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserForAutoFollow();
+                    if (user != null) {
+                        new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
+                        followRequestHandler.setRequestParameters(Request.Method.DELETE, user.getId(), false)
+                                .sendRequest();
+                    }
+                }
             }
-        }.newRequest().sendRequest(0);
+        };
+        final FollowersUpdateRequestHandler followersUpdateRequestHandler = new FollowersUpdateRequestHandler(null, weakContext, null) {
+            @Override
+            public void onCompletion() {
+                followingUpdateRequestHandler.initiate().sendRequest();
+            }
+        };
+        followersUpdateRequestHandler.initiate().sendRequest();
         return Result.success();
-    }
-
-    /**
-     * Extends OrganizeFileHandler to organize new followers
-     * @author LethalMaus
-     */
-    static class autoFollowOrganizeFileHandler extends OrganizeFileHandler {
-
-        //Constant - FOLLOW, UNFOLLOW & FOLLOW_UNFOLLOW (both)
-        private String autoFollow;
-        //Whether the AutoFollow should activate/deactivate notifications
-        private boolean autoFollowNotifications;
-
-        /**
-         * Constructor for autoFollowOrganizeFileHandler that extends OrganizeFileHandler to organize new followers
-         * @author LethalMaus
-         * @param weakActivity weak referenced activity
-         * @param weakContext weak referenced context
-         * @param displayUsers boolean whether channel is to be displayed
-         */
-        autoFollowOrganizeFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUsers) {
-            super(weakActivity, weakContext, null, displayUsers);
-        }
-
-        /**
-         * Sets the AutoFollow preferences
-         * @author LethalMaus
-         * @param autoFollow constant - type of action to be taken eg. FOLLOW, UNFOLLOW & FOLLOW_UNFOLLOW
-         * @param autoFollowNotifications boolean whether the AutoFollow should activate/deactivate notifications
-         * @return instance of itself for method building
-         */
-        autoFollowOrganizeFileHandler setPreferences(String autoFollow, boolean autoFollowNotifications) {
-            this.autoFollow = autoFollow;
-            this.autoFollowNotifications = autoFollowNotifications;
-            return this;
-        }
-
-        @Override
-        protected void onPostExecute(Void v) {
-            if (autoFollow != null && (autoFollow.equals("FOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
-                ArrayList<String> newUsers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_NEW_PATH).readFileNames();
-                for (final String user : newUsers) {
-                    if (!new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + user).exists() &&
-                            !new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + File.separator + user).exists() &&
-                            !new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + File.separator + user).exists()) {
-                        new FollowRequestHandler(null, weakContext) {
-                            @Override
-                            public void responseHandler(JSONObject response) {
-                                super.responseHandler(response);
-                                new WriteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + user, null, null, false).writeToFileOrPath();
-                                new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
-                            }
-                        }.setRequestParameters(Request.Method.PUT, user, autoFollowNotifications).requestFollow();
-                    }
-                }
-            }
-            if (autoFollow != null && (autoFollow.equals("UNFOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
-                ArrayList<String> unfollowedUsers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_UNFOLLOWED_PATH).readFileNames();
-                for (final String user : unfollowedUsers) {
-                    if (!new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + user).exists() &&
-                            !new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + File.separator + user).exists() &&
-                            !new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + File.separator + user).exists()) {
-                        new FollowRequestHandler(null, weakContext) {
-                            @Override
-                            public void responseHandler(JSONObject response) {
-                                super.responseHandler(response);
-                                new WriteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + user, null, null, false).writeToFileOrPath();
-                                new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
-                            }
-                        }.setRequestParameters(Request.Method.DELETE, user, autoFollowNotifications).requestFollow();
-                    }
-                }
-            }
-            notifyUser(weakContext);
-        }
     }
 
     /**

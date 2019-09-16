@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -30,6 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -184,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
             NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(channelDescription);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
 
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
         } else {
-            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext()), true, true).sendRequest(0);
+            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext())).sendRequest();
         }
     }
 

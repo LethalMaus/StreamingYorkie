@@ -40,8 +40,11 @@ public class DeleteFileHandler implements Runnable {
         File pathOrFile = new File(appDirectory + File.separator + pathOrFileName);
         if (pathOrFile.exists()) {
             if (pathOrFile.isDirectory()) {
-                for (String file : pathOrFile.list()) {
-                    deleteFileOrPath(pathOrFileName + File.separator + file);
+                File[] files = pathOrFile.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        deleteFileOrPath(pathOrFileName + File.separator + file.getName());
+                    }
                 }
             }
             if (!pathOrFile.delete()) {

@@ -10,11 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
-import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.Channel;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -27,45 +24,39 @@ public class UserView extends AsyncTask<Void, View, Void> {
 
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
-    //Whether channel is to be display or just updated
-    private boolean displayUser;
+    private StreamingYorkieDB streamingYorkieDB;
 
-    //Channel attributes
+    //User attributes
     private String displayName;
     private String logo;
 
     /**
-     * Constructor for UserView for viewing current channel info
+     * Constructor for UserView for viewing current user info
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
-     * @param displayUser boolean whether channel is to be display or just updated
      */
-    public UserView (WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, boolean displayUser) {
+    public UserView (WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
-        this.displayUser = displayUser;
+        streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        try {
-            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
-            displayName = user.getString("display_name");
-            logo = user.getString("logo");
-            if (logo.contains("/")
-                    && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
-                logo = logo.substring(logo.lastIndexOf("/")+1);
-            }
-        } catch (JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Error reading USER file | " + e.toString(), true);
+        Channel channel = streamingYorkieDB.channelDAO().getChannel();
+        displayName = channel.getDisplay_name();
+        logo = channel.getLogo();
+        if (logo.contains("/")
+                && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
+            logo = logo.substring(logo.lastIndexOf("/")+1);
         }
         return null;
     }
 
     @Override
     protected void onPostExecute(Void v) {
-        if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && displayUser) {
+        if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
             Activity activity = weakActivity.get();
                 ImageView user_Logo = activity.findViewById(R.id.user_Logo);
                 if (!logo.contains("/")

@@ -8,10 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +15,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.LurkAdapter;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
-import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
+import com.lethalmaus.streaming_yorkie.view.UserView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -54,7 +56,7 @@ public class Lurk extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lurk);
 
-        new UserRequestHandler(weakActivity, weakContext,true, false).sendRequest(0);
+        new UserView(weakActivity, weakContext).execute();
         recyclerView = findViewById(R.id.lurk_list);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -85,7 +87,7 @@ public class Lurk extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return Globals.onOptionsItemsSelected(this, item);
     }
 

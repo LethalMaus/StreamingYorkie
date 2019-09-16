@@ -3,11 +3,13 @@ package com.lethalmaus.streaming_yorkie.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
@@ -32,14 +34,14 @@ public class Channel extends AppCompatActivity {
         this.weakContext = new WeakReference<>(getApplicationContext());
         setContentView(R.layout.channel);
         channelRequestHandler = new ChannelRequestHandler(new WeakReference<Activity>(this), weakContext);
-        channelRequestHandler.sendRequest(0);
+        channelRequestHandler.sendRequest();
 
         ImageButton refreshPage = findViewById(R.id.user_refresh);
         refreshPage.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        channelRequestHandler.sendRequest(0);
+                        channelRequestHandler.sendRequest();
                     }
                 });
     }
@@ -51,7 +53,7 @@ public class Channel extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return Globals.onOptionsItemsSelected(this, item);
     }
 

@@ -4,23 +4,31 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.Channel;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
-import com.lethalmaus.streaming_yorkie.file.FollowFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -30,37 +38,21 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
  */
 public class RequestHandler {
 
-    //Channel token for authorization
     String token;
-
+    String userID;
+    String requestType;
+    int method;
     int offset;
     int twitchTotal;
     int itemCount;
-    String userID;
+    long timestamp;
+    StreamingYorkieDB streamingYorkieDB;
+    private JSONObject postBody;
 
     //Weak references to avoid memory leaks
     WeakReference<Activity> weakActivity;
     WeakReference<Context> weakContext;
     WeakReference<RecyclerView> recyclerView;
-
-    FollowFileHandler followFileHandler;
-
-    //Paths for the file handlers
-    String currentUsersPath;
-    String newUsersPath;
-    String unfollowedUsersPath;
-    String excludedUsersPath;
-    String usersPath;
-    String requestPath;
-
-    //Display preferences
-    String itemsToDisplay;
-    String actionButtonType1;
-    String actionButtonType2;
-    String actionButtonType3;
-
-    //Boolean whether to show updated files
-    boolean displayRequest;
 
     /**
      * Constructor for RequestHandler. Parent class for all request handlers
@@ -69,84 +61,109 @@ public class RequestHandler {
      * @param weakContext weak referenced context
      * @param recyclerView weak referenced recycler view
      */
-    public RequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView){
+    public RequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
         this.recyclerView = recyclerView;
-
-        if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-            token = new ReadFileHandler(weakContext,"TOKEN").readFile();
-        }
-        if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + "USER").exists()) {
-            try {
-                JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
-                userID = user.getString("_id");
-            } catch (JSONException e) {
-                if (weakActivity != null && weakActivity.get() != null) {
-                    Toast.makeText(weakActivity.get(), "Error reading channel for request.", Toast.LENGTH_SHORT).show();
-                }
-                new WriteFileHandler(weakContext, "ERROR", null, "Error reading channel for request | " + e.toString(), true).run();
-            }
-        }
+        streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
     }
 
     /**
-     * Sets Paths for file handlers
+     * Builds Url dynamically for changing url parameters
+     * Is overridden in sub classes
      * @author LethalMaus
-     * @param currentUsersPath constant directory of current users
-     * @param newUsersPath constant directory of new users
-     * @param unfollowedUsersPath constant directory of unfollowed users
-     * @param excludedUsersPath constant directory of excluded users
-     * @param requestPath constant directory of to temporarily store requested users before being organized
-     * @param usersPath constant directory of channel objects
+     * @return dynamic Url
+     */
+    public String url() {
+        return "";
+    }
+
+    /**
+     * Returns the method for current request.
+     * Is overridden in sub classes
+     * @author LethalMaus
+     * @return dynamic Url
+     */
+    public int method() {
+        return 0;
+    }
+
+    /**
+     * Sets the body for POST requests
+     * @author LethalMaus
+     * @param postBody JSONObject
      * @return instance of itself for method building
      */
-    public RequestHandler setPaths(String currentUsersPath, String newUsersPath, String unfollowedUsersPath, String excludedUsersPath, String requestPath, String usersPath) {
-        this.currentUsersPath = currentUsersPath;
-        this.newUsersPath = newUsersPath;
-        this.unfollowedUsersPath = unfollowedUsersPath;
-        this.excludedUsersPath = excludedUsersPath;
-        this.requestPath = requestPath;
-        this.usersPath = usersPath;
+    public RequestHandler setPostBody(JSONObject postBody) {
+        this.postBody = postBody;
         return this;
     }
 
     /**
-     * Sets display preferences
-     * @author LethalMaus
-     * @param itemsToDisplay constant of users to display
-     * @param actionButtonType1 constant of which button type is required
-     * @param actionButtonType2 constant of which button type is required
-     * @param actionButtonType3 constant of which button type is required
-     * @return instance of itself for method building
-     */
-    public RequestHandler setDisplayPreferences(String itemsToDisplay, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
-        this.itemsToDisplay = itemsToDisplay;
-        this.actionButtonType1 = actionButtonType1;
-        this.actionButtonType2 = actionButtonType2;
-        this.actionButtonType3 = actionButtonType3;
-        return this;
-    }
-
-    /**
-     * Sets the total & channel count to '0' for new requests.
-     * This variables are dynamic & reused during multiple request firing
+     * Sets the total & channel count to '0' for new requests as well as setting the request timestamp.
+     * These variables are dynamic & reused during multiple request firing
      * @author LethalMaus
      * @return instance of itself for method building
      */
-    public RequestHandler newRequest() {
+    public RequestHandler initiate() {
         twitchTotal = 0;
         itemCount = 0;
+        offset = 0;
+        timestamp = System.currentTimeMillis();
+        new WriteFileHandler(weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
         return this;
     }
 
     /**
      * Method for sending a request.
+     * Must have called initiate() at least once.
      * This method is overridden in every sub-class.
      * @author LethalMaus
-     * @param offset used for stacking requests
      */
-    public void sendRequest(int offset) {}
+    public void sendRequest() {
+        new Thread(new Runnable() {
+            public void run() {
+                if (weakContext != null && weakContext.get() != null) {
+                    if (userID == null) {
+                        if (new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+                            token = new ReadFileHandler(weakContext, "TOKEN").readFile();
+                        }
+                        Channel channel = streamingYorkieDB.channelDAO().getChannel();
+                        if (channel != null) {
+                            userID = Integer.toString(channel.getId());
+                        }
+                    }
+                    if (networkIsAvailable(weakContext)) {
+                        JsonObjectRequest jsObjRequest = new JsonObjectRequest(method(), url(), postBody,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(final JSONObject response) {
+                                        responseHandler(response);
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                errorHandler(error);
+                            }
+                        }) {
+                            @Override
+                            public Map<String, String> getHeaders() {
+                                return getRequestHeaders();
+                            }
+                            @Override
+                            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                                return parseRequestNetworkResponse(response, PROTOCOL_CHARSET);
+                            }
+                        };
+                        jsObjRequest.setTag(requestType);
+                        VolleySingleton.getInstance(weakContext).addToRequestQueue(jsObjRequest);
+                    } else {
+                        offlineResponseHandler();
+                    }
+                }
+            }
+        }).start();
+    }
 
     /**
      * Method for handling a request response
@@ -161,32 +178,37 @@ public class RequestHandler {
      * @author LethalMaus
      */
     protected void offlineResponseHandler() {
-        if (displayRequest && recyclerView != null && recyclerView.get() != null) {
-            if (weakActivity != null && weakActivity.get() != null) {
-                Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved items", Toast.LENGTH_SHORT).show();
-            }
-            recyclerView.get().setAdapter(new UserAdapter(weakActivity, weakContext)
-                    .setPaths(newUsersPath, currentUsersPath, unfollowedUsersPath, excludedUsersPath, usersPath)
-                    .setDisplayPreferences(itemsToDisplay, actionButtonType1, actionButtonType2, actionButtonType3));
+        if (recyclerView != null && recyclerView.get() != null && weakActivity.get() != null) {
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved " + requestType, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         }
     }
 
     /**
      * Method for handling a request error response.
-     * Provokes offlineResponseHandler
      * @author LethalMaus
      * @param error Volley Error
      */
     void errorHandler(VolleyError error) {
-        if (weakActivity != null && weakActivity.get() != null) {
-            Toast.makeText(weakActivity.get(), "Error requesting items", Toast.LENGTH_SHORT).show();
+        if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            Toast.makeText(weakActivity.get(), "Error requesting " + requestType, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
         }
         String errorMessage = error.toString();
         if (error.networkResponse != null) {
             errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
         }
-        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting items" + errorMessage, true).run();
-        offlineResponseHandler();
+        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();
     }
 
     /**
@@ -204,21 +226,45 @@ public class RequestHandler {
     }
 
     /**
-     * Cancels all requests sent and voids any methods that would be provoked afterwards
+     * Method for overriding parseNetworkResponse
      * @author LethalMaus
+     * @param response JSONObject
+     * @param PROTOCOL_CHARSET HTTP Protocol Character set used
+     * @return Response
      */
-    public void cancelAllRequests() {
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("FOLLOWERS");
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("FOLLOWING");
-        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("FOLLOW");
+    public Response<JSONObject> parseRequestNetworkResponse(NetworkResponse response, String PROTOCOL_CHARSET) {
+        try {
+            String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+        } catch (UnsupportedEncodingException e) {
+            return Response.error(new ParseError(e));
+        } catch (JSONException je) {
+            return Response.error(new ParseError(je));
+        }
     }
 
     /**
+     * Cancels all requests sent of the same type and voids any methods that would be provoked afterwards
+     * @author LethalMaus
+     */
+    public void cancelRequest() {
+        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll(requestType);
+    }
+
+    /**
+     * Method for making synchronous processes for F4F & Automation
+     * @author LethalMaus
+     */
+    public void onCompletion() {}
+
+    //FIXME needs to be changed due to deprecation
+    /**
      * Method for checking network status
      * @author LethalMaus
+     * @param weakContext Weak reference context
      * @return boolean as to whether network is available
      */
-    public boolean networkIsAvailable() {
+    public static boolean networkIsAvailable(WeakReference<Context> weakContext) {
         NetworkInfo activeNetwork = null;
         if (weakContext != null && weakContext.get() != null) {
             ConnectivityManager systemService = (ConnectivityManager) weakContext.get().getSystemService(CONNECTIVITY_SERVICE);

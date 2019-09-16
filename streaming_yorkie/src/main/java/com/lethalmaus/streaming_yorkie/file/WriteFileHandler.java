@@ -74,7 +74,7 @@ public class WriteFileHandler implements Runnable {
         try {
             File file = new File(appDirectory + File.separator + fileOrPathName);
             if (!file.exists()) {
-                if (!new File(file.getParent()).exists() && !new File(file.getParent()).mkdirs()) {
+                if (file.getParent() != null && !new File(file.getParent()).exists() && !new File(file.getParent()).mkdirs()) {
                     if (weakContext != null && weakContext.get() != null) {
                         Toast.makeText(weakContext.get(), "Error creating directory '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
                     } else {

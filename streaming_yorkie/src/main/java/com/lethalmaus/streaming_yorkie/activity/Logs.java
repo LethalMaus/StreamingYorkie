@@ -3,8 +3,10 @@ package com.lethalmaus.streaming_yorkie.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.view.LogView;
@@ -33,7 +35,7 @@ public class Logs extends AppCompatActivity {
 
     //Only the back button is available. If the current directory position is a sub folder it goes back. Otherwise it finishes the activity.
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (logView.getCurrentDirectory().equals(this.getFilesDir().toString())) {
             finish();
         } else {

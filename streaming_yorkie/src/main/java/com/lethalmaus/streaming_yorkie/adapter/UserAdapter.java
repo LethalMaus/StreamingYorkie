@@ -2,8 +2,7 @@ package com.lethalmaus.streaming_yorkie.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +12,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.Request;
 import com.bumptech.glide.Glide;
-import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.F4F;
+import com.lethalmaus.streaming_yorkie.entity.Follower;
+import com.lethalmaus.streaming_yorkie.entity.Following;
+import com.lethalmaus.streaming_yorkie.entity.User;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
-import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Recycler View Adapter for Followers/Following/F4F
@@ -39,41 +38,27 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     //All activities & contexts are weak referenced to avoid memory leaks
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
-    private String appDirectory;
-
-    //Paths for Dataset files
-    private String newUsersPath;
-    private String currentUsersPath;
-    private String unfollowedUsersPath;
-    private String excludedUsersPath;
-
-    //Display preferences
-    private String usersPath;
-    private String usersToDisplay;
-    private ArrayList<String> userDataset;
+    private String userType;
+    private String userStatus;
     private String actionButtonType1;
     private String actionButtonType2;
     private String actionButtonType3;
-
-    //Page counts
     private int pageCount1;
     private int pageCount2;
     private int pageCount3;
     private int pageCount4;
-
-    private FollowRequestHandler followRequestHandler;
+    private int currentPageCount = 0;
+    private StreamingYorkieDB streamingYorkieDB;
 
     /**
      * Simple View Holder for loading the View with a Dataset Row
      * @author LethalMaus
      */
     static class UserViewHolder extends RecyclerView.ViewHolder {
-
         View userRow;
-
         /**
-         * Holder for Channel View
-         * @param userRow View for Channel Row
+         * Holder for user View
+         * @param userRow View for user Row
          */
         UserViewHolder(View userRow) {
             super(userRow);
@@ -82,7 +67,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Adapter for displaying a Channel Dataset
+     * Adapter for displaying a User Dataset
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
@@ -90,59 +75,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public UserAdapter(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
-        if (weakContext != null && weakContext.get() != null) {
-            this.appDirectory = weakContext.get().getFilesDir().toString();
-        }
-        followRequestHandler = new FollowRequestHandler(weakActivity, weakContext);
-    }
-
-    /**
-     * Sets the paths where the data files can be found
-     * @author LethalMaus
-     * @param newUsersPath directory of new channel ids
-     * @param currentUsersPath directory of current channel ids
-     * @param unfollowedUsersPath directory of unfollowed channel ids
-     * @param excludedUsersPath directory of excluded channel ids
-     * @param usersPath directory of channel objects
-     * @return an instance of itself for method building
-     */
-    public UserAdapter setPaths(String newUsersPath, String currentUsersPath, String unfollowedUsersPath, String excludedUsersPath, String usersPath) {
-        this.newUsersPath = newUsersPath;
-        this.currentUsersPath = currentUsersPath;
-        this.unfollowedUsersPath = unfollowedUsersPath;
-        this.excludedUsersPath = excludedUsersPath;
-        this.usersPath = usersPath;
-        return this;
+        streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
     }
 
     /**
      * Sets Display preferences
      * @author LethalMaus
-     * @param usersToDisplay constant of which users are to be displayed
+     * @param userType eg. FOLLOWERS, FOLLOWING
+     * @param userStatus constant of which users are to be displayed
      * @param actionButtonType1 constant of which button is required in relation to the itemsToDisplay
      * @param actionButtonType2 constant of which button is required in relation to the itemsToDisplay
      * @param actionButtonType3 constant of which button is required in relation to the itemsToDisplay
      * @return an instance of itself for method building
      */
-    public UserAdapter setDisplayPreferences(String usersToDisplay, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
-        this.usersToDisplay = usersToDisplay;
+    public UserAdapter setDisplayPreferences(String userType, String userStatus, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
+        this.userType = userType;
+        this.userStatus = userStatus;
         this.actionButtonType1 = actionButtonType1;
         this.actionButtonType2 = actionButtonType2;
         this.actionButtonType3 = actionButtonType3;
-        //As soon as we know how to display the users, we get the channel Dataset
-        getUsers();
-        //An empty row or table can be displayed based on if the dataset is empty or not
-        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            if (userDataset.size() > 0) {
-                weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
-                weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
-            } else {
-                weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
-                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
-                weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-            }
-        }
         return this;
     }
 
@@ -154,111 +105,163 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserViewHolder userViewHolder, int position) {
-        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
-            try {
-                JSONObject userObject;
-                if (new File(weakContext.get().getFilesDir() + File.separator + Globals.FOLLOWING_PATH + File.separator + userDataset.get(position)).exists()) {
-                    userObject = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userDataset.get(position)).readFile());
+    public void onBindViewHolder(@NonNull final UserViewHolder userViewHolder, final int position) {
+        weakActivity.get().runOnUiThread(new Runnable() {
+            public void run() {
+                new UserAsyncTask(weakActivity, weakContext, UserAdapter.this, userViewHolder, streamingYorkieDB, userType, userStatus, position, actionButtonType1, actionButtonType2, actionButtonType3).execute();
+            }
+        });
+    }
+
+    /**
+     * Async Task to request User and display it
+     * @author LethalMaus
+     */
+    private static class UserAsyncTask extends AsyncTask<Void, Void, User> {
+
+        private WeakReference<Activity> weakActivity;
+        private WeakReference<Context> weakContext;
+        private UserAdapter userAdapter;
+        private UserViewHolder userViewHolder;
+        private StreamingYorkieDB streamingYorkieDB;
+        private String userType;
+        private String userStatus;
+        private int position;
+        private String actionButtonType1;
+        private String actionButtonType2;
+        private String actionButtonType3;
+
+        /**
+         * Async Task constructor
+         * @author LethalMaus
+         * @param weakActivity inner class reference
+         * @param weakContext inner class reference
+         * @param userAdapter inner class reference
+         * @param userViewHolder inner class reference
+         * @param streamingYorkieDB inner class reference
+         * @param userType inner class reference
+         * @param userStatus inner class reference
+         * @param position inner class reference
+         * @param actionButtonType1 inner class reference
+         * @param actionButtonType2 inner class reference
+         * @param actionButtonType3 inner class reference
+         */
+        UserAsyncTask(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, UserAdapter userAdapter, UserViewHolder userViewHolder, StreamingYorkieDB streamingYorkieDB, String userType, String userStatus, int position, String actionButtonType1, String actionButtonType2, String actionButtonType3) {
+            this.weakActivity = weakActivity;
+            this.weakContext = weakContext;
+            this.userAdapter = userAdapter;
+            this.userViewHolder = userViewHolder;
+            this.streamingYorkieDB = streamingYorkieDB;
+            this.userType = userType;
+            this.userStatus = userStatus;
+            this.position = position;
+            this.actionButtonType1 = actionButtonType1;
+            this.actionButtonType2 = actionButtonType2;
+            this.actionButtonType3 = actionButtonType3;
+        }
+
+        @Override
+        protected User doInBackground(Void... params) {
+            User user;
+            if (userType.contentEquals("FOLLOWERS")) {
+                if (userStatus.contentEquals("CURRENT")) {
+                    user = streamingYorkieDB.followerDAO().getCurrentUserByPosition(position);
                 } else {
-                    userObject = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWERS_PATH + File.separator + userDataset.get(position)).readFile());
+                    user = streamingYorkieDB.followerDAO().getUserByStatusAndPosition(userStatus, position);
                 }
+            } else if (userType.contentEquals("FOLLOWING")) {
+                if (userStatus.contentEquals("CURRENT")) {
+                    user = streamingYorkieDB.followingDAO().getCurrentUserByPosition(position);
+                } else {
+                    user = streamingYorkieDB.followingDAO().getUserByStatusAndPosition(userStatus, position);
+                }
+            } else if (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+                user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(position);
+            } else if (userStatus.contentEquals("FOLLOW4FOLLOW")) {
+                user = streamingYorkieDB.f4fDAO().getFollow4FollowUserByPosition(position);
+            } else if (userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+                user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(position);
+            } else {
+                user = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserByPosition(position);
+            }
+            return user;
+        }
 
-                TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
-                textView.setText(userObject.getString("display_name"));
+        @Override
+        protected void onPostExecute(final User user) {
+            if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
+                if (user != null) {
+                    TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
+                    textView.setText(user.getDisplay_name());
 
-                ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
-                Glide.with(weakContext.get()).load(userObject.getString("logo")).placeholder(R.drawable.user).into(imageView);
+                    ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
+                    Glide.with(weakContext.get()).load(user.getLogo()).placeholder(R.drawable.user).into(imageView);
 
-                ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
-                editButton(button1, actionButtonType1, userObject.getString("_id"));
-                ImageButton button2 = userViewHolder.userRow.findViewById(R.id.userrow_button2);
-                editButton(button2, actionButtonType2, userObject.getString("_id"));
-                ImageButton button3 = userViewHolder.userRow.findViewById(R.id.userrow_button3);
-                editButton(button3, actionButtonType3, userObject.getString("_id"));
-
+                    final ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
+                    final ImageButton button2 = userViewHolder.userRow.findViewById(R.id.userrow_button2);
+                    final ImageButton button3 = userViewHolder.userRow.findViewById(R.id.userrow_button3);
+                    new Thread(new Runnable() {
+                        public void run() {
+                            userAdapter.editButton(button1, actionButtonType1, user.getId());
+                            userAdapter.editButton(button2, actionButtonType2, user.getId());
+                            userAdapter.editButton(button3, actionButtonType3, user.getId());
+                        }
+                    }).start();
+                }
                 ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
                 progressBar.setVisibility(View.INVISIBLE);
-
-            } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error binding channel | " + e.toString(), true);
             }
         }
     }
 
     /**
      * Takes action once a dataset has been changed then notifies UI
+     * @author LethalMaus
      */
-    private void datasetChanged() {
-        if (userDataset != null && userDataset.size() > 0) {
-            if (userDataset.size() > 1 && (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING") || usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING"))) {
-                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
-            } else {
-                weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+    public void datasetChanged() {
+        new Thread(new Runnable() {
+            public void run() {
+                setPageCounts();
+                if (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+                    actionAllButton(true);
+                } else if (userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+                    actionAllButton(false);
+                } else {
+                    weakActivity.get().runOnUiThread(new Runnable() {
+                        public void run() {
+                            weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                        }
+                    });
+                }
+                weakActivity.get().runOnUiThread(
+                        new Runnable() {
+                            public void run() {
+                                setPageCountViews();
+                                //An empty row or table can be displayed based on if the dataset is empty or not
+                                if (currentPageCount > 0) {
+                                    if (currentPageCount > 1 && (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING"))) {
+                                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
+                                    } else {
+                                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                                    }
+                                    weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
+                                    weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
+                                } else {
+                                    weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+                                    weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                                    weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                }
+                                notifyDataSetChanged();
+                            }
+                        });
             }
-            weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
-            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
-        } else {
-            weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
-            weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
-            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-        }
-        notifyDataSetChanged();
+        }).start();
     }
 
     @Override
     public int getItemCount() {
-        return userDataset != null ? userDataset.size() : 0;
-    }
-
-    /**
-     * Gets the Dataset (list of channel ids) based on itemsToDisplay
-     * @author LethalMaus
-     */
-    private void getUsers() {
-        switch (usersToDisplay) {
-            case "NEW":
-                userDataset = new ReadFileHandler(weakContext, newUsersPath).readFileNames();
-                break;
-            case "CURRENT":
-                userDataset = new ReadFileHandler(weakContext, currentUsersPath).readFileNames();
-                break;
-            case "UNFOLLOWED":
-                userDataset = new ReadFileHandler(weakContext, unfollowedUsersPath).readFileNames();
-                break;
-            case "EXCLUDED":
-                userDataset = new ReadFileHandler(weakContext, excludedUsersPath).readFileNames();
-                break;
-            case "FOLLOWED_NOTFOLLOWING":
-                usersPath = Globals.FOLLOWERS_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
-                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames());
-                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames());
-                actionAllButton(true);
-                break;
-            case "FOLLOW4FOLLOW":
-                usersPath = Globals.FOLLOWERS_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
-                userDataset.retainAll(new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames());
-                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames());
-                break;
-            case "NOTFOLLOWED_FOLLOWING":
-                usersPath = Globals.FOLLOWING_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
-                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames());
-                userDataset.removeAll(new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames());
-                actionAllButton(false);
-                break;
-            case "F4F_EXCLUDED":
-                usersPath = Globals.FOLLOWING_PATH;
-                userDataset = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
-                break;
-        }
-        //To show the newest first
-        Collections.reverse(userDataset);
-        //As soon as we know the paths, the counts can be set
-        setPageCounts();
-        setPageCountViews(weakActivity);
+        return currentPageCount;
     }
 
     /**
@@ -266,9 +269,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @author LethalMaus
      * @param button which button is to be changed
      * @param actionButtonType a constant of the action button type
-     * @param userID the channel id which is related to the button
+     * @param userID the user id which is related to the button
      */
-    private void editButton(ImageButton button, String actionButtonType, String userID) {
+    private void editButton(final ImageButton button, final String actionButtonType, final int userID) {
         if (actionButtonType != null) {
             switch (actionButtonType) {
                 case "DELETE_BUTTON":
@@ -288,241 +291,279 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     break;
             }
         } else {
-            button.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    /**
-     * Button for deleting a channel
-     * @author LethalMaus
-     * @param imageButton button view
-     * @param userID channel to be deleted
-     */
-    private void deleteButton(ImageButton imageButton, final String userID) {
-        imageButton.setImageResource(R.drawable.delete);
-        imageButton.setTag("DELETE_BUTTON");
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DeleteFileHandler(weakContext, usersPath + File.separator + userID).run();
-                new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID).run();
-                userDataset.remove(userID);
-                datasetChanged();
-                pageCount3--;
-                setPageCountViews(weakActivity);
-            }
-        });
-    }
-
-    /**
-     * Button for excluding a channel from automation and other views
-     * @author LethalMaus
-     * @param imageButton button view
-     * @param userID channel to be excluded
-     */
-    private void excludeButton(ImageButton imageButton, final String userID) {
-        imageButton.setImageResource(R.drawable.excluded);
-        imageButton.setTag("EXCLUDE_BUTTON");
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userDataset.remove(userID);
-                datasetChanged();
-                if (usersToDisplay.contentEquals("NEW") || usersToDisplay.contentEquals("CURRENT") || usersToDisplay.contentEquals("UNFOLLOWED")) {
-                    new WriteFileHandler(weakContext, excludedUsersPath + File.separator + userID, null, null, false).run();
-                    if (usersToDisplay.contentEquals("NEW")) {
-                        new DeleteFileHandler(weakContext, newUsersPath + File.separator + userID).run();
-                        new DeleteFileHandler(weakContext, currentUsersPath + File.separator + userID).run();
-                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID, null, null, false).run();
-                        pageCount1--;
-                        pageCount2--;
-                    } else if (usersToDisplay.contentEquals("CURRENT")) {
-                        new DeleteFileHandler(weakContext, currentUsersPath + File.separator + userID).run();
-                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID, null, null, false).run();
-                        pageCount2--;
-                    } else if (usersToDisplay.contentEquals("UNFOLLOWED")) {
-                        new DeleteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID).run();
-                        new WriteFileHandler(weakContext, excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID, null, null, false).run();
-                        pageCount3--;
-                    }
-                } else {
-                    new WriteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + File.separator + userID, null, null, false).run();
-                    new WriteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + usersToDisplay + File.separator + userID, null, null, false).run();
-                    if (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING")) {
-                        pageCount1--;
-                    } else if (usersToDisplay.contentEquals("FOLLOW4FOLLOW")) {
-                        pageCount2--;
-                    } else if (usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING")) {
-                        pageCount3--;
-                    }
-                }
-                pageCount4++;
-                setPageCountViews(weakActivity);
-            }
-        });
-    }
-
-    /**
-     * Button for including a channel to automation and other views
-     * @author LethalMaus
-     * @param imageButton button view
-     * @param userID channel to be included
-     */
-    private void includeButton(ImageButton imageButton, final String userID) {
-        imageButton.setImageResource(R.drawable.include);
-        imageButton.setTag("INCLUDE_BUTTON");
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userDataset.remove(userID);
-                datasetChanged();
-                if (usersToDisplay.contentEquals("EXCLUDED")) {
-                    new DeleteFileHandler(weakContext, excludedUsersPath + File.separator + userID).run();
-                    if (new File(appDirectory + File.separator + excludedUsersPath + "_" + currentUsersPath + File.separator + userID).exists()) {
-                        new DeleteFileHandler(weakContext, excludedUsersPath + "_" + currentUsersPath + File.separator + userID).run();
-                        new WriteFileHandler(weakContext, currentUsersPath + File.separator + userID, null, null, false).run();
-                        pageCount2++;
-                    } else if (new File(appDirectory + File.separator + excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID).exists()) {
-                        new DeleteFileHandler(weakContext, excludedUsersPath + "_" + unfollowedUsersPath + File.separator + userID).run();
-                        new WriteFileHandler(weakContext, unfollowedUsersPath + File.separator + userID, null, null, false).run();
-                        pageCount3++;
-                    }
-                } else {
-                    new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + File.separator + userID).run();
-                    if (new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + userID).exists()) {
-                        new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH + File.separator + userID).run();
-                        pageCount1++;
-                    } else if (new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + userID).exists()) {
-                        new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_FOLLOW4FOLLOW_PATH + File.separator + userID).run();
-                        pageCount2++;
-                    } else if (new File(appDirectory + File.separator + Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + userID).exists()) {
-                        new DeleteFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH + "_" + Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH + File.separator + userID).run();
-                        pageCount3++;
-                    }
-                }
-                pageCount4--;
-                setPageCountViews(weakActivity);
-            }
-        });
-    }
-
-    /**
-     * Button for following/unfollowing a channel
-     * @author LethalMaus
-     * @param imageButton button view
-     * @param userID channel to be followed/unfollowed
-     */
-    private void followButton(final ImageButton imageButton, final String userID) {
-        if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
-            imageButton.setImageResource(R.drawable.unfollow);
-        } else {
-            imageButton.setImageResource(R.drawable.follow);
-        }
-        imageButton.setTag("FOLLOW_BUTTON");
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (followRequestHandler.networkIsAvailable()) {
-                    if (new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() ||
-                            new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH + "_" + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
-                        followRequestHandler.setRequestParameters(Request.Method.DELETE, userID, false)
-                                .requestFollow();
-                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FOLLOWING_CURRENT_PATH + File.separator + userID);
-                        new WriteFileHandler(weakContext, Globals.FOLLOWING_UNFOLLOWED_PATH + File.separator + userID, null, null, false).writeToFileOrPath();
-                        if (usersToDisplay.contains(Globals.F4F_NOTFOLLOWED_FOLLOWING_PATH)) {
-                            userDataset.remove(userID);
-                            datasetChanged();
-                            pageCount3--;
-                            setPageCountViews(weakActivity);
-                        } else if (usersToDisplay.contains(Globals.F4F_FOLLOW4FOLLOW_PATH)) {
-                            userDataset.remove(userID);
-                            datasetChanged();
-                            pageCount2--;
-                            pageCount1++;
-                            setPageCountViews(weakActivity);
-                        } else {
-                            imageButton.setImageResource(R.drawable.follow);
-                            ViewGroup row = (ViewGroup) imageButton.getParent();
-                            row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            button.setVisibility(View.INVISIBLE);
                         }
-                    } else {
-                        followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
-                                .requestFollow();
-                        new WriteFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH + File.separator + userID, null, null, false).writeToFileOrPath();
-                        new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FOLLOWING_UNFOLLOWED_PATH + File.separator + userID);
-                        if (usersToDisplay.contains(Globals.F4F_FOLLOWED_NOTFOLLOWING_PATH)) {
-                            userDataset.remove(userID);
-                            datasetChanged();
-                            pageCount1--;
-                            pageCount2++;
-                            setPageCountViews(weakActivity);
-                        } else if (usersToDisplay.contains(Globals.FOLLOWING_UNFOLLOWED_PATH)) {
-                            userDataset.remove(userID);
-                            datasetChanged();
-                            pageCount3--;
-                            pageCount2++;
-                            setPageCountViews(weakActivity);
+                    });
+        }
+    }
+
+    /**
+     * Button for deleting a user
+     * @author LethalMaus
+     * @param imageButton button view
+     * @param userID user to be deleted
+     */
+    private void deleteButton(final ImageButton imageButton, final int userID) {
+        weakActivity.get().runOnUiThread(
+                new Runnable() {
+                    public void run() {
+                        imageButton.setImageResource(R.drawable.delete);
+                        imageButton.setTag("DELETE_BUTTON");
+                        imageButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        if (userType.contentEquals("FOLLOWERS")) {
+                                            streamingYorkieDB.followerDAO().deleteUserById(userID);
+                                        } else {
+                                            streamingYorkieDB.followingDAO().deleteUserById(userID);
+                                        }
+                                        datasetChanged();
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+    }
+
+    /**
+     * Button for excluding a user from automation and other views
+     * @author LethalMaus
+     * @param imageButton button view
+     * @param userID user to be excluded
+     */
+    private void excludeButton(final ImageButton imageButton, final int userID) {
+        weakActivity.get().runOnUiThread(
+                new Runnable() {
+                    public void run() {
+                        imageButton.setImageResource(R.drawable.excluded);
+                        imageButton.setTag("EXCLUDE_BUTTON");
+                        imageButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        User user = streamingYorkieDB.followerDAO().getUserById(userID);
+                                        if (user == null) {
+                                            user = streamingYorkieDB.followingDAO().getUserById(userID);
+                                        }
+                                        if (userType.contentEquals("FOLLOWERS")) {
+                                            streamingYorkieDB.followerDAO().updateUserStatusById("EXCLUDED", userID);
+                                        } else if (userType.contentEquals("FOLLOWING")) {
+                                            streamingYorkieDB.followingDAO().updateUserStatusById("EXCLUDED", userID);
+                                        } else if (userType.contentEquals("F4F")) {
+                                            streamingYorkieDB.f4fDAO().insertUser(new F4F(user.getId(), user.getDisplay_name(), user.getLogo(), user.getCreated_at(), user.isNotifications(), user.getLast_updated()));
+                                        }
+                                        datasetChanged();
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+    }
+
+    /**
+     * Button for including a user to automation and other views
+     * @author LethalMaus
+     * @param imageButton button view
+     * @param userID user to be included
+     */
+    private void includeButton(final ImageButton imageButton, final int userID) {
+        weakActivity.get().runOnUiThread(
+                new Runnable() {
+                    public void run() {
+                        imageButton.setImageResource(R.drawable.include);
+                        imageButton.setTag("INCLUDE_BUTTON");
+                        imageButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        if (userType.contentEquals("FOLLOWERS")) {
+                                            String timestamp = new ReadFileHandler(weakContext, "FOLLOWERS_TIMESTAMP").readFile();
+                                            if (timestamp.isEmpty()) {
+                                                timestamp = "0";
+                                            }
+                                            Follower follower = streamingYorkieDB.followerDAO().getUserById(userID);
+                                            if (follower.getLast_updated() == Long.parseLong(timestamp)) {
+                                                streamingYorkieDB.followerDAO().updateUserStatusById("CURRENT", userID);
+                                            } else {
+                                                streamingYorkieDB.followerDAO().updateUserStatusById("UNFOLLOWED", userID);
+                                            }
+                                        } else if (userType.contentEquals("FOLLOWING")) {
+                                            String timestamp = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                                            if (timestamp.isEmpty()) {
+                                                timestamp = "0";
+                                            }
+                                            Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+                                            if (following.getLast_updated() == Long.parseLong(timestamp)) {
+                                                streamingYorkieDB.followingDAO().updateUserStatusById("CURRENT", userID);
+                                            } else {
+                                                streamingYorkieDB.followingDAO().updateUserStatusById("UNFOLLOWED", userID);
+                                            }
+                                        } else if (userType.contentEquals("F4F")) {
+                                            streamingYorkieDB.f4fDAO().deleteUserById(userID);
+                                        }
+                                        datasetChanged();
+                                    }
+                                }).start();
+                            }
+                        });
+                    }
+                });
+    }
+
+    /**
+     * Button for following/unfollowing a user
+     * @author LethalMaus
+     * @param imageButton button view
+     * @param userID user to be followed/unfollowed
+     */
+    private void followButton(final ImageButton imageButton, final int userID) {
+        final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+        final String timestamp = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+        weakActivity.get().runOnUiThread(
+                new Runnable() {
+                    public void run() {
+                        if (following == null ||
+                                following.getStatus().contentEquals("UNFOLLOWED") ||
+                                (following.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
+                                        following.getLast_updated() != Long.parseLong(timestamp)
+                                )) {
+                            imageButton.setImageResource(R.drawable.follow);
                         } else {
                             imageButton.setImageResource(R.drawable.unfollow);
-                            ViewGroup row = (ViewGroup) imageButton.getParent();
-                            ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
-                            notificationsButton(imageButton2, userID);
                         }
+                        imageButton.setTag("FOLLOW_BUTTON");
+                        imageButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        if (RequestHandler.networkIsAvailable(weakContext)) {
+                                            final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+                                            if (following == null ||
+                                                    following.getStatus().contentEquals("UNFOLLOWED") ||
+                                                    (following.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
+                                                            following.getLast_updated() != Long.parseLong(timestamp)
+                                                    )) {
+                                                new FollowRequestHandler(weakActivity, weakContext){
+                                                    @Override
+                                                    public void onCompletion() {
+                                                        if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
+                                                            datasetChanged();
+                                                        } else {
+                                                            weakActivity.get().runOnUiThread(
+                                                                    new Runnable() {
+                                                                        public void run() {
+                                                                            imageButton.setImageResource(R.drawable.unfollow);
+                                                                            ViewGroup row = (ViewGroup) imageButton.getParent();
+                                                                            final ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
+                                                                            new Thread(new Runnable() {
+                                                                                public void run() {
+                                                                                    editButton(imageButton2, "NOTIFICATIONS_BUTTON", userID);
+                                                                                }
+                                                                            }).start();
+                                                                        }
+                                                                    });
+                                                        }
+                                                    }
+                                                }.setRequestParameters(Request.Method.PUT, userID, false)
+                                                        .sendRequest();
+                                            } else {
+                                                new FollowRequestHandler(weakActivity, weakContext){
+                                                    @Override
+                                                    public void onCompletion() {
+                                                        if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
+                                                            datasetChanged();
+                                                        } else {
+                                                            weakActivity.get().runOnUiThread(
+                                                                    new Runnable() {
+                                                                        public void run() {
+                                                                            imageButton.setImageResource(R.drawable.follow);
+                                                                            ViewGroup row = (ViewGroup) imageButton.getParent();
+                                                                            row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
+                                                                        }
+                                                                    });
+                                                        }
+                                                    }
+                                                }.setRequestParameters(Request.Method.DELETE, userID, false)
+                                                        .sendRequest();
+                                            }
+                                        } else if (weakActivity != null && weakActivity.get() != null) {
+                                            weakActivity.get().runOnUiThread(
+                                                    new Runnable() {
+                                                        public void run() {
+                                                            Toast.makeText(weakActivity.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                }).start();
+                            }
+                        });
                     }
-                } else if (weakActivity != null && weakActivity.get() != null) {
-                    Toast.makeText(weakActivity.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                });
     }
 
     /**
      * Button for activating/deactivating notifications of users
      * @author LethalMaus
      * @param imageButton button view
-     * @param userID channel to have notifications activated/deactivated
+     * @param userID user to have notifications activated/deactivated
      */
-    private void notificationsButton(final ImageButton imageButton, final String userID) {
-        if (!new File(appDirectory + File.separator + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists() &&
-                !new File(appDirectory + File.separator + Globals.FOLLOWING_EXCLUDED_PATH  + Globals.FOLLOWING_CURRENT_PATH + File.separator + userID).exists()) {
-            imageButton.setVisibility(View.INVISIBLE);
-        } else {
-            try {
-                final JSONObject user = new JSONObject(new ReadFileHandler(weakContext, Globals.FOLLOWING_PATH + File.separator + userID).readFile());
-                if (user.getBoolean("notifications")) {
-                    imageButton.setImageResource(R.drawable.deactivate_notifications);
-                } else {
-                    imageButton.setImageResource(R.drawable.notifications);
-                }
-                imageButton.setVisibility(View.VISIBLE);
-                imageButton.setTag("NOTIFICATIONS_BUTTON");
-                imageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (followRequestHandler.networkIsAvailable()) {
-                            try {
-                                if (user.getBoolean("notifications")) {
-                                    followRequestHandler.setRequestParameters(Request.Method.PUT, userID, false)
-                                            .requestFollow();
-                                    imageButton.setImageResource(R.drawable.notifications);
-                                } else {
-                                    followRequestHandler.setRequestParameters(Request.Method.PUT, userID, true)
-                                            .requestFollow();
-                                    imageButton.setImageResource(R.drawable.deactivate_notifications);
-                                }
-                            } catch (JSONException e) {
-                                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error reading JSON key | " + e.toString(), true).run();
+    private void notificationsButton(final ImageButton imageButton, final int userID) {
+        final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+        weakActivity.get().runOnUiThread(
+                new Runnable() {
+                    public void run() {
+                        if (following == null || following.getStatus().contentEquals("UNFOLLOWED")) {
+                            imageButton.setVisibility(View.INVISIBLE);
+                        } else {
+                            if (following.isNotifications()) {
+                                imageButton.setImageResource(R.drawable.deactivate_notifications);
+                            } else {
+                                imageButton.setImageResource(R.drawable.notifications);
                             }
-                        } else if (weakActivity != null && weakActivity.get() != null) {
-                            Toast.makeText(weakActivity.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show();
+                            imageButton.setVisibility(View.VISIBLE);
+                            imageButton.setTag("NOTIFICATIONS_BUTTON");
+                            imageButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    new Thread(new Runnable() {
+                                        public void run() {
+                                            final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+                                            if (RequestHandler.networkIsAvailable(weakContext)) {
+                                                if (following.isNotifications()) {
+                                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false)
+                                                            .sendRequest();
+                                                    imageButton.setImageResource(R.drawable.notifications);
+                                                } else {
+                                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, true)
+                                                            .sendRequest();
+                                                    imageButton.setImageResource(R.drawable.deactivate_notifications);
+                                                }
+                                            } else if (weakActivity != null && weakActivity.get() != null) {
+                                                weakActivity.get().runOnUiThread(
+                                                        new Runnable() {
+                                                            public void run() {
+                                                                Toast.makeText(weakActivity.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                            }
+                                        }
+                                    }).start();
+                                }
+                            });
                         }
                     }
                 });
-            } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, "UAda: Error reading JSON | " + e.toString(), true).run();
-            }
-        }
     }
 
     /**
@@ -532,88 +573,152 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void actionAllButton(final boolean followAll) {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
-            if (userDataset.size() > 1) {
-                final int method;
-                if (followAll) {
-                    imageButton.setImageResource(R.drawable.follow);
-                    method = Request.Method.PUT;
-                } else {
-                    imageButton.setImageResource(R.drawable.unfollow);
-                    method = Request.Method.DELETE;
-                }
-                imageButton.setVisibility(View.VISIBLE);
-                imageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (followRequestHandler.networkIsAvailable()) {
-                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
-                            for (String userID : userDataset) {
-                                followRequestHandler.setRequestParameters(method, userID, false)
-                                        .requestFollow();
-                            }
-                            if (followAll) {
-                                pageCount1 = 0;
-                                pageCount2 = userDataset.size();
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            final ImageButton imageButton = weakActivity.get().findViewById(R.id.follow_unfollow_all);
+                            if (currentPageCount > 1) {
+                                if (followAll) {
+                                    imageButton.setImageResource(R.drawable.follow);
+                                } else {
+                                    imageButton.setImageResource(R.drawable.unfollow);
+                                }
+                                imageButton.setVisibility(View.VISIBLE);
+                                imageButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        new Thread(new Runnable() {
+                                            public void run() {
+                                                weakActivity.get().runOnUiThread(
+                                                        new Runnable() {
+                                                            public void run() {
+                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
+                                                            }
+                                                        });
+                                                if (followAll) {
+                                                    FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
+                                                        @Override
+                                                        public void onCompletion() {
+                                                            User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
+                                                            if (user != null) {
+                                                                setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                                                        .sendRequest();
+                                                            } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                                                datasetChanged();
+                                                                weakActivity.get().runOnUiThread(
+                                                                        new Runnable() {
+                                                                            public void run() {
+                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        }
+                                                    };
+                                                    User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
+                                                    if (user != null) {
+                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                                                .sendRequest();
+                                                    }
+                                                } else {
+                                                    FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
+                                                        @Override
+                                                        public void onCompletion() {
+                                                            User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
+                                                            if (user != null) {
+                                                                setRequestParameters(Request.Method.DELETE, user.getId(), false)
+                                                                        .sendRequest();
+                                                            } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                                                datasetChanged();
+                                                                weakActivity.get().runOnUiThread(
+                                                                        new Runnable() {
+                                                                            public void run() {
+                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        }
+                                                    };
+                                                    User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
+                                                    if (user != null) {
+                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                                                .sendRequest();
+                                                    }
+                                                }
+                                            }
+                                        }).start();
+                                    }
+                                });
                             } else {
-                                pageCount3 = 0;
+                                imageButton.setVisibility(View.GONE);
                             }
-                            userDataset.clear();
-                            datasetChanged();
-                            setPageCountViews(weakActivity);
-                            imageButton.setVisibility(View.GONE);
-                            weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
-                            weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                         }
-                    }
-                });
-            } else {
-                imageButton.setVisibility(View.GONE);
-            }
+                    });
         }
     }
 
     /**
-     * Method for counting files within channel directories
+     * Method for counting files within user directories
      * @author LethalMaus
      */
-    private void setPageCounts() {
-        if (usersToDisplay.contentEquals("FOLLOWED_NOTFOLLOWING") || usersToDisplay.contentEquals("FOLLOW4FOLLOW") || usersToDisplay.contentEquals("NOTFOLLOWED_FOLLOWING") || usersToDisplay.contentEquals("F4F_EXCLUDED")) {
-            ArrayList<String> followers = new ReadFileHandler(weakContext, Globals.FOLLOWERS_CURRENT_PATH).readFileNames();
-            ArrayList<String> following = new ReadFileHandler(weakContext, Globals.FOLLOWING_CURRENT_PATH).readFileNames();
-            ArrayList<String> excluded = new ReadFileHandler(weakContext, Globals.F4F_EXCLUDED_PATH).readFileNames();
-            followers.removeAll(excluded);
-            following.removeAll(excluded);
-            ArrayList<String> f4f = new ArrayList<>(followers);
-            f4f.retainAll(following);
-            pageCount1 = followers.size() - f4f.size();
-            pageCount2 = f4f.size();
-            pageCount3 = following.size() - f4f.size();
-            pageCount4 = excluded.size();
+    public void setPageCounts() {
+        if (userType.contentEquals("FOLLOWERS")){
+            pageCount1 = streamingYorkieDB.followerDAO().countUsersByStatus("NEW");
+            pageCount2 = streamingYorkieDB.followerDAO().countUsersByStatus("CURRENT") + pageCount1;
+            pageCount3 = streamingYorkieDB.followerDAO().countUsersByStatus("UNFOLLOWED");
+            pageCount4 = streamingYorkieDB.followerDAO().countUsersByStatus("EXCLUDED");
+        } else if (userType.contentEquals("FOLLOWING")){
+            pageCount1 = streamingYorkieDB.followingDAO().countUsersByStatus("NEW");
+            pageCount2 = streamingYorkieDB.followingDAO().countUsersByStatus("CURRENT") + pageCount1;
+            pageCount3 = streamingYorkieDB.followingDAO().countUsersByStatus("UNFOLLOWED");
+            pageCount4 = streamingYorkieDB.followingDAO().countUsersByStatus("EXCLUDED");
         } else {
-            pageCount1 = new ReadFileHandler(weakContext, newUsersPath).countFiles();
-            pageCount2 = new ReadFileHandler(weakContext, currentUsersPath).countFiles();
-            pageCount3 = new ReadFileHandler(weakContext, unfollowedUsersPath).countFiles();
-            pageCount4 = new ReadFileHandler(weakContext, excludedUsersPath).countFiles();
+            pageCount1 = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserCount();
+            pageCount2 = streamingYorkieDB.f4fDAO().getFollow4FollowUserCount();
+            pageCount3 = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserCount();
+            pageCount4 = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserCount();
+        }
+        if (userStatus.contentEquals("NEW") || userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+            currentPageCount = pageCount1;
+        } else if (userStatus.contentEquals("CURRENT") || userStatus.contentEquals("FOLLOW4FOLLOW")) {
+            currentPageCount = pageCount2;
+        } else if (userStatus.contentEquals("UNFOLLOWED") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+            currentPageCount = pageCount3;
+        } else if (userStatus.contentEquals("EXCLUDED")) {
+            currentPageCount = pageCount4;
         }
     }
 
     /**
      * Method for setting the page count views
      * @author LethalMaus
-     * @param weakActivity weak reference of an activity which contains the views
      */
-    private void setPageCountViews(WeakReference<Activity> weakActivity) {
+    private void setPageCountViews() {
+        if (pageCount1 < 0) {
+            pageCount1 = 0;
+        }
+        if (pageCount2 < 0) {
+            pageCount2 = 0;
+        }
+        if (pageCount3 < 0) {
+            pageCount3 = 0;
+        }
+        if (pageCount4 < 0) {
+            pageCount4 = 0;
+        }
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            TextView page1 = weakActivity.get().findViewById(R.id.count1);
-            TextView page2 = weakActivity.get().findViewById(R.id.count2);
-            TextView page3 = weakActivity.get().findViewById(R.id.count3);
-            TextView page4 = weakActivity.get().findViewById(R.id.count4);
-            page1.setText(String.valueOf(pageCount1));
-            page2.setText(String.valueOf(pageCount2));
-            page3.setText(String.valueOf(pageCount3));
-            page4.setText(String.valueOf(pageCount4));
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            TextView page1 = weakActivity.get().findViewById(R.id.count1);
+                            TextView page2 = weakActivity.get().findViewById(R.id.count2);
+                            TextView page3 = weakActivity.get().findViewById(R.id.count3);
+                            TextView page4 = weakActivity.get().findViewById(R.id.count4);
+                            page1.setText(String.valueOf(pageCount1));
+                            page2.setText(String.valueOf(pageCount2));
+                            page3.setText(String.valueOf(pageCount3));
+                            page4.setText(String.valueOf(pageCount4));
+                        }
+                    });
         }
     }
 }

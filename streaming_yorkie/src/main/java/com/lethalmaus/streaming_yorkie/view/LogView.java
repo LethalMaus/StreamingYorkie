@@ -82,34 +82,36 @@ public class LogView extends AsyncTask<Void, Button, Void> {
         final String directory = currentDirectory;
         String[] filesOrPaths = new File(directory).list();
 
-        for (final String fileOrPath : filesOrPaths) {
-            Button button = new Button(weakActivity.get());
-            button.setText(fileOrPath);
-            if (new File(directory + File.separator + fileOrPath).isDirectory()) {
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        currentDirectory = directory + File.separator + fileOrPath;
-                        LinearLayout logsTable = weakActivity.get().findViewById(R.id.log_table);
-                        logsTable.removeAllViews();
-                        getFileList();
-                    }
-                });
-            } else {
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        currentDirectory = directory + File.separator + fileOrPath;
-                        TextView textView = new TextView(weakActivity.get());
-                        String text = new ReadFileHandler(weakContext, currentDirectory.replace(weakContext.get().getFilesDir().toString(), "")).readFile();
-                        textView.setText(text);
-                        LinearLayout logsTable = weakActivity.get().findViewById(R.id.log_table);
-                        logsTable.removeAllViews();
-                        logsTable.addView(textView);
-                    }
-                });
+        if (filesOrPaths != null) {
+            for (final String fileOrPath : filesOrPaths) {
+                Button button = new Button(weakActivity.get());
+                button.setText(fileOrPath);
+                if (new File(directory + File.separator + fileOrPath).isDirectory()) {
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            currentDirectory = directory + File.separator + fileOrPath;
+                            LinearLayout logsTable = weakActivity.get().findViewById(R.id.log_table);
+                            logsTable.removeAllViews();
+                            getFileList();
+                        }
+                    });
+                } else {
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            currentDirectory = directory + File.separator + fileOrPath;
+                            TextView textView = new TextView(weakActivity.get());
+                            String text = new ReadFileHandler(weakContext, currentDirectory.replace(weakContext.get().getFilesDir().toString(), "")).readFile();
+                            textView.setText(text);
+                            LinearLayout logsTable = weakActivity.get().findViewById(R.id.log_table);
+                            logsTable.removeAllViews();
+                            logsTable.addView(textView);
+                        }
+                    });
+                }
+                publishProgress(button);
             }
-            publishProgress(button);
         }
     }
 }
