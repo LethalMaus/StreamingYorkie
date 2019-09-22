@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -208,8 +207,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                         }
                     }).start();
                 }
-                ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
-                progressBar.setVisibility(View.INVISIBLE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
             }
         }
     }
@@ -250,7 +248,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                     weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
                                     weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
                                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                 }
                                 notifyDataSetChanged();
                             }
@@ -456,6 +454,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                 new FollowRequestHandler(weakActivity, weakContext){
                                                     @Override
                                                     public void onCompletion() {
+                                                        super.onCompletion();
                                                         if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
                                                             datasetChanged();
                                                         } else {
@@ -480,6 +479,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                 new FollowRequestHandler(weakActivity, weakContext){
                                                     @Override
                                                     public void onCompletion() {
+                                                        super.onCompletion();
                                                         if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
                                                             datasetChanged();
                                                         } else {
@@ -592,13 +592,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                 weakActivity.get().runOnUiThread(
                                                         new Runnable() {
                                                             public void run() {
-                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
+                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                                             }
                                                         });
                                                 if (followAll) {
                                                     FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
                                                         @Override
                                                         public void onCompletion() {
+                                                            super.onCompletion();
                                                             User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
                                                             if (user != null) {
                                                                 setRequestParameters(Request.Method.PUT, user.getId(), false)
@@ -608,7 +609,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
-                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                                                             }
                                                                         });
                                                             }
@@ -623,6 +624,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                     FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
                                                         @Override
                                                         public void onCompletion() {
+                                                            super.onCompletion();
                                                             User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
                                                             if (user != null) {
                                                                 setRequestParameters(Request.Method.DELETE, user.getId(), false)
@@ -632,7 +634,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
-                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                                                             }
                                                                         });
                                                             }

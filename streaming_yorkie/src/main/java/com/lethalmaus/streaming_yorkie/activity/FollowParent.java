@@ -10,12 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
+import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
 import com.lethalmaus.streaming_yorkie.view.UserView;
 
 import java.io.File;
@@ -54,11 +56,8 @@ public class FollowParent extends AppCompatActivity {
         new UserView(weakActivity, weakContext).execute();
         WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOFOLLOW);
 
-        progressBar = findViewById(R.id.progressbar);
-        //This is to make sure its invisible (not necessary but wanted)
-        progressBar.setVisibility(View.INVISIBLE);
-
         ImageButton refreshPage = findViewById(R.id.refresh);
+        progressBar = findViewById(R.id.progressbar);
         refreshPage.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -70,6 +69,7 @@ public class FollowParent extends AppCompatActivity {
                         }
                     }
                 });
+        cancelRequests();
         deleteNotifications();
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);
@@ -101,7 +101,7 @@ public class FollowParent extends AppCompatActivity {
                     new DeleteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
                 }
             }
-        });
+        }).start();
     }
 
     /**
@@ -109,8 +109,14 @@ public class FollowParent extends AppCompatActivity {
      * @author LethalMaus
      */
     protected void cancelRequests() {
-        requestHandler.cancelRequest();
-        progressBar.setVisibility(View.INVISIBLE);
+        VolleySingleton volleySingleton = VolleySingleton.getInstance(weakContext);
+        if (volleySingleton != null) {
+            volleySingleton.getRequestQueue().cancelAll("FOLLOWING_UPDATE");
+            volleySingleton.getRequestQueue().cancelAll("FOLLOWERS_UPDATE");
+            volleySingleton.getRequestQueue().cancelAll("FOLLOWING");
+            volleySingleton.getRequestQueue().cancelAll("FOLLOWERS");
+        }
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -169,6 +175,8 @@ public class FollowParent extends AppCompatActivity {
             if (userAdapter != null) {
                 userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged();
             }
+        } else {
+            Toast.makeText(this, "Updating Users, please be patient.", Toast.LENGTH_SHORT).show();
         }
     }
 }

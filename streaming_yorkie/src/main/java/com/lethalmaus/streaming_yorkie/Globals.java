@@ -23,6 +23,8 @@ public class Globals {
     public static final int USER_REQUEST_LIMIT = 25;
     public static final int USER_UPDATE_REQUEST_LIMIT = 3;
     public static final int VOD_REQUEST_LIMIT = 10;
+    public static final int VOD_UPDATE_REQUEST_LIMIT = 1;
+
 
     //Directories for Lurks
     public static final String LURK_PATH = "LURKS";

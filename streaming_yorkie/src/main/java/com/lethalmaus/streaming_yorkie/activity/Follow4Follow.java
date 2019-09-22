@@ -70,6 +70,7 @@ public class Follow4Follow extends FollowParent {
         requestHandler = new FollowersUpdateRequestHandler(weakActivity, weakContext, null) {
             @Override
             public void onCompletion() {
+                super.onCompletion();
                 runOnUiThread(
                         new Runnable() {
                             public void run() {

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.entity.VOD;
 
 /**
@@ -89,6 +90,23 @@ public interface VODDAO {
      */
     @Query("SELECT COUNT(id) FROM vod WHERE excluded = 1")
     int getExcludedVODsCount();
+
+    /**
+     * Get total VOD Count
+     * @author LethalMaus
+     * @return int count
+     */
+    @Query("SELECT COUNT(id) FROM vod")
+    int getVODsCount();
+
+    /**
+     * Gets the last updated VODs to check if a full update is needed
+     * @author LethalMaus
+     * @param last_updated Long of when it was last updated
+     * @return Array of VOD Ids
+     */
+    @Query("SELECT id FROM vod WHERE last_updated <> :last_updated ORDER BY created_at DESC LIMIT " + Globals.USER_UPDATE_REQUEST_LIMIT)
+    int[] getLastVODs(Long last_updated);
 
     /**
      * Delete VOD by Id

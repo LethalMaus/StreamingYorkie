@@ -98,6 +98,9 @@ public class FollowRequestHandler extends RequestHandler {
                             streamingYorkieDB.followingDAO().insertUser(following);
                         }
                     } else {
+                        int followingCount = Integer.parseInt(new ReadFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile());
+                        new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(followingCount-1), false).writeToFileOrPath();
+
                         Following following = streamingYorkieDB.followingDAO().getUserById(followId);
                         if (!following.getStatus().contentEquals("EXCLUDED")) {
                             following.setStatus("UNFOLLOWED");
@@ -141,7 +144,7 @@ public class FollowRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (weakActivity.get() != null) {
+        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
             weakActivity.get().runOnUiThread(
                     new Runnable() {
                         public void run() {

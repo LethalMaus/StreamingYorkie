@@ -7,9 +7,15 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.adapter.VODAdapter;
+import com.lethalmaus.streaming_yorkie.entity.VOD;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -18,16 +24,17 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 
 /**
- * Class for requesting Followers to check if an Update is needed
+ * Class for requesting VODs to check if an Update is needed
  * @author LethalMaus
  */
-public class FollowingUpdateRequestHandler extends RequestHandler {
+public class VODUpdateRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        return "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels?limit=" + Globals.USER_UPDATE_REQUEST_LIMIT + "&direction=desc";
+        return "https://api.twitch.tv/kraken/channels/" + userID + "/videos" + "?limit=" + Globals.VOD_UPDATE_REQUEST_LIMIT;
     }
 
     @Override
@@ -36,15 +43,15 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
     }
 
     /**
-     * Constructor for FollowersUpdateRequestHandler
+     * Constructor for VODUpdateRequestHandler for requesting current VODs
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
      * @param recyclerView weak referenced recycler view
      */
-    public FollowingUpdateRequestHandler(final WeakReference<Activity> weakActivity, final WeakReference<Context> weakContext, final WeakReference<RecyclerView> recyclerView) {
+    public VODUpdateRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView) {
         super(weakActivity, weakContext, recyclerView);
-        this.requestType = "FOLLOWING_UPDATE";
+        requestType = "VOD_UPDATE";
     }
 
     @Override
@@ -53,19 +60,18 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
             public void run() {
                 try {
                     long lastUpdated = 0;
-                    String lastUpdatedString = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                    String lastUpdatedString = new ReadFileHandler(weakContext, "VOD_TIMESTAMP").readFile();
                     if (!lastUpdatedString.isEmpty()) {
                         lastUpdated = Long.parseLong(lastUpdatedString);
                     }
-                    int[] lastFollowing = streamingYorkieDB.followingDAO().getLastUsers(lastUpdated);
-                    if (lastFollowing.length == response.getJSONArray("follows").length()  && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWING_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile())) {
-                        for (int i = 0; i < lastFollowing.length; i++) {
-                            if (lastFollowing[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id"))) {
-                                new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
+                    int[] lastVODs = streamingYorkieDB.vodDAO().getLastVODs(lastUpdated);
+                    if (lastVODs.length == response.getJSONArray("videos").length() && response.getInt("_total") == streamingYorkieDB.vodDAO().getVODsCount()) {
+                        for (int i = 0; i < lastVODs.length; i++) {
+                            if (lastVODs[i] != Integer.parseInt(response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""))) {
+                                new VODRequestHandler(weakActivity, weakContext, recyclerView){
                                     @Override
                                     public void onCompletion() {
-                                        super.onCompletion();
-                                        FollowingUpdateRequestHandler.this.onCompletion();
+                                        VODUpdateRequestHandler.this.onCompletion();
                                     }
                                 }.initiate().sendRequest();
                                 return;
@@ -80,11 +86,10 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                         }
                         onCompletion();
                     } else {
-                        new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
+                        new VODRequestHandler(weakActivity, weakContext, recyclerView){
                             @Override
                             public void onCompletion() {
-                                super.onCompletion();
-                                FollowingUpdateRequestHandler.this.onCompletion();
+                                VODUpdateRequestHandler.this.onCompletion();
                             }
                         }.initiate().sendRequest();
                     }
@@ -98,9 +103,19 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Following Update response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "VODUpdate response error | " + e.toString(), true).run();
                 }
             }
         }).start();
+    }
+
+    @Override
+    public Response<JSONObject> parseRequestNetworkResponse(NetworkResponse response, String PROTOCOL_CHARSET) {
+        try {
+            String utf8String = new String(response.data, Charset.forName("UTF-8"));
+            return Response.success(new JSONObject(utf8String), HttpHeaderParser.parseCacheHeaders(response));
+        } catch (JSONException e) {
+            return Response.error(new ParseError(e));
+        }
     }
 }

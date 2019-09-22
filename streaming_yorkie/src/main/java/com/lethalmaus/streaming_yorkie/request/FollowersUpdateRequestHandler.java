@@ -52,13 +52,19 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                   int[] lastFollowers = streamingYorkieDB.followerDAO().getLastUsers();
+                    long lastUpdated = 0;
+                    String lastUpdatedString = new ReadFileHandler(weakContext, "FOLLOWERS_TIMESTAMP").readFile();
+                    if (!lastUpdatedString.isEmpty()) {
+                        lastUpdated = Long.parseLong(lastUpdatedString);
+                    }
+                    int[] lastFollowers = streamingYorkieDB.followerDAO().getLastUsers(lastUpdated);
                     if (lastFollowers.length == response.getJSONArray("follows").length() && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWERS_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT").readFile())) {
                         for (int i = 0; i < lastFollowers.length; i++) {
                             if (lastFollowers[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id"))) {
                                 new FollowersRequestHandler(weakActivity, weakContext, recyclerView){
                                     @Override
                                     public void onCompletion() {
+                                        super.onCompletion();
                                         FollowersUpdateRequestHandler.this.onCompletion();
                                     }
                                 }.initiate().sendRequest();
@@ -68,7 +74,7 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                         if (weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                 }
                             });
                         }
@@ -77,6 +83,7 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                         new FollowersRequestHandler(weakActivity, weakContext, recyclerView){
                             @Override
                             public void onCompletion() {
+                                super.onCompletion();
                                 FollowersUpdateRequestHandler.this.onCompletion();
                             }
                         }.initiate().sendRequest();
@@ -91,7 +98,7 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Followers response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Followers Update response error | " + e.toString(), true).run();
                 }
             }
         }).start();

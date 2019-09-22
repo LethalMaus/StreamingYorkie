@@ -66,6 +66,15 @@ public class VODExportRequestHandler extends RequestHandler {
         return this;
     }
 
+    /**
+     * Gets the VodId
+     * @author LethalMaus
+     * @return int vodId
+     */
+    public int getVodId() {
+        return vodId;
+    }
+
     @Override
     public void responseHandler(JSONObject response) {
         new Thread(new Runnable() {

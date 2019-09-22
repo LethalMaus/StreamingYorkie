@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.entity.Follower;
 
 import java.util.List;
@@ -16,14 +17,6 @@ import java.util.List;
  */
 @Dao
 public interface FollowerDAO {
-
-    /**
-     * Gets all Users
-     * @author LethalMaus
-     * @return List of Users
-     */
-    @Query("SELECT * FROM follower")
-    List<Follower> getAll();
 
     /**
      * Gets a User by id
@@ -63,12 +56,13 @@ public interface FollowerDAO {
     List<Follower> getUnfollowedUsers(Long last_updated);
 
     /**
-     * Gets the last 3 updated Users to check if a full update is needed
+     * Gets the last updated Users to check if a full update is needed
      * @author LethalMaus
+     * @param last_updated Long of when it was last updated
      * @return Array of User Ids
      */
-    @Query("SELECT id FROM follower ORDER BY created_at DESC LIMIT 3")
-    int[] getLastUsers();
+    @Query("SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND last_updated == :last_updated ORDER BY created_at DESC LIMIT " + Globals.USER_UPDATE_REQUEST_LIMIT)
+    int[] getLastUsers(Long last_updated);
 
     /**
      * Counts Users by status

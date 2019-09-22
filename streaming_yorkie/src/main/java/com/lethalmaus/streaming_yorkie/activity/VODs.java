@@ -9,12 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.VODAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
-import com.lethalmaus.streaming_yorkie.request.VODRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.VODUpdateRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
 import com.lethalmaus.streaming_yorkie.view.UserView;
 
@@ -44,7 +45,7 @@ public class VODs extends AppCompatActivity {
     //Timer between clicks to prevent multiple requests
     private long mLastClickTime = 0;
 
-    protected VODRequestHandler requestHandler;
+    protected VODUpdateRequestHandler requestHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +56,6 @@ public class VODs extends AppCompatActivity {
         new UserView(weakActivity, weakContext).execute();
         WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOVODEXPORT);
 
-        progressBar = findViewById(R.id.progressbar);
-        //This is to make sure its invisible (not necessary but wanted)
-        progressBar.setVisibility(View.GONE);
-
         deleteNotifications();
         recyclerView = findViewById(R.id.table);
         recyclerView.setHasFixedSize(true);
@@ -67,6 +64,7 @@ public class VODs extends AppCompatActivity {
         recyclerView.setAdapter(new VODAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView)));
 
         ImageButton refreshPage = findViewById(R.id.refresh);
+        progressBar = findViewById(R.id.progressbar);
         refreshPage.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -105,7 +103,7 @@ public class VODs extends AppCompatActivity {
                 });
         pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE");
 
-        requestHandler = new VODRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
+        requestHandler = new VODUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
         requestHandler.initiate().sendRequest();
     }
 
@@ -129,7 +127,7 @@ public class VODs extends AppCompatActivity {
                     new DeleteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
                 }
             }
-        });
+        }).start();
     }
 
     /**
@@ -196,6 +194,8 @@ public class VODs extends AppCompatActivity {
             if (vodAdapter != null) {
                 vodAdapter.setDisplayPreferences(vodsType, actionButtonType1, actionButtonType2).datasetChanged();
             }
+        } else {
+            Toast.makeText(this, "Updating VODs, please be patient.", Toast.LENGTH_SHORT).show();
         }
     }
 }

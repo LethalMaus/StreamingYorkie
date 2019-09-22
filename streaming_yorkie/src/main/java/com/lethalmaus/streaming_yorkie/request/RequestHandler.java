@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
+import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.entity.Channel;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
@@ -110,7 +112,6 @@ public class RequestHandler {
         itemCount = 0;
         offset = 0;
         timestamp = System.currentTimeMillis();
-        new WriteFileHandler(weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
         return this;
     }
 
@@ -121,6 +122,18 @@ public class RequestHandler {
      * @author LethalMaus
      */
     public void sendRequest() {
+        if (weakActivity != null && weakActivity.get() != null) {
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            View progressbar = weakActivity.get().findViewById(R.id.progressbar);
+                            if (progressbar != null) {
+                                progressbar.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+            );
+        }
         new Thread(new Runnable() {
             public void run() {
                 if (weakContext != null && weakContext.get() != null) {
@@ -252,10 +265,12 @@ public class RequestHandler {
     }
 
     /**
-     * Method for making synchronous processes for F4F & Automation
+     * Method to be called once all requests are complete
      * @author LethalMaus
      */
-    public void onCompletion() {}
+    public void onCompletion() {
+        new WriteFileHandler(weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
+    }
 
     //FIXME needs to be changed due to deprecation
     /**

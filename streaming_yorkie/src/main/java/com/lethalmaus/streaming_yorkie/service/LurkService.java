@@ -114,8 +114,12 @@ public class LurkService extends Service {
             webView = null;
             windowManager = null;
         }
-        networkUsageHandler.removeCallbacks(networkUsageRunnable);
-        notificationManager.cancel(3);
+        if (networkUsageHandler != null) {
+            networkUsageHandler.removeCallbacks(networkUsageRunnable);
+        }
+        if (notificationManager != null) {
+            notificationManager.cancel(3);
+        }
         Toast.makeText(this,"Stopped lurking", Toast.LENGTH_SHORT).show();
     }
 

@@ -30,7 +30,7 @@ public class FollowingRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        return "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=asc&offset=" + this.offset;
+        return "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=desc&offset=" + this.offset;
     }
 
     @Override
@@ -106,6 +106,8 @@ public class FollowingRequestHandler extends RequestHandler {
                                 weakActivity.get().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        recyclerView.get().stopScroll();
+                                        recyclerView.get().getRecycledViewPool().clear();
                                         userAdapter.datasetChanged();
                                     }
                                 });
@@ -114,7 +116,7 @@ public class FollowingRequestHandler extends RequestHandler {
                         if (weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                 }
                             });
                         }

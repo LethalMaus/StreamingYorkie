@@ -127,6 +127,8 @@ public class VODRequestHandler extends RequestHandler {
                                 weakActivity.get().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        recyclerView.get().stopScroll();
+                                        recyclerView.get().getRecycledViewPool().clear();
                                         vodAdapter.datasetChanged();
                                     }
                                 });
@@ -165,10 +167,4 @@ public class VODRequestHandler extends RequestHandler {
             return Response.error(new ParseError(e));
         }
     }
-
-    /**
-     * Method for making synchronous processes for F4F & Automation
-     * @author LethalMaus
-     */
-    public void onCompletion() {}
 }
