@@ -24,10 +24,10 @@
 Streaming Yorkie is designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers as well as offering a better overview of *Followers & Following*.
 After your stream any *VOD (Video On Demand)* can be seen & exported to *Youtube* in our VOD Overview.
 **Automatically Follow, Unfollow, F4F & export VODs to Youtube** simply by installing and configuring Streaming Yorkie.
-Share that you are **AutoFollowing** to our Discord Community & gain more followers.
-Helps build a bigger community, simplifies/automates communication, become an *affiliate* sooner & helps free up time to stream more.
-Watch multiple streams at once on one screen with **Multi View**.
-**Lurk** your favourite streamers with little network usage (audio only) & add to their view count.
+Share that you are **AutoFollowing** to our Discord Community & gain even more followers.
+Helps build a bigger community, simplifies/automates communication, become an *affiliate* sooner & free up time to stream more.
+Watch multiple streams on one screen at once with **Multi View** and cast it to a larger screen
+**Lurk** your favourite streamers with minimum possible network data usage (audio only) & increase their view count.
 Streaming Yorkie can be found in the [Google Play Store](https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie).
 
 Currently it is in an **Alpha** state. 
@@ -35,23 +35,42 @@ It could be that a *Bug* may appear or the app behaves in an unexpected manner.
 Please report any problems, suspicions or confirmations to help improve Streaming Yorkie for everyone.
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved.
- t is a gift back to a great community who I will continue to support for **free**.
+It is a gift back to a great community who I will continue to support for **free**.
  
 Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv) and [Twitch Multi View](https://github.com/LethalMaus/TwitchMultiView).
 A login is required to be able to edit & see your Twitch data.
 Passwords are not saved, rather a unique Token given by Twitch is saved.
 This ensures that your account is as safe as can be.
-VOD exports are done by Twitch. VODs are not downloaded & uploaded by Streaming Yorkie
-This ensure data usage is kept to a minimum.
+VOD exports are done by Twitch, they are not downloaded & uploaded by Streaming Yorkie
+This ensures network data usage is kept to a minimum.
 
-Streaming Yorkie was developed with *Android Studio* in *Java*. *Lint* was used to acquire high quality standardized code with little complexity & the code itself is documented with *JavaDocs* & comments.
-**DRY** *(Don't Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible. Variable naming conventions are in place. 
+Streaming Yorkie is developed with *Android Studio* in *Java*. 
+*Lint* & [Sonarcloud](https://sonarcloud.io/dashboard?id=LethalMaus_StreamingYorkie) is used to acquire high quality standardized code with little complexity.
+The code is documented with *JavaDocs* & comments to allow for easier collaborations with other developers.
+**DRY** *(Don't Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible.
+Variable naming conventions are also in place. 
 
 > The variable name must explain what it is or what it does, clearly, for any developer to understand.
 
 Hopefully this can be used as an example for good coding as well as how to develop an Android App in Java.
+The code includes examples of:
+
++ RecyclerView, Adapter
++ Room & SQLite
++ Volley library for HTTP requests
++ Glide library for image rendering
++ Notifications, Window Manager
++ Foreground Service, Background Service
++ Worker, Async Task
++ Network Usage Monitor
++ Threading
++ Programmatic permission, views
++ File read, write & delete operations
++ WebView, TextView, ImageView, ...
++ Activity, Intent, Listener, ...
+
 Any collaborations are welcome, so feel free to fork & ask for merge requests.
-See something inefficient? [Let me know](#contact). I'm always trying to improve my code & learn new things.
+See something inefficient? [Let me know](#contact). I'm always trying to improve my coding & learn new things.
 
 ---
 
@@ -62,7 +81,7 @@ See something inefficient? [Let me know](#contact). I'm always trying to improve
   + [Menu](#menu)
   + [Categories](#categories)
   + [Actions](#actions)
-+ [Followers, Following & F4F](#followers-following--f4f)
++ [Followers, Following & F4F](#followers-following--f4F)
 + [VODs](#-vods)
 + [MultiView](#-multiview)
 + [Lurk](#-lurk)
@@ -226,7 +245,7 @@ The notification only disappears once the service has ended.
 
 This is an overview of the *User* who is currently logged in, that shows the following:
 + **Logo:** Your profile picture
-+ **Username:** Your login name / user name
++ **Username:** Your login name / username
 + **ID:** Your unique Twitch ID
 + **Game:** The current game you are playing
 + **Member Since:** When you joined
@@ -305,6 +324,7 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 
 ## Updates
 
++ [2.0.0-a](#200-a)
 + [1.3.1-a](#131-a)
 + [1.3.0-a](#130-a)
 + [1.2.1-a](#121-a)
@@ -318,6 +338,23 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 + [1.0.2-a](#102-a)
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
+
+### 2.0.0-a
+
+Major update affecting architecture
+
+Improvements:
++   Request architecture change for faster more efficient http requests
++   SQLite & Room introduction for efficient data management
++   Explicit threading for smoother UI loading and data handling
+
+Other:
++   Gradle update
++   Sonarcloud introduction
++   SDK update
++   Java update
+
+---
 
 ### 1.3.1-a
 
@@ -555,12 +592,14 @@ Issues:
 
 The following tasks and features are currently on the roadmap & some of which are likely to be within the next release.
 
-+ Request & threading optimization
-+ Embedded Database
++ AutoLurk
++ Stream Info/Event tracker (views, hosts, followers, chats, markers)
++ Sonarcloud improvments
++ Single automated E2E test 
++ Firebase device farm
 + Unit tests until 100% code coverage
 + Extend Settings for general (Wifi only, user pic size, theme choice)
 + Data backup & recovery
-+ AutoLurk
 + Stream Scheduler (for past, current & future streams)
 + Quick Tap host
 + Host for Host
@@ -568,7 +607,6 @@ The following tasks and features are currently on the roadmap & some of which ar
 + Status, Game, Tags & Description editing option 
 + Reusable Activities (Go Live text, game, tags)
 + Instant AutoFollow & AutoUnfollow (based on webhooks)
-+ Stream Info/Event tracker (views, hosts, followers, chats, markers)
 + Streaming tips (obs settings, camera & green screen, networking, chat interactions)
 + Handle Multiple/Dual accounts (eg. one for following, one for followers)
 + i18n (Internationalization)
@@ -579,8 +617,9 @@ The following tasks and features are currently on the roadmap & some of which ar
 ## Release Prerequisites
 
 + Testing
-  + Smoke tests on different versions done?
-  + JUnit tests defined and performed?
+  + Smoke tests on different sdk versions done?
+  + JUnit tests defined, changed and executed?
+  + Single E2E test changed and executed?
 + Google Play 
   + Listing updated?
   + Screenshots Updated?

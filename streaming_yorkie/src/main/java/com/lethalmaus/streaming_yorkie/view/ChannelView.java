@@ -10,11 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
-import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -27,10 +24,11 @@ public class ChannelView extends AsyncTask<Void, View, Void> {
 
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
+    private StreamingYorkieDB streamingYorkieDB;
 
-    //Channel attributes
+    //ChannelEntity attributes
     private String displayName;
-    private String userID;
+    private int userID;
     private String logo;
     private String game;
     private String createdAt;
@@ -49,49 +47,41 @@ public class ChannelView extends AsyncTask<Void, View, Void> {
     public ChannelView(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         this.weakActivity = weakActivity;
         this.weakContext = weakContext;
+        streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        if (new File(weakContext.get().getFilesDir() + File.separator + "CHANNEL").exists()) {
-            try {
-                JSONObject channel = new JSONObject(new ReadFileHandler(weakContext, "CHANNEL").readFile());
-                displayName = channel.getString("display_name");
-                userID = channel.getString("_id");
-                logo = channel.getString("logo");
-                if (logo.contains("/")
-                        && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/") + 1)).exists()) {
-                    logo = logo.substring(logo.lastIndexOf("/") + 1);
-                }
-                game = channel.getString("game");
-                createdAt = channel.getString("created_at");
-                views = channel.getInt("views");
-                followers = channel.getInt("followers");
-                status = channel.getString("status");
-                description = channel.getString("description");
-                broadcasterType = channel.getString("broadcaster_type");
-            } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, "Error reading CHANNEL file | " + e.toString(), true);
-            }
-        } else if (new File(weakContext.get().getFilesDir() + File.separator + "USER").exists()) {
-            try {
-                JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "USER").readFile());
-                displayName = user.getString("display_name");
-                userID = user.getString("_id");
-                logo = user.getString("logo");
-                if (logo.contains("/")
-                        && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/") + 1)).exists()) {
-                    logo = logo.substring(logo.lastIndexOf("/") + 1);
-                }
-                createdAt = user.getString("created_at");
-                description = user.getString("bio");
-                game = "-";
-                views = 0;
-                followers = 0;
-                status = "-";
-            } catch (JSONException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, "Error reading USER file | " + e.toString(), true);
-            }
+        ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
+        displayName = channelEntity.getDisplay_name();
+        userID = channelEntity.getId();
+        logo = channelEntity.getLogo();
+        if (logo.contains("/")
+                && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/") + 1)).exists()) {
+            logo = logo.substring(logo.lastIndexOf("/") + 1);
+        }
+        createdAt = channelEntity.getCreated_at();
+        if (channelEntity.getGame() != null && !channelEntity.getGame().contentEquals("")) {
+            game = channelEntity.getGame();
+        } else {
+            game = "-";
+        }
+        views = channelEntity.getViews();
+        followers = channelEntity.getFollowers();
+        if (channelEntity.getStatus() != null && !channelEntity.getStatus().contentEquals("")) {
+            status = channelEntity.getStatus();
+        } else {
+            status = "-";
+        }
+        if (channelEntity.getDescription() != null && !channelEntity.getDescription().contentEquals("")) {
+            description = channelEntity.getDescription();
+        } else {
+            description = "-";
+        }
+        if (channelEntity.getBroadcasterType() != null && !channelEntity.getBroadcasterType().contentEquals("")) {
+            broadcasterType = channelEntity.getBroadcasterType();
+        } else {
+            broadcasterType = "-";
         }
         return null;
     }
@@ -113,7 +103,7 @@ public class ChannelView extends AsyncTask<Void, View, Void> {
                 user_Username.setText(displayName);
 
                 TextView user_ID = activity.findViewById(R.id.user_ID);
-                user_ID.setText(userID);
+                user_ID.setText(String.valueOf(userID));
 
                 TextView user_Game = activity.findViewById(R.id.user_Game);
                 user_Game.setText(game);

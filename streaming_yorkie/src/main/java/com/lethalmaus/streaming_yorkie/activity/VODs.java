@@ -4,26 +4,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.VODAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
-import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
-import com.lethalmaus.streaming_yorkie.request.VODRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.VODUpdateRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
+import com.lethalmaus.streaming_yorkie.view.UserView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.WorkManager;
 
 /**
@@ -43,7 +45,7 @@ public class VODs extends AppCompatActivity {
     //Timer between clicks to prevent multiple requests
     private long mLastClickTime = 0;
 
-    protected VODRequestHandler requestHandler;
+    protected VODUpdateRequestHandler requestHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +53,18 @@ public class VODs extends AppCompatActivity {
         this.weakContext = new WeakReference<>(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vod);
+        new UserView(weakActivity, weakContext).execute();
         WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOVODEXPORT);
-        setSubtitle("VODs");
 
-        progressBar = findViewById(R.id.progressbar);
-        //This is to make sure its invisible (not necessary but wanted)
-        progressBar.setVisibility(View.GONE);
+        deleteNotifications();
+        recyclerView = findViewById(R.id.table);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(new VODAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView)));
 
         ImageButton refreshPage = findViewById(R.id.refresh);
+        progressBar = findViewById(R.id.progressbar);
         refreshPage.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -66,7 +72,7 @@ public class VODs extends AppCompatActivity {
                         if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
                             mLastClickTime = SystemClock.elapsedRealtime();
                             progressBar.setVisibility(View.VISIBLE);
-                            requestHandler.newRequest().sendRequest(0);
+                            requestHandler.initiate().sendRequest();
                         }
                     }
                 });
@@ -75,7 +81,7 @@ public class VODs extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pageButtonListenerAction(vodButton, "VODs", "NEW", "EXPORT", "EXCLUDE");
+                        pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE");
                     }
                 });
 
@@ -84,7 +90,7 @@ public class VODs extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pageButtonListenerAction(exportedButton, "Exported", "EXPORTED", "DELETE", null);
+                        pageButtonListenerAction(exportedButton, "Exported", "EXPORTED", null, "DELETE");
                     }
                 });
         final ImageButton excludedButton = findViewById(R.id.page3);
@@ -92,20 +98,13 @@ public class VODs extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pageButtonListenerAction(excludedButton, "Excluded", "EXCLUDED", "INCLUDE", null);
+                        pageButtonListenerAction(excludedButton, "Excluded", "EXCLUDED", null, "INCLUDE");
                     }
                 });
-        deleteNotifications();
-        new UserRequestHandler(weakActivity, weakContext,true, false).sendRequest(0);
-        highlightButton(vodButton);
-        recyclerView = findViewById(R.id.table);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new VODAdapter(weakActivity, weakContext));
-        progressBar.setVisibility(View.VISIBLE);
-        requestHandler = new VODRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView), true);
-        requestHandler.setDisplayPreferences("NEW", "EXPORT", "EXCLUDE", null).newRequest().sendRequest(0);
+        pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE");
+
+        requestHandler = new VODUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
+        requestHandler.initiate().sendRequest();
     }
 
     @Override
@@ -113,28 +112,22 @@ public class VODs extends AppCompatActivity {
         cancelRequests();
         super.onPause();
     }
-    @Override
-    protected void onStop() {
-        cancelRequests();
-        super.onStop();
-    }
-    @Override
-    protected void onDestroy() {
-        cancelRequests();
-        super.onDestroy();
-    }
 
     /**
      * Deletes any notification files when the activity is started
      * @author LethalMaus
      */
     private void deleteNotifications() {
-        if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_VODEXPORT).exists()) {
-            new DeleteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).run();
-        }
-        if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()) {
-            new DeleteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_VODEXPORT).exists()) {
+                    new DeleteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).run();
+                }
+                if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()) {
+                    new DeleteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
+                }
+            }
+        }).start();
     }
 
     /**
@@ -142,6 +135,7 @@ public class VODs extends AppCompatActivity {
      * @author LethalMaus
      */
     protected void cancelRequests() {
+        VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("VOD");
         VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("VOD_EXPORT");
         progressBar.setVisibility(View.GONE);
     }
@@ -153,7 +147,7 @@ public class VODs extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return Globals.onOptionsItemsSelected(this, item);
     }
 
@@ -184,18 +178,24 @@ public class VODs extends AppCompatActivity {
      * @author LethalMaus
      * @param button image button that has been selected
      * @param subtitle explains where the channel is
-     * @param vodsToDisplay vod that are to be displayed (eg. new, exported)
+     * @param vodsType vod that are to be displayed (eg. new, exported)
      * @param actionButtonType1 first action button belonging to vod to be displayed
      * @param actionButtonType2 second action button belonging to vod to be displayed
      */
-    protected void pageButtonListenerAction(ImageButton button, String subtitle, String vodsToDisplay, String actionButtonType1, String actionButtonType2) {
-        if (progressBar.getVisibility() != View.VISIBLE) {
+    protected void pageButtonListenerAction(ImageButton button, String subtitle, String vodsType, String actionButtonType1, String actionButtonType2) {
+        if ((SystemClock.elapsedRealtime() - mLastClickTime > 500 && progressBar.getVisibility() != View.VISIBLE) || SystemClock.elapsedRealtime() - mLastClickTime > 10000) {
+            mLastClickTime = SystemClock.elapsedRealtime();
             progressBar.setVisibility(View.VISIBLE);
             highlightButton(button);
             setSubtitle(subtitle);
-            requestHandler.setDisplayPreferences(vodsToDisplay, actionButtonType1, actionButtonType2, null);
-            recyclerView.setAdapter(new VODAdapter(weakActivity, weakContext)
-                    .setDisplayPreferences(vodsToDisplay, actionButtonType1, actionButtonType2));
+            recyclerView.stopScroll();
+            recyclerView.getRecycledViewPool().clear();
+            VODAdapter vodAdapter = (VODAdapter) recyclerView.getAdapter();
+            if (vodAdapter != null) {
+                vodAdapter.setDisplayPreferences(vodsType, actionButtonType1, actionButtonType2).datasetChanged();
+            }
+        } else {
+            Toast.makeText(this, "Updating VODs, please be patient.", Toast.LENGTH_SHORT).show();
         }
     }
 }

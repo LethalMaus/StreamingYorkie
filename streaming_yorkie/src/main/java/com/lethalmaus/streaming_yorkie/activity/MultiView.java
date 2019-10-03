@@ -1,9 +1,9 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +11,9 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
@@ -37,7 +40,7 @@ public class MultiView extends AppCompatActivity {
         multi_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new RequestHandler(null, new WeakReference<>(getApplicationContext()), null).networkIsAvailable()) {
+                if (RequestHandler.networkIsAvailable(new WeakReference<>(getApplicationContext()))) {
                     getChannels();
                     if (!channels.isEmpty()) {
                         findViewById(R.id.multi_input).setVisibility(View.GONE);
@@ -64,7 +67,7 @@ public class MultiView extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.cast) {
             startActivity(new Intent("android.settings.CAST_SETTINGS"));
             return true;

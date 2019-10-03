@@ -3,41 +3,44 @@ package com.lethalmaus.streaming_yorkie.worker;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.activity.VODs;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.VODExportRequestHandler;
-import com.lethalmaus.streaming_yorkie.request.VODRequestHandler;
+import com.lethalmaus.streaming_yorkie.request.VODUpdateRequestHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 /**
- * Worker for automating VOD Exports
+ * Worker for automating VODEntity Exports
  * @author LethalMaus
  */
 public class AutoVODExportWorker extends Worker {
 
     private WeakReference<Context> weakContext;
-    private boolean publicize;
+    private StreamingYorkieDB streamingYorkieDB;
+    private boolean visibility;
     private boolean split;
+    private int vodId;
 
     /**
-     * Constructor for AutoVODExportWorker for automating VOD Exports
+     * Constructor for AutoVODExportWorker for automating VODEntity Exports
      * @author LethalMaus
      * @param context app context
      * @param params parameters for worker.super()
@@ -47,56 +50,63 @@ public class AutoVODExportWorker extends Worker {
             @NonNull WorkerParameters params) {
         super(context, params);
         this.weakContext = new WeakReference<>(context);
+        this.streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
         try {
             if (new File(weakContext.get().getFilesDir() + File.separator + "SETTINGS_VOD").exists()) {
                 JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
-                publicize = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
+                visibility = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
                 split = settings.getBoolean(Globals.SETTINGS_SPLIT);
             } else {
-                publicize = false;
+                visibility = false;
                 split = false;
             }
         } catch(JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error reading settings | " + e.toString(), true).run();
+            new WriteFileHandler(weakContext, "ERROR", null, "AutoVOD: Error reading settings | " + e.toString(), true).run();
         }
     }
 
     @Override
     public @NonNull Result doWork() {
-        new VODRequestHandler(null, weakContext, null, false) {
+        new VODUpdateRequestHandler(null, weakContext, null) {
             @Override
-            public void responseAction() {
-                ArrayList<String> vods = new ReadFileHandler(weakContext, Globals.VOD_PATH).readFileNames();
-                vods.removeAll(new ReadFileHandler(weakContext, Globals.VOD_EXCLUDED_PATH).readFileNames());
-                for (int i = 0; i < vods.size(); i++) {
-                    if (!new File(weakContext.get().getFilesDir() + File.separator + Globals.VOD_EXPORTED_PATH + File.separator + vods.get(i)).exists()) {
-                        try {
-                            final JSONObject vodObject = new JSONObject(new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vods.get(i)).readFile());
-                            new VODExportRequestHandler(null, weakContext){
+            public void onCompletion() {
+                super.onCompletion();
+                final int vodCount = streamingYorkieDB.vodDAO().getCurrentVODsCount();
+                if (vodCount > 0) {
+                    new WriteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
+                    for (int i = 0; i < vodCount; i++) {
+                        VODEntity vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
+                        vodId = vodEntity.getId();
+                        if (!vodEntity.isExported()) {
+                            JSONObject body = new JSONObject();
+                            try {
+                                body.put("title", vodEntity.getTitle());
+                                body.put("description", vodEntity.getDescription());
+                                body.put("tag_list", vodEntity.getTag_list());
+                                body.put("private", !visibility);
+                                body.put("do_split", split);
+                            } catch (JSONException e) {
+                                new WriteFileHandler(weakContext, "ERROR", null, "AutoVOD: Twitch export content could not be set. | " + e.toString(), true).run();
+                            }
+                            new VODExportRequestHandler(null, weakContext, null) {
                                 @Override
-                                public void responseHandler(JSONObject response) {
-                                    try {
-                                        new WriteFileHandler(weakContext, Globals.VOD_EXPORTED_PATH + File.separator + vodObject.getString("_id"), null, new ReadFileHandler(weakContext, Globals.VOD_PATH + File.separator + vodObject.getString("_id")).readFile(), false).run();
-                                        new WriteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + vodObject.getString("_id"), null, null, false).writeToFileOrPath();
-                                        new WriteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
-                                    } catch (JSONException e) {
-                                        new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error writing VOD response | " + e.toString(), true);
+                                public void onCompletion() {
+                                    new WriteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + getVodId(), null, null, false).writeToFileOrPath();
+                                    if (vodCount == new ReadFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles()) {
+                                        notifyUser(weakContext);
                                     }
                                 }
-                            }.export(vods.get(i), vodObject.getString("title"), vodObject.getString("description"), vodObject.getString("tag_list"), publicize, split);
-                        } catch (JSONException e) {
-                            new WriteFileHandler(weakContext, "ERROR", null, "AuVO: Error reading VOD object | " + e.toString(), true);
+                            }.setVodId(vodId).setPostBody(body).sendRequest();
                         }
                     }
                 }
-                notifyUser(weakContext);
             }
-        }.newRequest().sendRequest(0);
+        }.initiate().sendRequest();
         return Result.success();
     }
 
     /**
-     * Method for pushing notifications to inform channel if VOD has been exported
+     * Method for pushing notifications to inform channel if VODEntity has been exported
      * @author LethalMaus
      * @param weakContext weak reference context
      */
