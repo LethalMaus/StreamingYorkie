@@ -110,6 +110,11 @@ public class VODs extends AppCompatActivity {
     @Override
     protected void onPause() {
         cancelRequests();
+        if (recyclerView != null) {
+            recyclerView.stopScroll();
+            recyclerView.scrollToPosition(0);
+            recyclerView.getRecycledViewPool().clear();
+        }
         super.onPause();
     }
 
@@ -189,6 +194,7 @@ public class VODs extends AppCompatActivity {
             highlightButton(button);
             setSubtitle(subtitle);
             recyclerView.stopScroll();
+            recyclerView.scrollToPosition(0);
             recyclerView.getRecycledViewPool().clear();
             VODAdapter vodAdapter = (VODAdapter) recyclerView.getAdapter();
             if (vodAdapter != null) {

@@ -86,7 +86,7 @@ public class UserRequestHandler extends RequestHandler {
                             new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
                         }
                     }
-                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
+                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChannelById(Integer.parseInt(response.getString("_id")));
                     if (existingChannelEntity != null) {
                         existingChannelEntity.setDisplay_name(response.getString("display_name"));
                         existingChannelEntity.setLogo(response.getString("logo"));

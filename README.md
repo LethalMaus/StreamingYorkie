@@ -324,6 +324,7 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 
 ## Updates
 
++ [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
 + [1.3.1-a](#131-a)
 + [1.3.0-a](#130-a)
@@ -338,6 +339,28 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 + [1.0.2-a](#102-a)
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
+
+### 2.0.1-a
+
+Patch for minor fixes
+
+Issues:
++   UserView crash on displaying chanel name fix
++   RecyclerView crash IndexOutOfBoundsException fix
++   FollowRequestHandler NumberFormatException crash fix
+
+Improvements:
++   Request architecture change for faster more efficient http requests
++   SQLite & Room introduction for efficient data management
++   Explicit threading for smoother UI loading and data handling
+
+Other:
++   Gradle update
++   Sonarcloud introduction
++   SDK update
++   Java update
+
+---
 
 ### 2.0.0-a
 

@@ -30,7 +30,7 @@ public interface ChannelDAO {
      * @return ChannelEntity
      */
     @Query("SELECT * FROM channel WHERE id = :id")
-    ChannelEntity getChanneById(int id);
+    ChannelEntity getChannelById(int id);
 
     /**
      * Inserts a ChannelEntity and replaces on conflict

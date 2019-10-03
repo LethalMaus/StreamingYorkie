@@ -207,7 +207,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                         }
                     }).start();
                 }
-                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -248,7 +248,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                     weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
                                     weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
                                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                 }
                                 notifyDataSetChanged();
                             }
@@ -259,7 +259,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public int getItemCount() {
-        return currentPageCount;
+        return currentPageCount < 0 ? 0 : currentPageCount;
     }
 
     /**
@@ -464,6 +464,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                             imageButton.setImageResource(R.drawable.unfollow);
                                                                             ViewGroup row = (ViewGroup) imageButton.getParent();
                                                                             final ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
+                                                                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                                                             new Thread(new Runnable() {
                                                                                 public void run() {
                                                                                     editButton(imageButton2, "NOTIFICATIONS_BUTTON", userID);
@@ -489,6 +490,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                             imageButton.setImageResource(R.drawable.follow);
                                                                             ViewGroup row = (ViewGroup) imageButton.getParent();
                                                                             row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
+                                                                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                                                         }
                                                                     });
                                                         }
@@ -543,11 +545,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                 if (followingEntity.isNotifications()) {
                                                     new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false)
                                                             .sendRequest();
-                                                    imageButton.setImageResource(R.drawable.notifications);
+                                                    weakActivity.get().runOnUiThread(
+                                                            new Runnable() {
+                                                                public void run() {
+                                                                    imageButton.setImageResource(R.drawable.notifications);
+                                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                                }
+                                                            }
+                                                    );
                                                 } else {
                                                     new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, true)
                                                             .sendRequest();
-                                                    imageButton.setImageResource(R.drawable.deactivate_notifications);
+                                                    weakActivity.get().runOnUiThread(
+                                                            new Runnable() {
+                                                                public void run() {
+                                                                    imageButton.setImageResource(R.drawable.deactivate_notifications);
+                                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                                }
+                                                            }
+                                                    );
                                                 }
                                             } else if (weakActivity != null && weakActivity.get() != null) {
                                                 weakActivity.get().runOnUiThread(
@@ -592,7 +608,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                 weakActivity.get().runOnUiThread(
                                                         new Runnable() {
                                                             public void run() {
-                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                                             }
                                                         });
                                                 if (followAll) {
@@ -609,7 +625,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
-                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                                                             }
                                                                         });
                                                             }
@@ -634,7 +650,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
-                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                                                             }
                                                                         });
                                                             }

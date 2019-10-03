@@ -216,7 +216,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                         }
                     }).start();
                 }
-                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -250,7 +250,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
                                 }
                                 notifyDataSetChanged();
-                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                             }
                         });
             }
@@ -259,7 +259,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
 
     @Override
     public int getItemCount() {
-        return currentPageCount;
+        return currentPageCount < 0 ? 0 : currentPageCount;
     }
 
     /**

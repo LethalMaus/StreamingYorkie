@@ -48,7 +48,7 @@ public class VODRequestHandler extends RequestHandler {
      * @param weakContext weak referenced context
      * @param recyclerView weak referenced recycler view
      */
-    public VODRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView) {
+    VODRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView) {
         super(weakActivity, weakContext, recyclerView);
         requestType = "VODEntity";
     }
@@ -128,6 +128,7 @@ public class VODRequestHandler extends RequestHandler {
                                     @Override
                                     public void run() {
                                         recyclerView.get().stopScroll();
+                                        recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
                                         vodAdapter.datasetChanged();
                                     }
@@ -137,7 +138,7 @@ public class VODRequestHandler extends RequestHandler {
                         if (weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                 }
                             });
                         }

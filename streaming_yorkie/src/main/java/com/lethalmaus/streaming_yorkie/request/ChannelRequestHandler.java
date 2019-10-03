@@ -93,7 +93,7 @@ public class ChannelRequestHandler extends RequestHandler {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
+                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChannelById(Integer.parseInt(response.getString("_id")));
                     if (existingChannelEntity != null) {
                         existingChannelEntity.setDisplay_name(response.getString("display_name"));
                         existingChannelEntity.setLogo(response.getString("logo"));
