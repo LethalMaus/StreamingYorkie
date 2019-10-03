@@ -11,7 +11,7 @@ import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
-import com.lethalmaus.streaming_yorkie.entity.Following;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -62,23 +62,23 @@ public class FollowingRequestHandler extends RequestHandler {
                     itemCount += response.getJSONArray("follows").length();
                     if (response.getJSONArray("follows").length() > 0) {
                         for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
-                            Following following = new Following(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id")),
+                            FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id")),
                                     response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("display_name"),
                                     response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
                                     response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
                                     response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
                                     timestamp);
-                            Following existingFollowing = streamingYorkieDB.followingDAO().getUserById(following.getId());
-                            if (existingFollowing != null) {
-                                if (existingFollowing.getStatus().contentEquals("EXCLUDED")) {
-                                    following.setStatus("EXCLUDED");
+                            FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
+                            if (existingFollowingEntity != null) {
+                                if (existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
+                                    followingEntity.setStatus("EXCLUDED");
                                 } else {
-                                    following.setStatus("CURRENT");
+                                    followingEntity.setStatus("CURRENT");
                                 }
-                                streamingYorkieDB.followingDAO().updateUser(following);
+                                streamingYorkieDB.followingDAO().updateUser(followingEntity);
                             } else {
-                                following.setStatus("NEW");
-                                streamingYorkieDB.followingDAO().insertUser(following);
+                                followingEntity.setStatus("NEW");
+                                streamingYorkieDB.followingDAO().insertUser(followingEntity);
                             }
                         }
                         sendRequest();
@@ -87,14 +87,14 @@ public class FollowingRequestHandler extends RequestHandler {
                             weakActivity.get().runOnUiThread(
                                     new Runnable() {
                                         public void run() {
-                                            Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'Following' is out of sync. Total should be '" + twitchTotal
+                                            Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'FollowingEntity' is out of sync. Total should be '" + twitchTotal
                                                     + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                             );
                         }
                         new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).run();
-                        List<Following> unfollowing = streamingYorkieDB.followingDAO().getUnfollowedUsers(timestamp);
+                        List<FollowingEntity> unfollowing = streamingYorkieDB.followingDAO().getUnfollowedUsers(timestamp);
                         for (int i = 0; i < unfollowing.size(); i++) {
                             unfollowing.get(i).setStatus("UNFOLLOWED");
                             streamingYorkieDB.followingDAO().updateUser(unfollowing.get(i));
@@ -132,7 +132,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Following response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "FollowingEntity response error | " + e.toString(), true).run();
                 }
             }
             }).start();

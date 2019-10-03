@@ -6,7 +6,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
-import com.lethalmaus.streaming_yorkie.entity.Channel;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.view.ChannelView;
 
@@ -65,7 +65,7 @@ public class ChannelRequestHandler extends RequestHandler {
                     weakActivity.get().runOnUiThread(
                             new Runnable() {
                                 public void run() {
-                                    Toast.makeText(weakActivity.get(), "Error requesting Channel", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(weakActivity.get(), "Error requesting ChannelEntity", Toast.LENGTH_SHORT).show();
                                 }
                             }
                     );
@@ -76,7 +76,7 @@ public class ChannelRequestHandler extends RequestHandler {
                 weakActivity.get().runOnUiThread(
                         new Runnable() {
                             public void run() {
-                                Toast.makeText(weakActivity.get(), "Error requesting Channel", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(weakActivity.get(), "Error requesting ChannelEntity", Toast.LENGTH_SHORT).show();
                             }
                         }
                 );
@@ -85,7 +85,7 @@ public class ChannelRequestHandler extends RequestHandler {
         if (errorMessage.isEmpty()) {
             errorMessage = error.toString();
         }
-        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting Channel | " + errorMessage, true).run();
+        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting ChannelEntity | " + errorMessage, true).run();
     }
 
     @Override
@@ -93,24 +93,24 @@ public class ChannelRequestHandler extends RequestHandler {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    Channel existingChannel = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
-                    if (existingChannel != null) {
-                        existingChannel.setDisplay_name(response.getString("display_name"));
-                        existingChannel.setLogo(response.getString("logo"));
-                        existingChannel.setGame(response.getString("game"));
-                        existingChannel.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
-                        existingChannel.setViews(response.getInt("views"));
-                        existingChannel.setFollowers(response.getInt("followers"));
-                        existingChannel.setStatus(response.getString("status"));
-                        existingChannel.setDescription(response.getString("description"));
+                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
+                    if (existingChannelEntity != null) {
+                        existingChannelEntity.setDisplay_name(response.getString("display_name"));
+                        existingChannelEntity.setLogo(response.getString("logo"));
+                        existingChannelEntity.setGame(response.getString("game"));
+                        existingChannelEntity.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
+                        existingChannelEntity.setViews(response.getInt("views"));
+                        existingChannelEntity.setFollowers(response.getInt("followers"));
+                        existingChannelEntity.setStatus(response.getString("status"));
+                        existingChannelEntity.setDescription(response.getString("description"));
                         if (response.getString("broadcaster_type").equals("")) {
-                            existingChannel.setBroadcasterType("streamer");
+                            existingChannelEntity.setBroadcasterType("streamer");
                         } else {
-                            existingChannel.setBroadcasterType(response.getString("broadcaster_type"));
+                            existingChannelEntity.setBroadcasterType(response.getString("broadcaster_type"));
                         }
-                        streamingYorkieDB.channelDAO().updateChannel(existingChannel);
+                        streamingYorkieDB.channelDAO().updateChannel(existingChannelEntity);
                     } else {
-                        Channel channel = new Channel(Integer.parseInt(response.getString("_id")),
+                        ChannelEntity channelEntity = new ChannelEntity(Integer.parseInt(response.getString("_id")),
                                 response.getString("display_name"),
                                 response.getString("logo"),
                                 response.getString("game"),
@@ -120,7 +120,7 @@ public class ChannelRequestHandler extends RequestHandler {
                                 response.getString("status"),
                                 response.getString("description"),
                                 response.getString("broadcaster_type"));
-                        streamingYorkieDB.channelDAO().insertChannel(channel);
+                        streamingYorkieDB.channelDAO().insertChannel(channelEntity);
                     }
                     new ChannelView(weakActivity, weakContext).execute();
                 } catch (JSONException e) {
@@ -128,12 +128,12 @@ public class ChannelRequestHandler extends RequestHandler {
                         weakActivity.get().runOnUiThread(
                                 new Runnable() {
                                     public void run() {
-                                        Toast.makeText(weakContext.get(), "Channel can't be saved", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(weakContext.get(), "ChannelEntity can't be saved", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving Channel | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving ChannelEntity | " + e.toString(), true).run();
                 }
             }
         }).start();

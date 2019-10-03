@@ -19,7 +19,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 
 /**
- * Class to share F4F status to Discord
+ * Class to share F4FEntity status to Discord
  * @author LethalMaus
  */
 public class ShareF4FStatusRequestHandler extends RequestHandler {
@@ -54,7 +54,7 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
                     weakActivity.get().runOnUiThread(
                             new Runnable() {
                                 public void run() {
-                                    Toast.makeText(weakActivity.get(), "Shared F4F Status to Discord", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(weakActivity.get(), "Shared F4FEntity Status to Discord", Toast.LENGTH_SHORT).show();
                                 }
                             }
                     );

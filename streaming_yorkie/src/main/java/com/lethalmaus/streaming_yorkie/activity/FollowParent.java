@@ -158,7 +158,7 @@ public class FollowParent extends AppCompatActivity {
      * @author LethalMaus
      * @param button image button that has been selected
      * @param subtitle explains where the channel is
-     * @param daoType DAO Type (eg. Follower, Following, ...)
+     * @param daoType DAO Type (eg. FollowerEntity, FollowingEntity, ...)
      * @param entityStatus entity status (eg. new, current)
      * @param actionButtonType1 action button belonging to users to be displayed, can be null
      * @param actionButtonType2 action button belonging to users to be displayed, can be null

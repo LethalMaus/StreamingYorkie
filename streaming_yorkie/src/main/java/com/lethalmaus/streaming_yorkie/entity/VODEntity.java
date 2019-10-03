@@ -4,11 +4,11 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 /**
- * VOD Entity
+ * VODEntity Entity
  * @author LethalMaus
  */
 @Entity(tableName = "vod")
-public class VOD {
+public class VODEntity {
 
     @PrimaryKey
     private int id;
@@ -25,17 +25,17 @@ public class VOD {
     private long last_updated;
 
     /**
-     * VOD Constructor
+     * VODEntity Constructor
      * @author LethalMaus
-     * @param id VOD Id
-     * @param title VOD Title
-     * @param url VOD Url
-     * @param created_at VOD creation date
-     * @param length VOD length
-     * @param preview VOD preview url
-     * @param last_updated When the VOD was last updated
+     * @param id VODEntity Id
+     * @param title VODEntity Title
+     * @param url VODEntity Url
+     * @param created_at VODEntity creation date
+     * @param length VODEntity length
+     * @param preview VODEntity preview url
+     * @param last_updated When the VODEntity was last updated
      */
-    public VOD(int id, String title, String url, String created_at, String length, String preview, long last_updated) {
+    public VODEntity(int id, String title, String url, String created_at, String length, String preview, long last_updated) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -46,7 +46,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD id
+     * Get VODEntity id
      * @author LethalMaus
      * @return int id
      */
@@ -55,7 +55,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD id
+     * Set VODEntity id
      * @author LethalMaus
      * @param id int
      */
@@ -64,7 +64,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD title
+     * Get VODEntity title
      * @author LethalMaus
      * @return String title
      */
@@ -73,7 +73,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD title
+     * Set VODEntity title
      * @author LethalMaus
      * @param title String
      */
@@ -82,7 +82,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD Url
+     * Get VODEntity Url
      * @author LethalMaus
      * @return String url
      */
@@ -91,7 +91,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD Url
+     * Set VODEntity Url
      * @author LethalMaus
      * @param url String
      */
@@ -100,7 +100,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD creation date
+     * Get VODEntity creation date
      * @author LethalMaus
      * @return String created_at
      */
@@ -109,7 +109,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD creation date
+     * Set VODEntity creation date
      * @author LethalMaus
      * @param created_at String
      */
@@ -118,7 +118,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD description
+     * Get VODEntity description
      * @author LethalMaus
      * @return String description
      */
@@ -127,7 +127,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD description
+     * Set VODEntity description
      * @author LethalMaus
      * @param description String
      */
@@ -136,7 +136,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD tag list
+     * Get VODEntity tag list
      * @author LethalMaus
      * @return String tag_list
      */
@@ -145,7 +145,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD tag list
+     * Set VODEntity tag list
      * @author LethalMaus
      * @param tag_list String
      */
@@ -154,7 +154,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD game
+     * Get VODEntity game
      * @author LethalMaus
      * @return String game
      */
@@ -163,7 +163,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD game
+     * Set VODEntity game
      * @author LethalMaus
      * @param game String
      */
@@ -172,7 +172,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD length
+     * Get VODEntity length
      * @author LethalMaus
      * @return String length
      */
@@ -181,7 +181,7 @@ public class VOD {
     }
 
     /**
-     * Set VOD length
+     * Set VODEntity length
      * @author LethalMaus
      * @param length String
      */
@@ -190,7 +190,7 @@ public class VOD {
     }
 
     /**
-     * Get VOD preview url
+     * Get VODEntity preview url
      * @author LethalMaus
      * @return String preview
      */

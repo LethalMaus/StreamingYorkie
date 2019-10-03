@@ -71,6 +71,9 @@ public class WriteFileHandler implements Runnable {
      * @author LethalMaus
      */
     private void writeToFile() {
+        FileOutputStream fileOutputStream = null;
+        OutputStreamWriter outputStreamWriter = null;
+        BufferedWriter bufferedWriter = null;
         try {
             File file = new File(appDirectory + File.separator + fileOrPathName);
             if (!file.exists()) {
@@ -90,17 +93,14 @@ public class WriteFileHandler implements Runnable {
                 }
             }
             if (data != null) {
-                FileOutputStream fileOutputStream = new FileOutputStream(file, append);
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
-                BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
+                fileOutputStream = new FileOutputStream(file, append);
+                outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+                bufferedWriter = new BufferedWriter(outputStreamWriter);
                 bufferedWriter.write(data);
                 if (append) {
                     bufferedWriter.newLine();
                 }
                 bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStreamWriter.close();
-                fileOutputStream.close();
             }
         } catch (FileNotFoundException e) {
             if (weakContext != null && weakContext.get() != null) {
@@ -112,6 +112,20 @@ public class WriteFileHandler implements Runnable {
             if (weakContext != null && weakContext.get() != null) {
                 Toast.makeText(weakContext.get(), "Error writing to file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
             } else {
+                System.out.println("Error writing to file '" + fileOrPathName + "'");
+            }
+        } finally {
+            try {
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+                if (outputStreamWriter != null) {
+                    outputStreamWriter.close();
+                }
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+            } catch (IOException e) {
                 System.out.println("Error writing to file '" + fileOrPathName + "'");
             }
         }

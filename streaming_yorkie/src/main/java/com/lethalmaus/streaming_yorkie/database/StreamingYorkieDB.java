@@ -11,17 +11,17 @@ import com.lethalmaus.streaming_yorkie.dao.F4FDAO;
 import com.lethalmaus.streaming_yorkie.dao.FollowerDAO;
 import com.lethalmaus.streaming_yorkie.dao.FollowingDAO;
 import com.lethalmaus.streaming_yorkie.dao.VODDAO;
-import com.lethalmaus.streaming_yorkie.entity.Channel;
-import com.lethalmaus.streaming_yorkie.entity.F4F;
-import com.lethalmaus.streaming_yorkie.entity.Follower;
-import com.lethalmaus.streaming_yorkie.entity.Following;
-import com.lethalmaus.streaming_yorkie.entity.VOD;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
+import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 
 /**
  * Streaming Yorkie Database
  * @author LethalMaus
  */
-@Database(entities = {Follower.class, Following.class, F4F.class, Channel.class, VOD.class}, exportSchema = false, version = 1)
+@Database(entities = {FollowerEntity.class, FollowingEntity.class, F4FEntity.class, ChannelEntity.class, VODEntity.class}, exportSchema = false, version = 1)
 public abstract class StreamingYorkieDB extends RoomDatabase {
     private static final String DB_NAME = "streaming_yorkie";
     private static StreamingYorkieDB steamingYorkieDBInstance;

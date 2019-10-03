@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.Channel;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -26,7 +26,7 @@ public class ChannelView extends AsyncTask<Void, View, Void> {
     private WeakReference<Context> weakContext;
     private StreamingYorkieDB streamingYorkieDB;
 
-    //Channel attributes
+    //ChannelEntity attributes
     private String displayName;
     private int userID;
     private String logo;
@@ -52,34 +52,34 @@ public class ChannelView extends AsyncTask<Void, View, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        Channel channel = streamingYorkieDB.channelDAO().getChannel();
-        displayName = channel.getDisplay_name();
-        userID = channel.getId();
-        logo = channel.getLogo();
+        ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
+        displayName = channelEntity.getDisplay_name();
+        userID = channelEntity.getId();
+        logo = channelEntity.getLogo();
         if (logo.contains("/")
                 && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/") + 1)).exists()) {
             logo = logo.substring(logo.lastIndexOf("/") + 1);
         }
-        createdAt = channel.getCreated_at();
-        if (channel.getGame() != null && !channel.getGame().contentEquals("")) {
-            game = channel.getGame();
+        createdAt = channelEntity.getCreated_at();
+        if (channelEntity.getGame() != null && !channelEntity.getGame().contentEquals("")) {
+            game = channelEntity.getGame();
         } else {
             game = "-";
         }
-        views = channel.getViews();
-        followers = channel.getFollowers();
-        if (channel.getStatus() != null && !channel.getStatus().contentEquals("")) {
-            status = channel.getStatus();
+        views = channelEntity.getViews();
+        followers = channelEntity.getFollowers();
+        if (channelEntity.getStatus() != null && !channelEntity.getStatus().contentEquals("")) {
+            status = channelEntity.getStatus();
         } else {
             status = "-";
         }
-        if (channel.getDescription() != null && !channel.getDescription().contentEquals("")) {
-            description = channel.getDescription();
+        if (channelEntity.getDescription() != null && !channelEntity.getDescription().contentEquals("")) {
+            description = channelEntity.getDescription();
         } else {
             description = "-";
         }
-        if (channel.getBroadcasterType() != null && !channel.getBroadcasterType().contentEquals("")) {
-            broadcasterType = channel.getBroadcasterType();
+        if (channelEntity.getBroadcasterType() != null && !channelEntity.getBroadcasterType().contentEquals("")) {
+            broadcasterType = channelEntity.getBroadcasterType();
         } else {
             broadcasterType = "-";
         }

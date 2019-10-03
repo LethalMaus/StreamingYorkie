@@ -26,7 +26,7 @@ import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.VOD;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.VODExportRequestHandler;
@@ -56,7 +56,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     private StreamingYorkieDB streamingYorkieDB;
     private VODExportRequestHandler vodExportRequestHandler;
 
-    //VOD export properties
+    //VODEntity export properties
     private String title;
     private String description;
     private String tags;
@@ -72,8 +72,8 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         View vodRow;
 
         /**
-         * Holder for VOD View
-         * @param vodRow View for VOD Row
+         * Holder for VODEntity View
+         * @param vodRow View for VODEntity Row
          */
         VODViewHolder(View vodRow) {
             super(vodRow);
@@ -82,7 +82,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Adapter for displaying a VOD Dataset
+     * Adapter for displaying a VODEntity Dataset
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
@@ -128,10 +128,10 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Async Task to request VOD and display it
+     * Async Task to request VODEntity and display it
      * @author LethalMaus
      */
-    private static class VODAsyncTask extends AsyncTask<Void, Void, VOD> {
+    private static class VODAsyncTask extends AsyncTask<Void, Void, VODEntity> {
 
         private WeakReference<Activity> weakActivity;
         private WeakReference<Context> weakContext;
@@ -169,35 +169,35 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         }
 
         @Override
-        protected VOD doInBackground(Void... params) {
-            VOD vod;
+        protected VODEntity doInBackground(Void... params) {
+            VODEntity vodEntity;
             if (vodsType.contentEquals("CURRENT")) {
-                vod = streamingYorkieDB.vodDAO().getCurrentVODByPosition(position);
+                vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(position);
             } else if (vodsType.contentEquals("EXPORTED")) {
-                vod = streamingYorkieDB.vodDAO().getExportedVODByPosition(position);
+                vodEntity = streamingYorkieDB.vodDAO().getExportedVODByPosition(position);
             } else {
-                vod = streamingYorkieDB.vodDAO().getExcludedVODByPosition(position);
+                vodEntity = streamingYorkieDB.vodDAO().getExcludedVODByPosition(position);
             }
-            return vod;
+            return vodEntity;
         }
 
         @Override
-        protected void onPostExecute(final VOD vod) {
+        protected void onPostExecute(final VODEntity vodEntity) {
             if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
-                if (vod != null) {
+                if (vodEntity != null) {
                     TextView title = vodViewHolder.vodRow.findViewById(R.id.vod_title);
-                    title.setText(vod.getTitle());
+                    title.setText(vodEntity.getTitle());
                     TextView game = vodViewHolder.vodRow.findViewById(R.id.vod_game);
-                    game.setText(vod.getGame());
+                    game.setText(vodEntity.getGame());
                     TextView duration = vodViewHolder.vodRow.findViewById(R.id.vod_duration);
-                    duration.setText(vod.getLength());
+                    duration.setText(vodEntity.getLength());
                     TextView createdAt = vodViewHolder.vodRow.findViewById(R.id.vod_createdAt);
-                    createdAt.setText(vod.getCreated_at());
+                    createdAt.setText(vodEntity.getCreated_at());
 
                     ImageView preview = vodViewHolder.vodRow.findViewById(R.id.vod_preview);
-                    Glide.with(weakContext.get()).load(vod.getPreview()).into(preview);
+                    Glide.with(weakContext.get()).load(vodEntity.getPreview()).into(preview);
 
-                    final String vodUrl = vod.getUrl();
+                    final String vodUrl = vodEntity.getUrl();
                     preview.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -211,13 +211,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                     action2.setVisibility(View.VISIBLE);
                     new Thread(new Runnable() {
                         public void run() {
-                            vodAdapter.editButton(action1, actionButtonType1, vod.getId());
-                            vodAdapter.editButton(action2, actionButtonType2, vod.getId());
+                            vodAdapter.editButton(action1, actionButtonType1, vodEntity.getId());
+                            vodAdapter.editButton(action2, actionButtonType2, vodEntity.getId());
                         }
                     }).start();
                 }
-                ProgressBar progressBar = weakActivity.get().findViewById(R.id.progressbar);
-                progressBar.setVisibility(View.INVISIBLE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
             }
         }
     }
@@ -290,10 +289,10 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for deleting a VOD from the exported view and current view (if expired in twitch)
+     * Button for deleting a VODEntity from the exported view and current view (if expired in twitch)
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID exported VOD to be deleted
+     * @param vodID exported VODEntity to be deleted
      */
     private void deleteButton(final ImageButton imageButton, final int vodID) {
         weakActivity.get().runOnUiThread(
@@ -317,10 +316,10 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for exporting a VOD that hasn't already been exported
+     * Button for exporting a VODEntity that hasn't already been exported
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID VOD to be exported
+     * @param vodID VODEntity to be exported
      */
     private void exportButton(final ImageButton imageButton, final int vodID) {
         weakActivity.get().runOnUiThread(
@@ -333,15 +332,15 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             public void onClick(View v) {
                                 new Thread(new Runnable() {
                                     public void run() {
-                                        final VOD vod = streamingYorkieDB.vodDAO().getVODById(vodID);
-                                        title = vod.getTitle();
-                                        description = vod.getDescription();
-                                        tags = vod.getTag_list();
+                                        final VODEntity vodEntity = streamingYorkieDB.vodDAO().getVODById(vodID);
+                                        title = vodEntity.getTitle();
+                                        description = vodEntity.getDescription();
+                                        tags = vodEntity.getTag_list();
                                         weakActivity.get().runOnUiThread(
                                                 new Runnable() {
                                                     public void run() {
                                                         final Dialog dialog = new Dialog(weakActivity.get());
-                                                        dialog.setTitle("VOD Export");
+                                                        dialog.setTitle("VODEntity Export");
                                                         dialog.setContentView(R.layout.vod_export_dialog);
 
                                                         final EditText exportDialogTitle = dialog.findViewById(R.id.vod_export_dialog_title_text);
@@ -433,14 +432,16 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                                             new WriteFileHandler(weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
                                                                         }
                                                                         vodExportRequestHandler.setVodId(vodID).setPostBody(body).sendRequest();
-                                                                        weakActivity.get().runOnUiThread(
-                                                                                new Runnable() {
-                                                                                    public void run() {
-                                                                                        imageButton.setVisibility(View.GONE);
-                                                                                        Toast.makeText(weakActivity.get(), "Starting export", Toast.LENGTH_SHORT).show();
-                                                                                        dialog.dismiss();
-                                                                                    }
-                                                                                });
+                                                                        if (weakActivity != null && weakActivity.get() != null) {
+                                                                            weakActivity.get().runOnUiThread(
+                                                                                    new Runnable() {
+                                                                                        public void run() {
+                                                                                            imageButton.setVisibility(View.GONE);
+                                                                                            Toast.makeText(weakActivity.get(), "Starting export", Toast.LENGTH_SHORT).show();
+                                                                                            dialog.dismiss();
+                                                                                        }
+                                                                                    });
+                                                                        }
                                                                     }
                                                                 }).start();
                                                             }
@@ -457,7 +458,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for excluding a VOD from automation and other views
+     * Button for excluding a VODEntity from automation and other views
      * @author LethalMaus
      * @param imageButton button view
      * @param vodID channel to be excluded
@@ -484,10 +485,10 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for including a VOD to automation and other views
+     * Button for including a VODEntity to automation and other views
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID VOD to be included
+     * @param vodID VODEntity to be included
      */
     private void includeButton(final ImageButton imageButton, final int vodID) {
         weakActivity.get().runOnUiThread(
@@ -529,8 +530,8 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     new Thread(new Runnable() {
                                         public void run() {
                                             for (int i = 0; i < currentPageCount; i++) {
-                                                VOD vod = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
-                                                if (!vod.isExported()) {
+                                                VODEntity vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
+                                                if (!vodEntity.isExported()) {
                                                     try {
                                                         boolean visibility = false;
                                                         boolean split = false;
@@ -541,9 +542,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                         }
                                                         JSONObject body = new JSONObject();
                                                         try {
-                                                            body.put("title", vod.getTitle());
-                                                            body.put("description", vod.getDescription());
-                                                            body.put("tag_list", vod.getTag_list());
+                                                            body.put("title", vodEntity.getTitle());
+                                                            body.put("description", vodEntity.getDescription());
+                                                            body.put("tag_list", vodEntity.getTag_list());
                                                             body.put("private", !visibility);
                                                             body.put("do_split", split);
                                                         } catch (JSONException e) {
@@ -558,7 +559,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                             }
                                                             new WriteFileHandler(weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
                                                         }
-                                                        vodExportRequestHandler.setVodId(vod.getId()).setPostBody(body).sendRequest();
+                                                        vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest();
                                                     } catch (JSONException e) {
                                                         if (weakActivity != null && weakActivity.get() != null) {
                                                             weakActivity.get().runOnUiThread(

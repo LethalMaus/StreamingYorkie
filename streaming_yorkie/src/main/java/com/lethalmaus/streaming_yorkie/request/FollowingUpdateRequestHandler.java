@@ -98,7 +98,7 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Following Update response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "FollowingEntity Update response error | " + e.toString(), true).run();
                 }
             }
         }).start();

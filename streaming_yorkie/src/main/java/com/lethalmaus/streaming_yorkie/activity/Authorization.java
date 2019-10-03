@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +46,7 @@ public class Authorization extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.weakActivity = new WeakReference<Activity>(this);
+        this.weakActivity = new WeakReference<>(this);
         this.weakContext = new WeakReference<>(getApplicationContext());
         if (new File(this.getFilesDir() + File.separator + "TOKEN").exists()) {
             setContentView(R.layout.logout);
@@ -56,13 +55,9 @@ public class Authorization extends AppCompatActivity {
             }
             new UserView(weakActivity, weakContext).execute();
             ImageButton logout = findViewById(R.id.authorization_logout);
-            logout.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            promptUser();
-                        }
-                    });
+            logout.setOnClickListener((View v) ->
+                    promptUser()
+            );
         } else {
             setContentView(R.layout.authorization);
             if (RequestHandler.networkIsAvailable(weakContext)) {
@@ -108,11 +103,6 @@ public class Authorization extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        super.onPageStarted(view, url, favicon);
-                    }
-
-                    @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
@@ -149,21 +139,15 @@ public class Authorization extends AppCompatActivity {
      */
     protected void promptUser() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Authorization.this, R.style.CustomDialog);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                new DeleteFileHandler(weakContext, "").run();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();
-            }
+        builder.setPositiveButton("OK", (DialogInterface dialog, int id) -> {
+            new DeleteFileHandler(weakContext, "").run();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
         });
-        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                //Do nothing
-            }
+        builder.setNegativeButton("CANCEL", (DialogInterface dialog, int id) -> {
+            //Do nothing
         });
         builder.setMessage("All data will be deleted. Are you sure?");
         builder.setTitle("Logout");
@@ -180,7 +164,7 @@ public class Authorization extends AppCompatActivity {
         String message = null;
         String title = null;
         if (errorCode == WebViewClient.ERROR_AUTHENTICATION) {
-            message = "Channel authentication failed on server";
+            message = "ChannelEntity authentication failed on server";
             title = "Auth Error";
         } else if (errorCode == WebViewClient.ERROR_TIMEOUT) {
             message = "The server is taking too much time to communicate. Try again later.";
@@ -204,7 +188,7 @@ public class Authorization extends AppCompatActivity {
             message = "Server or proxy hostname lookup failed";
             title = "Host Lookup Error";
         } else if (errorCode == WebViewClient.ERROR_PROXY_AUTHENTICATION) {
-            message = "Channel authentication failed on proxy";
+            message = "ChannelEntity authentication failed on proxy";
             title = "Proxy Auth Error";
         } else if (errorCode == WebViewClient.ERROR_REDIRECT_LOOP) {
             message = "Too many redirects";

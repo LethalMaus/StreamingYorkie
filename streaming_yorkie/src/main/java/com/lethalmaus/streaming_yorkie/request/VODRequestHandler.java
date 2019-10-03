@@ -15,7 +15,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.VODAdapter;
-import com.lethalmaus.streaming_yorkie.entity.VOD;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -50,7 +50,7 @@ public class VODRequestHandler extends RequestHandler {
      */
     public VODRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, WeakReference<RecyclerView> recyclerView) {
         super(weakActivity, weakContext, recyclerView);
-        requestType = "VOD";
+        requestType = "VODEntity";
     }
 
     @Override
@@ -71,7 +71,7 @@ public class VODRequestHandler extends RequestHandler {
                                 length += (seconds / 3600) + "h ";
                                 length += ((seconds % 3600) / 60) + "m ";
                                 length += ((seconds % 3600) % 60) + "s";
-                                VOD vod = new VOD(Integer.parseInt(response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", "")),
+                                VODEntity vodEntity = new VODEntity(Integer.parseInt(response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", "")),
                                         response.getJSONArray("videos").getJSONObject(i).getString("title"),
                                         response.getJSONArray("videos").getJSONObject(i).getString("url"),
                                         response.getJSONArray("videos").getJSONObject(i).getString("created_at").replace("T", " ").replace("Z", ""),
@@ -79,29 +79,29 @@ public class VODRequestHandler extends RequestHandler {
                                         response.getJSONArray("videos").getJSONObject(i).getJSONObject("preview").getString("medium"),
                                         timestamp);
                                 if (response.getJSONArray("videos").getJSONObject(i).isNull("description")) {
-                                    vod.setDescription("");
+                                    vodEntity.setDescription("");
                                 } else {
-                                    vod.setDescription(response.getJSONArray("videos").getJSONObject(i).getString("description"));
+                                    vodEntity.setDescription(response.getJSONArray("videos").getJSONObject(i).getString("description"));
                                 }
                                 if (response.getJSONArray("videos").getJSONObject(i).isNull("tag_list")) {
-                                    vod.setTag_list("");
+                                    vodEntity.setTag_list("");
                                 } else {
-                                    vod.setTag_list(response.getJSONArray("videos").getJSONObject(i).getString("tag_list"));
+                                    vodEntity.setTag_list(response.getJSONArray("videos").getJSONObject(i).getString("tag_list"));
                                 }
                                 if (response.getJSONArray("videos").getJSONObject(i).isNull("game")) {
-                                    vod.setGame("");
+                                    vodEntity.setGame("");
                                 } else {
-                                    vod.setGame(response.getJSONArray("videos").getJSONObject(i).getString("game"));
+                                    vodEntity.setGame(response.getJSONArray("videos").getJSONObject(i).getString("game"));
                                 }
-                                VOD existingVOD = streamingYorkieDB.vodDAO().getVODById(vod.getId());
-                                if (existingVOD != null) {
-                                    vod.setExported(existingVOD.isExported());
-                                    vod.setExcluded(existingVOD.isExcluded());
-                                    streamingYorkieDB.vodDAO().updateVOD(vod);
+                                VODEntity existingVODEntity = streamingYorkieDB.vodDAO().getVODById(vodEntity.getId());
+                                if (existingVODEntity != null) {
+                                    vodEntity.setExported(existingVODEntity.isExported());
+                                    vodEntity.setExcluded(existingVODEntity.isExcluded());
+                                    streamingYorkieDB.vodDAO().updateVOD(vodEntity);
                                 } else {
-                                    vod.setExcluded(false);
-                                    vod.setExported(false);
-                                    streamingYorkieDB.vodDAO().insertVOD(vod);
+                                    vodEntity.setExcluded(false);
+                                    vodEntity.setExported(false);
+                                    streamingYorkieDB.vodDAO().insertVOD(vodEntity);
                                 }
                             }
                         }
@@ -137,7 +137,7 @@ public class VODRequestHandler extends RequestHandler {
                         if (weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                 }
                             });
                         }
@@ -152,7 +152,7 @@ public class VODRequestHandler extends RequestHandler {
                                     }
                                 });
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error reading VOD response | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error reading VODEntity response | " + e.toString(), true).run();
                 }
             }
         }).start();

@@ -13,7 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.adapter.VODAdapter;
-import com.lethalmaus.streaming_yorkie.entity.VOD;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 
 import org.json.JSONException;
@@ -42,7 +42,7 @@ public class VODExportRequestHandler extends RequestHandler {
     }
 
     /**
-     * Constructor for VODExportRequestHandler for exporting a current VOD
+     * Constructor for VODExportRequestHandler for exporting a current VODEntity
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
@@ -79,8 +79,8 @@ public class VODExportRequestHandler extends RequestHandler {
     public void responseHandler(JSONObject response) {
         new Thread(new Runnable() {
             public void run() {
-                VOD vod = streamingYorkieDB.vodDAO().getVODById(vodId);
-                final String title = vod.getTitle();
+                VODEntity vodEntity = streamingYorkieDB.vodDAO().getVODById(vodId);
+                final String title = vodEntity.getTitle();
                 if (weakActivity != null && weakActivity.get() != null) {
                     weakActivity.get().runOnUiThread(
                             new Runnable() {
@@ -90,8 +90,8 @@ public class VODExportRequestHandler extends RequestHandler {
                             }
                     );
                 }
-                vod.setExported(true);
-                streamingYorkieDB.vodDAO().updateVOD(vod);
+                vodEntity.setExported(true);
+                streamingYorkieDB.vodDAO().updateVOD(vodEntity);
                 if (recyclerView != null && recyclerView.get() != null && recyclerView.get().getAdapter() != null) {
                     final VODAdapter vodAdapter = (VODAdapter) recyclerView.get().getAdapter();
                     if (vodAdapter != null && weakActivity != null && weakActivity.get() != null) {

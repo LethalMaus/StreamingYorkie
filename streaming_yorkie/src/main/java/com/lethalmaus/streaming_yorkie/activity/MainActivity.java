@@ -1,10 +1,9 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +13,10 @@ import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -26,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -55,22 +59,69 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /*FIXME
-        Delete after next update, this is to inform users of breaking changes
+        Delete when 1.3.1-a (13) is not in use
+        This transfers local files to DB
+        TODO this method will be found in AutoFollowWorker as well
          */
-        if (new File(getFilesDir().toString() + File.separator + "SETTINGS").exists()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.CustomDialog);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    new DeleteFileHandler(new WeakReference<>(getApplicationContext()), "SETTINGS").run();
-                    dialog.dismiss();
+        if (new File(getFilesDir().toString() + File.separator + "FOLLOWING_EXCLUDED").exists()
+                || new File(getFilesDir().toString() + File.separator + "FOLLOWERS_EXCLUDED").exists()
+                || new File(getFilesDir().toString() + File.separator + "F4F_EXCLUDED").exists()) {
+            new Thread(new Runnable() {
+                public void run() {
+                    WeakReference<Context> weakContext = new WeakReference<>(getApplicationContext());
+                    try {
+                        StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
+                        ArrayList<String> excluded = new ReadFileHandler(weakContext, "FOLLOWING_EXCLUDED").readFileNames();
+                        for (int i = 0; i < excluded.size(); i++) {
+                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
+                            FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(user.getString("_id")),
+                                    user.getString("display_name"),
+                                    user.getString("logo"),
+                                    user.getString("created_at"),
+                                    user.getBoolean("notifications"),
+                                    0);
+                            streamingYorkieDB.followingDAO().insertUser(followingEntity);
+                        }
+                        new DeleteFileHandler(weakContext, "FOLLOWING").run();
+                        new DeleteFileHandler(weakContext, "FOLLOWING_EXCLUDED").run();
+                        excluded = new ReadFileHandler(weakContext, "FOLLOWERS_EXCLUDED").readFileNames();
+                        for (int i = 0; i < excluded.size(); i++) {
+                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
+                            FollowerEntity follower = new FollowerEntity(Integer.parseInt(user.getString("_id")),
+                                    user.getString("display_name"),
+                                    user.getString("logo"),
+                                    user.getString("created_at"),
+                                    user.getBoolean("notifications"),
+                                    0);
+                            streamingYorkieDB.followerDAO().insertUser(follower);
+                        }
+                        new DeleteFileHandler(weakContext, "FOLLOWERS").run();
+                        new DeleteFileHandler(weakContext, "FOLLOWERS_EXCLUDED").run();
+                        excluded = new ReadFileHandler(weakContext, "F4F_EXCLUDED").readFileNames();
+                        for (int i = 0; i < excluded.size(); i++) {
+                            JSONObject user;
+                            if (new File(getFilesDir().toString() + File.separator + "FOLLOWING" + File.separator + excluded.get(i)).exists()) {
+                                user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
+                            } else {
+                                user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
+                            }
+                            F4FEntity f4f = new F4FEntity(Integer.parseInt(user.getString("_id")),
+                                    user.getString("display_name"),
+                                    user.getString("logo"),
+                                    user.getString("created_at"),
+                                    user.getBoolean("notifications"),
+                                    0);
+                            streamingYorkieDB.f4fDAO().insertUser(f4f);
+                        }
+                        new DeleteFileHandler(weakContext, "F4F_EXCLUDED").run();
+                    } catch (JSONException e) {
+                        Toast.makeText(MainActivity.this, "Error migrating local files to DB", Toast.LENGTH_SHORT).show();
+                        new WriteFileHandler(weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
+                    }
                 }
-            });
-            builder.setMessage("Auto-Follow settings have been reset due to the introduction of VOD Exports. Sorry for the inconvenience");
-            builder.setTitle("Breaking Changes");
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            }).start();
         }
+
         createNotificationChannel(Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
 
         ImageButton followers = findViewById(R.id.menu_followers);
@@ -191,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks if a Channel has logged in before then it updates & displays the Username & Logo. Otherwise it starts a login process.
+     * Checks if a ChannelEntity has logged in before then it updates & displays the Username & Logo. Otherwise it starts a login process.
      * @author LethalMaus
      */
     private void userLoggedIn() {
@@ -233,8 +284,6 @@ public class MainActivity extends AppCompatActivity {
                             intervalUnit = TimeUnit.HOURS;
                             break;
                         case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
-                            intervalUnit = TimeUnit.DAYS;
-                            break;
                         default:
                             intervalUnit = TimeUnit.DAYS;
                             break;

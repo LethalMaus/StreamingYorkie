@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.User;
+import com.lethalmaus.streaming_yorkie.entity.UserEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.request.LurkRequestHandler;
@@ -132,9 +132,9 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                 String[] channelDetails = channel.split("-", 2);
                 String channelId = channelDetails[0];
                 channelName = channelDetails[1];
-                User user = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId));
-                if (user != null) {
-                    logo = user.getLogo();
+                UserEntity userEntity = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId));
+                if (userEntity != null) {
+                    logo = userEntity.getLogo();
                 }
             } else {
                 channelName = channel;

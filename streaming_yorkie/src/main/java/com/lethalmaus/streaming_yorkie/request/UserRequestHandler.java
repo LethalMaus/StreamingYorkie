@@ -5,7 +5,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.lethalmaus.streaming_yorkie.entity.Channel;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
 
@@ -16,6 +16,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -52,33 +53,49 @@ public class UserRequestHandler extends RequestHandler {
         new Thread(new Runnable() {
             public void run() {
                 try {
+                    InputStream inputStream = null;
+                    ByteArrayOutputStream byteArrayOutputStream = null;
+                    FileOutputStream fileOutputStream = null;
                     try {
                         URL url = new URL(response.getString("logo"));
-                        InputStream inputStream = new BufferedInputStream(url.openStream());
-                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        inputStream = new BufferedInputStream(url.openStream());
+                        byteArrayOutputStream = new ByteArrayOutputStream();
                         byte[] buffer = new byte[1024];
                         int byteNumber;
                         while (-1 != (byteNumber = inputStream.read(buffer))) {
                             byteArrayOutputStream.write(buffer, 0, byteNumber);
                         }
-                        byteArrayOutputStream.close();
-                        inputStream.close();
-                        FileOutputStream fos = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/") + 1));
-                        fos.write(byteArrayOutputStream.toByteArray());
-                        fos.close();
+                        byteArrayOutputStream.flush();
+                        fileOutputStream = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/") + 1));
+                        fileOutputStream.write(byteArrayOutputStream.toByteArray());
+                        fileOutputStream.flush();
                     } catch (Exception e) {
                         new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
+                    }  finally {
+                        try {
+                            if (byteArrayOutputStream != null) {
+                                byteArrayOutputStream.close();
+                            }
+                            if (inputStream != null) {
+                                inputStream.close();
+                            }
+                            if (fileOutputStream != null) {
+                                fileOutputStream.close();
+                            }
+                        } catch (IOException e) {
+                            new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
+                        }
                     }
-                    Channel existingChannel = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
-                    if (existingChannel != null) {
-                        existingChannel.setDisplay_name(response.getString("display_name"));
-                        existingChannel.setLogo(response.getString("logo"));
-                        existingChannel.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
-                        existingChannel.setDescription(response.getString("bio"));
-                        streamingYorkieDB.channelDAO().updateChannel(existingChannel);
+                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChanneById(Integer.parseInt(response.getString("_id")));
+                    if (existingChannelEntity != null) {
+                        existingChannelEntity.setDisplay_name(response.getString("display_name"));
+                        existingChannelEntity.setLogo(response.getString("logo"));
+                        existingChannelEntity.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
+                        existingChannelEntity.setDescription(response.getString("bio"));
+                        streamingYorkieDB.channelDAO().updateChannel(existingChannelEntity);
                     } else {
-                        Channel channel = new Channel(Integer.parseInt(response.getString("_id")), response.getString("display_name"), response.getString("logo"), "", response.getString("created_at").replace("T", " ").replace("Z", ""), 0, 0, "", response.getString("bio"), "");
-                        streamingYorkieDB.channelDAO().insertChannel(channel);
+                        ChannelEntity channelEntity = new ChannelEntity(Integer.parseInt(response.getString("_id")), response.getString("display_name"), response.getString("logo"), "", response.getString("created_at").replace("T", " ").replace("Z", ""), 0, 0, "", response.getString("bio"), "");
+                        streamingYorkieDB.channelDAO().insertChannel(channelEntity);
                     }
                     new UserView(weakActivity, weakContext).execute();
                 } catch (JSONException e) {
@@ -86,12 +103,12 @@ public class UserRequestHandler extends RequestHandler {
                         weakActivity.get().runOnUiThread(
                                 new Runnable() {
                                     public void run() {
-                                        Toast.makeText(weakContext.get(), "User can't be saved", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(weakContext.get(), "UserEntity can't be saved", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving User | " + e.toString(), true).run();
+                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving UserEntity | " + e.toString(), true).run();
                 }
             }
         }).start();

@@ -5,8 +5,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.lethalmaus.streaming_yorkie.entity.F4F;
-import com.lethalmaus.streaming_yorkie.entity.User;
+import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
+import com.lethalmaus.streaming_yorkie.entity.UserEntity;
 
 /**
  * F4FDAO Interface
@@ -16,83 +16,83 @@ import com.lethalmaus.streaming_yorkie.entity.User;
 public interface F4FDAO {
 
     /**
-     * Get Follow4Follow User by position
+     * Get Follow4Follow UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return User
+     * @return UserEntity
      */
-    @Query("SELECT * FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    User getFollow4FollowUserByPosition(int offset);
+    @Query("SELECT * FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
+    UserEntity getFollow4FollowUserByPosition(int offset);
 
     /**
-     * Get Follow4Follow User count
+     * Get Follow4Follow UserEntity count
      * @author LethalMaus
      * @return count int
      */
-    @Query("SELECT COUNT(id) FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded)")
+    @Query("SELECT COUNT(id) FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded)")
     int getFollow4FollowUserCount();
 
     /**
-     * Get Followed_NotFollowing User by position
+     * Get Followed_NotFollowing UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return User
+     * @return UserEntity
      */
-    @Query("SELECT * FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    User getFollowedNotFollowingUserByPosition(int offset);
+    @Query("SELECT * FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
+    UserEntity getFollowedNotFollowingUserByPosition(int offset);
 
     /**
-     * Get Followed_NotFollowing User for AutoFollow
+     * Get Followed_NotFollowing UserEntity for AutoFollow
      * @author LethalMaus
-     * @return User
+     * @return UserEntity
      */
-    @Query("SELECT * FROM follower WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded) ORDER BY created_at DESC LIMIT 1")
-    User getFollowedNotFollowingUserForAutoFollow();
+    @Query("SELECT * FROM follower WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1")
+    UserEntity getFollowedNotFollowingUserForAutoFollow();
 
     /**
-     * Get Followed_NotFollowing User count
+     * Get Followed_NotFollowing UserEntity count
      * @author LethalMaus
      * @return count int
      */
-    @Query("SELECT COUNT(id) FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded)")
+    @Query("SELECT COUNT(id) FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded)")
     int getFollowedNotFollowingUserCount();
 
     /**
-     * Get NotFollowed_Following User by position
+     * Get NotFollowed_Following UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return User
+     * @return UserEntity
      */
-    @Query("SELECT * FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    User getNotFollowedFollowingUserByPosition(int offset);
+    @Query("SELECT * FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
+    UserEntity getNotFollowedFollowingUserByPosition(int offset);
 
     /**
-     * Get NotFollowed_Following User for AutoFollow
+     * Get NotFollowed_Following UserEntity for AutoFollow
      * @author LethalMaus
-     * @return User
+     * @return UserEntity
      */
-    @Query("SELECT * FROM following WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded) ORDER BY created_at DESC LIMIT 1")
-    User getNotFollowedFollowingUserForAutoFollow();
+    @Query("SELECT * FROM following WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1")
+    UserEntity getNotFollowedFollowingUserForAutoFollow();
 
     /**
-     * Get NotFollowed_Following User count
+     * Get NotFollowed_Following UserEntity count
      * @author LethalMaus
      * @return count int
      */
-    @Query("SELECT COUNT(id) FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id from f4f_excluded)")
+    @Query("SELECT COUNT(id) FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded)")
     int getNotFollowedFollowingUserCount();
 
     /**
-     * Get excluded Follow4Follow User by position
+     * Get excluded Follow4Follow UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return User
+     * @return UserEntity
      */
     @Query("SELECT * FROM f4f_excluded ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    F4F getExcludedFollow4FollowUserByPosition(int offset);
+    F4FEntity getExcludedFollow4FollowUserByPosition(int offset);
 
     /**
-     * Get excluded Follow4Follow User count
+     * Get excluded Follow4Follow UserEntity count
      * @author LethalMaus
      * @return count int
      */
@@ -100,7 +100,7 @@ public interface F4FDAO {
     int getExcludedFollow4FollowUserCount();
 
     /**
-     * Delete User by Id
+     * Delete UserEntity by Id
      * @author LethalMaus
      * @param id int
      */
@@ -108,10 +108,10 @@ public interface F4FDAO {
     void deleteUserById(int id);
 
     /**
-     * Inserts a User and replaces on conflict
+     * Inserts a UserEntity and replaces on conflict
      * @author LethalMaus
-     * @param f4f User
+     * @param f4FEntity UserEntity
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertUser(F4F f4f);
+    void insertUser(F4FEntity f4FEntity);
 }

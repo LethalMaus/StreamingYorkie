@@ -25,6 +25,8 @@ public class Globals {
     public static final int VOD_REQUEST_LIMIT = 10;
     public static final int VOD_UPDATE_REQUEST_LIMIT = 1;
 
+    //Request Types
+    public static final String CHANNEL = "CHANNEL";
 
     //Directories for Lurks
     public static final String LURK_PATH = "LURKS";
@@ -83,9 +85,6 @@ public class Globals {
     public static boolean onOptionsItemsSelected(Activity activity, MenuItem item) {
         Intent intent;
         switch (item.getItemId()) {
-            case android.R.id.home:
-                activity.finish();
-                return true;
             case R.id.menu_info_guide:
                 intent = new Intent(activity, InfoGuide.class);
                 activity.startActivity(intent);
@@ -102,7 +101,8 @@ public class Globals {
                 intent = new Intent(activity, Authorization.class);
                 activity.startActivity(intent);
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 }

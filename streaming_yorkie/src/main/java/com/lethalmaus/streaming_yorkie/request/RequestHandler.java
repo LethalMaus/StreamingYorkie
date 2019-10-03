@@ -18,7 +18,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.Channel;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -141,9 +141,9 @@ public class RequestHandler {
                         if (new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
                             token = new ReadFileHandler(weakContext, "TOKEN").readFile();
                         }
-                        Channel channel = streamingYorkieDB.channelDAO().getChannel();
-                        if (channel != null) {
-                            userID = Integer.toString(channel.getId());
+                        ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
+                        if (channelEntity != null) {
+                            userID = Integer.toString(channelEntity.getId());
                         }
                     }
                     if (networkIsAvailable(weakContext)) {
@@ -195,7 +195,7 @@ public class RequestHandler {
             weakActivity.get().runOnUiThread(
                     new Runnable() {
                         public void run() {
-                            Toast.makeText(weakActivity.get(), "OFFLINE: Showing saved " + requestType, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(weakActivity.get(), "OFFLINE: Showing locally saved data", Toast.LENGTH_SHORT).show();
                         }
                     }
             );

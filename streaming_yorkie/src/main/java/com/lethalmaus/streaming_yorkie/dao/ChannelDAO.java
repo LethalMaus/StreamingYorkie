@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.lethalmaus.streaming_yorkie.entity.Channel;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 
 /**
  * ChannelDAO Interface
@@ -16,35 +16,35 @@ import com.lethalmaus.streaming_yorkie.entity.Channel;
 public interface ChannelDAO {
 
     /**
-     * Get Channel
+     * Get ChannelEntity
      * @author LethalMaus
-     * @return Channel
+     * @return ChannelEntity
      */
     @Query("SELECT * FROM channel LIMIT 1")
-    Channel getChannel();
+    ChannelEntity getChannel();
 
     /**
-     * Get Channel by Id
+     * Get ChannelEntity by Id
      * @author LethalMaus
-     * @param id Channel Id
-     * @return Channel
+     * @param id ChannelEntity Id
+     * @return ChannelEntity
      */
     @Query("SELECT * FROM channel WHERE id = :id")
-    Channel getChanneById(int id);
+    ChannelEntity getChanneById(int id);
 
     /**
-     * Inserts a Channel and replaces on conflict
+     * Inserts a ChannelEntity and replaces on conflict
      * @author LethalMaus
-     * @param channel Channel
+     * @param channelEntity ChannelEntity
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertChannel(Channel channel);
+    void insertChannel(ChannelEntity channelEntity);
 
     /**
-     * Updates a Channel
+     * Updates a ChannelEntity
      * @author LethalMaus
-     * @param channel Channel
+     * @param channelEntity ChannelEntity
      */
     @Update
-    void updateChannel(Channel channel);
+    void updateChannel(ChannelEntity channelEntity);
 }

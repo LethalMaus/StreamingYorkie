@@ -3,10 +3,10 @@ package com.lethalmaus.streaming_yorkie.entity;
 import androidx.room.PrimaryKey;
 
 /**
- * User Entity
+ * UserEntity Entity
  * @author LethalMaus
  */
-public class User {
+public class UserEntity {
 
     @PrimaryKey
     private int id;
@@ -18,15 +18,15 @@ public class User {
     private String status;
 
     /**
-     * User Constructor
+     * UserEntity Constructor
      * @param id Twitch Id
      * @param display_name Twitch Name
      * @param logo Twitch Logo
-     * @param created_at Following Since
+     * @param created_at FollowingEntity Since
      * @param notifications Notifications Activated
      * @param last_updated Last retrieved from Twitch
      */
-    public User(int id, String display_name, String logo, String created_at, boolean notifications, long last_updated) {
+    public UserEntity(int id, String display_name, String logo, String created_at, boolean notifications, long last_updated) {
         this.id = id;
         this.display_name = display_name;
         this.logo = logo;
@@ -97,7 +97,7 @@ public class User {
 
     /** Set created_at
      * @author LethalMaus
-     * @param created_at Following Since
+     * @param created_at FollowingEntity Since
      */
     public void setCreated_at(String created_at) {
         this.created_at = created_at;

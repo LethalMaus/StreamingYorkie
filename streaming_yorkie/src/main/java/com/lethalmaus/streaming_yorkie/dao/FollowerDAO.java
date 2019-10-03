@@ -7,7 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.entity.Follower;
+import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
 
 import java.util.List;
 
@@ -19,32 +19,32 @@ import java.util.List;
 public interface FollowerDAO {
 
     /**
-     * Gets a User by id
+     * Gets a UserEntity by id
      * @author LethalMaus
      * @param id Twitch id
-     * @return User
+     * @return UserEntity
      */
     @Query("SELECT * FROM follower WHERE id = :id")
-    Follower getUserById(int id);
+    FollowerEntity getUserById(int id);
 
     /**
-     * Gets a User based on status and position
+     * Gets a UserEntity based on status and position
      * @author LethalMaus
      * @param status String status eg. NEW, CURRENT, ...
      * @param offset Position relevant to status
-     * @return User
+     * @return UserEntity
      */
     @Query("SELECT * FROM follower WHERE status LIKE :status ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    Follower getUserByStatusAndPosition(String status, int offset);
+    FollowerEntity getUserByStatusAndPosition(String status, int offset);
 
     /**
-     * Gets a current User based on position
+     * Gets a current UserEntity based on position
      * @author LethalMaus
      * @param offset Position relevant to status
-     * @return User
+     * @return UserEntity
      */
     @Query("SELECT * FROM follower WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    Follower getCurrentUserByPosition(int offset);
+    FollowerEntity getCurrentUserByPosition(int offset);
 
     /**
      * Gets all Users who haven't changed last_updated and don't contain the status 'EXCLUDED'
@@ -53,13 +53,13 @@ public interface FollowerDAO {
      * @return List of Users
      */
     @Query("SELECT * FROM follower WHERE last_updated <> :last_updated AND status NOT LIKE 'EXCLUDED'")
-    List<Follower> getUnfollowedUsers(Long last_updated);
+    List<FollowerEntity> getUnfollowedUsers(Long last_updated);
 
     /**
      * Gets the last updated Users to check if a full update is needed
      * @author LethalMaus
      * @param last_updated Long of when it was last updated
-     * @return Array of User Ids
+     * @return Array of UserEntity Ids
      */
     @Query("SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND last_updated == :last_updated ORDER BY created_at DESC LIMIT " + Globals.USER_UPDATE_REQUEST_LIMIT)
     int[] getLastUsers(Long last_updated);
@@ -74,7 +74,7 @@ public interface FollowerDAO {
     int countUsersByStatus(String status);
 
     /**
-     * Delete User by Id
+     * Delete UserEntity by Id
      * @author LethalMaus
      * @param id int
      */
@@ -82,23 +82,23 @@ public interface FollowerDAO {
     void deleteUserById(int id);
 
     /**
-     * Inserts a User and replaces on conflict
+     * Inserts a UserEntity and replaces on conflict
      * @author LethalMaus
-     * @param follower User
+     * @param followerEntity UserEntity
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertUser(Follower follower);
+    void insertUser(FollowerEntity followerEntity);
 
     /**
-     * Updates existing User
+     * Updates existing UserEntity
      * @author LethalMaus
-     * @param follower User
+     * @param followerEntity UserEntity
      */
     @Update
-    void updateUser(Follower follower);
+    void updateUser(FollowerEntity followerEntity);
 
     /**
-     * Update User status by Id
+     * Update UserEntity status by Id
      * @author LethalMaus
      * @param status String status eg. NEW, CURRENT, ...
      * @param id int

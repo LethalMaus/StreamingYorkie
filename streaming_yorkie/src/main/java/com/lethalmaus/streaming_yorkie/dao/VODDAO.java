@@ -7,7 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.entity.VOD;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 
 /**
  * VODDAO Interface
@@ -17,13 +17,13 @@ import com.lethalmaus.streaming_yorkie.entity.VOD;
 public interface VODDAO {
 
     /**
-     * Gets a VOD by id
+     * Gets a VODEntity by id
      * @author LethalMaus
      * @param id int
-     * @return VOD
+     * @return VODEntity
      */
     @Query("SELECT * FROM vod WHERE id = :id")
-    VOD getVODById(int id);
+    VODEntity getVODById(int id);
 
     /**
      * Get expired VODs based on timestamp
@@ -37,38 +37,38 @@ public interface VODDAO {
     /**
      * Get current VODs by position
      * @param offset position
-     * @return VOD
+     * @return VODEntity
      */
     @Query("SELECT * FROM vod WHERE excluded = 0 ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    VOD getCurrentVODByPosition(int offset);
+    VODEntity getCurrentVODByPosition(int offset);
 
     /**
      * Get current VODs by position
      * @param offset position
-     * @return VOD
+     * @return VODEntity
      */
     @Query("SELECT * FROM vod WHERE excluded = 0 AND exported = 1 ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    VOD getExportedVODByPosition(int offset);
+    VODEntity getExportedVODByPosition(int offset);
 
     /**
      * Get current VODs by position
      * @param offset position
-     * @return VOD
+     * @return VODEntity
      */
     @Query("SELECT * FROM vod WHERE excluded = 1 ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    VOD getExcludedVODByPosition(int offset);
+    VODEntity getExcludedVODByPosition(int offset);
 
     /**
-     * Sees if a VOD is already exported
+     * Sees if a VODEntity is already exported
      * @author LethalMaus
      * @param id int
-     * @return VOD
+     * @return VODEntity
      */
     @Query("SELECT exported FROM vod WHERE id = :id")
     boolean isVODExported(int id);
 
     /**
-     * Get 'Current' VOD Count
+     * Get 'Current' VODEntity Count
      * @author LethalMaus
      * @return int count
      */
@@ -76,7 +76,7 @@ public interface VODDAO {
     int getCurrentVODsCount();
 
     /**
-     * Get 'Exported' VOD Count
+     * Get 'Exported' VODEntity Count
      * @author LethalMaus
      * @return int count
      */
@@ -84,7 +84,7 @@ public interface VODDAO {
     int getExportedVODsCount();
 
     /**
-     * Get 'Excluded' VOD Count
+     * Get 'Excluded' VODEntity Count
      * @author LethalMaus
      * @return int count
      */
@@ -92,7 +92,7 @@ public interface VODDAO {
     int getExcludedVODsCount();
 
     /**
-     * Get total VOD Count
+     * Get total VODEntity Count
      * @author LethalMaus
      * @return int count
      */
@@ -103,13 +103,13 @@ public interface VODDAO {
      * Gets the last updated VODs to check if a full update is needed
      * @author LethalMaus
      * @param last_updated Long of when it was last updated
-     * @return Array of VOD Ids
+     * @return Array of VODEntity Ids
      */
     @Query("SELECT id FROM vod WHERE last_updated <> :last_updated ORDER BY created_at DESC LIMIT " + Globals.USER_UPDATE_REQUEST_LIMIT)
     int[] getLastVODs(Long last_updated);
 
     /**
-     * Delete VOD by Id
+     * Delete VODEntity by Id
      * @author LethalMaus
      * @param id int
      */
@@ -117,23 +117,23 @@ public interface VODDAO {
     void deleteVODById(int id);
 
     /**
-     * Inserts a VOD and replaces on conflict
+     * Inserts a VODEntity and replaces on conflict
      * @author LethalMaus
-     * @param vod VOD
+     * @param vodEntity VODEntity
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertVOD(VOD vod);
+    void insertVOD(VODEntity vodEntity);
 
     /**
-     * Updates existing VOD
+     * Updates existing VODEntity
      * @author LethalMaus
-     * @param vod VOD
+     * @param vodEntity VODEntity
      */
     @Update
-    void updateVOD(VOD vod);
+    void updateVOD(VODEntity vodEntity);
 
     /**
-     * Updates exported status of VOD
+     * Updates exported status of VODEntity
      * @author LethalMaus
      * @param exported boolean
      * @param id int
@@ -142,7 +142,7 @@ public interface VODDAO {
     void updateVODExportStatusById(boolean exported, int id);
 
     /**
-     * Updates excluded status of VOD
+     * Updates excluded status of VODEntity
      * @author LethalMaus
      * @param excluded boolean
      * @param id int

@@ -43,12 +43,15 @@ public class ReadFileHandler {
      * @return File content or empty string
      */
     public String readFile() {
+        FileInputStream fileInputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
         try {
             File file = new File(appDirectory + File.separator + filename);
             if (file.exists() && !file.isDirectory()) {
-                FileInputStream fileInputStream = new FileInputStream(file);
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                fileInputStream = new FileInputStream(file);
+                inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
+                bufferedReader = new BufferedReader(inputStreamReader);
                 StringBuilder stringBuilder = new StringBuilder();
                 //Appends new lines to error log
                 String newLine = "";
@@ -60,15 +63,26 @@ public class ReadFileHandler {
                     stringBuilder.append(temp);
                     stringBuilder.append(newLine);
                 }
-                bufferedReader.close();
-                inputStreamReader.close();
-                fileInputStream.close();
                 return stringBuilder.toString();
             }
         } catch (FileNotFoundException e) {
             new WriteFileHandler(weakContext, "ERROR", null, "Error finding file '" + filename + "' | " + e.toString(), true).run();
         } catch (IOException e) {
             new WriteFileHandler(weakContext, "ERROR", null, "Errors reading from file '" + filename + "' | " + e.toString(), true).run();
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+                if (inputStreamReader != null) {
+                    inputStreamReader.close();
+                }
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                new WriteFileHandler(weakContext, "ERROR", null, "Error closing file '" + filename + "' | " + e.toString(), true).run();
+            }
         }
         return "";
     }

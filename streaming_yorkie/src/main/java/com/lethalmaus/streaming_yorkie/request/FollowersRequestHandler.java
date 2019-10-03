@@ -11,7 +11,7 @@ import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
-import com.lethalmaus.streaming_yorkie.entity.Follower;
+import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import org.json.JSONException;
@@ -60,23 +60,23 @@ public class FollowersRequestHandler extends RequestHandler {
                     itemCount += response.getJSONArray("follows").length();
                     if (response.getJSONArray("follows").length() > 0) {
                         for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
-                            Follower follower = new Follower(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id")),
+                            FollowerEntity followerEntity = new FollowerEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id")),
                                     response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("display_name"),
                                     response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("logo").replace("300x300", "50x50"),
                                     response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
                                     response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
                                     timestamp);
-                            Follower existingFollower = streamingYorkieDB.followerDAO().getUserById(follower.getId());
-                            if (existingFollower != null) {
-                                if (existingFollower.getStatus().contentEquals("EXCLUDED")) {
-                                    follower.setStatus("EXCLUDED");
+                            FollowerEntity existingFollowerEntity = streamingYorkieDB.followerDAO().getUserById(followerEntity.getId());
+                            if (existingFollowerEntity != null) {
+                                if (existingFollowerEntity.getStatus().contentEquals("EXCLUDED")) {
+                                    followerEntity.setStatus("EXCLUDED");
                                 } else {
-                                    follower.setStatus("CURRENT");
+                                    followerEntity.setStatus("CURRENT");
                                 }
-                                streamingYorkieDB.followerDAO().updateUser(follower);
+                                streamingYorkieDB.followerDAO().updateUser(followerEntity);
                             } else {
-                                follower.setStatus("NEW");
-                                streamingYorkieDB.followerDAO().insertUser(follower);
+                                followerEntity.setStatus("NEW");
+                                streamingYorkieDB.followerDAO().insertUser(followerEntity);
                             }
                         }
                         sendRequest();
@@ -92,7 +92,7 @@ public class FollowersRequestHandler extends RequestHandler {
                             );
                         }
                         new WriteFileHandler(weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).run();
-                        List<Follower> unfollowed = streamingYorkieDB.followerDAO().getUnfollowedUsers(timestamp);
+                        List<FollowerEntity> unfollowed = streamingYorkieDB.followerDAO().getUnfollowedUsers(timestamp);
                         for (int i = 0; i < unfollowed.size(); i++) {
                             unfollowed.get(i).setStatus("UNFOLLOWED");
                             streamingYorkieDB.followerDAO().updateUser(unfollowed.get(i));

@@ -18,10 +18,10 @@ import com.android.volley.Request;
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.F4F;
-import com.lethalmaus.streaming_yorkie.entity.Follower;
-import com.lethalmaus.streaming_yorkie.entity.Following;
-import com.lethalmaus.streaming_yorkie.entity.User;
+import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
+import com.lethalmaus.streaming_yorkie.entity.UserEntity;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
@@ -29,7 +29,7 @@ import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 import java.lang.ref.WeakReference;
 
 /**
- * Recycler View Adapter for Followers/Following/F4F
+ * Recycler View Adapter for Followers/FollowingEntity/F4FEntity
  * @author LethalMaus
  */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
@@ -66,7 +66,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Adapter for displaying a User Dataset
+     * Adapter for displaying a UserEntity Dataset
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
@@ -113,10 +113,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * Async Task to request User and display it
+     * Async Task to request UserEntity and display it
      * @author LethalMaus
      */
-    private static class UserAsyncTask extends AsyncTask<Void, Void, User> {
+    private static class UserAsyncTask extends AsyncTask<Void, Void, UserEntity> {
 
         private WeakReference<Activity> weakActivity;
         private WeakReference<Context> weakContext;
@@ -160,50 +160,50 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         }
 
         @Override
-        protected User doInBackground(Void... params) {
-            User user;
+        protected UserEntity doInBackground(Void... params) {
+            UserEntity userEntity;
             if (userType.contentEquals("FOLLOWERS")) {
                 if (userStatus.contentEquals("CURRENT")) {
-                    user = streamingYorkieDB.followerDAO().getCurrentUserByPosition(position);
+                    userEntity = streamingYorkieDB.followerDAO().getCurrentUserByPosition(position);
                 } else {
-                    user = streamingYorkieDB.followerDAO().getUserByStatusAndPosition(userStatus, position);
+                    userEntity = streamingYorkieDB.followerDAO().getUserByStatusAndPosition(userStatus, position);
                 }
             } else if (userType.contentEquals("FOLLOWING")) {
                 if (userStatus.contentEquals("CURRENT")) {
-                    user = streamingYorkieDB.followingDAO().getCurrentUserByPosition(position);
+                    userEntity = streamingYorkieDB.followingDAO().getCurrentUserByPosition(position);
                 } else {
-                    user = streamingYorkieDB.followingDAO().getUserByStatusAndPosition(userStatus, position);
+                    userEntity = streamingYorkieDB.followingDAO().getUserByStatusAndPosition(userStatus, position);
                 }
             } else if (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
-                user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(position);
+                userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(position);
             } else if (userStatus.contentEquals("FOLLOW4FOLLOW")) {
-                user = streamingYorkieDB.f4fDAO().getFollow4FollowUserByPosition(position);
+                userEntity = streamingYorkieDB.f4fDAO().getFollow4FollowUserByPosition(position);
             } else if (userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
-                user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(position);
+                userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(position);
             } else {
-                user = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserByPosition(position);
+                userEntity = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserByPosition(position);
             }
-            return user;
+            return userEntity;
         }
 
         @Override
-        protected void onPostExecute(final User user) {
+        protected void onPostExecute(final UserEntity userEntity) {
             if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
-                if (user != null) {
+                if (userEntity != null) {
                     TextView textView = userViewHolder.userRow.findViewById(R.id.userrow_username);
-                    textView.setText(user.getDisplay_name());
+                    textView.setText(userEntity.getDisplay_name());
 
                     ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
-                    Glide.with(weakContext.get()).load(user.getLogo()).placeholder(R.drawable.user).into(imageView);
+                    Glide.with(weakContext.get()).load(userEntity.getLogo()).placeholder(R.drawable.user).into(imageView);
 
                     final ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
                     final ImageButton button2 = userViewHolder.userRow.findViewById(R.id.userrow_button2);
                     final ImageButton button3 = userViewHolder.userRow.findViewById(R.id.userrow_button3);
                     new Thread(new Runnable() {
                         public void run() {
-                            userAdapter.editButton(button1, actionButtonType1, user.getId());
-                            userAdapter.editButton(button2, actionButtonType2, user.getId());
-                            userAdapter.editButton(button3, actionButtonType3, user.getId());
+                            userAdapter.editButton(button1, actionButtonType1, userEntity.getId());
+                            userAdapter.editButton(button2, actionButtonType2, userEntity.getId());
+                            userAdapter.editButton(button3, actionButtonType3, userEntity.getId());
                         }
                     }).start();
                 }
@@ -346,16 +346,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             public void onClick(View v) {
                                 new Thread(new Runnable() {
                                     public void run() {
-                                        User user = streamingYorkieDB.followerDAO().getUserById(userID);
-                                        if (user == null) {
-                                            user = streamingYorkieDB.followingDAO().getUserById(userID);
+                                        UserEntity userEntity = streamingYorkieDB.followerDAO().getUserById(userID);
+                                        if (userEntity == null) {
+                                            userEntity = streamingYorkieDB.followingDAO().getUserById(userID);
                                         }
                                         if (userType.contentEquals("FOLLOWERS")) {
                                             streamingYorkieDB.followerDAO().updateUserStatusById("EXCLUDED", userID);
                                         } else if (userType.contentEquals("FOLLOWING")) {
                                             streamingYorkieDB.followingDAO().updateUserStatusById("EXCLUDED", userID);
-                                        } else if (userType.contentEquals("F4F")) {
-                                            streamingYorkieDB.f4fDAO().insertUser(new F4F(user.getId(), user.getDisplay_name(), user.getLogo(), user.getCreated_at(), user.isNotifications(), user.getLast_updated()));
+                                        } else if (userType.contentEquals("F4FEntity")) {
+                                            streamingYorkieDB.f4fDAO().insertUser(new F4FEntity(userEntity.getId(), userEntity.getDisplay_name(), userEntity.getLogo(), userEntity.getCreated_at(), userEntity.isNotifications(), userEntity.getLast_updated()));
                                         }
                                         datasetChanged();
                                     }
@@ -388,8 +388,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                             if (timestamp.isEmpty()) {
                                                 timestamp = "0";
                                             }
-                                            Follower follower = streamingYorkieDB.followerDAO().getUserById(userID);
-                                            if (follower.getLast_updated() == Long.parseLong(timestamp)) {
+                                            FollowerEntity followerEntity = streamingYorkieDB.followerDAO().getUserById(userID);
+                                            if (followerEntity.getLast_updated() == Long.parseLong(timestamp)) {
                                                 streamingYorkieDB.followerDAO().updateUserStatusById("CURRENT", userID);
                                             } else {
                                                 streamingYorkieDB.followerDAO().updateUserStatusById("UNFOLLOWED", userID);
@@ -399,13 +399,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                             if (timestamp.isEmpty()) {
                                                 timestamp = "0";
                                             }
-                                            Following following = streamingYorkieDB.followingDAO().getUserById(userID);
-                                            if (following.getLast_updated() == Long.parseLong(timestamp)) {
+                                            FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
+                                            if (followingEntity.getLast_updated() == Long.parseLong(timestamp)) {
                                                 streamingYorkieDB.followingDAO().updateUserStatusById("CURRENT", userID);
                                             } else {
                                                 streamingYorkieDB.followingDAO().updateUserStatusById("UNFOLLOWED", userID);
                                             }
-                                        } else if (userType.contentEquals("F4F")) {
+                                        } else if (userType.contentEquals("F4FEntity")) {
                                             streamingYorkieDB.f4fDAO().deleteUserById(userID);
                                         }
                                         datasetChanged();
@@ -424,15 +424,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param userID user to be followed/unfollowed
      */
     private void followButton(final ImageButton imageButton, final int userID) {
-        final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+        final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
         final String timestamp = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
-                        if (following == null ||
-                                following.getStatus().contentEquals("UNFOLLOWED") ||
-                                (following.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
-                                        following.getLast_updated() != Long.parseLong(timestamp)
+                        if (followingEntity == null ||
+                                followingEntity.getStatus().contentEquals("UNFOLLOWED") ||
+                                (followingEntity.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
+                                        followingEntity.getLast_updated() != Long.parseLong(timestamp)
                                 )) {
                             imageButton.setImageResource(R.drawable.follow);
                         } else {
@@ -445,11 +445,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 new Thread(new Runnable() {
                                     public void run() {
                                         if (RequestHandler.networkIsAvailable(weakContext)) {
-                                            final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
-                                            if (following == null ||
-                                                    following.getStatus().contentEquals("UNFOLLOWED") ||
-                                                    (following.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
-                                                            following.getLast_updated() != Long.parseLong(timestamp)
+                                            final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
+                                            if (followingEntity == null ||
+                                                    followingEntity.getStatus().contentEquals("UNFOLLOWED") ||
+                                                    (followingEntity.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
+                                                            followingEntity.getLast_updated() != Long.parseLong(timestamp)
                                                     )) {
                                                 new FollowRequestHandler(weakActivity, weakContext){
                                                     @Override
@@ -500,7 +500,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                             weakActivity.get().runOnUiThread(
                                                     new Runnable() {
                                                         public void run() {
-                                                            Toast.makeText(weakActivity.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
                                         }
@@ -519,14 +519,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param userID user to have notifications activated/deactivated
      */
     private void notificationsButton(final ImageButton imageButton, final int userID) {
-        final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+        final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
-                        if (following == null || following.getStatus().contentEquals("UNFOLLOWED")) {
+                        if (followingEntity == null || followingEntity.getStatus().contentEquals("UNFOLLOWED")) {
                             imageButton.setVisibility(View.INVISIBLE);
                         } else {
-                            if (following.isNotifications()) {
+                            if (followingEntity.isNotifications()) {
                                 imageButton.setImageResource(R.drawable.deactivate_notifications);
                             } else {
                                 imageButton.setImageResource(R.drawable.notifications);
@@ -538,9 +538,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 public void onClick(View v) {
                                     new Thread(new Runnable() {
                                         public void run() {
-                                            final Following following = streamingYorkieDB.followingDAO().getUserById(userID);
+                                            final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
                                             if (RequestHandler.networkIsAvailable(weakContext)) {
-                                                if (following.isNotifications()) {
+                                                if (followingEntity.isNotifications()) {
                                                     new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false)
                                                             .sendRequest();
                                                     imageButton.setImageResource(R.drawable.notifications);
@@ -600,9 +600,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                         @Override
                                                         public void onCompletion() {
                                                             super.onCompletion();
-                                                            User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
-                                                            if (user != null) {
-                                                                setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                                            UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
+                                                            if (userEntity != null) {
+                                                                setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
                                                                         .sendRequest();
                                                             } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
                                                                 datasetChanged();
@@ -615,9 +615,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                             }
                                                         }
                                                     };
-                                                    User user = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
-                                                    if (user != null) {
-                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                                    UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
+                                                    if (userEntity != null) {
+                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
                                                                 .sendRequest();
                                                     }
                                                 } else {
@@ -625,9 +625,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                         @Override
                                                         public void onCompletion() {
                                                             super.onCompletion();
-                                                            User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
-                                                            if (user != null) {
-                                                                setRequestParameters(Request.Method.DELETE, user.getId(), false)
+                                                            UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
+                                                            if (userEntity != null) {
+                                                                setRequestParameters(Request.Method.DELETE, userEntity.getId(), false)
                                                                         .sendRequest();
                                                             } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
                                                                 datasetChanged();
@@ -640,9 +640,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                             }
                                                         }
                                                     };
-                                                    User user = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
-                                                    if (user != null) {
-                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, user.getId(), false)
+                                                    UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
+                                                    if (userEntity != null) {
+                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
                                                                 .sendRequest();
                                                     }
                                                 }

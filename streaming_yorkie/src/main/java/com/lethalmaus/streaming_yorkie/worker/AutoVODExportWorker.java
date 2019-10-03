@@ -8,7 +8,7 @@ import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.activity.VODs;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.VOD;
+import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -28,7 +28,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 /**
- * Worker for automating VOD Exports
+ * Worker for automating VODEntity Exports
  * @author LethalMaus
  */
 public class AutoVODExportWorker extends Worker {
@@ -40,7 +40,7 @@ public class AutoVODExportWorker extends Worker {
     private int vodId;
 
     /**
-     * Constructor for AutoVODExportWorker for automating VOD Exports
+     * Constructor for AutoVODExportWorker for automating VODEntity Exports
      * @author LethalMaus
      * @param context app context
      * @param params parameters for worker.super()
@@ -75,14 +75,14 @@ public class AutoVODExportWorker extends Worker {
                 if (vodCount > 0) {
                     new WriteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
                     for (int i = 0; i < vodCount; i++) {
-                        VOD vod = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
-                        vodId = vod.getId();
-                        if (!vod.isExported()) {
+                        VODEntity vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
+                        vodId = vodEntity.getId();
+                        if (!vodEntity.isExported()) {
                             JSONObject body = new JSONObject();
                             try {
-                                body.put("title", vod.getTitle());
-                                body.put("description", vod.getDescription());
-                                body.put("tag_list", vod.getTag_list());
+                                body.put("title", vodEntity.getTitle());
+                                body.put("description", vodEntity.getDescription());
+                                body.put("tag_list", vodEntity.getTag_list());
                                 body.put("private", !visibility);
                                 body.put("do_split", split);
                             } catch (JSONException e) {
@@ -106,7 +106,7 @@ public class AutoVODExportWorker extends Worker {
     }
 
     /**
-     * Method for pushing notifications to inform channel if VOD has been exported
+     * Method for pushing notifications to inform channel if VODEntity has been exported
      * @author LethalMaus
      * @param weakContext weak reference context
      */

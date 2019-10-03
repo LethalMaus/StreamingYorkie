@@ -11,7 +11,7 @@ import com.lethalmaus.streaming_yorkie.request.FollowingUpdateRequestHandler;
 import java.lang.ref.WeakReference;
 
 /**
- * Activity for Following view that extends FollowParent
+ * Activity for FollowingEntity view that extends FollowParent
  * @author LethalMaus
  */
 public class Following extends FollowParent {

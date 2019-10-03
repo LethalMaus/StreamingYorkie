@@ -4,11 +4,11 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 /**
- * Channel Entity
+ * ChannelEntity Entity
  * @author LethalMaus
  */
 @Entity(tableName = "channel")
-public class Channel {
+public class ChannelEntity {
 
     @PrimaryKey
     private int id;
@@ -23,7 +23,7 @@ public class Channel {
     private String broadcasterType;
 
     /**
-     * Channel constructor
+     * ChannelEntity constructor
      * @author LethalMaus
      * @param id Twitch Id
      * @param display_name Twitch Name
@@ -31,12 +31,12 @@ public class Channel {
      * @param game Current Game
      * @param created_at Account creation date
      * @param views View count
-     * @param followers Follower amount
+     * @param followers FollowerEntity amount
      * @param status Current status
      * @param description Current description
      * @param broadcasterType eg. Affiliated
      */
-    public Channel(int id, String display_name, String logo, String game, String created_at, int views, int followers, String status, String description, String broadcasterType) {
+    public ChannelEntity(int id, String display_name, String logo, String game, String created_at, int views, int followers, String status, String description, String broadcasterType) {
         this.id = id;
         this.display_name = display_name;
         this.logo = logo;
@@ -115,7 +115,7 @@ public class Channel {
 
     /** Set created_at
      * @author LethalMaus
-     * @param created_at Following Since
+     * @param created_at FollowingEntity Since
      */
     public void setCreated_at(String created_at) {
         this.created_at = created_at;

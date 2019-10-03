@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.Channel;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -26,7 +26,7 @@ public class UserView extends AsyncTask<Void, View, Void> {
     private WeakReference<Context> weakContext;
     private StreamingYorkieDB streamingYorkieDB;
 
-    //User attributes
+    //UserEntity attributes
     private String displayName;
     private String logo;
 
@@ -44,9 +44,9 @@ public class UserView extends AsyncTask<Void, View, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        Channel channel = streamingYorkieDB.channelDAO().getChannel();
-        displayName = channel.getDisplay_name();
-        logo = channel.getLogo();
+        ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
+        displayName = channelEntity.getDisplay_name();
+        logo = channelEntity.getLogo();
         if (logo.contains("/")
                 && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
             logo = logo.substring(logo.lastIndexOf("/")+1);

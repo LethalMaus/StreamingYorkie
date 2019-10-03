@@ -17,7 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.lethalmaus.streaming_yorkie.R;
 
 /**
- * Activity for showing Channel Guide
+ * Activity for showing ChannelEntity Guide
  * @author LethalMaus
  */
 public class InfoGuide extends AppCompatActivity {

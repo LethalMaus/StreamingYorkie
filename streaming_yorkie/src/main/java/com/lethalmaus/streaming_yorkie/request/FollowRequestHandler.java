@@ -9,7 +9,7 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.lethalmaus.streaming_yorkie.entity.Following;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -79,34 +79,34 @@ public class FollowRequestHandler extends RequestHandler {
                         if (timestamp.isEmpty()) {
                             timestamp = "0";
                         }
-                        Following following = new Following(Integer.parseInt(response.getJSONObject("channel").getString("_id")),
+                        FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONObject("channel").getString("_id")),
                                 response.getJSONObject("channel").getString("display_name"),
                                 response.getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
                                 response.getString("created_at"),
                                 response.getBoolean("notifications"),
                                 Long.parseLong(timestamp));
-                        Following existingFollowing = streamingYorkieDB.followingDAO().getUserById(following.getId());
-                        if (existingFollowing != null) {
-                            if (existingFollowing.getStatus().contentEquals("EXCLUDED")) {
-                                following.setStatus("EXCLUDED");
+                        FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
+                        if (existingFollowingEntity != null) {
+                            if (existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
+                                followingEntity.setStatus("EXCLUDED");
                             } else {
-                                following.setStatus("CURRENT");
+                                followingEntity.setStatus("CURRENT");
                             }
-                            streamingYorkieDB.followingDAO().updateUser(following);
+                            streamingYorkieDB.followingDAO().updateUser(followingEntity);
                         } else {
-                            following.setStatus("NEW");
-                            streamingYorkieDB.followingDAO().insertUser(following);
+                            followingEntity.setStatus("NEW");
+                            streamingYorkieDB.followingDAO().insertUser(followingEntity);
                         }
                     } else {
                         int followingCount = Integer.parseInt(new ReadFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile());
                         new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(followingCount-1), false).writeToFileOrPath();
 
-                        Following following = streamingYorkieDB.followingDAO().getUserById(followId);
-                        if (!following.getStatus().contentEquals("EXCLUDED")) {
-                            following.setStatus("UNFOLLOWED");
+                        FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(followId);
+                        if (!followingEntity.getStatus().contentEquals("EXCLUDED")) {
+                            followingEntity.setStatus("UNFOLLOWED");
                         }
-                        following.setLast_updated(System.currentTimeMillis());
-                        streamingYorkieDB.followingDAO().updateUser(following);
+                        followingEntity.setLast_updated(System.currentTimeMillis());
+                        streamingYorkieDB.followingDAO().updateUser(followingEntity);
                     }
                     onCompletion();
                 } catch (JSONException e) {
@@ -148,7 +148,7 @@ public class FollowRequestHandler extends RequestHandler {
             weakActivity.get().runOnUiThread(
                     new Runnable() {
                         public void run() {
-                            Toast.makeText(weakActivity.get(), "Cannot change Following preferences when offline", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show();
                         }
                     }
             );
