@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
@@ -140,6 +142,13 @@ public class Authorization extends AppCompatActivity {
     protected void promptUser() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Authorization.this, R.style.CustomDialog);
         builder.setPositiveButton("OK", (DialogInterface dialog, int id) -> {
+             new Thread() {
+                    public void run() {
+                        StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
+                        streamingYorkieDB.clearAllTables();
+                        new DeleteFileHandler(weakContext, "").deleteFileOrPath("");
+                    }
+                }.start();
             new DeleteFileHandler(weakContext, "").run();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

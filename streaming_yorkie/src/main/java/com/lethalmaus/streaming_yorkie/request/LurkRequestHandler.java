@@ -96,7 +96,11 @@ public class LurkRequestHandler extends RequestHandler {
                         public void onResponse(String response) {
                             if (weakActivity != null && weakActivity.get() != null) {
                                 String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"")+18);
-                                String video = "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001' id='" + channel + "'><source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel + "').outerHTML=\"\"'></video>";
+                                String video = "<div id='" + channel + "'>"
+                                + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001'><source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel + "').outerHTML=\"\"'></video>"
+                                + "<iframe src='https://www.twitch.tv/embed/" + channel.toLowerCase() + "/chat'/>"
+                                + "</div>";
+                                System.out.println(video);
                                 new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
                                 new WriteFileHandler(weakContext, Globals.LURK_PATH + File.separator + channelId + "-" + channel, null, video, false).writeToFileOrPath();
                                 if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
@@ -123,9 +127,7 @@ public class LurkRequestHandler extends RequestHandler {
                             new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                         }
                     } else {
-                        if (errorMessage.isEmpty()) {
-                            errorMessage = error.toString();
-                        }
+                        errorMessage = error.toString();
                         new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                     }
 

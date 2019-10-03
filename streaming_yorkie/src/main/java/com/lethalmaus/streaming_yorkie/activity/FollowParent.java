@@ -81,6 +81,11 @@ public class FollowParent extends AppCompatActivity {
     @Override
     protected void onPause() {
         cancelRequests();
+        if (recyclerView != null) {
+            recyclerView.stopScroll();
+            recyclerView.scrollToPosition(0);
+            recyclerView.getRecycledViewPool().clear();
+        }
         super.onPause();
     }
 
@@ -115,8 +120,9 @@ public class FollowParent extends AppCompatActivity {
             volleySingleton.getRequestQueue().cancelAll("FOLLOWERS_UPDATE");
             volleySingleton.getRequestQueue().cancelAll("FOLLOWING");
             volleySingleton.getRequestQueue().cancelAll("FOLLOWERS");
+            volleySingleton.getRequestQueue().cancelAll("FOLLOW");
         }
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -170,6 +176,7 @@ public class FollowParent extends AppCompatActivity {
             highlightButton(button);
             setSubtitle(subtitle);
             recyclerView.stopScroll();
+            recyclerView.scrollToPosition(0);
             recyclerView.getRecycledViewPool().clear();
             UserAdapter userAdapter = (UserAdapter) recyclerView.getAdapter();
             if (userAdapter != null) {

@@ -68,7 +68,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                     timestamp);
                             FollowerEntity existingFollowerEntity = streamingYorkieDB.followerDAO().getUserById(followerEntity.getId());
                             if (existingFollowerEntity != null) {
-                                if (existingFollowerEntity.getStatus().contentEquals("EXCLUDED")) {
+                                if (existingFollowerEntity.getStatus() != null && existingFollowerEntity.getStatus().contentEquals("EXCLUDED")) {
                                     followerEntity.setStatus("EXCLUDED");
                                 } else {
                                     followerEntity.setStatus("CURRENT");
@@ -105,6 +105,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                     @Override
                                     public void run() {
                                         recyclerView.get().stopScroll();
+                                        recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
                                         userAdapter.datasetChanged();
                                     }
@@ -114,7 +115,7 @@ public class FollowersRequestHandler extends RequestHandler {
                         if (weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                 }
                             });
                         }

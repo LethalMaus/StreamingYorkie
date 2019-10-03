@@ -54,7 +54,7 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
                     weakActivity.get().runOnUiThread(
                             new Runnable() {
                                 public void run() {
-                                    Toast.makeText(weakActivity.get(), "Shared F4FEntity Status to Discord", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(weakActivity.get(), "Shared F4F Status to Discord", Toast.LENGTH_SHORT).show();
                                 }
                             }
                     );

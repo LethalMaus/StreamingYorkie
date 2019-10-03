@@ -70,7 +70,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                     timestamp);
                             FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
                             if (existingFollowingEntity != null) {
-                                if (existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
+                                if (existingFollowingEntity.getStatus() != null && existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
                                     followingEntity.setStatus("EXCLUDED");
                                 } else {
                                     followingEntity.setStatus("CURRENT");
@@ -93,7 +93,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                     }
                             );
                         }
-                        new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).run();
+                        new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).writeToFileOrPath();
                         List<FollowingEntity> unfollowing = streamingYorkieDB.followingDAO().getUnfollowedUsers(timestamp);
                         for (int i = 0; i < unfollowing.size(); i++) {
                             unfollowing.get(i).setStatus("UNFOLLOWED");
@@ -107,6 +107,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                     @Override
                                     public void run() {
                                         recyclerView.get().stopScroll();
+                                        recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
                                         userAdapter.datasetChanged();
                                     }
@@ -116,7 +117,7 @@ public class FollowingRequestHandler extends RequestHandler {
                         if (weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(new Runnable() {
                                 public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                 }
                             });
                         }

@@ -18,7 +18,7 @@ public class Following extends FollowParent {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.weakActivity = new WeakReference<Activity>(this);
+        this.weakActivity = new WeakReference<>(this);
         this.weakContext = new WeakReference<>(getApplicationContext());
         super.onCreate(savedInstanceState);
 

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
@@ -45,11 +46,13 @@ public class UserView extends AsyncTask<Void, View, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
-        displayName = channelEntity.getDisplay_name();
-        logo = channelEntity.getLogo();
-        if (logo.contains("/")
-                && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/")+1)).exists()) {
-            logo = logo.substring(logo.lastIndexOf("/")+1);
+        if (channelEntity != null) {
+            displayName = channelEntity.getDisplay_name();
+            logo = channelEntity.getLogo();
+            if (logo.contains("/")
+                    && new File(weakContext.get().getFilesDir() + File.separator + logo.substring(logo.lastIndexOf("/") + 1)).exists()) {
+                logo = logo.substring(logo.lastIndexOf("/") + 1);
+            }
         }
         return null;
     }
@@ -57,16 +60,19 @@ public class UserView extends AsyncTask<Void, View, Void> {
     @Override
     protected void onPostExecute(Void v) {
         if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            Activity activity = weakActivity.get();
-                ImageView user_Logo = activity.findViewById(R.id.user_Logo);
+            if (!displayName.isEmpty() && !logo.isEmpty()) {
+                ImageView user_Logo = weakActivity.get().findViewById(R.id.user_Logo);
                 if (!logo.contains("/")
                         && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
                     user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(weakContext.get().getFilesDir() + File.separator + logo).getAbsolutePath()));
                 } else {
-                    Glide.with(activity).load(logo).into(user_Logo);
+                    Glide.with(weakActivity.get()).load(logo).into(user_Logo);
                 }
-                TextView user_Username = activity.findViewById(R.id.user_Username);
+                TextView user_Username = weakActivity.get().findViewById(R.id.user_Username);
                 user_Username.setText(displayName);
+            } else {
+                Toast.makeText(weakActivity.get(), "Error accessing User Info locally. Please contact the developer", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

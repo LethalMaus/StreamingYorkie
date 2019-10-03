@@ -28,6 +28,7 @@ import com.lethalmaus.streaming_yorkie.util.NetworkUsageMonitor;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -98,7 +99,13 @@ public class LurkService extends Service {
                     htmlInjection.append(videos.get(i));
                 }
                 new WriteFileHandler(new WeakReference<>(getApplicationContext()), "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
-                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
+                String token = "";
+                if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+                    token = new ReadFileHandler(new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
+                }
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "OAuth " + token);
+                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML", headers);
                 windowManager.addView(webView, params);
             }
             showNotification(false);
