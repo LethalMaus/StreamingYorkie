@@ -91,7 +91,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                     }
                             );
                         }
-                        new WriteFileHandler(weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).run();
+                        new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).run();
                         List<FollowerEntity> unfollowed = streamingYorkieDB.followerDAO().getUnfollowedUsers(timestamp);
                         for (int i = 0; i < unfollowed.size(); i++) {
                             unfollowed.get(i).setStatus("UNFOLLOWED");
@@ -107,7 +107,12 @@ public class FollowersRequestHandler extends RequestHandler {
                                         recyclerView.get().stopScroll();
                                         recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
-                                        userAdapter.datasetChanged();
+                                        recyclerView.get().post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                userAdapter.datasetChanged();
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -131,7 +136,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Followers response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Followers response error | " + e.toString(), true).run();
                 }
             }
         }).start();

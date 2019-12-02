@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
+import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -59,20 +60,26 @@ public class UserView extends AsyncTask<Void, View, Void> {
 
     @Override
     protected void onPostExecute(Void v) {
-        if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            if (!displayName.isEmpty() && !logo.isEmpty()) {
-                ImageView user_Logo = weakActivity.get().findViewById(R.id.user_Logo);
-                if (!logo.contains("/")
-                        && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
-                    user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(weakContext.get().getFilesDir() + File.separator + logo).getAbsolutePath()));
+        try {
+            if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                if (!displayName.isEmpty() && !logo.isEmpty()) {
+                    ImageView user_Logo = weakActivity.get().findViewById(R.id.user_Logo);
+                    if (user_Logo != null) {
+                        if (!logo.contains("/")
+                                && new File(weakContext.get().getFilesDir() + File.separator + logo).exists()) {
+                            user_Logo.setImageBitmap(BitmapFactory.decodeFile(new File(weakContext.get().getFilesDir() + File.separator + logo).getAbsolutePath()));
+                        } else {
+                            Glide.with(weakActivity.get()).load(logo).into(user_Logo);
+                        }
+                        TextView user_Username = weakActivity.get().findViewById(R.id.user_Username);
+                        user_Username.setText(displayName);
+                    }
                 } else {
-                    Glide.with(weakActivity.get()).load(logo).into(user_Logo);
+                    Toast.makeText(weakActivity.get(), "Error accessing User Info locally. Please contact the developer", Toast.LENGTH_SHORT).show();
                 }
-                TextView user_Username = weakActivity.get().findViewById(R.id.user_Username);
-                user_Username.setText(displayName);
-            } else {
-                Toast.makeText(weakActivity.get(), "Error accessing User Info locally. Please contact the developer", Toast.LENGTH_SHORT).show();
             }
+        } catch (NullPointerException e) {
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "ANTI-CRASH: Not able to load logo due to: " + e.toString(), true).run();
         }
     }
 }

@@ -29,7 +29,7 @@ public class NetworkUsageMonitor {
                 long bytesTransmitted = TrafficStats.getUidTxBytes(weakContext.get().getPackageManager().getApplicationInfo("com.lethalmaus.streaming_yorkie", 0).uid);
                 dataUsageInKbits = (bytesReceived + bytesTransmitted) / 125L;
             } catch (Exception e) {
-                new WriteFileHandler(new WeakReference<>(weakContext.get()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
+                new WriteFileHandler(null, new WeakReference<>(weakContext.get()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
             }
         }
     }
@@ -48,7 +48,7 @@ public class NetworkUsageMonitor {
                 dataUsageInKbits += difference;
                 return difference;
             } catch (Exception e) {
-                new WriteFileHandler(new WeakReference<>(weakContext.get()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
+                new WriteFileHandler(null, new WeakReference<>(weakContext.get()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
             }
         }
         return 0;

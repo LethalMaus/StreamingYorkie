@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.WorkManager;
 
 /**
  * Activity for VOD view that displays the info from the Users Twitch account VODs
@@ -49,12 +48,11 @@ public class VODs extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.weakActivity = new WeakReference<Activity>(this);
+        this.weakActivity = new WeakReference<>(this);
         this.weakContext = new WeakReference<>(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vod);
         new UserView(weakActivity, weakContext).execute();
-        WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOVODEXPORT);
 
         deleteNotifications();
         recyclerView = findViewById(R.id.table);
@@ -126,10 +124,10 @@ public class VODs extends AppCompatActivity {
         new Thread(new Runnable() {
             public void run() {
                 if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_VODEXPORT).exists()) {
-                    new DeleteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).run();
+                    new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_VODEXPORT).run();
                 }
                 if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()) {
-                    new DeleteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
+                    new DeleteFileHandler(weakActivity, weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
                 }
             }
         }).start();
@@ -198,7 +196,12 @@ public class VODs extends AppCompatActivity {
             recyclerView.getRecycledViewPool().clear();
             VODAdapter vodAdapter = (VODAdapter) recyclerView.getAdapter();
             if (vodAdapter != null) {
-                vodAdapter.setDisplayPreferences(vodsType, actionButtonType1, actionButtonType2).datasetChanged();
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        vodAdapter.setDisplayPreferences(vodsType, actionButtonType1, actionButtonType2).datasetChanged();
+                    }
+                });
             }
         } else {
             Toast.makeText(this, "Updating VODs, please be patient.", Toast.LENGTH_SHORT).show();

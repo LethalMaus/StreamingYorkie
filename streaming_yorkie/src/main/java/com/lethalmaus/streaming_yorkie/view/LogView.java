@@ -102,7 +102,7 @@ public class LogView extends AsyncTask<Void, Button, Void> {
                         public void onClick(View v) {
                             currentDirectory = directory + File.separator + fileOrPath;
                             TextView textView = new TextView(weakActivity.get());
-                            String text = new ReadFileHandler(weakContext, currentDirectory.replace(weakContext.get().getFilesDir().toString(), "")).readFile();
+                            String text = new ReadFileHandler(weakActivity, weakContext, currentDirectory.replace(weakContext.get().getFilesDir().toString(), "")).readFile();
                             textView.setText(text);
                             LinearLayout logsTable = weakActivity.get().findViewById(R.id.log_table);
                             logsTable.removeAllViews();

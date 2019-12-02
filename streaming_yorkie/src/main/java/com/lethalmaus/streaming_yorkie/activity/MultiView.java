@@ -1,6 +1,7 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,7 +70,12 @@ public class MultiView extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.cast) {
-            startActivity(new Intent("android.settings.CAST_SETTINGS"));
+            try {
+                startActivity(new Intent("android.settings.CAST_SETTINGS"));
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(MultiView.this, "Your phone does not have casting capabilities with this app", Toast.LENGTH_SHORT).show();
+                return false;
+            }
             return true;
         }
         return false;

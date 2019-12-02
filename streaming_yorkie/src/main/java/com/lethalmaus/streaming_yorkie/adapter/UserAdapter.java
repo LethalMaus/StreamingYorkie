@@ -47,6 +47,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private int pageCount3;
     private int pageCount4;
     private int currentPageCount = 0;
+    private int previousPageCount = 0;
     private StreamingYorkieDB streamingYorkieDB;
 
     /**
@@ -250,7 +251,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
                                     weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                 }
-                                notifyDataSetChanged();
                             }
                         });
             }
@@ -384,7 +384,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 new Thread(new Runnable() {
                                     public void run() {
                                         if (userType.contentEquals("FOLLOWERS")) {
-                                            String timestamp = new ReadFileHandler(weakContext, "FOLLOWERS_TIMESTAMP").readFile();
+                                            String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS_TIMESTAMP").readFile();
                                             if (timestamp.isEmpty()) {
                                                 timestamp = "0";
                                             }
@@ -395,7 +395,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                 streamingYorkieDB.followerDAO().updateUserStatusById("UNFOLLOWED", userID);
                                             }
                                         } else if (userType.contentEquals("FOLLOWING")) {
-                                            String timestamp = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                                            String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
                                             if (timestamp.isEmpty()) {
                                                 timestamp = "0";
                                             }
@@ -425,7 +425,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void followButton(final ImageButton imageButton, final int userID) {
         final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
-        final String timestamp = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+        final String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
@@ -695,6 +695,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             pageCount3 = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserCount();
             pageCount4 = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserCount();
         }
+        notifyItemRangeRemoved(0, currentPageCount);
         if (userStatus.contentEquals("NEW") || userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
             currentPageCount = pageCount1;
         } else if (userStatus.contentEquals("CURRENT") || userStatus.contentEquals("FOLLOW4FOLLOW")) {
@@ -704,6 +705,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         } else if (userStatus.contentEquals("EXCLUDED")) {
             currentPageCount = pageCount4;
         }
+        notifyItemRangeInserted(0, currentPageCount);
     }
 
     /**

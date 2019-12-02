@@ -24,10 +24,10 @@ public class ReadFileHandlerTest {
     public void shouldReadFile() {
         //Setup
         String fileContent = "TEST";
-        new WriteFileHandler(new WeakReference<>(context), "READ_FILE_TEST1", null, fileContent, false).writeToFileOrPath();
+        new WriteFileHandler(null, new WeakReference<>(context), "READ_FILE_TEST1", null, fileContent, false).writeToFileOrPath();
         assertTrue(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST1").exists());
         //Test
-        readFileHandler = new ReadFileHandler(new WeakReference<>(context), "READ_FILE_TEST1");
+        readFileHandler = new ReadFileHandler(null, new WeakReference<>(context), "READ_FILE_TEST1");
         assertTrue(readFileHandler.readFile().contentEquals(fileContent));
         //Cleanup
         assertTrue(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST1").delete());
@@ -39,15 +39,15 @@ public class ReadFileHandlerTest {
         ArrayList<String> files = new ArrayList<>();
         files.add("READ_FILE_TEST" + File.separator + "READ_FILE_TEST2");
         files.add("READ_FILE_TEST" + File.separator + "READ_FILE_TEST3");
-        new WriteFileHandler(new WeakReference<>(context), "", files, null, false).writeToFileOrPath();
+        new WriteFileHandler(null, new WeakReference<>(context), "", files, null, false).writeToFileOrPath();
         //Test
-        readFileHandler = new ReadFileHandler(new WeakReference<>(context), "READ_FILE_TEST");
+        readFileHandler = new ReadFileHandler(null, new WeakReference<>(context), "READ_FILE_TEST");
         files = readFileHandler.readFileNames();
         assertEquals(files.size(), 2);
         assertTrue(files.get(0).contains("READ_FILE_TEST"));
         assertTrue(files.get(1).contains("READ_FILE_TEST"));
         //Cleanup
-        new DeleteFileHandler(new WeakReference<>(context), "").deleteFileOrPath("READ_FILE_TEST");
+        new DeleteFileHandler(null, new WeakReference<>(context), "").deleteFileOrPath("READ_FILE_TEST");
         assertFalse(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST" + File.separator + "READ_FILE_TEST2").exists());
         assertFalse(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST" + File.separator + "READ_FILE_TEST3").exists());
         assertFalse(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST").exists());
@@ -58,12 +58,12 @@ public class ReadFileHandlerTest {
         ArrayList<String> files = new ArrayList<>();
         files.add("READ_FILE_TEST" + File.separator + "READ_FILE_TEST4");
         files.add("READ_FILE_TEST" + File.separator + "READ_FILE_TEST5");
-        new WriteFileHandler(new WeakReference<>(context), "", files, null, false).writeToFileOrPath();
+        new WriteFileHandler(null, new WeakReference<>(context), "", files, null, false).writeToFileOrPath();
         //Test
-        readFileHandler = new ReadFileHandler(new WeakReference<>(context), "READ_FILE_TEST");
+        readFileHandler = new ReadFileHandler(null, new WeakReference<>(context), "READ_FILE_TEST");
         assertEquals(readFileHandler.countFiles(), 2);
         //Cleanup
-        new DeleteFileHandler(new WeakReference<>(context), "").deleteFileOrPath("READ_FILE_TEST");
+        new DeleteFileHandler(null, new WeakReference<>(context), "").deleteFileOrPath("READ_FILE_TEST");
         assertFalse(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST" + File.separator + "READ_FILE_TEST4").exists());
         assertFalse(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST" + File.separator + "READ_FILE_TEST5").exists());
         assertFalse(new File(context.getFilesDir() + File.separator + "READ_FILE_TEST").exists());

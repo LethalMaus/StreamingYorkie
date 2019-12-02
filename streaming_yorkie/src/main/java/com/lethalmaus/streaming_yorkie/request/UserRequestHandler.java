@@ -70,7 +70,7 @@ public class UserRequestHandler extends RequestHandler {
                         fileOutputStream.write(byteArrayOutputStream.toByteArray());
                         fileOutputStream.flush();
                     } catch (Exception e) {
-                        new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
+                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
                     }  finally {
                         try {
                             if (byteArrayOutputStream != null) {
@@ -83,7 +83,7 @@ public class UserRequestHandler extends RequestHandler {
                                 fileOutputStream.close();
                             }
                         } catch (IOException e) {
-                            new WriteFileHandler(weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
+                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
                         }
                     }
                     ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChannelById(Integer.parseInt(response.getString("_id")));
@@ -108,7 +108,7 @@ public class UserRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving UserEntity | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error saving UserEntity | " + e.toString(), true).run();
                 }
             }
         }).start();

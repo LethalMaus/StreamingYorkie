@@ -31,6 +31,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 
@@ -68,12 +70,13 @@ public class MainActivity extends AppCompatActivity {
                 || new File(getFilesDir().toString() + File.separator + "F4F_EXCLUDED").exists()) {
             new Thread(new Runnable() {
                 public void run() {
+                    WeakReference<Activity> weakActivity = new WeakReference<>(MainActivity.this);
                     WeakReference<Context> weakContext = new WeakReference<>(getApplicationContext());
                     try {
                         StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
-                        ArrayList<String> excluded = new ReadFileHandler(weakContext, "FOLLOWING_EXCLUDED").readFileNames();
+                        ArrayList<String> excluded = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_EXCLUDED").readFileNames();
                         for (int i = 0; i < excluded.size(); i++) {
-                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
+                            JSONObject user = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
                             FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(user.getString("_id")),
                                     user.getString("display_name"),
                                     user.getString("logo"),
@@ -82,11 +85,11 @@ public class MainActivity extends AppCompatActivity {
                                     0);
                             streamingYorkieDB.followingDAO().insertUser(followingEntity);
                         }
-                        new DeleteFileHandler(weakContext, "FOLLOWING").run();
-                        new DeleteFileHandler(weakContext, "FOLLOWING_EXCLUDED").run();
-                        excluded = new ReadFileHandler(weakContext, "FOLLOWERS_EXCLUDED").readFileNames();
+                        new DeleteFileHandler(weakActivity, weakContext, "FOLLOWING").run();
+                        new DeleteFileHandler(weakActivity, weakContext, "FOLLOWING_EXCLUDED").run();
+                        excluded = new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS_EXCLUDED").readFileNames();
                         for (int i = 0; i < excluded.size(); i++) {
-                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
+                            JSONObject user = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
                             FollowerEntity follower = new FollowerEntity(Integer.parseInt(user.getString("_id")),
                                     user.getString("display_name"),
                                     user.getString("logo"),
@@ -95,15 +98,15 @@ public class MainActivity extends AppCompatActivity {
                                     0);
                             streamingYorkieDB.followerDAO().insertUser(follower);
                         }
-                        new DeleteFileHandler(weakContext, "FOLLOWERS").run();
-                        new DeleteFileHandler(weakContext, "FOLLOWERS_EXCLUDED").run();
-                        excluded = new ReadFileHandler(weakContext, "F4F_EXCLUDED").readFileNames();
+                        new DeleteFileHandler(weakActivity, weakContext, "FOLLOWERS").run();
+                        new DeleteFileHandler(weakActivity, weakContext, "FOLLOWERS_EXCLUDED").run();
+                        excluded = new ReadFileHandler(weakActivity, weakContext, "F4F_EXCLUDED").readFileNames();
                         for (int i = 0; i < excluded.size(); i++) {
                             JSONObject user;
                             if (new File(getFilesDir().toString() + File.separator + "FOLLOWING" + File.separator + excluded.get(i)).exists()) {
-                                user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
+                                user = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
                             } else {
-                                user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
+                                user = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
                             }
                             F4FEntity f4f = new F4FEntity(Integer.parseInt(user.getString("_id")),
                                     user.getString("display_name"),
@@ -113,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
                                     0);
                             streamingYorkieDB.f4fDAO().insertUser(f4f);
                         }
-                        new DeleteFileHandler(weakContext, "F4F_EXCLUDED").run();
+                        new DeleteFileHandler(weakActivity, weakContext, "F4F_EXCLUDED").run();
                     } catch (JSONException e) {
                         Toast.makeText(MainActivity.this, "Error migrating local files to DB", Toast.LENGTH_SHORT).show();
-                        new WriteFileHandler(weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
+                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
                     }
                 }
             }).start();
@@ -250,11 +253,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
         } else if ((new Date().getTime() - new File(getFilesDir().toString() + File.separator + "TOKEN").lastModified()) > 5184000000L) {
-            new DeleteFileHandler(new WeakReference<>(getApplicationContext()), null).deleteFileOrPath("TOKEN");
+            new DeleteFileHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext()), null).deleteFileOrPath("TOKEN");
             Intent intent = new Intent(MainActivity.this, Authorization.class);
             startActivity(intent);
         } else {
-            new UserRequestHandler(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext())).sendRequest();
+            new UserRequestHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext())).sendRequest();
         }
     }
 
@@ -272,8 +275,8 @@ public class MainActivity extends AppCompatActivity {
     public void activateWorker(String settingsFileName, String workerName, Class<? extends Worker> workerClass, String channelID, String channelName, String channelDescription) {
         if (new File(getFilesDir().toString() + File.separator + settingsFileName).exists()) {
             try {
-                JSONObject settings = new JSONObject(new ReadFileHandler(new WeakReference<>(getApplicationContext()), settingsFileName).readFile());
-                if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF)) {
+                JSONObject settings = new JSONObject(new ReadFileHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext()), settingsFileName).readFile());
+                if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(workerName)) {
                     createNotificationChannel(channelID, channelName, channelDescription);
                     TimeUnit intervalUnit;
                     switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
@@ -295,15 +298,34 @@ public class MainActivity extends AppCompatActivity {
                             .setRequiredNetworkType(NetworkType.NOT_ROAMING)
                             .build();
                     PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
-
                     WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
-                } else {
-                    WorkManager.getInstance().cancelAllWorkByTag(workerName);
                 }
             } catch (JSONException e) {
                 Toast.makeText(MainActivity.this, "Error activating " + workerName, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(new WeakReference<>(getApplicationContext()), "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+                new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
             }
+        }
+    }
+
+    /**
+     * Method for checking if worker is running or enqueued to avoid restarting
+     * @author LethalMaus
+     * @param workerName name of worker process
+     * @return Boolean if running or enqueued
+     */
+    private Boolean isWorkerActive(String workerName) {
+        try {
+            if (WorkManager.getInstance().getWorkInfosForUniqueWork(workerName).get().size() > 0) {
+                WorkInfo.State state = WorkManager.getInstance().getWorkInfosForUniqueWork(workerName)
+                        .get().get(0).getState();
+                return (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING);
+            } else {
+                return false;
+            }
+        } catch (ExecutionException|InterruptedException e) {
+            Toast.makeText(MainActivity.this, "Error activating " + workerName, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+            return false;
         }
     }
 }

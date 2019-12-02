@@ -57,11 +57,11 @@ public class AutoFollowWorker extends Worker {
         this.weakContext = new WeakReference<>(context);
         streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
         try {
-            JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_F4F").readFile());
+            JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, "SETTINGS_F4F").readFile());
             autoFollow = settings.getString(Globals.SETTINGS_AUTOFOLLOW);
             autoFollowNotifications = settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS);
         } catch(JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "AutoFollow: Error reading settings | " + e.toString(), true).run();
+            new WriteFileHandler(null, weakContext, "ERROR", null, "AutoFollow: Error reading settings | " + e.toString(), true).run();
         }
     }
 
@@ -79,9 +79,9 @@ public class AutoFollowWorker extends Worker {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        ArrayList<String> excluded = new ReadFileHandler(weakContext, "FOLLOWING_EXCLUDED").readFileNames();
+                        ArrayList<String> excluded = new ReadFileHandler(null, weakContext, "FOLLOWING_EXCLUDED").readFileNames();
                         for (int i = 0; i < excluded.size(); i++) {
-                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
+                            JSONObject user = new JSONObject(new ReadFileHandler(null, weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
                             FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(user.getString("_id")),
                                     user.getString("display_name"),
                                     user.getString("logo"),
@@ -90,11 +90,11 @@ public class AutoFollowWorker extends Worker {
                                     0);
                             streamingYorkieDB.followingDAO().insertUser(followingEntity);
                         }
-                        new DeleteFileHandler(weakContext, "FOLLOWING").run();
-                        new DeleteFileHandler(weakContext, "FOLLOWING_EXCLUDED").run();
-                        excluded = new ReadFileHandler(weakContext, "FOLLOWERS_EXCLUDED").readFileNames();
+                        new DeleteFileHandler(null, weakContext, "FOLLOWING").run();
+                        new DeleteFileHandler(null, weakContext, "FOLLOWING_EXCLUDED").run();
+                        excluded = new ReadFileHandler(null, weakContext, "FOLLOWERS_EXCLUDED").readFileNames();
                         for (int i = 0; i < excluded.size(); i++) {
-                            JSONObject user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
+                            JSONObject user = new JSONObject(new ReadFileHandler(null, weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
                             FollowerEntity followerEntity = new FollowerEntity(Integer.parseInt(user.getString("_id")),
                                     user.getString("display_name"),
                                     user.getString("logo"),
@@ -103,15 +103,15 @@ public class AutoFollowWorker extends Worker {
                                     0);
                             streamingYorkieDB.followerDAO().insertUser(followerEntity);
                         }
-                        new DeleteFileHandler(weakContext, "FOLLOWERS").run();
-                        new DeleteFileHandler(weakContext, "FOLLOWERS_EXCLUDED").run();
-                        excluded = new ReadFileHandler(weakContext, "F4F_EXCLUDED").readFileNames();
+                        new DeleteFileHandler(null, weakContext, "FOLLOWERS").run();
+                        new DeleteFileHandler(null, weakContext, "FOLLOWERS_EXCLUDED").run();
+                        excluded = new ReadFileHandler(null, weakContext, "F4F_EXCLUDED").readFileNames();
                         for (int i = 0; i < excluded.size(); i++) {
                             JSONObject user;
                             if (new File(weakContext.get().getFilesDir().toString() + File.separator + "FOLLOWING" + File.separator + excluded.get(i)).exists()) {
-                                user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
+                                user = new JSONObject(new ReadFileHandler(null, weakContext, "FOLLOWING" + File.separator + excluded.get(i)).readFile());
                             } else {
-                                user = new JSONObject(new ReadFileHandler(weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
+                                user = new JSONObject(new ReadFileHandler(null, weakContext, "FOLLOWERS" + File.separator + excluded.get(i)).readFile());
                             }
                             F4FEntity f4FEntity = new F4FEntity(Integer.parseInt(user.getString("_id")),
                                     user.getString("display_name"),
@@ -121,9 +121,9 @@ public class AutoFollowWorker extends Worker {
                                     0);
                             streamingYorkieDB.f4fDAO().insertUser(f4FEntity);
                         }
-                        new DeleteFileHandler(weakContext, "F4F_EXCLUDED").run();
+                        new DeleteFileHandler(null, weakContext, "F4F_EXCLUDED").run();
                     } catch (JSONException e) {
-                        new WriteFileHandler(weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
+                        new WriteFileHandler(null, weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
                     }
                 }
             }).start();
@@ -135,15 +135,15 @@ public class AutoFollowWorker extends Worker {
                 if (autoFollow != null && (autoFollow.equals("FOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
                     UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserForAutoFollow();
                     if (userEntity != null) {
-                        new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
-                        new WriteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
+                        new WriteFileHandler(null, weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
+                        new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                         new FollowRequestHandler(null, weakContext) {
                             @Override
                             public void onCompletion() {
                                 super.onCompletion();
                                 UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserForAutoFollow();
                                 if (userEntity != null) {
-                                    new WriteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
+                                    new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                                     setRequestParameters(Request.Method.PUT, userEntity.getId(), autoFollowNotifications)
                                             .sendRequest();
                                 } else {
@@ -157,15 +157,15 @@ public class AutoFollowWorker extends Worker {
                 if (autoFollow != null && (autoFollow.equals("UNFOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
                     UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserForAutoFollow();
                     if (userEntity != null) {
-                        new WriteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
-                        new WriteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
+                        new WriteFileHandler(null, weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
+                        new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                         new FollowRequestHandler(null, weakContext) {
                             @Override
                             public void onCompletion() {
                                 super.onCompletion();
                                 UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserForAutoFollow();
                                 if (userEntity != null) {
-                                    new WriteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
+                                    new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                                     setRequestParameters(Request.Method.DELETE, userEntity.getId(), autoFollowNotifications)
                                             .sendRequest();
                                 } else {
@@ -195,12 +195,12 @@ public class AutoFollowWorker extends Worker {
      * @param weakContext weak reference context
      */
     private static void notifyUser(WeakReference<Context> weakContext) {
-        int autoFollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();
-        int autoUnfollowCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).countFiles();
+        int autoFollowCount = new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();
+        int autoUnfollowCount = new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_UNFOLLOW).countFiles();
         if (weakContext != null && weakContext.get() != null
                 && new File(weakContext.get().getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()
                 && (autoFollowCount > 0 || autoUnfollowCount > 0)) {
-            new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE);
+            new DeleteFileHandler(null, weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE);
             Intent intent = new Intent(weakContext.get(), Follow4Follow.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(weakContext.get(), 0, intent, 0);

@@ -75,7 +75,7 @@ public class FollowRequestHandler extends RequestHandler {
             public void run() {
                 try {
                     if (response != null && !response.toString().equals("") && requestMethod != Request.Method.DELETE) {
-                        String timestamp = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                        String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
                         if (timestamp.isEmpty()) {
                             timestamp = "0";
                         }
@@ -98,10 +98,10 @@ public class FollowRequestHandler extends RequestHandler {
                             streamingYorkieDB.followingDAO().insertUser(followingEntity);
                         }
                     } else {
-                        String followingCountString = new ReadFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile();
+                        String followingCountString = new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile();
                         if (!followingCountString.isEmpty()) {
                             int followingCount = Integer.parseInt(followingCountString);
-                            new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(followingCount - 1), false).writeToFileOrPath();
+                            new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(followingCount - 1), false).writeToFileOrPath();
                         }
 
                         FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(followId);
@@ -122,7 +122,7 @@ public class FollowRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Follow response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Follow response error | " + e.toString(), true).run();
                 }
             }
         }).start();

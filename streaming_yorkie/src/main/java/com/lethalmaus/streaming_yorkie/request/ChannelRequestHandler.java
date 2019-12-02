@@ -85,7 +85,7 @@ public class ChannelRequestHandler extends RequestHandler {
         if (errorMessage.isEmpty()) {
             errorMessage = error.toString();
         }
-        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting ChannelEntity | " + errorMessage, true).run();
+        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error requesting ChannelEntity | " + errorMessage, true).run();
     }
 
     @Override
@@ -133,7 +133,7 @@ public class ChannelRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error saving ChannelEntity | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error saving ChannelEntity | " + e.toString(), true).run();
                 }
             }
         }).start();

@@ -53,7 +53,7 @@ public class AutoVODExportWorker extends Worker {
         this.streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
         try {
             if (new File(weakContext.get().getFilesDir() + File.separator + "SETTINGS_VOD").exists()) {
-                JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
+                JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, "SETTINGS_VOD").readFile());
                 visibility = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
                 split = settings.getBoolean(Globals.SETTINGS_SPLIT);
             } else {
@@ -61,7 +61,7 @@ public class AutoVODExportWorker extends Worker {
                 split = false;
             }
         } catch(JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "AutoVOD: Error reading settings | " + e.toString(), true).run();
+            new WriteFileHandler(null, weakContext, "ERROR", null, "AutoVOD: Error reading settings | " + e.toString(), true).run();
         }
     }
 
@@ -73,7 +73,7 @@ public class AutoVODExportWorker extends Worker {
                 super.onCompletion();
                 final int vodCount = streamingYorkieDB.vodDAO().getCurrentVODsCount();
                 if (vodCount > 0) {
-                    new WriteFileHandler(weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
+                    new WriteFileHandler(null, weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
                     for (int i = 0; i < vodCount; i++) {
                         VODEntity vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
                         vodId = vodEntity.getId();
@@ -86,13 +86,13 @@ public class AutoVODExportWorker extends Worker {
                                 body.put("private", !visibility);
                                 body.put("do_split", split);
                             } catch (JSONException e) {
-                                new WriteFileHandler(weakContext, "ERROR", null, "AutoVOD: Twitch export content could not be set. | " + e.toString(), true).run();
+                                new WriteFileHandler(null, weakContext, "ERROR", null, "AutoVOD: Twitch export content could not be set. | " + e.toString(), true).run();
                             }
                             new VODExportRequestHandler(null, weakContext, null) {
                                 @Override
                                 public void onCompletion() {
-                                    new WriteFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + getVodId(), null, null, false).writeToFileOrPath();
-                                    if (vodCount == new ReadFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles()) {
+                                    new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + getVodId(), null, null, false).writeToFileOrPath();
+                                    if (vodCount == new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles()) {
                                         notifyUser(weakContext);
                                     }
                                 }
@@ -111,11 +111,11 @@ public class AutoVODExportWorker extends Worker {
      * @param weakContext weak reference context
      */
     private static void notifyUser(WeakReference<Context> weakContext) {
-        int autoVODExportCount = new ReadFileHandler(weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles();
+        int autoVODExportCount = new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles();
         if (weakContext != null && weakContext.get() != null
                 && new File(weakContext.get().getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()
                 && autoVODExportCount > 0) {
-            new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE);
+            new DeleteFileHandler(null, weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE);
             Intent intent = new Intent(weakContext.get(), VODs.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(weakContext.get(), 0, intent, 0);

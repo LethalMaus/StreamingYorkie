@@ -57,7 +57,7 @@ public class VODUpdateRequestHandler extends RequestHandler {
             public void run() {
                 try {
                     long lastUpdated = 0;
-                    String lastUpdatedString = new ReadFileHandler(weakContext, "VOD_TIMESTAMP").readFile();
+                    String lastUpdatedString = new ReadFileHandler(weakActivity, weakContext, "VOD_TIMESTAMP").readFile();
                     if (!lastUpdatedString.isEmpty()) {
                         lastUpdated = Long.parseLong(lastUpdatedString);
                     }
@@ -100,7 +100,7 @@ public class VODUpdateRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "VODUpdate response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "VODUpdate response error | " + e.toString(), true).run();
                 }
             }
         }).start();

@@ -139,7 +139,7 @@ public class RequestHandler {
                 if (weakContext != null && weakContext.get() != null) {
                     if (userID == null) {
                         if (new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-                            token = new ReadFileHandler(weakContext, "TOKEN").readFile();
+                            token = new ReadFileHandler(weakActivity, weakContext, "TOKEN").readFile();
                         }
                         ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
                         if (channelEntity != null) {
@@ -221,7 +221,7 @@ public class RequestHandler {
         if (error.networkResponse != null) {
             errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
         }
-        new WriteFileHandler(weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();
+        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();
     }
 
     /**
@@ -269,7 +269,7 @@ public class RequestHandler {
      * @author LethalMaus
      */
     public void onCompletion() {
-        new WriteFileHandler(weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
+        new WriteFileHandler(weakActivity, weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
     }
 
     //FIXME needs to be changed due to deprecation

@@ -93,7 +93,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                     }
                             );
                         }
-                        new WriteFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).writeToFileOrPath();
+                        new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).writeToFileOrPath();
                         List<FollowingEntity> unfollowing = streamingYorkieDB.followingDAO().getUnfollowedUsers(timestamp);
                         for (int i = 0; i < unfollowing.size(); i++) {
                             unfollowing.get(i).setStatus("UNFOLLOWED");
@@ -109,7 +109,12 @@ public class FollowingRequestHandler extends RequestHandler {
                                         recyclerView.get().stopScroll();
                                         recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
-                                        userAdapter.datasetChanged();
+                                        recyclerView.get().post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                userAdapter.datasetChanged();
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -133,7 +138,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "FollowingEntity response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "FollowingEntity response error | " + e.toString(), true).run();
                 }
             }
             }).start();

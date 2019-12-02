@@ -49,7 +49,7 @@ public class DevInfoRequestHandler extends RequestHandler {
                 Glide.with(weakActivity.get()).load(response.getString("logo")).into(developer_Logo);
             }
         } catch (JSONException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "DevInfo response cant be read | " + e.toString(), true).run();
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "DevInfo response cant be read | " + e.toString(), true).run();
         }
     }
 }

@@ -157,7 +157,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                     public void onClick(View v) {
                         Thread thread = new Thread() {
                             public void run() {
-                                new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
+                                new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
                                 lurkAdapter.lurkDataset.remove(channel);
                                 lurkAdapter.datasetChanged();
                             }
@@ -179,11 +179,11 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      * @author LethalMaus
      */
     private void getLurks() {
-        if (new ReadFileHandler(weakContext, Globals.LURK_PATH).countFiles() > 0) {
-            lurkDataset = new ReadFileHandler(weakContext, Globals.LURK_PATH).readFileNames();
+        if (new ReadFileHandler(weakActivity, weakContext, Globals.LURK_PATH).countFiles() > 0) {
+            lurkDataset = new ReadFileHandler(weakActivity, weakContext, Globals.LURK_PATH).readFileNames();
             int videoCount = 0;
             for (int i = 0; i < lurkDataset.size(); i++) {
-                String video = new ReadFileHandler(weakContext, Globals.LURK_PATH + File.separator + lurkDataset.get(i)).readFile();
+                String video = new ReadFileHandler(weakActivity, weakContext, Globals.LURK_PATH + File.separator + lurkDataset.get(i)).readFile();
                 if (video.isEmpty()) {
                     new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView).newRequest(lurkDataset.get(i)).sendRequest();
                 } else {

@@ -71,7 +71,7 @@ public class Lurk extends AppCompatActivity {
                     mLastClickTime = SystemClock.elapsedRealtime();
                     EditText channelInput = findViewById(R.id.lurk_input);
                     if (channelInput != null && channelInput.getText().toString().replaceAll("\\s", "").length() > 0) {
-                        new WriteFileHandler(weakContext, Globals.LURK_PATH + File.separator + channelInput.getText().toString().replaceAll("\\s", ""), null, null, false).writeToFileOrPath();
+                        new WriteFileHandler(weakActivity, weakContext, Globals.LURK_PATH + File.separator + channelInput.getText().toString().replaceAll("\\s", ""), null, null, false).writeToFileOrPath();
                         recyclerView.setAdapter(new LurkAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView)));
                         channelInput.setText("");
                     }
