@@ -130,7 +130,12 @@ public class VODRequestHandler extends RequestHandler {
                                         recyclerView.get().stopScroll();
                                         recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
-                                        vodAdapter.datasetChanged();
+                                        recyclerView.get().post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                vodAdapter.datasetChanged();
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -153,7 +158,7 @@ public class VODRequestHandler extends RequestHandler {
                                     }
                                 });
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error reading VODEntity response | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading VODEntity response | " + e.toString(), true).run();
                 }
             }
         }).start();

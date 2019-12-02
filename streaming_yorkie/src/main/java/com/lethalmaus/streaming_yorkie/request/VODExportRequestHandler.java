@@ -99,7 +99,12 @@ public class VODExportRequestHandler extends RequestHandler {
                         weakActivity.get().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                vodAdapter.datasetChanged();
+                                recyclerView.get().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        vodAdapter.datasetChanged();
+                                    }
+                                });
                             }
                         });
                     }
@@ -116,7 +121,7 @@ public class VODExportRequestHandler extends RequestHandler {
         headers.put("Client-ID", Globals.TWITCHID);
         headers.put("Content-Type", "application/json");
         if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + "TWITCH_TOKEN").exists()) {
-            headers.put("Authorization", "OAuth " + new ReadFileHandler(weakContext,"TWITCH_TOKEN").readFile());
+            headers.put("Authorization", "OAuth " + new ReadFileHandler(weakActivity, weakContext,"TWITCH_TOKEN").readFile());
         }
         return headers;
     }

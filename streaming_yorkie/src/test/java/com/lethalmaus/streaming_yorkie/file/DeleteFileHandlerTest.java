@@ -30,7 +30,7 @@ public class DeleteFileHandlerTest {
         assertTrue(new File(context.getFilesDir() + File.separator + "DELETE_FILE_TEST" + File.separator + "DELETE_FILE_TEST2").exists());
         assertTrue(new File(context.getFilesDir() + File.separator + "DELETE_FILE_TEST").exists());
         //Test
-        new DeleteFileHandler(new WeakReference<>(context), "").deleteFileOrPath("DELETE_FILE_TEST");
+        new DeleteFileHandler(null, new WeakReference<>(context), "").deleteFileOrPath("DELETE_FILE_TEST");
         assertFalse(new File(context.getFilesDir() + File.separator + "DELETE_FILE_TEST" + File.separator + "DELETE_FILE_TEST1").exists());
         assertFalse(new File(context.getFilesDir() + File.separator + "DELETE_FILE_TEST" + File.separator + "DELETE_FILE_TEST2").exists());
         assertFalse(new File(context.getFilesDir() + File.separator + "DELETE_FILE_TEST").exists());

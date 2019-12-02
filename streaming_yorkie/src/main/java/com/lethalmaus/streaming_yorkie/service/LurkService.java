@@ -72,10 +72,10 @@ public class LurkService extends Service {
             showNotification(true);
         } else {
             videos = new ArrayList<>();
-            if (new ReadFileHandler(new WeakReference<Context>(this), Globals.LURK_PATH).countFiles() > 0) {
-                List<String> lurkDataset = new ReadFileHandler(new WeakReference<Context>(this), Globals.LURK_PATH).readFileNames();
+            if (new ReadFileHandler(null, new WeakReference<Context>(this), Globals.LURK_PATH).countFiles() > 0) {
+                List<String> lurkDataset = new ReadFileHandler(null, new WeakReference<Context>(this), Globals.LURK_PATH).readFileNames();
                 for (int i = 0; i < lurkDataset.size(); i++) {
-                    String video = new ReadFileHandler(new WeakReference<Context>(this), Globals.LURK_PATH + File.separator + lurkDataset.get(i)).readFile();
+                    String video = new ReadFileHandler(null, new WeakReference<Context>(this), Globals.LURK_PATH + File.separator + lurkDataset.get(i)).readFile();
                     videos.add(video);
                 }
             }
@@ -98,10 +98,10 @@ public class LurkService extends Service {
                 for (int i = 0; i < videos.size(); i++) {
                     htmlInjection.append(videos.get(i));
                 }
-                new WriteFileHandler(new WeakReference<>(getApplicationContext()), "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
+                new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
                 String token = "";
                 if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-                    token = new ReadFileHandler(new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
+                    token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
                 }
                 HashMap<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "OAuth " + token);
@@ -190,7 +190,7 @@ public class LurkService extends Service {
                             networkUsageHandler.postDelayed(this, 3000);
                         }
                     } catch (Exception e) {
-                        new WriteFileHandler(new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
+                        new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
                     }
                 }
             };

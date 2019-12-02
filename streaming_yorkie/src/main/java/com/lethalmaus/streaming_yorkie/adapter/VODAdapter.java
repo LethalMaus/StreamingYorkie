@@ -13,7 +13,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -249,7 +248,6 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
                                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
                                 }
-                                notifyDataSetChanged();
                                 weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                             }
                         });
@@ -370,7 +368,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
 
                                                         try {
                                                             if (new File(weakActivity.get().getFilesDir() + File.separator + "SETTINGS_VOD").exists()) {
-                                                                JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
+                                                                JSONObject settings = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "SETTINGS_VOD").readFile());
                                                                 if (settings.getBoolean(Globals.SETTINGS_VISIBILITY)) {
                                                                     radioGroup.check(R.id.vod_export_dialog_visibility_public);
                                                                 } else {
@@ -385,7 +383,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                             if (weakActivity != null && weakActivity.get() != null) {
                                                                 Toast.makeText(weakActivity.get(), "Twitch export could not be initiated.", Toast.LENGTH_SHORT).show();
                                                             }
-                                                            new WriteFileHandler(weakContext, "ERROR", null, "Twitch export could not be initiated. | " + e.toString(), true).run();
+                                                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export could not be initiated. | " + e.toString(), true).run();
                                                         }
 
                                                         ImageButton cancelButton = dialog.findViewById(R.id.vod_export_dialog_cancel);
@@ -429,7 +427,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                                                         }
                                                                                 );
                                                                             }
-                                                                            new WriteFileHandler(weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
+                                                                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
                                                                         }
                                                                         vodExportRequestHandler.setVodId(vodID).setPostBody(body).sendRequest();
                                                                         if (weakActivity != null && weakActivity.get() != null) {
@@ -536,7 +534,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                         boolean visibility = false;
                                                         boolean split = false;
                                                         if (new File(weakContext.get().getFilesDir() + File.separator + "SETTINGS_VOD").exists()) {
-                                                            JSONObject settings = new JSONObject(new ReadFileHandler(weakContext, "SETTINGS_VOD").readFile());
+                                                            JSONObject settings = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "SETTINGS_VOD").readFile());
                                                             visibility = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
                                                             split = settings.getBoolean(Globals.SETTINGS_SPLIT);
                                                         }
@@ -557,7 +555,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                                         }
                                                                 );
                                                             }
-                                                            new WriteFileHandler(weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
+                                                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
                                                         }
                                                         vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest();
                                                     } catch (JSONException e) {
@@ -570,7 +568,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                                     }
                                                             );
                                                         }
-                                                        new WriteFileHandler(weakContext, "ERROR", null, "All Twitch exports could not be initiated. | " + e.toString(), true).run();
+                                                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "All Twitch exports could not be initiated. | " + e.toString(), true).run();
                                                     }
                                                 }
                                             }
@@ -620,6 +618,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         pageCount1 = streamingYorkieDB.vodDAO().getCurrentVODsCount();
         pageCount2 = streamingYorkieDB.vodDAO().getExportedVODsCount();
         pageCount3 = streamingYorkieDB.vodDAO().getExcludedVODsCount();
+        notifyItemRangeRemoved(0, currentPageCount);
         if (vodsType.contentEquals("CURRENT")) {
             currentPageCount = pageCount1;
         } else if (vodsType.contentEquals("EXPORTED")) {
@@ -627,6 +626,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         } else if (vodsType.contentEquals("EXCLUDED")) {
             currentPageCount = pageCount3;
         }
+        notifyItemRangeInserted(0, currentPageCount);
     }
 
     /**

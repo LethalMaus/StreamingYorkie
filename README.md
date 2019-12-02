@@ -324,6 +324,7 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 
 ## Updates
 
++ [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
 + [1.3.1-a](#131-a)
@@ -340,6 +341,24 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
 
+### 2.0.2-a
+ 
+Patch for minor fixes
+
+Issues:
++   Lurk - Redundant API call replacement fix
++   RecyclerView - crash IndexOutOfBoundsException fix
++   WriteFileHandler - toasts on error only when activity is present fix
++   AutoFollow - creation of notification directories fix
++   UserView - loading logo crash
+
+Other:
++   Gradle update
++   RecyclerView update
++   Room update
+
+---
+ 
 ### 2.0.1-a
 
 Patch for minor fixes

@@ -54,7 +54,6 @@ public class FollowParent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.follow_parent);
         new UserView(weakActivity, weakContext).execute();
-        WorkManager.getInstance().cancelUniqueWork(Globals.SETTINGS_AUTOFOLLOW);
 
         ImageButton refreshPage = findViewById(R.id.refresh);
         progressBar = findViewById(R.id.progressbar);
@@ -97,13 +96,13 @@ public class FollowParent extends AppCompatActivity {
         new Thread(new Runnable() {
             public void run() {
                 if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_FOLLOW).exists()) {
-                    new DeleteFileHandler(weakContext, Globals.NOTIFICATION_FOLLOW).run();
+                    new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_FOLLOW).run();
                 }
                 if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_UNFOLLOW).exists()) {
-                    new DeleteFileHandler(weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
+                    new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
                 }
                 if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()) {
-                    new DeleteFileHandler(weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
+                    new DeleteFileHandler(weakActivity, weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
                 }
             }
         }).start();
@@ -180,7 +179,12 @@ public class FollowParent extends AppCompatActivity {
             recyclerView.getRecycledViewPool().clear();
             UserAdapter userAdapter = (UserAdapter) recyclerView.getAdapter();
             if (userAdapter != null) {
-                userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged();
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged();
+                    }
+                });
             }
         } else {
             Toast.makeText(this, "Updating Users, please be patient.", Toast.LENGTH_SHORT).show();

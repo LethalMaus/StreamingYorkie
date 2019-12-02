@@ -53,12 +53,12 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
             public void run() {
                 try {
                     long lastUpdated = 0;
-                    String lastUpdatedString = new ReadFileHandler(weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                    String lastUpdatedString = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
                     if (!lastUpdatedString.isEmpty()) {
                         lastUpdated = Long.parseLong(lastUpdatedString);
                     }
                     int[] lastFollowing = streamingYorkieDB.followingDAO().getLastUsers(lastUpdated);
-                    if (lastFollowing.length == response.getJSONArray("follows").length()  && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWING_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile())) {
+                    if (lastFollowing.length == response.getJSONArray("follows").length()  && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWING_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile())) {
                         for (int i = 0; i < lastFollowing.length; i++) {
                             if (lastFollowing[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id"))) {
                                 new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
@@ -98,7 +98,7 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "FollowingEntity Update response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "FollowingEntity Update response error | " + e.toString(), true).run();
                 }
             }
         }).start();

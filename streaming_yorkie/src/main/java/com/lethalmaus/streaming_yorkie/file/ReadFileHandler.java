@@ -1,5 +1,6 @@
 package com.lethalmaus.streaming_yorkie.file;
 
+import android.app.Activity;
 import android.content.Context;
 
 import java.io.BufferedReader;
@@ -19,6 +20,8 @@ import java.util.Arrays;
  */
 public class ReadFileHandler {
 
+    //All contexts are weak referenced to avoid memory leaks
+    private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
     private String appDirectory;
     private String filename;
@@ -26,10 +29,12 @@ public class ReadFileHandler {
     /**
      * Constructor for Read File Handler, filename can be null
      * @author LethalMaus
+     * @param weakActivity weak reference activity
      * @param weakContext weak reference context
      * @param filename name of file to be read
      */
-    public ReadFileHandler(WeakReference<Context> weakContext, String filename) {
+    public ReadFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, String filename) {
+        this.weakActivity = weakActivity;
         this.weakContext = weakContext;
         if (weakContext != null && weakContext.get() != null) {
             this.appDirectory = weakContext.get().getFilesDir().toString();
@@ -66,9 +71,9 @@ public class ReadFileHandler {
                 return stringBuilder.toString();
             }
         } catch (FileNotFoundException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Error finding file '" + filename + "' | " + e.toString(), true).run();
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error finding file '" + filename + "' | " + e.toString(), true).run();
         } catch (IOException e) {
-            new WriteFileHandler(weakContext, "ERROR", null, "Errors reading from file '" + filename + "' | " + e.toString(), true).run();
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Errors reading from file '" + filename + "' | " + e.toString(), true).run();
         } finally {
             try {
                 if (bufferedReader != null) {
@@ -81,7 +86,7 @@ public class ReadFileHandler {
                     fileInputStream.close();
                 }
             } catch (IOException e) {
-                new WriteFileHandler(weakContext, "ERROR", null, "Error closing file '" + filename + "' | " + e.toString(), true).run();
+                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error closing file '" + filename + "' | " + e.toString(), true).run();
             }
         }
         return "";

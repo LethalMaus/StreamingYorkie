@@ -24,6 +24,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 /**
  * Class for getting lurk Urls
@@ -37,7 +38,7 @@ public class LurkRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        return "https://api.twitch.tv/api/channels/" + channel.toLowerCase() + "/access_token?need_https=true&oauth_token=" + token + "&platform=web&player_backend=mediaplayer&player_type=embed";
+        return "https://api.twitch.tv/api/channels/" + channel.toLowerCase() + "/access_token?need_https=true&platform=web&player_backend=mediaplayer&player_type=embed&client_id=" + Globals.TWITCHID;
     }
 
     @Override
@@ -77,7 +78,7 @@ public class LurkRequestHandler extends RequestHandler {
                     signature = response.getString("sig");
                     getLurkUrl(new JSONObject(lurkToken).getString("channel_id"));
                 } catch (JSONException e) {
-                    new WriteFileHandler(weakContext, "ERROR", null, "Error reading first Lurk Url JSON | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading first Lurk Url JSON | " + e.toString(), true).run();
                 }
             }
         }).start();
@@ -101,8 +102,8 @@ public class LurkRequestHandler extends RequestHandler {
                                 + "<iframe src='https://www.twitch.tv/embed/" + channel.toLowerCase() + "/chat'/>"
                                 + "</div>";
                                 System.out.println(video);
-                                new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
-                                new WriteFileHandler(weakContext, Globals.LURK_PATH + File.separator + channelId + "-" + channel, null, video, false).writeToFileOrPath();
+                                new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
+                                new WriteFileHandler(weakActivity, weakContext, Globals.LURK_PATH + File.separator + channelId + "-" + channel, null, video, false).writeToFileOrPath();
                                 if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
                                     recyclerView.get().setAdapter(new LurkAdapter(weakActivity, weakContext, recyclerView));
                                 }
@@ -116,7 +117,7 @@ public class LurkRequestHandler extends RequestHandler {
                         errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
                         if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND || error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                             Toast.makeText(weakActivity.get(), "Stream from '" + channel + "' has ended", Toast.LENGTH_SHORT).show();
-                            new DeleteFileHandler(weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
+                            new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
                             if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
                                 recyclerView.get().setAdapter(new LurkAdapter(weakActivity, weakContext, recyclerView));
                             }
@@ -124,11 +125,11 @@ public class LurkRequestHandler extends RequestHandler {
                             if (errorMessage.isEmpty()) {
                                 errorMessage = error.toString();
                             }
-                            new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
+                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                         }
                     } else {
                         errorMessage = error.toString();
-                        new WriteFileHandler(weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
+                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                     }
 
                 }
@@ -151,5 +152,14 @@ public class LurkRequestHandler extends RequestHandler {
                     }
             );
         }
+    }
+
+    @Override
+    HashMap<String, String> getRequestHeaders() {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/vnd.twitchtv.v5+json");
+        headers.put("Client-ID", Globals.TWITCHID);
+        headers.put("Content-Type", "application/json; charset=utf-8");
+        return headers;
     }
 }

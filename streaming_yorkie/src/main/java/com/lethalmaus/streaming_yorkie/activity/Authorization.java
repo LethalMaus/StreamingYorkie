@@ -69,7 +69,7 @@ public class Authorization extends AppCompatActivity {
                     public boolean shouldOverrideUrlLoading(WebView view, String url) {
                         if (url.contains("twitch.tv")) {
                             if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
-                                new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
+                                new WriteFileHandler(weakActivity, weakContext, "TWITCH_TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
                                 Toast.makeText(Authorization.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -89,7 +89,7 @@ public class Authorization extends AppCompatActivity {
                     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                         if (request.getUrl().toString().contains("twitch.tv")) {
                             if (request.getUrl().toString().contains("https://www.twitch.tv/passport-callback#access_token")) {
-                                new WriteFileHandler(weakContext, "TWITCH_TOKEN", null, request.getUrl().toString().substring(request.getUrl().toString().indexOf("access_token") + 13, request.getUrl().toString().indexOf("access_token") + 43), false).writeToFileOrPath();
+                                new WriteFileHandler(weakActivity, weakContext, "TWITCH_TOKEN", null, request.getUrl().toString().substring(request.getUrl().toString().indexOf("access_token") + 13, request.getUrl().toString().indexOf("access_token") + 43), false).writeToFileOrPath();
                                 Toast.makeText(Authorization.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -108,7 +108,7 @@ public class Authorization extends AppCompatActivity {
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
-                            new WriteFileHandler(weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
+                            new WriteFileHandler(weakActivity, weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
                             new UserRequestHandler(weakActivity, weakContext).sendRequest();
                             view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read");
                         } else if (!url.contains("twitch.tv")) {
@@ -146,10 +146,10 @@ public class Authorization extends AppCompatActivity {
                     public void run() {
                         StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
                         streamingYorkieDB.clearAllTables();
-                        new DeleteFileHandler(weakContext, "").deleteFileOrPath("");
+                        new DeleteFileHandler(weakActivity, weakContext, "").deleteFileOrPath("");
                     }
                 }.start();
-            new DeleteFileHandler(weakContext, "").run();
+            new DeleteFileHandler(weakActivity, weakContext, "").run();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

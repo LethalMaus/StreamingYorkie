@@ -35,7 +35,7 @@ public class WriteFileHandlerTest {
         files.add("WRITE_FILE_TEST2");
         files.add("WRITE_FILE_TEST3");
         //Test
-        writeFileHandler = new WriteFileHandler(new WeakReference<>(context), "", files, null, false);
+        writeFileHandler = new WriteFileHandler(null, new WeakReference<>(context), "", files, null, false);
         writeFileHandler.writeToFileOrPath();
         assertTrue(new File(context.getFilesDir() + File.separator + "WRITE_FILE_TEST2").exists());
         assertTrue(new File(context.getFilesDir() + File.separator + "WRITE_FILE_TEST3").exists());
@@ -46,7 +46,7 @@ public class WriteFileHandlerTest {
 
     private void shouldWriteSingleFile(String data) {
         //Test
-        writeFileHandler = new WriteFileHandler(new WeakReference<>(context), "WRITE_FILE_TEST1", null, data, false);
+        writeFileHandler = new WriteFileHandler(null, new WeakReference<>(context), "WRITE_FILE_TEST1", null, data, false);
         writeFileHandler.writeToFileOrPath();
         assertTrue(new File(context.getFilesDir() + File.separator + "WRITE_FILE_TEST1").exists());
         //Cleanup

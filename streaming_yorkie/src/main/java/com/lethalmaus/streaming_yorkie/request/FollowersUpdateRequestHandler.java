@@ -53,12 +53,12 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
             public void run() {
                 try {
                     long lastUpdated = 0;
-                    String lastUpdatedString = new ReadFileHandler(weakContext, "FOLLOWERS_TIMESTAMP").readFile();
+                    String lastUpdatedString = new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS_TIMESTAMP").readFile();
                     if (!lastUpdatedString.isEmpty()) {
                         lastUpdated = Long.parseLong(lastUpdatedString);
                     }
                     int[] lastFollowers = streamingYorkieDB.followerDAO().getLastUsers(lastUpdated);
-                    if (lastFollowers.length == response.getJSONArray("follows").length() && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWERS_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT").readFile())) {
+                    if (lastFollowers.length == response.getJSONArray("follows").length() && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWERS_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT").readFile())) {
                         for (int i = 0; i < lastFollowers.length; i++) {
                             if (lastFollowers[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id"))) {
                                 new FollowersRequestHandler(weakActivity, weakContext, recyclerView){
@@ -98,7 +98,7 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                                 }
                         );
                     }
-                    new WriteFileHandler(weakContext, "ERROR", null, "Followers Update response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Followers Update response error | " + e.toString(), true).run();
                 }
             }
         }).start();
