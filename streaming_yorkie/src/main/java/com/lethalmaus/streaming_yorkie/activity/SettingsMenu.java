@@ -10,8 +10,11 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.view.UserView;
+import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
+import com.lethalmaus.streaming_yorkie.worker.AutoVODExportWorker;
 
 import java.lang.ref.WeakReference;
 
@@ -59,7 +62,14 @@ public class SettingsMenu extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-        new UserView(new WeakReference<Activity>(this), new WeakReference<>(getApplicationContext())).execute();
+        new UserView(new WeakReference<>(this), new WeakReference<>(getApplicationContext())).execute();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
+        Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
     }
 
     //Back to Settings Menu

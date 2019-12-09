@@ -324,6 +324,7 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 
 ## Updates
 
++ [2.0.3-a](#203-a)
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
@@ -340,6 +341,19 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 + [1.0.2-a](#102-a)
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
+
+### 2.0.3-a
+ 
+Patch for minor fixes
+
+Issues:
++   RecyclerView - crash reduction per post method IndexOutOfBoundsException fix
++   Worker - fix activating/deactivating worker
+
+Improvements:
++   Worker - activation/deactivation handling
+
+---
 
 ### 2.0.2-a
  

@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }).start();
         }
 
-        createNotificationChannel(Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
+        Globals.createNotificationChannel(new WeakReference<>(getApplicationContext()), Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
 
         ImageButton followers = findViewById(R.id.menu_followers);
         followers.setOnClickListener(
@@ -222,26 +222,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         userLoggedIn();
-        activateWorker("SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
-        activateWorker("SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
-    }
-
-    /**
-     * Opens a notification channel for the AutoFollower
-     * @author LethalMaus
-     * @param channelID notification channel ID
-     * @param channelName notification channel name
-     * @param channelDescription notification channel description
-     */
-    private void createNotificationChannel(String channelID, String channelName, String channelDescription) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(channelDescription);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
+        Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
+        Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
     }
 
     /**
@@ -258,74 +240,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             new UserRequestHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext())).sendRequest();
-        }
-    }
-
-    /**
-     * Checks if settings were ever made for the Worker type, then checks if the Worker has been activated & with which preferences.
-     * A PeriodicWorkRequest is activated to perform the Worker process
-     * @author LethalMaus
-     * @param settingsFileName name of settings files
-     * @param workerName name of worker process
-     * @param workerClass name of worker class
-     * @param channelID notification channel ID
-     * @param channelName notification channel name
-     * @param channelDescription notification channel description
-     */
-    public void activateWorker(String settingsFileName, String workerName, Class<? extends Worker> workerClass, String channelID, String channelName, String channelDescription) {
-        if (new File(getFilesDir().toString() + File.separator + settingsFileName).exists()) {
-            try {
-                JSONObject settings = new JSONObject(new ReadFileHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext()), settingsFileName).readFile());
-                if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(workerName)) {
-                    createNotificationChannel(channelID, channelName, channelDescription);
-                    TimeUnit intervalUnit;
-                    switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
-                        case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
-                            intervalUnit = TimeUnit.MINUTES;
-                            break;
-                        case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
-                            intervalUnit = TimeUnit.HOURS;
-                            break;
-                        case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
-                        default:
-                            intervalUnit = TimeUnit.DAYS;
-                            break;
-                    }
-                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, settings.getInt(Globals.SETTINGS_INTERVAL), intervalUnit);
-                    Constraints constraints = new Constraints.Builder()
-                            .setRequiresBatteryNotLow(true)
-                            .setRequiresStorageNotLow(true)
-                            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
-                            .build();
-                    PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
-                    WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
-                }
-            } catch (JSONException e) {
-                Toast.makeText(MainActivity.this, "Error activating " + workerName, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
-            }
-        }
-    }
-
-    /**
-     * Method for checking if worker is running or enqueued to avoid restarting
-     * @author LethalMaus
-     * @param workerName name of worker process
-     * @return Boolean if running or enqueued
-     */
-    private Boolean isWorkerActive(String workerName) {
-        try {
-            if (WorkManager.getInstance().getWorkInfosForUniqueWork(workerName).get().size() > 0) {
-                WorkInfo.State state = WorkManager.getInstance().getWorkInfosForUniqueWork(workerName)
-                        .get().get(0).getState();
-                return (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING);
-            } else {
-                return false;
-            }
-        } catch (ExecutionException|InterruptedException e) {
-            Toast.makeText(MainActivity.this, "Error activating " + workerName, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
-            return false;
         }
     }
 }
