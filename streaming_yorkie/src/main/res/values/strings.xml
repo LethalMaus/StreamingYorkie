@@ -70,8 +70,9 @@
     <string name="menu_info">Info Menu</string>
     <string name="menu_settings">Settings Menu</string>
     <string name="info_twitch">Live Streams</string>
-    <string name="info_readme">Github ReadMe</string>
+    <string name="info_readme">Read Me</string>
     <string name="info_contact">Contact</string>
+    <string name="info_discord">Discord</string>
     <string name="info_patreon">Membership</string>
     <string name="info_developer">Developer</string>
     <string name="info_github">Projects</string>

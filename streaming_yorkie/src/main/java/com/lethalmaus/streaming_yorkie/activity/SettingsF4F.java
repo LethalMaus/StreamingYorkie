@@ -217,11 +217,14 @@ public class SettingsF4F extends AppCompatActivity {
             switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
                 case SETTINGS_INTERVAL_UNIT_MINUTES:
                     autoFollowIntervalUnitRadioGroup.check(R.id.settings_autoFollowIntervalUnit_minutes);
+                    //TODO set min=15 max=90 and remove warning
                     break;
                 case SETTINGS_INTERVAL_UNIT_HOURS:
                     autoFollowIntervalUnitRadioGroup.check(R.id.settings_autoFollowIntervalUnit_hours);
+                    //TODO set min=1 max = 72
                     break;
                 case SETTINGS_INTERVAL_UNIT_DAYS:
+                    //TODO set min=1 max=30
                 default:
                     autoFollowIntervalUnitRadioGroup.check(R.id.settings_autoFollowIntervalUnit_days);
                     break;

@@ -52,7 +52,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/delete" />
+        app:srcCompat="@drawable/holder" />
 
     <ImageButton
         android:id="@+id/userrow_button2"
@@ -70,7 +70,7 @@
         app:layout_constraintEnd_toStartOf="@+id/userrow_button1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/deactivate_notifications" />
+        app:srcCompat="@drawable/holder" />
 
     <ImageButton
         android:id="@+id/userrow_button3"
@@ -87,6 +87,6 @@
         app:layout_constraintEnd_toStartOf="@+id/userrow_button2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/followunfollow" />
+        app:srcCompat="@drawable/holder" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

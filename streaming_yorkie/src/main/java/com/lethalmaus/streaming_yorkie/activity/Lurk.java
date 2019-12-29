@@ -24,10 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.LurkAdapter;
-import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
+import com.lethalmaus.streaming_yorkie.dao.LurkDAO;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
+import com.lethalmaus.streaming_yorkie.request.LurkRequestHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -51,7 +53,7 @@ public class Lurk extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             checkDrawOverlayPermission();
         }
-        this.weakActivity = new WeakReference<Activity>(this);
+        this.weakActivity = new WeakReference<>(this);
         this.weakContext = new WeakReference<>(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lurk);
@@ -61,7 +63,9 @@ public class Lurk extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new LurkAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView)));
+        LurkAdapter lurkAdapter = new LurkAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView));
+        recyclerView.setAdapter(lurkAdapter);
+        lurkAdapter.datasetChanged();
 
         ImageView lurk_start = findViewById(R.id.lurk_start);
         lurk_start.setOnClickListener(new View.OnClickListener() {
@@ -70,9 +74,26 @@ public class Lurk extends AppCompatActivity {
                 if (SystemClock.elapsedRealtime() - mLastClickTime > 5000) {
                     mLastClickTime = SystemClock.elapsedRealtime();
                     EditText channelInput = findViewById(R.id.lurk_input);
+                    recyclerView.stopScroll();
+                    recyclerView.scrollToPosition(0);
+                    recyclerView.getRecycledViewPool().clear();
+                    LurkAdapter lurkAdapter = (LurkAdapter) recyclerView.getAdapter();
+                    if (lurkAdapter != null) {
+                        new Thread() {
+                            public void run() {
+                                LurkDAO lurkDAO = StreamingYorkieDB.getInstance(getApplicationContext()).lurkDAO();
+                                lurkDAO.insertLurk(new LurkEntity(channelInput.getText().toString().replaceAll("\\s", ""), 0, null, null, null, false, true));
+                                recyclerView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        lurkAdapter.datasetChanged();
+                                    }
+                                });
+                            }
+                        }.start();
+                    }
                     if (channelInput != null && channelInput.getText().toString().replaceAll("\\s", "").length() > 0) {
-                        new WriteFileHandler(weakActivity, weakContext, Globals.LURK_PATH + File.separator + channelInput.getText().toString().replaceAll("\\s", ""), null, null, false).writeToFileOrPath();
-                        recyclerView.setAdapter(new LurkAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView)));
+                        new LurkRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)).newRequest(channelInput.getText().toString().replaceAll("\\s", "")).initiate().sendRequest();
                         channelInput.setText("");
                     }
                 }

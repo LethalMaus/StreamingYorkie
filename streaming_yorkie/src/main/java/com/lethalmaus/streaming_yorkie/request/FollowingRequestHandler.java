@@ -52,7 +52,7 @@ public class FollowingRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
+        new Thread() {
             public void run() {
                 try {
                     offset += Globals.USER_REQUEST_LIMIT;
@@ -109,12 +109,7 @@ public class FollowingRequestHandler extends RequestHandler {
                                         recyclerView.get().stopScroll();
                                         recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
-                                        recyclerView.get().post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                userAdapter.datasetChanged();
-                                            }
-                                        });
+                                        userAdapter.datasetChanged();
                                     }
                                 });
                             }
@@ -141,6 +136,6 @@ public class FollowingRequestHandler extends RequestHandler {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "FollowingEntity response error | " + e.toString(), true).run();
                 }
             }
-            }).start();
+            }.start();
     }
 }

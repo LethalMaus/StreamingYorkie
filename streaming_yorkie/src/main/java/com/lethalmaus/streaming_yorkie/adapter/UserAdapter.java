@@ -327,12 +327,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                         } else {
                                             streamingYorkieDB.followingDAO().deleteUserById(userID);
                                         }
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                datasetChanged();
-                                            }
-                                        });
+                                        datasetChanged();
                                     }
                                 }).start();
                             }
@@ -369,12 +364,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                         } else if (userType.contentEquals("F4FEntity")) {
                                             streamingYorkieDB.f4fDAO().insertUser(new F4FEntity(userEntity.getId(), userEntity.getDisplay_name(), userEntity.getLogo(), userEntity.getCreated_at(), userEntity.isNotifications(), userEntity.getLast_updated()));
                                         }
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                datasetChanged();
-                                            }
-                                        });
+                                        datasetChanged();
                                     }
                                 }).start();
                             }
@@ -425,12 +415,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                         } else if (userType.contentEquals("F4FEntity")) {
                                             streamingYorkieDB.f4fDAO().deleteUserById(userID);
                                         }
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                datasetChanged();
-                                            }
-                                        });
+                                        datasetChanged();
                                     }
                                 }).start();
                             }
@@ -478,12 +463,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                     public void onCompletion() {
                                                         super.onCompletion();
                                                         if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
-                                                            recyclerView.post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    datasetChanged();
-                                                                }
-                                                            });
+                                                            datasetChanged();
                                                         } else {
                                                             weakActivity.get().runOnUiThread(
                                                                     new Runnable() {
@@ -509,12 +489,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                     public void onCompletion() {
                                                         super.onCompletion();
                                                         if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
-                                                            recyclerView.post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    datasetChanged();
-                                                                }
-                                                            });
+                                                            datasetChanged();
                                                         } else {
                                                             weakActivity.get().runOnUiThread(
                                                                     new Runnable() {
@@ -653,12 +628,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
                                                                         .sendRequest();
                                                             } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                                                recyclerView.post(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        datasetChanged();
-                                                                    }
-                                                                });
+                                                                datasetChanged();
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
@@ -683,12 +653,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 setRequestParameters(Request.Method.DELETE, userEntity.getId(), false)
                                                                         .sendRequest();
                                                             } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                                                recyclerView.post(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        datasetChanged();
-                                                                    }
-                                                                });
+                                                                datasetChanged();
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
@@ -737,17 +702,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             pageCount3 = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserCount();
             pageCount4 = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserCount();
         }
-        notifyItemRangeRemoved(0, currentPageCount);
-        if (userStatus.contentEquals("NEW") || userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
-            currentPageCount = pageCount1;
-        } else if (userStatus.contentEquals("CURRENT") || userStatus.contentEquals("FOLLOW4FOLLOW")) {
-            currentPageCount = pageCount2;
-        } else if (userStatus.contentEquals("UNFOLLOWED") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
-            currentPageCount = pageCount3;
-        } else if (userStatus.contentEquals("EXCLUDED")) {
-            currentPageCount = pageCount4;
-        }
-        notifyItemRangeInserted(0, currentPageCount);
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (userStatus.contentEquals("NEW") || userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+                    currentPageCount = pageCount1;
+                } else if (userStatus.contentEquals("CURRENT") || userStatus.contentEquals("FOLLOW4FOLLOW")) {
+                    currentPageCount = pageCount2;
+                } else if (userStatus.contentEquals("UNFOLLOWED") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+                    currentPageCount = pageCount3;
+                } else if (userStatus.contentEquals("EXCLUDED")) {
+                    currentPageCount = pageCount4;
+                }
+                notifyDataSetChanged();
+            }
+        });
     }
 
     /**

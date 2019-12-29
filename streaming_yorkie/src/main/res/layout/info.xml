@@ -74,24 +74,15 @@
                     app:srcCompat="@drawable/help" />
 
                 <ImageButton
-                    android:id="@+id/info_updates"
+                    android:id="@+id/info_contact"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
                     android:layout_weight="1"
+                    android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/info_updates"
+                    android:contentDescription="@string/info_contact"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/update" />
-
-                <ImageButton
-                    android:id="@+id/info_source_code"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/info_source_code"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/sourcecode" />
+                    app:srcCompat="@drawable/contact" />
 
             </LinearLayout>
 
@@ -128,21 +119,11 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/info_updates_text"
+                    android:id="@+id/info_contact_text"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/info_updates"
-                    android:textAlignment="center"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/info_source_code_text"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:text="@string/info_source_code"
+                    android:text="@string/info_contact"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -163,15 +144,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
 
                 <ImageButton
-                    android:id="@+id/info_contact"
+                    android:id="@+id/info_updates"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
                     android:layout_weight="1"
-                    android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/info_contact"
+                    android:contentDescription="@string/info_updates"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/contact" />
+                    app:srcCompat="@drawable/update" />
 
                 <ImageButton
                     android:id="@+id/info_twitch"
@@ -183,6 +163,85 @@
                     android:contentDescription="@string/info_twitch"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/twitch" />
+
+                <ImageButton
+                    android:id="@+id/info_source_code"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/info_source_code"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/sourcecode" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout7"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+                <TextView
+                    android:id="@+id/info_updates_text"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="@string/info_updates"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/info_twitch_text"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="@string/info_twitch"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/info_source_code_text"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="@string/info_source_code"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout8"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
+
+                <ImageButton
+                    android:id="@+id/info_discord"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/info_discord"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/discord" />
 
                 <ImageButton
                     android:id="@+id/info_patreon"
@@ -205,35 +264,27 @@
                     android:contentDescription="@string/info_github"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/github" />
+
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearLayout9"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
 
                 <TextView
-                    android:id="@+id/info_contact_text"
+                    android:id="@+id/info_discord_text"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/info_contact"
-                    android:textAlignment="center"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/info_twitch_text"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:text="@string/info_twitch"
+                    android:text="@string/info_discord"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />

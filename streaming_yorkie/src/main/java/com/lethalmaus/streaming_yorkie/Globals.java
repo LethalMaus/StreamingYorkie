@@ -51,9 +51,6 @@ public class Globals {
     //Request Types
     public static final String CHANNEL = "CHANNEL";
 
-    //Directories for Lurks
-    public static final String LURK_PATH = "LURKS";
-
     //Settings object keys
     public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
     public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";

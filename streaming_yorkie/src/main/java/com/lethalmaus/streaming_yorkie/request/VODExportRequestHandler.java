@@ -71,7 +71,7 @@ public class VODExportRequestHandler extends RequestHandler {
      * @author LethalMaus
      * @return int vodId
      */
-    public int getVodId() {
+    protected int getVodId() {
         return vodId;
     }
 
@@ -99,12 +99,7 @@ public class VODExportRequestHandler extends RequestHandler {
                         weakActivity.get().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                recyclerView.get().post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        vodAdapter.datasetChanged();
-                                    }
-                                });
+                                vodAdapter.datasetChanged();
                             }
                         });
                     }

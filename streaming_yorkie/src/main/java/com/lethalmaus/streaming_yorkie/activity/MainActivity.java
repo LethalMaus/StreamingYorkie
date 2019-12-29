@@ -1,11 +1,8 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -31,17 +28,8 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-import androidx.work.Worker;
 
 /**
  * Main Activity. If the channel isn't logged in then the activity changes to Authorization.
@@ -55,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setIcon(R.drawable.streaming_yorkie);
         }
@@ -68,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         if (new File(getFilesDir().toString() + File.separator + "FOLLOWING_EXCLUDED").exists()
                 || new File(getFilesDir().toString() + File.separator + "FOLLOWERS_EXCLUDED").exists()
                 || new File(getFilesDir().toString() + File.separator + "F4F_EXCLUDED").exists()) {
-            new Thread(new Runnable() {
+            new Thread() {
                 public void run() {
                     WeakReference<Activity> weakActivity = new WeakReference<>(MainActivity.this);
                     WeakReference<Context> weakContext = new WeakReference<>(getApplicationContext());
@@ -122,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
                     }
                 }
-            }).start();
+            }.start();
         }
 
         Globals.createNotificationChannel(new WeakReference<>(getApplicationContext()), Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);

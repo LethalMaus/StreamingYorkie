@@ -40,7 +40,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
  */
 public class RequestHandler {
 
-    String token;
+    private String token;
     String userID;
     String requestType;
     int method;
@@ -134,7 +134,7 @@ public class RequestHandler {
                     }
             );
         }
-        new Thread(new Runnable() {
+        new Thread() {
             public void run() {
                 if (weakContext != null && weakContext.get() != null) {
                     if (userID == null) {
@@ -175,7 +175,7 @@ public class RequestHandler {
                     }
                 }
             }
-        }).start();
+        }.start();
     }
 
     /**
@@ -272,7 +272,6 @@ public class RequestHandler {
         new WriteFileHandler(weakActivity, weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
     }
 
-    //FIXME needs to be changed due to deprecation
     /**
      * Method for checking network status
      * @author LethalMaus
@@ -283,7 +282,9 @@ public class RequestHandler {
         NetworkInfo activeNetwork = null;
         if (weakContext != null && weakContext.get() != null) {
             ConnectivityManager systemService = (ConnectivityManager) weakContext.get().getSystemService(CONNECTIVITY_SERVICE);
-            activeNetwork = systemService.getActiveNetworkInfo();
+            if (systemService != null) {
+                activeNetwork = systemService.getActiveNetworkInfo();
+            }
         }
         return activeNetwork != null && activeNetwork.isConnected();
     }

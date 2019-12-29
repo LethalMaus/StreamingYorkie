@@ -16,18 +16,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
-import com.lethalmaus.streaming_yorkie.entity.UserEntity;
+import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
-import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
+import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.LurkRequestHandler;
 import com.lethalmaus.streaming_yorkie.service.LurkService;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 
 /**
  * RecyclerView Adapter for Lurk Objects
@@ -40,7 +37,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
     private WeakReference<Context> weakContext;
     private WeakReference<RecyclerView> weakRecyclerView;
     private StreamingYorkieDB streamingYorkieDB;
-    private ArrayList<String> lurkDataset;
+    private int lurkCount = 0;
 
     /**
      * Simple View Holder for loading the View with a Dataset Row
@@ -86,7 +83,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
     public void onBindViewHolder(@NonNull final LurkAdapter.LurkViewHolder lurkViewHolder, final int position) {
         weakActivity.get().runOnUiThread(new Runnable() {
             public void run() {
-                new LurkAdapter.LurkAsyncTask(weakActivity, weakContext, LurkAdapter.this, lurkViewHolder, streamingYorkieDB, lurkDataset.get(position)).execute();
+                new LurkAdapter.LurkAsyncTask(weakActivity, weakContext, LurkAdapter.this, lurkViewHolder, streamingYorkieDB, position).execute();
             }
         });
     }
@@ -95,16 +92,14 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      * Async Task to request Lurks and display it
      * @author LethalMaus
      */
-    private static class LurkAsyncTask extends AsyncTask<Void, Void, Void> {
+    private static class LurkAsyncTask extends AsyncTask<Void, Void, LurkEntity> {
 
         private WeakReference<Activity> weakActivity;
         private WeakReference<Context> weakContext;
         private StreamingYorkieDB streamingYorkieDB;
         private LurkAdapter lurkAdapter;
         private LurkAdapter.LurkViewHolder lurkViewHolder;
-        private String channel;
-        private String channelName;
-        private String logo;
+        private int position;
 
         /**
          * Async Task constructor
@@ -114,64 +109,94 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
          * @param lurkAdapter inner class reference
          * @param lurkViewHolder inner class reference
          * @param streamingYorkieDB inner class reference
-         * @param channel inner class reference
+         * @param position inner class reference
          */
-        LurkAsyncTask(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, LurkAdapter lurkAdapter, LurkAdapter.LurkViewHolder lurkViewHolder, StreamingYorkieDB streamingYorkieDB, String channel) {
+        LurkAsyncTask(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, LurkAdapter lurkAdapter, LurkAdapter.LurkViewHolder lurkViewHolder, StreamingYorkieDB streamingYorkieDB, int position) {
             this.weakActivity = weakActivity;
             this.weakContext = weakContext;
             this.streamingYorkieDB = streamingYorkieDB;
             this.lurkAdapter = lurkAdapter;
             this.lurkViewHolder = lurkViewHolder;
-            this.channel = channel;
+            this.position = position;
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            logo = "";
-            if (channel.contains("-")) {
-                String[] channelDetails = channel.split("-", 2);
-                String channelId = channelDetails[0];
-                channelName = channelDetails[1];
-                UserEntity userEntity = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId));
-                if (userEntity != null) {
-                    logo = userEntity.getLogo();
-                }
-            } else {
-                channelName = channel;
-            }
-            return null;
+        protected LurkEntity doInBackground(Void... params) {
+            return streamingYorkieDB.lurkDAO().getLurkByPosition(position);
         }
 
         @Override
-        protected void onPostExecute(Void x) {
+        protected void onPostExecute(LurkEntity lurk) {
             if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
                 TextView textView = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_username);
-                textView.setText(channelName);
-                if (!logo.isEmpty()) {
+                textView.setText(lurk.getChannelName());
+                if (lurk.getLogo() != null && !lurk.getLogo().isEmpty()) {
                     ImageView imageView = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_logo);
-                    Glide.with(weakContext.get()).load(logo).placeholder(R.drawable.user).into(imageView);
+                    Glide.with(weakContext.get()).load(lurk.getLogo()).placeholder(R.drawable.user).into(imageView);
                 }
-                ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
-                button1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Thread thread = new Thread() {
-                            public void run() {
-                                new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
-                                lurkAdapter.lurkDataset.remove(channel);
-                                lurkAdapter.datasetChanged();
-                            }
-                        };
-                        thread.start();
-                    }
-                });
+                if (!lurk.isChannelIsToBeLurked() || lurk.getHtml() == null || lurk.getHtml().isEmpty() ||  lurk.getBroadcastId() == null || lurk.getBroadcastId().isEmpty()) {
+                    ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
+                    button1.setImageResource(R.drawable.lurk);
+                    button1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new Thread() {
+                                public void run() {
+                                    lurk.setChannelIsToBeLurked(true);
+                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                    lurkAdapter.datasetChanged();
+                                }
+                            }.start();
+                        }
+                    });
+                    ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
+                    button2.setImageResource(R.drawable.delete);
+                    button2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new Thread() {
+                                public void run() {
+                                    streamingYorkieDB.lurkDAO().deleteLurkByChannelName(lurk.getChannelName());
+                                    lurkAdapter.datasetChanged();
+                                }
+                            }.start();
+                        }
+                    });
+                } else {
+                    ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
+                    button1.setImageResource(R.drawable.unlurk);
+                    button1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new Thread() {
+                                public void run() {
+                                    lurk.setChannelIsToBeLurked(false);
+                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                    lurkAdapter.datasetChanged();
+                                }
+                            }.start();
+                        }
+                    });
+                    ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
+                    button2.setImageResource(R.drawable.message);
+                    button2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new Thread() {
+                                public void run() {
+                                   //TODO open dialog & use chat bot to send message
+                                }
+                            }.start();
+                        }
+                    });
+                }
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return lurkDataset != null ? lurkDataset.size() : 0;
+        return  lurkCount < 0 ? 0 : lurkCount;
     }
 
     /**
@@ -179,54 +204,92 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      * @author LethalMaus
      */
     private void getLurks() {
-        if (new ReadFileHandler(weakActivity, weakContext, Globals.LURK_PATH).countFiles() > 0) {
-            lurkDataset = new ReadFileHandler(weakActivity, weakContext, Globals.LURK_PATH).readFileNames();
-            int videoCount = 0;
-            for (int i = 0; i < lurkDataset.size(); i++) {
-                String video = new ReadFileHandler(weakActivity, weakContext, Globals.LURK_PATH + File.separator + lurkDataset.get(i)).readFile();
-                if (video.isEmpty()) {
-                    new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView).newRequest(lurkDataset.get(i)).sendRequest();
-                } else {
-                    videoCount++;
-                }
-            }
-            if (videoCount == lurkDataset.size()) {
-                Thread thread = new Thread(){
-                    public void run(){
-                        Intent intent = new Intent(weakActivity.get(), LurkService.class);
-                        if (Build.VERSION.SDK_INT < 28) {
-                            weakActivity.get().startService(intent);
-                        } else {
-                            weakActivity.get().startForegroundService(intent);
+        new Thread() {
+            public void run() {
+                int lurkCount = getItemCount();
+                if (lurkCount > 0) {
+                    for (int i = 0; i < lurkCount; i++) {
+                        final LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByPosition(i);
+                        final StringBuilder htmlInjection = new StringBuilder();
+                        if (i == (lurkCount - 1)) {
+                            new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView) {
+                                @Override
+                                public void onCompletion() {
+                                    if (lurk.getHtml() != null && !lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
+                                        htmlInjection.append(lurk.getHtml());
+                                    }
+                                    new WriteFileHandler(weakActivity, weakContext, "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
+                                    new Thread() {
+                                        public void run() {
+                                            Intent intent = new Intent(weakActivity.get(), LurkService.class);
+                                            if (Build.VERSION.SDK_INT < 28) {
+                                                weakActivity.get().startService(intent);
+                                            } else {
+                                                weakActivity.get().startForegroundService(intent);
+                                            }
+                                        }
+                                    }.start();
+                                }
+                            }.newRequest(lurk.getChannelName()).initiate().sendRequest();
+                        } else if (!lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
+                            new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView) {
+                                @Override
+                                public void onCompletion() {
+                                    if (lurk.getHtml() != null && !lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
+                                        htmlInjection.append(lurk.getHtml());
+                                    }
+                                }
+                            }.newRequest(lurk.getChannelName()).initiate().sendRequest();
                         }
                     }
-                };
-                thread.start();
+                }
             }
-        }
+        }.start();
     }
 
     /**
      * Takes action once a dataset has been changed then notifies UI
      * @author LethalMaus
      */
-    private void datasetChanged() {
-        Thread thread = new Thread(){
+    public void datasetChanged() {
+        new Thread(){
             public void run() {
+                setLurkCount();
                 if (getItemCount() > 0) {
                     getLurks();
                 } else {
                     Intent intent = new Intent(weakActivity.get(), LurkService.class);
                     weakActivity.get().stopService(intent);
+                    new DeleteFileHandler(weakActivity, weakContext, "LURK.HTML").run();
                 }
                 weakActivity.get().runOnUiThread(
                         new Runnable() {
                             public void run() {
-                                notifyDataSetChanged();
+                                if (weakRecyclerView != null && weakRecyclerView.get() != null) {
+                                    weakRecyclerView.get().post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            notifyDataSetChanged();
+                                        }
+                                    });
+                                }
                             }
                         });
             }
-        };
-        thread.start();
+        }.start();
+    }
+
+    /**
+     * Method for counting files within channel directories
+     * @author LethalMaus
+     */
+    private void setLurkCount() {
+        lurkCount = streamingYorkieDB.lurkDAO().getLurkCount();
+        weakRecyclerView.get().post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 }

@@ -311,12 +311,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new Thread(new Runnable() {
                                     public void run() {
                                         streamingYorkieDB.vodDAO().updateVODExportStatusById(false, vodID);
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                datasetChanged();
-                                            }
-                                        });
+                                        datasetChanged();
                                     }
                                 }).start();
                             }
@@ -485,12 +480,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new Thread(new Runnable() {
                                     public void run() {
                                         streamingYorkieDB.vodDAO().updateVODExclusionStatusById(true, vodID);
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                datasetChanged();
-                                            }
-                                        });
+                                        datasetChanged();
                                     }
                                 }).start();
                             }
@@ -517,12 +507,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new Thread(new Runnable() {
                                     public void run() {
                                         streamingYorkieDB.vodDAO().updateVODExclusionStatusById(false, vodID);
-                                        recyclerView.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                datasetChanged();
-                                            }
-                                        });
+                                        datasetChanged();
                                     }
                                 }).start();
                             }
@@ -594,12 +579,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                     }
                                                 }
                                             }
-                                            recyclerView.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    datasetChanged();
-                                                }
-                                            });
+                                            datasetChanged();
                                         }
                                     }).start();
                                 }
@@ -613,12 +593,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     new Thread(new Runnable() {
                                         public void run() {
                                             streamingYorkieDB.vodDAO().removeExportedStatus();
-                                            recyclerView.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    datasetChanged();
-                                                }
-                                            });
+                                            datasetChanged();
                                         }
                                     }).start();
                                 }
@@ -632,12 +607,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     new Thread(new Runnable() {
                                         public void run() {
                                             streamingYorkieDB.vodDAO().removeExcludedStatus();
-                                            recyclerView.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    datasetChanged();
-                                                }
-                                            });
+                                            datasetChanged();
                                         }
                                     }).start();
                                 }
@@ -655,15 +625,19 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         pageCount1 = streamingYorkieDB.vodDAO().getCurrentVODsCount();
         pageCount2 = streamingYorkieDB.vodDAO().getExportedVODsCount();
         pageCount3 = streamingYorkieDB.vodDAO().getExcludedVODsCount();
-        notifyItemRangeRemoved(0, currentPageCount);
-        if (vodsType.contentEquals("CURRENT")) {
-            currentPageCount = pageCount1;
-        } else if (vodsType.contentEquals("EXPORTED")) {
-            currentPageCount = pageCount2;
-        } else if (vodsType.contentEquals("EXCLUDED")) {
-            currentPageCount = pageCount3;
-        }
-        notifyItemRangeInserted(0, currentPageCount);
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (vodsType.contentEquals("CURRENT")) {
+                    currentPageCount = pageCount1;
+                } else if (vodsType.contentEquals("EXPORTED")) {
+                    currentPageCount = pageCount2;
+                } else if (vodsType.contentEquals("EXCLUDED")) {
+                    currentPageCount = pageCount3;
+                }
+                notifyDataSetChanged();
+            }
+        });
     }
 
     /**

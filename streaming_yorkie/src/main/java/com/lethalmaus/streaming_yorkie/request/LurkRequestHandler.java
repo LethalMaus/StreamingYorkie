@@ -13,18 +13,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.adapter.LurkAdapter;
-import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
+import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Class for getting lurk Urls
@@ -71,7 +70,7 @@ public class LurkRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
+        new Thread() {
             public void run() {
                 try {
                     lurkToken = response.getString("token");
@@ -81,7 +80,24 @@ public class LurkRequestHandler extends RequestHandler {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading first Lurk Url JSON | " + e.toString(), true).run();
                 }
             }
-        }).start();
+        }.start();
+    }
+
+    @Override
+    void errorHandler(VolleyError error) {
+        if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+            streamingYorkieDB.lurkDAO().deleteLurkByChannelName(channel);
+            weakActivity.get().runOnUiThread(
+                    new Runnable() {
+                        public void run() {
+                            Toast.makeText(weakActivity.get(), "Unable to find channel '" + channel + "'", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+            );
+        } else {
+            String errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();
+        }
     }
 
     /**
@@ -91,36 +107,70 @@ public class LurkRequestHandler extends RequestHandler {
      */
     private void getLurkUrl(final String channelId) {
         if (networkIsAvailable(weakContext)) {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://usher.ttvnw.net/api/channel/hls/" + channel.toLowerCase() + ".m3u8?allow_source=true&allow_audio_only=true&baking_bread=true&baking_brownies=true&baking_brownies_timeout=1050&fast_bread=true&p=9293905&player_backend=mediaplayer&playlist_include_framerate=true&reassignments_supported=true&sig=" + signature + "&token=" + Uri.encode(lurkToken),
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://usher.ttvnw.net/api/channel/hls/" + channel.toLowerCase() + ".m3u8?allow_source=true&allow_audio_only=true&p=" + new Random().nextInt(999999) + "&player=twitchweb&type=any&sig=" + signature + "&token=" + Uri.encode(lurkToken),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            if (weakActivity != null && weakActivity.get() != null) {
-                                String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"")+18);
-                                String video = "<div id='" + channel + "'>"
-                                + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001'><source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel + "').outerHTML=\"\"'></video>"
-                                + "<iframe src='https://www.twitch.tv/embed/" + channel.toLowerCase() + "/chat'/>"
-                                + "</div>";
-                                System.out.println(video);
-                                new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
-                                new WriteFileHandler(weakActivity, weakContext, Globals.LURK_PATH + File.separator + channelId + "-" + channel, null, video, false).writeToFileOrPath();
-                                if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
-                                    recyclerView.get().setAdapter(new LurkAdapter(weakActivity, weakContext, recyclerView));
+                            new Thread() {
+                                public void run() {
+                                    String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"") + 18);
+                                    String broadcastId = response.substring(response.indexOf("BROADCAST-ID=\"") + 14);
+                                    broadcastId = broadcastId.substring(0, broadcastId.indexOf("\","));
+                                    String htmlBlock = "<div id='" + channel.toLowerCase().trim() + "'>"
+                                            + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001'>"
+                                            + "<source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel.toLowerCase().trim() + "').outerHTML=\"\"'>"
+                                            + "</video></div>";
+                                    LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(channel);
+                                    if (lurk.getChannelId() == 0 || lurk.getHtml().isEmpty() || !broadcastId.contentEquals(lurk.getBroadcastId())) {
+                                        if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
+                                            String logo = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId)).getLogo();
+                                            lurk.setLogo(logo.isEmpty() ? null : logo);
+                                        }
+                                        lurk.setChannelId(Integer.parseInt(channelId));
+                                        lurk.setBroadcastId(broadcastId);
+                                        lurk.setHtml(htmlBlock);
+                                        lurk.setChannelInformedOfLurk(false);
+                                        lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
+                                    } else {
+                                        lurk.setHtml(htmlBlock);
+                                    }
+                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                    onCompletion();
                                 }
-                            }
+                            }.start();
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    String errorMessage = "";
+                    String errorMessage;
                     if (error.networkResponse != null) {
                         errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
                         if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND || error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
-                            Toast.makeText(weakActivity.get(), "Stream from '" + channel + "' has ended", Toast.LENGTH_SHORT).show();
-                            new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.LURK_PATH + File.separator + channel);
-                            if (recyclerView != null && recyclerView.get() != null &&  recyclerView.get().getAdapter() != null) {
-                                recyclerView.get().setAdapter(new LurkAdapter(weakActivity, weakContext, recyclerView));
+                            if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                weakActivity.get().runOnUiThread(
+                                        new Runnable() {
+                                            public void run() {
+                                                Toast.makeText(weakActivity.get(), "'" + channel + "' is offline", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                );
                             }
+                            new Thread() {
+                                public void run() {
+                                    LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(channel);
+                                    if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
+                                        String logo = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId)).getLogo();
+                                        lurk.setLogo(logo.isEmpty() ? null : logo);
+                                    }
+                                    lurk.setChannelId(Integer.parseInt(channelId));
+                                    lurk.setBroadcastId(null);
+                                    lurk.setHtml(null);
+                                    lurk.setChannelInformedOfLurk(false);
+                                    lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
+                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                    onCompletion();
+                                }
+                            }.start();
                         } else {
                             if (errorMessage.isEmpty()) {
                                 errorMessage = error.toString();

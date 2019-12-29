@@ -199,15 +199,6 @@ public class VODEntity {
     }
 
     /**
-     * Set preview url
-     * @author LethalMaus
-     * @param preview String
-     */
-    public void setPreview(String preview) {
-        this.preview = preview;
-    }
-
-    /**
      * Is exported
      * @author LethalMaus
      * @return boolean exported

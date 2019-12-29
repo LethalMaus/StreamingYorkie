@@ -10,18 +10,20 @@ import com.lethalmaus.streaming_yorkie.dao.ChannelDAO;
 import com.lethalmaus.streaming_yorkie.dao.F4FDAO;
 import com.lethalmaus.streaming_yorkie.dao.FollowerDAO;
 import com.lethalmaus.streaming_yorkie.dao.FollowingDAO;
+import com.lethalmaus.streaming_yorkie.dao.LurkDAO;
 import com.lethalmaus.streaming_yorkie.dao.VODDAO;
 import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
 import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
 import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
+import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
 import com.lethalmaus.streaming_yorkie.entity.VODEntity;
 
 /**
  * Streaming Yorkie Database
  * @author LethalMaus
  */
-@Database(entities = {FollowerEntity.class, FollowingEntity.class, F4FEntity.class, ChannelEntity.class, VODEntity.class}, exportSchema = false, version = 1)
+@Database(entities = {FollowerEntity.class, FollowingEntity.class, F4FEntity.class, ChannelEntity.class, VODEntity.class, LurkEntity.class}, exportSchema = false, version = 1)
 public abstract class StreamingYorkieDB extends RoomDatabase {
     private static final String DB_NAME = "streaming_yorkie";
     private static StreamingYorkieDB steamingYorkieDBInstance;
@@ -70,8 +72,15 @@ public abstract class StreamingYorkieDB extends RoomDatabase {
     /**
      * Abstract VODDAO
      * @author LethalMaus
-     * @return ChannelDAO
+     * @return VODDAO
      */
     public abstract VODDAO vodDAO();
+
+    /**
+     * Abstract LurkDAO
+     * @author LethalMaus
+     * @return LurkDAO
+     */
+    public abstract LurkDAO lurkDAO();
 
 }

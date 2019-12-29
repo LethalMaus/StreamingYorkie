@@ -76,7 +76,7 @@ public class AutoFollowWorker extends Worker {
                 new File(weakContext.get().getFilesDir().toString() + File.separator + "FOLLOWING_EXCLUDED").exists()
                 || new File(weakContext.get().getFilesDir().toString() + File.separator + "FOLLOWERS_EXCLUDED").exists()
                 || new File(weakContext.get().getFilesDir().toString() + File.separator + "F4F_EXCLUDED").exists())) {
-            new Thread(new Runnable() {
+            new Thread() {
                 public void run() {
                     try {
                         ArrayList<String> excluded = new ReadFileHandler(null, weakContext, "FOLLOWING_EXCLUDED").readFileNames();
@@ -126,7 +126,7 @@ public class AutoFollowWorker extends Worker {
                         new WriteFileHandler(null, weakContext, "ERROR", null, "Error migrating local files to DB: " + e.toString(), true).run();
                     }
                 }
-            }).start();
+            }.start();
         }
         final FollowingUpdateRequestHandler followingUpdateRequestHandler = new FollowingUpdateRequestHandler(null, weakContext, null) {
             @Override

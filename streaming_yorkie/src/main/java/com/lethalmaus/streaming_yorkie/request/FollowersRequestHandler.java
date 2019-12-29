@@ -50,7 +50,7 @@ public class FollowersRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
+        new Thread() {
             public void run() {
                 try {
                     offset += Globals.USER_REQUEST_LIMIT;
@@ -107,12 +107,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                         recyclerView.get().stopScroll();
                                         recyclerView.get().scrollToPosition(0);
                                         recyclerView.get().getRecycledViewPool().clear();
-                                        recyclerView.get().post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                userAdapter.datasetChanged();
-                                            }
-                                        });
+                                        userAdapter.datasetChanged();
                                     }
                                 });
                             }
@@ -139,6 +134,6 @@ public class FollowersRequestHandler extends RequestHandler {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Followers response error | " + e.toString(), true).run();
                 }
             }
-        }).start();
+        }.start();
     }
 }
