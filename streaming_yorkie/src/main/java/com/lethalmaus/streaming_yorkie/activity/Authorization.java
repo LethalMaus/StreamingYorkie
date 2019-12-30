@@ -141,13 +141,13 @@ public class Authorization extends AppCompatActivity {
     protected void promptUser() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Authorization.this, R.style.CustomDialog);
         builder.setPositiveButton("OK", (DialogInterface dialog, int id) -> {
-             new Thread() {
-                    public void run() {
-                        StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
-                        streamingYorkieDB.clearAllTables();
-                        new DeleteFileHandler(weakActivity, weakContext, "").deleteFileOrPath("");
-                    }
-                }.start();
+            new Thread() {
+                public void run() {
+                    StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
+                    streamingYorkieDB.clearAllTables();
+                    new DeleteFileHandler(weakActivity, weakContext, "").deleteFileOrPath("");
+                }
+            }.start();
             new DeleteFileHandler(weakActivity, weakContext, "").run();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -227,4 +227,3 @@ public class Authorization extends AppCompatActivity {
         }
     }
 }
-
