@@ -38,6 +38,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
     private WeakReference<RecyclerView> weakRecyclerView;
     private StreamingYorkieDB streamingYorkieDB;
     private int lurkCount = 0;
+    private int lurkResponseCount;
 
     /**
      * Simple View Holder for loading the View with a Dataset Row
@@ -69,7 +70,6 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
         this.weakContext = weakContext;
         this.weakRecyclerView = weakRecyclerView;
         streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
-        getLurks();
     }
 
     @Override
@@ -200,24 +200,26 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
     }
 
     /**
-     * Method for getting Lurk objects
+     * Method for getting Lurk HTML
      * @author LethalMaus
      */
-    private void getLurks() {
+    private void getLurkHTML() {
         new Thread() {
             public void run() {
-                int lurkCount = getItemCount();
+                int lurkCount = streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount();
                 if (lurkCount > 0) {
+                    final StringBuilder htmlInjection = new StringBuilder();
+                    lurkResponseCount = 0;
                     for (int i = 0; i < lurkCount; i++) {
-                        final LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByPosition(i);
-                        final StringBuilder htmlInjection = new StringBuilder();
-                        if (i == (lurkCount - 1)) {
-                            new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView) {
-                                @Override
-                                public void onCompletion() {
-                                    if (lurk.getHtml() != null && !lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
-                                        htmlInjection.append(lurk.getHtml());
-                                    }
+                        final LurkEntity lurk = streamingYorkieDB.lurkDAO().getChannelsToBeLurkedByPosition(i);
+                        new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView) {
+                            @Override
+                            public void onCompletion() {
+                                lurkResponseCount++;
+                                if (lurk.getHtml() != null && !lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
+                                    htmlInjection.append(lurk.getHtml());
+                                }
+                                if (lurkResponseCount == lurkCount) {
                                     new WriteFileHandler(weakActivity, weakContext, "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
                                     new Thread() {
                                         public void run() {
@@ -230,17 +232,8 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                                         }
                                     }.start();
                                 }
-                            }.newRequest(lurk.getChannelName()).initiate().sendRequest();
-                        } else if (!lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
-                            new LurkRequestHandler(weakActivity, weakContext, weakRecyclerView) {
-                                @Override
-                                public void onCompletion() {
-                                    if (lurk.getHtml() != null && !lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
-                                        htmlInjection.append(lurk.getHtml());
-                                    }
-                                }
-                            }.newRequest(lurk.getChannelName()).initiate().sendRequest();
-                        }
+                            }
+                        }.newRequest(lurk.getChannelName()).initiate().sendRequest();
                     }
                 }
             }
@@ -255,26 +248,13 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
         new Thread(){
             public void run() {
                 setLurkCount();
-                if (getItemCount() > 0) {
-                    getLurks();
+                if (streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount() > 0) {
+                    getLurkHTML();
                 } else {
                     Intent intent = new Intent(weakActivity.get(), LurkService.class);
                     weakActivity.get().stopService(intent);
                     new DeleteFileHandler(weakActivity, weakContext, "LURK.HTML").run();
                 }
-                weakActivity.get().runOnUiThread(
-                        new Runnable() {
-                            public void run() {
-                                if (weakRecyclerView != null && weakRecyclerView.get() != null) {
-                                    weakRecyclerView.get().post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            notifyDataSetChanged();
-                                        }
-                                    });
-                                }
-                            }
-                        });
             }
         }.start();
     }

@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import com.lethalmaus.streaming_yorkie.Globals;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -98,6 +99,7 @@ public class LurkRequestHandler extends RequestHandler {
             String errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();
         }
+        onCompletion();
     }
 
     /**
@@ -113,28 +115,35 @@ public class LurkRequestHandler extends RequestHandler {
                         public void onResponse(String response) {
                             new Thread() {
                                 public void run() {
-                                    String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"") + 18);
-                                    String broadcastId = response.substring(response.indexOf("BROADCAST-ID=\"") + 14);
-                                    broadcastId = broadcastId.substring(0, broadcastId.indexOf("\","));
-                                    String htmlBlock = "<div id='" + channel.toLowerCase().trim() + "'>"
-                                            + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001'>"
-                                            + "<source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel.toLowerCase().trim() + "').outerHTML=\"\"'>"
-                                            + "</video></div>";
                                     LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(channel);
-                                    if (lurk.getChannelId() == 0 || lurk.getHtml().isEmpty() || !broadcastId.contentEquals(lurk.getBroadcastId())) {
-                                        if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
-                                            String logo = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId)).getLogo();
-                                            lurk.setLogo(logo.isEmpty() ? null : logo);
+                                    String broadcastId = response.substring(response.indexOf("BROADCAST-ID=\"") + 14);
+                                    if (lurk.getBroadcastId() == null || !broadcastId.contentEquals(lurk.getBroadcastId())) {
+                                        String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"") + 18);
+                                        broadcastId = broadcastId.substring(0, broadcastId.indexOf("\","));
+                                        String htmlBlock = "<div id='" + channel.toLowerCase().trim() + "'>"
+                                                + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001'>"
+                                                + "<source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel.toLowerCase().trim() + "').outerHTML=\"\"'>"
+                                                + "</video></div>";
+                                        if (lurk.getChannelId() == 0 || lurk.getHtml().isEmpty()) {
+                                            if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
+                                                FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId));
+                                                if (following == null) {
+                                                    //TODO send request to get logo
+                                                } else {
+                                                    String logo = following.getLogo();
+                                                    lurk.setLogo(logo);
+                                                }
+                                            }
+                                            lurk.setChannelId(Integer.parseInt(channelId));
+                                            lurk.setBroadcastId(broadcastId);
+                                            lurk.setHtml(htmlBlock);
+                                            lurk.setChannelInformedOfLurk(false);
+                                            lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
+                                        } else {
+                                            lurk.setHtml(htmlBlock);
                                         }
-                                        lurk.setChannelId(Integer.parseInt(channelId));
-                                        lurk.setBroadcastId(broadcastId);
-                                        lurk.setHtml(htmlBlock);
-                                        lurk.setChannelInformedOfLurk(false);
-                                        lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
-                                    } else {
-                                        lurk.setHtml(htmlBlock);
+                                        streamingYorkieDB.lurkDAO().updateLurk(lurk);
                                     }
-                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
                                     onCompletion();
                                 }
                             }.start();
@@ -159,8 +168,13 @@ public class LurkRequestHandler extends RequestHandler {
                                 public void run() {
                                     LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(channel);
                                     if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
-                                        String logo = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId)).getLogo();
-                                        lurk.setLogo(logo.isEmpty() ? null : logo);
+                                        FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId));
+                                        if (following == null) {
+                                            //TODO send request to get logo
+                                        } else {
+                                            String logo = following.getLogo();
+                                            lurk.setLogo(logo);
+                                        }
                                     }
                                     lurk.setChannelId(Integer.parseInt(channelId));
                                     lurk.setBroadcastId(null);
@@ -168,7 +182,6 @@ public class LurkRequestHandler extends RequestHandler {
                                     lurk.setChannelInformedOfLurk(false);
                                     lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
                                     streamingYorkieDB.lurkDAO().updateLurk(lurk);
-                                    onCompletion();
                                 }
                             }.start();
                         } else {
@@ -181,7 +194,7 @@ public class LurkRequestHandler extends RequestHandler {
                         errorMessage = error.toString();
                         new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
                     }
-
+                    onCompletion();
                 }
             });
             stringRequest.setTag(requestType);

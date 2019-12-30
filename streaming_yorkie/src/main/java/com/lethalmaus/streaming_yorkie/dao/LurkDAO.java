@@ -34,6 +34,15 @@ public interface LurkDAO {
     LurkEntity getLurkByPosition(int offset);
 
     /**
+     * Get current channels to be lurked by position
+     * @author LethalMaus
+     * @param offset position
+     * @return LurkEntity
+     */
+    @Query("SELECT * FROM lurk WHERE channelIsToBeLurked = 1 ORDER BY channelName ASC LIMIT 1 OFFSET :offset")
+    LurkEntity getChannelsToBeLurkedByPosition(int offset);
+
+    /**
      * Get current Lurks by position
      * @author LethalMaus
      * @return ArrayList of Strings
@@ -42,12 +51,20 @@ public interface LurkDAO {
     String[] getChannelsToBeLurked();
 
     /**
-     * Get total LurkEntity Count
+     * Get total LurkEntity count
      * @author LethalMaus
      * @return int count
      */
     @Query("SELECT COUNT() FROM lurk")
     int getLurkCount();
+
+    /**
+     * Get total channels to be lurked count
+     * @author LethalMaus
+     * @return int count
+     */
+    @Query("SELECT COUNT() FROM lurk WHERE channelIsToBeLurked = 1")
+    int getChannelsToBeLurkedCount();
 
     /**
      * Inserts a LurkEntity and replaces on conflict

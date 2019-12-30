@@ -65,7 +65,12 @@ public class Lurk extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         LurkAdapter lurkAdapter = new LurkAdapter(weakActivity, weakContext, new WeakReference<>(recyclerView));
         recyclerView.setAdapter(lurkAdapter);
-        lurkAdapter.datasetChanged();
+        recyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                lurkAdapter.datasetChanged();
+            }
+        });
 
         ImageView lurk_start = findViewById(R.id.lurk_start);
         lurk_start.setOnClickListener(new View.OnClickListener() {
@@ -78,23 +83,25 @@ public class Lurk extends AppCompatActivity {
                     recyclerView.scrollToPosition(0);
                     recyclerView.getRecycledViewPool().clear();
                     LurkAdapter lurkAdapter = (LurkAdapter) recyclerView.getAdapter();
-                    if (lurkAdapter != null) {
+                    if (lurkAdapter != null && channelInput != null && channelInput.getText().toString().replaceAll("\\s", "").length() > 0) {
                         new Thread() {
                             public void run() {
                                 LurkDAO lurkDAO = StreamingYorkieDB.getInstance(getApplicationContext()).lurkDAO();
                                 lurkDAO.insertLurk(new LurkEntity(channelInput.getText().toString().replaceAll("\\s", ""), 0, null, null, null, false, true));
-                                recyclerView.post(new Runnable() {
+                                new LurkRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)) {
                                     @Override
-                                    public void run() {
-                                        lurkAdapter.datasetChanged();
+                                    public void onCompletion() {
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                lurkAdapter.datasetChanged();
+                                            }
+                                        });
                                     }
-                                });
+                                }.newRequest(channelInput.getText().toString().replaceAll("\\s", "")).initiate().sendRequest();
+                                channelInput.setText("");
                             }
                         }.start();
-                    }
-                    if (channelInput != null && channelInput.getText().toString().replaceAll("\\s", "").length() > 0) {
-                        new LurkRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)).newRequest(channelInput.getText().toString().replaceAll("\\s", "")).initiate().sendRequest();
-                        channelInput.setText("");
                     }
                 }
             }
