@@ -124,7 +124,7 @@ public class LurkRequestHandler extends RequestHandler {
                                                 + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.000001'>"
                                                 + "<source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel.toLowerCase().trim() + "').outerHTML=\"\"'>"
                                                 + "</video></div>";
-                                        if (lurk.getChannelId() == 0 || lurk.getHtml().isEmpty()) {
+                                        if (lurk.getChannelId() == 0 || lurk.getHtml() == null || lurk.getHtml().isEmpty()) {
                                             if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
                                                 FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(channelId));
                                                 if (following == null) {
@@ -182,6 +182,7 @@ public class LurkRequestHandler extends RequestHandler {
                                     lurk.setChannelInformedOfLurk(false);
                                     lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
                                     streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                    onCompletion();
                                 }
                             }.start();
                         } else {
@@ -189,12 +190,13 @@ public class LurkRequestHandler extends RequestHandler {
                                 errorMessage = error.toString();
                             }
                             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
+                            onCompletion();
                         }
                     } else {
                         errorMessage = error.toString();
                         new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting second Lurk Url | " + errorMessage, true).run();
+                        onCompletion();
                     }
-                    onCompletion();
                 }
             });
             stringRequest.setTag(requestType);

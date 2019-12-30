@@ -59,6 +59,9 @@ public class LurkService extends Service {
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         networkUsageMonitorRunning = false;
         streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
+        if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+            token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
+        }
     }
 
     @Override
@@ -109,14 +112,7 @@ public class LurkService extends Service {
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setDomStorageEnabled(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-/*
-                if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-                    token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
-                }
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "OAuth " + token);
-                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML", headers);
- */
+
             webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
             windowManager.addView(webView, params);
             showNotification(false);

@@ -1,6 +1,7 @@
 package com.lethalmaus.streaming_yorkie.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -8,9 +9,11 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,12 +21,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
+import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.LurkRequestHandler;
 import com.lethalmaus.streaming_yorkie.service.LurkService;
 
+import org.pircbotx.Configuration;
+import org.pircbotx.PircBotX;
+import org.pircbotx.cap.EnableCapHandler;
+import org.pircbotx.hooks.ListenerAdapter;
+
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -81,11 +92,9 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final LurkAdapter.LurkViewHolder lurkViewHolder, final int position) {
-        weakActivity.get().runOnUiThread(new Runnable() {
-            public void run() {
-                new LurkAdapter.LurkAsyncTask(weakActivity, weakContext, LurkAdapter.this, lurkViewHolder, streamingYorkieDB, position).execute();
-            }
-        });
+        weakActivity.get().runOnUiThread( () ->
+            new LurkAdapter.LurkAsyncTask(weakActivity, weakContext, LurkAdapter.this, lurkViewHolder, streamingYorkieDB, position).execute()
+        );
     }
 
     /**
@@ -137,57 +146,55 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                 if (!lurk.isChannelIsToBeLurked() || lurk.getHtml() == null || lurk.getHtml().isEmpty() ||  lurk.getBroadcastId() == null || lurk.getBroadcastId().isEmpty()) {
                     ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
                     button1.setImageResource(R.drawable.lurk);
-                    button1.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            new Thread() {
-                                public void run() {
-                                    lurk.setChannelIsToBeLurked(true);
-                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
-                                    lurkAdapter.datasetChanged();
-                                }
-                            }.start();
-                        }
-                    });
+                    button1.setOnClickListener((View v) ->
+                        new Thread() {
+                            public void run() {
+                                lurk.setChannelIsToBeLurked(true);
+                                streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                lurkAdapter.datasetChanged();
+                            }
+                        }.start()
+                    );
                     ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
                     button2.setImageResource(R.drawable.delete);
-                    button2.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    button2.setOnClickListener((View v) ->
                             new Thread() {
                                 public void run() {
                                     streamingYorkieDB.lurkDAO().deleteLurkByChannelName(lurk.getChannelName());
                                     lurkAdapter.datasetChanged();
                                 }
-                            }.start();
-                        }
-                    });
+                            }.start()
+                    );
                 } else {
                     ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
                     button1.setImageResource(R.drawable.unlurk);
-                    button1.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    button1.setOnClickListener((View v) ->
                             new Thread() {
                                 public void run() {
                                     lurk.setChannelIsToBeLurked(false);
                                     streamingYorkieDB.lurkDAO().updateLurk(lurk);
                                     lurkAdapter.datasetChanged();
                                 }
-                            }.start();
-                        }
-                    });
+                            }.start()
+                    );
                     ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
                     button2.setImageResource(R.drawable.message);
-                    button2.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            new Thread() {
-                                public void run() {
-                                   //TODO open dialog & use chat bot to send message
-                                }
-                            }.start();
-                        }
+                    button2.setOnClickListener((View v) -> {
+                        final Dialog dialog = new Dialog(weakActivity.get());
+                        dialog.setTitle(R.string.lurk_dialog_title);
+                        dialog.setContentView(R.layout.lurk_message_dialog);
+
+                        dialog.findViewById(R.id.dialog_cancel).setOnClickListener((View view) ->
+                                dialog.dismiss()
+                        );
+                        dialog.findViewById(R.id.dialog_send).setOnClickListener((View view) -> {
+                            EditText editText = dialog.findViewById(R.id.dialog_message);
+                            if (!editText.getText().toString().trim().isEmpty()) {
+                                lurkAdapter.sendLurkMessage(lurk.getChannelName().toLowerCase(), editText.getText().toString());
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
                     });
                 }
             }
@@ -265,11 +272,61 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      */
     private void setLurkCount() {
         lurkCount = streamingYorkieDB.lurkDAO().getLurkCount();
-        weakRecyclerView.get().post(new Runnable() {
-            @Override
+        weakRecyclerView.get().post(this::notifyDataSetChanged);
+    }
+
+    /**
+     * Method for sending a message to the lurked channel chat
+     * @author LethalMaus
+     * @param channel String channel name
+     * @param message String message to be sent
+     */
+    private void sendLurkMessage(String channel, String message) {
+        new Thread() {
             public void run() {
-                notifyDataSetChanged();
+                if (new File(weakActivity.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+                    String token = new ReadFileHandler(null, new WeakReference<>(weakContext.get()), "TOKEN").readFile();
+                    ChannelEntity channelEntity = StreamingYorkieDB.getInstance(weakActivity.get()).channelDAO().getChannel();
+                    if (channelEntity != null) {
+                        Configuration configuration = new Configuration.Builder()
+                                .setAutoNickChange(false)
+                                .setOnJoinWhoEnabled(false)
+                                .setCapEnabled(true)
+                                .addCapHandler(new EnableCapHandler("twitch.tv/membership"))
+                                .addServer("irc.twitch.tv")
+                                .setName(Integer.toString(channelEntity.getId()).toLowerCase())
+                                .setServerPassword("oauth:" + token)
+                                .addAutoJoinChannel("#" + channel)
+                                .addListener(new ListenerAdapter() {})
+                                .buildConfiguration();
+                        PircBotX bot = new PircBotX(configuration);
+                        new Thread() {
+                            public void run() {
+                                try {
+                                    bot.startBot();
+                                } catch (Exception e) {
+                                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error starting chat: " + e.toString(), true).run();
+                                }
+                            }
+                        }.start();
+                        try {
+                            //Wait for bot to start as the above method blocks the thread
+                            Thread.sleep(1000);
+                            if (bot.isConnected()) {
+                                bot.sendIRC().message("#" + channel, message);
+                                bot.close();
+                                if (weakActivity != null && weakActivity.get() != null) {
+                                    weakActivity.get().runOnUiThread(() ->
+                                            Toast.makeText(weakActivity.get(), "Message sent", Toast.LENGTH_SHORT).show()
+                                    );
+                                }
+                            }
+                        } catch (Exception e) {
+                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error sending to chat: " + e.toString(), true).run();
+                        }
+                    }
+                }
             }
-        });
+        }.start();
     }
 }

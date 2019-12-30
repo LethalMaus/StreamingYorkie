@@ -134,4 +134,9 @@
     <string name="multi_start">Start Multi Twitch</string>
     <string name="lurk_start">Start Lurk</string>
     <string name="lurk_input">Enter a Twitch channel name&#8230;</string>
+    <string name="lurk_dialog_title">Send a message</string>
+    <string name="lurk_dialog_message_title">Message:</string>
+    <string name="lurk_dialog_message_hint">Enter a message</string>
+    <string name="lurk_dialog_send">Send</string>
+    <string name="dialog_cancel">Cancel</string>
 </resources>

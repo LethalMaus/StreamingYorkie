@@ -217,8 +217,8 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                     action2.setVisibility(View.VISIBLE);
                     new Thread(new Runnable() {
                         public void run() {
-                            vodAdapter.editButton(action1, actionButtonType1, vodEntity.getId());
-                            vodAdapter.editButton(action2, actionButtonType2, vodEntity.getId());
+                            vodAdapter.editButton(action1, actionButtonType1, vodEntity);
+                            vodAdapter.editButton(action2, actionButtonType2, vodEntity);
                         }
                     }).start();
                 }
@@ -272,24 +272,21 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      * @param button which button is to be changed
      * @param actionButtonType a constant of the action button type
-     * @param vodID the channel id which is related to the button
+     * @param vodEntity the channel id which is related to the button
      */
-    private void editButton(final ImageButton button, final String actionButtonType, final int vodID) {
-        if (actionButtonType != null && actionButtonType.contentEquals("EXPORT") && !streamingYorkieDB.vodDAO().isVODExported(vodID)) {
-            exportButton(button, vodID);
+    private void editButton(final ImageButton button, final String actionButtonType, final VODEntity vodEntity) {
+        if (actionButtonType != null && actionButtonType.contentEquals("EXPORT") && !vodEntity.isExported()) {
+            exportButton(button, vodEntity);
         } else if (actionButtonType != null && actionButtonType.contentEquals("DELETE")) {
-            deleteButton(button, vodID);
+            deleteButton(button, vodEntity);
         } else if (actionButtonType != null && actionButtonType.contentEquals("EXCLUDE")) {
-            excludeButton(button, vodID);
+            excludeButton(button, vodEntity);
         } else if (actionButtonType != null && actionButtonType.contentEquals("INCLUDE")) {
-            includeButton(button, vodID);
+            includeButton(button, vodEntity);
         } else {
-            weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            button.setVisibility(View.INVISIBLE);
-                        }
-                    });
+            weakActivity.get().runOnUiThread(() ->
+                    button.setVisibility(View.INVISIBLE)
+            );
         }
     }
 
@@ -297,36 +294,31 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * Button for deleting a VODEntity from the exported view and current view (if expired in twitch)
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID exported VODEntity to be deleted
+     * @param vodEntity exported VODEntity to be deleted
      */
-    private void deleteButton(final ImageButton imageButton, final int vodID) {
-        weakActivity.get().runOnUiThread(
-                new Runnable() {
-                    public void run() {
-                        imageButton.setImageResource(R.drawable.delete);
-                        imageButton.setTag("DELETE_BUTTON");
-                        imageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        streamingYorkieDB.vodDAO().updateVODExportStatusById(false, vodID);
-                                        datasetChanged();
-                                    }
-                                }).start();
-                            }
-                        });
-                    }
-                });
+    private void deleteButton(final ImageButton imageButton, final VODEntity vodEntity) {
+        weakActivity.get().runOnUiThread(() -> {
+            imageButton.setImageResource(R.drawable.delete);
+            imageButton.setTag("DELETE_BUTTON");
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new Thread(() -> {
+                        streamingYorkieDB.vodDAO().updateVODExportStatusById(false, vodEntity.getId());
+                        datasetChanged();
+                    }).start();
+                }
+            });
+        });
     }
 
     /**
      * Button for exporting a VODEntity that hasn't already been exported
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID VODEntity to be exported
+     * @param vodEntity VODEntity to be exported
      */
-    private void exportButton(final ImageButton imageButton, final int vodID) {
+    private void exportButton(final ImageButton imageButton, final VODEntity vodEntity) {
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
@@ -337,7 +329,6 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             public void onClick(View v) {
                                 new Thread(new Runnable() {
                                     public void run() {
-                                        final VODEntity vodEntity = streamingYorkieDB.vodDAO().getVODById(vodID);
                                         title = vodEntity.getTitle();
                                         description = vodEntity.getDescription();
                                         tags = vodEntity.getTag_list();
@@ -436,7 +427,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                                             }
                                                                             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
                                                                         }
-                                                                        vodExportRequestHandler.setVodId(vodID).setPostBody(body).sendRequest();
+                                                                        vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest();
                                                                         if (weakActivity != null && weakActivity.get() != null) {
                                                                             weakActivity.get().runOnUiThread(
                                                                                     new Runnable() {
@@ -466,9 +457,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * Button for excluding a VODEntity from automation and other views
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID channel to be excluded
+     * @param vodEntity VOD to be excluded
      */
-    private void excludeButton(final ImageButton imageButton, final int vodID) {
+    private void excludeButton(final ImageButton imageButton, final VODEntity vodEntity) {
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
@@ -479,7 +470,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             public void onClick(View v) {
                                 new Thread(new Runnable() {
                                     public void run() {
-                                        streamingYorkieDB.vodDAO().updateVODExclusionStatusById(true, vodID);
+                                        streamingYorkieDB.vodDAO().updateVODExclusionStatusById(true, vodEntity.getId());
                                         datasetChanged();
                                     }
                                 }).start();
@@ -493,9 +484,9 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * Button for including a VODEntity to automation and other views
      * @author LethalMaus
      * @param imageButton button view
-     * @param vodID VODEntity to be included
+     * @param vodEntity VODEntity to be included
      */
-    private void includeButton(final ImageButton imageButton, final int vodID) {
+    private void includeButton(final ImageButton imageButton, final VODEntity vodEntity) {
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
@@ -506,7 +497,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                             public void onClick(View v) {
                                 new Thread(new Runnable() {
                                     public void run() {
-                                        streamingYorkieDB.vodDAO().updateVODExclusionStatusById(false, vodID);
+                                        streamingYorkieDB.vodDAO().updateVODExclusionStatusById(false, vodEntity.getId());
                                         datasetChanged();
                                     }
                                 }).start();
