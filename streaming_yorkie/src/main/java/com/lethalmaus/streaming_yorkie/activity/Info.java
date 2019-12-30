@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +37,7 @@ public class Info extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.weakActivity = new WeakReference<Activity>(this);
+        this.weakActivity = new WeakReference<>(this);
         this.weakContext = new WeakReference<>(getApplicationContext());
         setContentView(R.layout.info);
         if (getSupportActionBar() != null) {
@@ -49,98 +47,68 @@ public class Info extends AppCompatActivity {
         requestHandler = new DevInfoRequestHandler(weakActivity, weakContext);
         requestHandler.sendRequest();
 
-        ImageView developer_Logo = findViewById(R.id.info_developer);
-        developer_Logo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (showDevLogs > 0) {
-                    showDevLogs--;
-                } else {
-                    Intent intent = new Intent(Info.this, Logs.class);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        //Link to StreamingYorkie Guide on Github
-        ImageButton readme = findViewById(R.id.info_readme);
-        readme.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide");
-                    }
-                });
-
-        //Offline help/guide
-        ImageView help = findViewById(R.id.info_help);
-        help.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Info.this, InfoGuide.class);
+        findViewById(R.id.info_developer).setOnClickListener((View v) -> {
+            if (showDevLogs > 0) {
+                showDevLogs--;
+            } else {
+                Intent intent = new Intent(Info.this, Logs.class);
                 startActivity(intent);
             }
         });
 
+        //Link to StreamingYorkie Guide on Github
+        findViewById(R.id.info_readme).setOnClickListener(
+                (View v) -> openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide")
+        );
+
+        //Offline help/guide
+        findViewById(R.id.info_help).setOnClickListener((View v) -> {
+            Intent intent = new Intent(Info.this, InfoGuide.class);
+            startActivity(intent);
+        });
+
         //Link to Updates done available on Github
-        ImageButton updates = findViewById(R.id.info_updates);
-        updates.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates");
-                    }
-                });
+        findViewById(R.id.info_updates).setOnClickListener(
+                (View v) ->
+                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates")
+
+        );
 
         //Link to Source Code on Github
-        ImageButton source_code = findViewById(R.id.info_source_code);
-        source_code.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://github.com/LethalMaus/StreamingYorkie?files=1");
-                    }
-                });
+        findViewById(R.id.info_source_code).setOnClickListener(
+                (View v) ->
+                        openLink("https://github.com/LethalMaus/StreamingYorkie?files=1")
+        );
 
         //Link to Contact options on Github for donations
-        ImageButton contact = findViewById(R.id.info_contact);
-        contact.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact");
-                    }
-                });
+        findViewById(R.id.info_contact).setOnClickListener(
+                (View v) ->
+                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact")
+
+        );
 
         //Link to Twitch for entertainment
-        ImageButton twitch = findViewById(R.id.info_twitch);
-        twitch.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://twitch.tv/LethalMaus");
-                    }
-                });
+        findViewById(R.id.info_twitch).setOnClickListener(
+                (View v) ->
+                        openLink("https://twitch.tv/LethalMaus")
+
+        );
 
         //Link to Patreon for membership
-        ImageButton patreon = findViewById(R.id.info_patreon);
-        patreon.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://patreon.com/LethalMaus");
-                    }
-                });
+        findViewById(R.id.info_patreon).setOnClickListener(
+                (View v) ->
+                        openLink("https://patreon.com/LethalMaus")
+        );
 
         //Link to Github for Open Source Projects
-        ImageButton github = findViewById(R.id.info_github);
-        github.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        openLink("https://github.com/LethalMaus/");
-                    }
-                });
+        findViewById(R.id.info_github).setOnClickListener(
+                (View v) ->
+                        openLink("https://github.com/LethalMaus/")
+        );
+
+        findViewById(R.id.info_discord).setOnClickListener(
+                (View v) ->
+                        openLink("https://discord.gg/vkCHjVm"));
 
         TextView appVersion = findViewById(R.id.info_app_version);
         appVersion.setText(BuildConfig.VERSION_NAME);
