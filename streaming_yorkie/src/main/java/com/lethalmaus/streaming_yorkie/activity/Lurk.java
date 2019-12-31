@@ -68,7 +68,7 @@ public class Lurk extends AppCompatActivity {
         recyclerView.post(new Runnable() {
             @Override
             public void run() {
-                lurkAdapter.datasetChanged();
+                lurkAdapter.datasetChanged(false);
             }
         });
 
@@ -94,7 +94,7 @@ public class Lurk extends AppCompatActivity {
                                         recyclerView.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                lurkAdapter.datasetChanged();
+                                                lurkAdapter.datasetChanged(false);
                                             }
                                         });
                                     }

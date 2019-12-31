@@ -34,7 +34,6 @@ import org.pircbotx.hooks.ListenerAdapter;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 
 /**
  * Service for creating a Background WebView Lurk
