@@ -217,15 +217,16 @@ public class LurkService extends Service {
     private void activateChatBot(String channel) {
         new Thread() {
             public void run() {
-                ChannelEntity channelEntity = StreamingYorkieDB.getInstance(getApplicationContext()).channelDAO().getChannel();
+                ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
                 if (channelEntity != null) {
                     Configuration configuration = new Configuration.Builder()
+                            .setAutoReconnect(true)
                             .setAutoNickChange(false)
                             .setOnJoinWhoEnabled(false)
                             .setCapEnabled(true)
                             .addCapHandler(new EnableCapHandler("twitch.tv/membership"))
                             .addServer("irc.twitch.tv")
-                            .setName(Integer.toString(channelEntity.getId()).toLowerCase())
+                            .setName(channelEntity.getDisplay_name())
                             .setServerPassword("oauth:" + token)
                             .addAutoJoinChannel("#" + channel.toLowerCase())
                             .addListener(new ListenerAdapter(){})

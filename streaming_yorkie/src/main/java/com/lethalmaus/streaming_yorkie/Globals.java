@@ -54,11 +54,15 @@ public class Globals {
     //Settings object keys
     public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
     public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";
+    public static final String SETTINGS_AUTOLURK = "AutoLurk";
     public static final String SETTINGS_INTERVAL = "Interval";
     public static final String SETTINGS_INTERVAL_UNIT = "IntervalUnit";
     public static final String SETTINGS_NOTIFICATIONS = "Notifications";
     public static final String SETTINGS_VISIBILITY = "Visibility";
     public static final String SETTINGS_SPLIT = "Split";
+    public static final String SETTINGS_WIFI_ONLY = "WIFI_ONLY";
+    public static final String SETTINGS_LURK_INFORM = "LURK_INFORM";
+    public static final String SETTINGS_LURK_MESSAGE = "LURK_MESSAGE";
 
     //Settings
     public static final String SETTINGS_OFF = "OFF";
@@ -67,6 +71,7 @@ public class Globals {
     public static final String SETTINGS_FOLLOWUNFOLLOW = "FOLLOW_UNFOLLOW";
     public static final String SETTINGS_SHARE_F4F_STATUS = "SHARE_F4F_STATUS";
     public static final String SETTINGS_EXPORT = "EXPORT";
+    public static final String SETTINGS_LURK = "LURK";
 
     //Settings interval unit
     public static final String SETTINGS_INTERVAL_UNIT_MINUTES = "MINUTES";
@@ -164,19 +169,26 @@ public class Globals {
                 if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(weakContext, workerName)) {
                     createNotificationChannel(weakContext, channelID, channelName, channelDescription);
                     TimeUnit intervalUnit;
-                    switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
-                        case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
-                            intervalUnit = TimeUnit.MINUTES;
-                            break;
-                        case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
-                            intervalUnit = TimeUnit.HOURS;
-                            break;
-                        case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
-                        default:
-                            intervalUnit = TimeUnit.DAYS;
-                            break;
+                    int interval;
+                    if (settings.has(Globals.SETTINGS_INTERVAL_UNIT) && settings.has(Globals.SETTINGS_INTERVAL)) {
+                        switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
+                            case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
+                                intervalUnit = TimeUnit.MINUTES;
+                                break;
+                            case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
+                                intervalUnit = TimeUnit.HOURS;
+                                break;
+                            case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
+                            default:
+                                intervalUnit = TimeUnit.DAYS;
+                                break;
+                        }
+                        interval = settings.getInt(Globals.SETTINGS_INTERVAL);
+                    } else {
+                        intervalUnit = TimeUnit.MINUTES;
+                        interval = 15;
                     }
-                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, settings.getInt(Globals.SETTINGS_INTERVAL), intervalUnit);
+                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, interval, intervalUnit);
                     Constraints constraints = new Constraints.Builder()
                             .setRequiresBatteryNotLow(true)
                             .setRequiresStorageNotLow(true)

@@ -30,7 +30,7 @@
     <string name="interval_hours">Hour(s)</string>
     <string name="interval_days">Day(s)</string>
     <string name="interval_weeks">Weeks(s)</string>
-    <string name="settings_share_f4f_status">Share F4F Status</string>
+    <string name="settings_share_f4f_status">Share F4F status to Discord</string>
     <string name="save_symbol">Save Symbol</string>
     <string name="blank_text">_____</string>
     <string name="description">Description:</string>
@@ -139,4 +139,9 @@
     <string name="lurk_dialog_message_hint">Enter a message</string>
     <string name="lurk_dialog_send">Send</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="settings_autolurk_activate">Activate AutoLurk</string>
+    <string name="settings_autolurk_inform_channel">Inform channel of lurk</string>
+    <string name="settings_autolurk_wifi_only">Lurk on WiFi only</string>
+    <string name="settings_lurk_share_status">Share Lurk status to Discord</string>
+
 </resources>

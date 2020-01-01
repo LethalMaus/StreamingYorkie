@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.lethalmaus.streaming_yorkie">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -100,14 +102,19 @@
             android:label="Settings"
             android:launchMode="singleInstance"/>
         <activity
-            android:name=".activity.SettingsF4F"
+            android:name=".activity.SettingsLurk"
             android:configChanges="orientation|screenSize"
-            android:label="Settings F4F"
+            android:label="Settings Lurk"
             android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.SettingsVOD"
             android:configChanges="orientation|screenSize"
             android:label="Settings VODs"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.SettingsF4F"
+            android:configChanges="orientation|screenSize"
+            android:label="Settings F4F"
             android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.Logs"

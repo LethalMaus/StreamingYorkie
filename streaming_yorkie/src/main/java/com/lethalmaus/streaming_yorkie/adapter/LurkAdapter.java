@@ -211,6 +211,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      * @author LethalMaus
      */
     private void getLurkHTML() {
+        //TODO change request to check if all users are online at once
         new Thread() {
             public void run() {
                 int lurkCount = streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount();
@@ -296,7 +297,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
             public void run() {
                 if (new File(weakActivity.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
                     String token = new ReadFileHandler(null, new WeakReference<>(weakContext.get()), "TOKEN").readFile();
-                    ChannelEntity channelEntity = StreamingYorkieDB.getInstance(weakActivity.get()).channelDAO().getChannel();
+                    ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
                     if (channelEntity != null) {
                         Configuration configuration = new Configuration.Builder()
                                 .setAutoNickChange(false)
@@ -304,7 +305,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                                 .setCapEnabled(true)
                                 .addCapHandler(new EnableCapHandler("twitch.tv/membership"))
                                 .addServer("irc.twitch.tv")
-                                .setName(Integer.toString(channelEntity.getId()).toLowerCase())
+                                .setName(channelEntity.getDisplay_name())
                                 .setServerPassword("oauth:" + token)
                                 .addAutoJoinChannel("#" + channel)
                                 .addListener(new ListenerAdapter() {})
@@ -324,6 +325,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                             Thread.sleep(1000);
                             if (bot.isConnected()) {
                                 bot.sendIRC().message("#" + channel, message);
+                                bot.stopBotReconnect();
                                 bot.close();
                                 if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
                                     weakActivity.get().runOnUiThread(() ->

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
@@ -19,6 +18,7 @@ import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
+import com.lethalmaus.streaming_yorkie.worker.AutoLurkWorker;
 import com.lethalmaus.streaming_yorkie.worker.AutoVODExportWorker;
 
 import org.json.JSONException;
@@ -115,94 +115,49 @@ public class MainActivity extends AppCompatActivity {
 
         Globals.createNotificationChannel(new WeakReference<>(getApplicationContext()), Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
 
-        ImageButton followers = findViewById(R.id.menu_followers);
-        followers.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_followers).setOnClickListener((View v) ->  {
                         Intent intent = new Intent(MainActivity.this, Followers.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton following = findViewById(R.id.menu_following);
-        following.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_following).setOnClickListener((View v) ->  {
                         Intent intent = new Intent(MainActivity.this, Following.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton f4f = findViewById(R.id.menu_f4f);
-        f4f.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_f4f).setOnClickListener((View v) ->  {
                         Intent intent = new Intent(MainActivity.this, Follow4Follow.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton vods = findViewById(R.id.menu_vod);
-        vods.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_vod).setOnClickListener((View v) ->  {
                         Intent intent = new Intent(MainActivity.this, VODs.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton multi = findViewById(R.id.menu_multi);
-        multi.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_multi).setOnClickListener((View v) -> {
                         Intent intent = new Intent(MainActivity.this, MultiView.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton lurk = findViewById(R.id.menu_lurk);
-        lurk.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_lurk).setOnClickListener((View v) -> {
                         Intent intent = new Intent(MainActivity.this, Lurk.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton user = findViewById(R.id.menu_userinfo);
-        user.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_userinfo).setOnClickListener((View v) -> {
                         Intent intent = new Intent(MainActivity.this, Channel.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton info = findViewById(R.id.menu_info);
-        info.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_info).setOnClickListener((View v) -> {
                         Intent intent = new Intent(MainActivity.this, Info.class);
                         startActivity(intent);
-                    }
                 });
 
-        ImageButton settings = findViewById(R.id.menu_settings);
-        settings.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        findViewById(R.id.menu_settings).setOnClickListener((View v) -> {
                         Intent intent = new Intent(MainActivity.this, SettingsMenu.class);
                         startActivity(intent);
-                    }
                 });
     }
 
@@ -212,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         userLoggedIn();
         Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_F4F", Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
         Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_VOD", Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
+        Globals.activateWorker(new WeakReference<>(getApplicationContext()), "SETTINGS_LURK", Globals.SETTINGS_AUTOLURK, AutoLurkWorker.class, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
     }
 
     /**
