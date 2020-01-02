@@ -45,6 +45,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     //All activities & contexts are weak referenced to avoid memory leaks
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
+    private RecyclerView recyclerView;
     private String vodsType;
     private String actionButtonType1;
     private String actionButtonType2;
@@ -107,6 +108,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         this.actionButtonType1 = actionButtonType1;
         this.actionButtonType2 = actionButtonType2;
         return this;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -304,7 +311,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new Thread(new Runnable() {
                                     public void run() {
                                         streamingYorkieDB.vodDAO().updateVODExportStatusById(false, vodID);
-                                        datasetChanged();
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                datasetChanged();
+                                            }
+                                        });
                                     }
                                 }).start();
                             }
@@ -473,7 +485,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new Thread(new Runnable() {
                                     public void run() {
                                         streamingYorkieDB.vodDAO().updateVODExclusionStatusById(true, vodID);
-                                        datasetChanged();
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                datasetChanged();
+                                            }
+                                        });
                                     }
                                 }).start();
                             }
@@ -500,7 +517,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                 new Thread(new Runnable() {
                                     public void run() {
                                         streamingYorkieDB.vodDAO().updateVODExclusionStatusById(false, vodID);
-                                        datasetChanged();
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                datasetChanged();
+                                            }
+                                        });
                                     }
                                 }).start();
                             }
@@ -572,7 +594,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                     }
                                                 }
                                             }
-                                            datasetChanged();
+                                            recyclerView.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    datasetChanged();
+                                                }
+                                            });
                                         }
                                     }).start();
                                 }
@@ -586,7 +613,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     new Thread(new Runnable() {
                                         public void run() {
                                             streamingYorkieDB.vodDAO().removeExportedStatus();
-                                            datasetChanged();
+                                            recyclerView.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    datasetChanged();
+                                                }
+                                            });
                                         }
                                     }).start();
                                 }
@@ -600,7 +632,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                     new Thread(new Runnable() {
                                         public void run() {
                                             streamingYorkieDB.vodDAO().removeExcludedStatus();
-                                            datasetChanged();
+                                            recyclerView.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    datasetChanged();
+                                                }
+                                            });
                                         }
                                     }).start();
                                 }

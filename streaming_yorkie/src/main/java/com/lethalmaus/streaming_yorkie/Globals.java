@@ -1,13 +1,36 @@
 package com.lethalmaus.streaming_yorkie;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
 
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
 import com.lethalmaus.streaming_yorkie.activity.InfoGuide;
 import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
+import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
+import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Globals contains centralized constants & variables that are used throughout the whole app.
@@ -104,5 +127,98 @@ public class Globals {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Opens a notification channel for the AutoFollower
+     * @author LethalMaus
+     * @param weakContext weak reference to Context
+     * @param channelID notification channel ID
+     * @param channelName notification channel name
+     * @param channelDescription notification channel description
+     */
+    public static void createNotificationChannel(WeakReference<Context> weakContext, String channelID, String channelName, String channelDescription) {
+        if (weakContext != null && weakContext.get() != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(channelDescription);
+            NotificationManager notificationManager = weakContext.get().getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    /**
+     * Checks if settings were ever made for the Worker type, then checks if the Worker has been activated & with which preferences.
+     * A PeriodicWorkRequest is activated to perform the Worker process
+     * @author LethalMaus
+     * @param weakContext weak reference to Context
+     * @param settingsFileName name of settings files
+     * @param workerName name of worker process
+     * @param workerClass name of worker class
+     * @param channelID notification channel ID
+     * @param channelName notification channel name
+     * @param channelDescription notification channel description
+     */
+    public static void activateWorker(WeakReference<Context> weakContext, String settingsFileName, String workerName, Class<? extends Worker> workerClass, String channelID, String channelName, String channelDescription) {
+        if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + settingsFileName).exists()) {
+            try {
+                JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, settingsFileName).readFile());
+                if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(weakContext, workerName)) {
+                    createNotificationChannel(weakContext, channelID, channelName, channelDescription);
+                    TimeUnit intervalUnit;
+                    switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
+                        case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
+                            intervalUnit = TimeUnit.MINUTES;
+                            break;
+                        case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
+                            intervalUnit = TimeUnit.HOURS;
+                            break;
+                        case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
+                        default:
+                            intervalUnit = TimeUnit.DAYS;
+                            break;
+                    }
+                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, settings.getInt(Globals.SETTINGS_INTERVAL), intervalUnit);
+                    Constraints constraints = new Constraints.Builder()
+                            .setRequiresBatteryNotLow(true)
+                            .setRequiresStorageNotLow(true)
+                            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+                            .build();
+                    PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
+                    WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
+                } else if (settings.getString(workerName).equals(Globals.SETTINGS_OFF) && isWorkerActive(weakContext, workerName)) {
+                    WorkManager.getInstance().cancelAllWorkByTag(workerName);
+                }
+            } catch (JSONException e) {
+                Toast.makeText(weakContext.get(), "Error activating " + workerName, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(null, weakContext, "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+            }
+        }
+    }
+
+    /**
+     * Method for checking if worker is running or enqueued to avoid restarting
+     * @author LethalMaus
+     * @param weakContext weak reference to Context
+     * @param workerName name of worker process
+     * @return Boolean if running or enqueued
+     */
+    private static Boolean isWorkerActive(WeakReference<Context> weakContext, String workerName) {
+        if (weakContext != null && weakContext.get() != null) {
+            try {
+                if (WorkManager.getInstance().getWorkInfosForUniqueWork(workerName).get().size() > 0) {
+                    WorkInfo.State state = WorkManager.getInstance().getWorkInfosForUniqueWork(workerName)
+                            .get().get(0).getState();
+                    return (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING);
+                } else {
+                    return false;
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                Toast.makeText(weakContext.get(), "Error activating " + workerName, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(null, weakContext, "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+            }
+        }
+        return false;
     }
 }

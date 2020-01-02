@@ -37,6 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     //All activities & contexts are weak referenced to avoid memory leaks
     private WeakReference<Activity> weakActivity;
     private WeakReference<Context> weakContext;
+    private RecyclerView recyclerView;
     private String userType;
     private String userStatus;
     private String actionButtonType1;
@@ -95,6 +96,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.actionButtonType2 = actionButtonType2;
         this.actionButtonType3 = actionButtonType3;
         return this;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -320,7 +327,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                         } else {
                                             streamingYorkieDB.followingDAO().deleteUserById(userID);
                                         }
-                                        datasetChanged();
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                datasetChanged();
+                                            }
+                                        });
                                     }
                                 }).start();
                             }
@@ -357,7 +369,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                         } else if (userType.contentEquals("F4FEntity")) {
                                             streamingYorkieDB.f4fDAO().insertUser(new F4FEntity(userEntity.getId(), userEntity.getDisplay_name(), userEntity.getLogo(), userEntity.getCreated_at(), userEntity.isNotifications(), userEntity.getLast_updated()));
                                         }
-                                        datasetChanged();
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                datasetChanged();
+                                            }
+                                        });
                                     }
                                 }).start();
                             }
@@ -408,7 +425,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                         } else if (userType.contentEquals("F4FEntity")) {
                                             streamingYorkieDB.f4fDAO().deleteUserById(userID);
                                         }
-                                        datasetChanged();
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                datasetChanged();
+                                            }
+                                        });
                                     }
                                 }).start();
                             }
@@ -456,7 +478,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                     public void onCompletion() {
                                                         super.onCompletion();
                                                         if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
-                                                            datasetChanged();
+                                                            recyclerView.post(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    datasetChanged();
+                                                                }
+                                                            });
                                                         } else {
                                                             weakActivity.get().runOnUiThread(
                                                                     new Runnable() {
@@ -482,7 +509,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                     public void onCompletion() {
                                                         super.onCompletion();
                                                         if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
-                                                            datasetChanged();
+                                                            recyclerView.post(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    datasetChanged();
+                                                                }
+                                                            });
                                                         } else {
                                                             weakActivity.get().runOnUiThread(
                                                                     new Runnable() {
@@ -621,7 +653,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
                                                                         .sendRequest();
                                                             } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                                                datasetChanged();
+                                                                recyclerView.post(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        datasetChanged();
+                                                                    }
+                                                                });
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
@@ -646,7 +683,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                                 setRequestParameters(Request.Method.DELETE, userEntity.getId(), false)
                                                                         .sendRequest();
                                                             } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                                                datasetChanged();
+                                                                recyclerView.post(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        datasetChanged();
+                                                                    }
+                                                                });
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
