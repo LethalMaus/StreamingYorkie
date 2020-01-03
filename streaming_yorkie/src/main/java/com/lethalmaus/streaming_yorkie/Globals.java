@@ -51,6 +51,13 @@ public class Globals {
     //Request Types
     public static final String CHANNEL = "CHANNEL";
 
+    //Files
+    public static final String FILE_TOKEN = "TOKEN";
+    public static final String FILE_ERROR = "ERROR";
+    public static final String FILE_SETTINGS_VOD = "SETTINGS_VOD";
+    public static final String FILE_SETTINGS_F4F = "SETTINGS_F4F";
+    public static final String FILE_SETTINGS_LURK = "SETTINGS_LURK";
+
     //Settings object keys
     public static final String SETTINGS_AUTOFOLLOW = "AutoFollow";
     public static final String SETTINGS_AUTOVODEXPORT = "AutoVODExport";
@@ -108,23 +115,18 @@ public class Globals {
      * @return boolean whether an option was successfully selected
      */
     public static boolean onOptionsItemsSelected(Activity activity, MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_info_guide:
-                intent = new Intent(activity, InfoGuide.class);
-                activity.startActivity(intent);
+                activity.startActivity(new Intent(activity, InfoGuide.class));
                 return true;
             case R.id.menu_info:
-                intent = new Intent(activity, Info.class);
-                activity.startActivity(intent);
+                activity.startActivity(new Intent(activity, Info.class));
                 return true;
             case R.id.menu_settings:
-                intent = new Intent(activity, SettingsMenu.class);
-                activity.startActivity(intent);
+                activity.startActivity(new Intent(activity, SettingsMenu.class));
                 return true;
             case R.id.menu_logout:
-                intent = new Intent(activity, Authorization.class);
-                activity.startActivity(intent);
+                activity.startActivity(new Intent(activity, Authorization.class));
                 return true;
             default:
                 return false;
@@ -168,8 +170,8 @@ public class Globals {
                 JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, settingsFileName).readFile());
                 if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(weakContext, workerName)) {
                     createNotificationChannel(weakContext, channelID, channelName, channelDescription);
-                    TimeUnit intervalUnit;
-                    int interval;
+                    TimeUnit intervalUnit = TimeUnit.MINUTES;
+                    int interval = 15;
                     if (settings.has(Globals.SETTINGS_INTERVAL_UNIT) && settings.has(Globals.SETTINGS_INTERVAL)) {
                         switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
                             case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
@@ -184,9 +186,6 @@ public class Globals {
                                 break;
                         }
                         interval = settings.getInt(Globals.SETTINGS_INTERVAL);
-                    } else {
-                        intervalUnit = TimeUnit.MINUTES;
-                        interval = 15;
                     }
                     PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, interval, intervalUnit);
                     Constraints constraints = new Constraints.Builder()
@@ -200,8 +199,8 @@ public class Globals {
                     WorkManager.getInstance().cancelAllWorkByTag(workerName);
                 }
             } catch (JSONException e) {
-                Toast.makeText(weakContext.get(), "Error activating " + workerName, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(null, weakContext, "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+                Toast.makeText(weakContext.get(), "Error reading settings for " + workerName, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "Main: reading settings for '" + workerName + "'. " + e.toString(), true).run();
             }
         }
     }
@@ -223,9 +222,13 @@ public class Globals {
                 } else {
                     return false;
                 }
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (ExecutionException e) {
+                Toast.makeText(weakContext.get(), "Error getting " + workerName, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "Main: error getting '" + workerName + "'. " + e.toString(), true).run();
+            } catch (InterruptedException e) {
                 Toast.makeText(weakContext.get(), "Error activating " + workerName, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(null, weakContext, "ERROR", null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+                new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "Main: error activating '" + workerName + "'. " + e.toString(), true).run();
+                Thread.currentThread().interrupt();
             }
         }
         return false;

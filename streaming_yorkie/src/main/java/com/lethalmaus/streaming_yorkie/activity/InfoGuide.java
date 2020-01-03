@@ -31,66 +31,49 @@ public class InfoGuide extends AppCompatActivity {
         }
 
         final Button menus_button = findViewById(R.id.guide_menus_button);
-        menus_button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ConstraintLayout menus_view = findViewById(R.id.guide_menus);
-                        if (menus_view.getChildCount() <= 0) {
-                            resetViews();
-                            menus_button.setBackgroundResource(R.drawable.button_selected);
-                            View menus = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_menus, menus_view, false);
-                            menus_view.addView(menus, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
-                        } else {
-                            resetViews();
-                        }
-                    }
-                });
+        menus_button.setOnClickListener((View v) -> {
+            ConstraintLayout menus_view = findViewById(R.id.guide_menus);
+            if (menus_view.getChildCount() <= 0) {
+                resetViews();
+                menus_button.setBackgroundResource(R.drawable.button_selected);
+                View menus = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_menus, menus_view, false);
+                menus_view.addView(menus, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+            } else {
+                resetViews();
+            }
+        });
 
         final Button categories_button = findViewById(R.id.guide_categories_button);
-        categories_button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ConstraintLayout categories_view = findViewById(R.id.guide_categories);
-                        if (categories_view.getChildCount() <= 0) {
-                            resetViews();
-                            categories_button.setBackgroundResource(R.drawable.button_selected);
-                            View categories = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_categories, categories_view, false);
-                            categories_view.addView(categories, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
-                        } else {
-                            resetViews();
-                        }
-                    }
-                });
+        categories_button.setOnClickListener((View v) -> {
+            ConstraintLayout categories_view = findViewById(R.id.guide_categories);
+            if (categories_view.getChildCount() <= 0) {
+                resetViews();
+                categories_button.setBackgroundResource(R.drawable.button_selected);
+                View categories = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_categories, categories_view, false);
+                categories_view.addView(categories, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+            } else {
+                resetViews();
+            }
+        });
 
         final Button actions_button = findViewById(R.id.guide_actions_button);
-        actions_button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ConstraintLayout actions_view = findViewById(R.id.guide_actions);
-                        if (actions_view.getChildCount() <= 0) {
-                            resetViews();
-                            actions_button.setBackgroundResource(R.drawable.button_selected);
-                            View actions = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_actions, actions_view, false);
-                            actions_view.addView(actions, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
-                        } else {
-                            resetViews();
-                        }
-                    }
-                });
+        actions_button.setOnClickListener((View v) -> {
+            ConstraintLayout actions_view = findViewById(R.id.guide_actions);
+            if (actions_view.getChildCount() <= 0) {
+                resetViews();
+                actions_button.setBackgroundResource(R.drawable.button_selected);
+                View actions = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_actions, actions_view, false);
+                actions_view.addView(actions, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+            } else {
+                resetViews();
+            }
+        });
 
         //Link to StreamingYorkie Guide on Github
         Button readme = findViewById(R.id.guide_readme);
-        readme.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide"));
-                        startActivity(intent);
-                    }
-                });
+        readme.setOnClickListener((View v) ->
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide")))
+        );
     }
 
     //The only option is the back button for finishing the activity

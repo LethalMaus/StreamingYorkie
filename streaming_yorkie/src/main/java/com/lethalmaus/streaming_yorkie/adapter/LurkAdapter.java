@@ -139,9 +139,11 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
             if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing() && weakContext != null && weakContext.get() != null) {
                 TextView textView = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_username);
                 textView.setText(lurk.getChannelName());
+                ImageView imageView = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_logo);
                 if (lurk.getLogo() != null && !lurk.getLogo().isEmpty()) {
-                    ImageView imageView = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_logo);
                     Glide.with(weakContext.get()).load(lurk.getLogo()).placeholder(R.drawable.user).into(imageView);
+                } else {
+                    imageView.setImageResource(R.drawable.user);
                 }
                 if (!lurk.isChannelIsToBeLurked() || lurk.getHtml() == null || lurk.getHtml().isEmpty() || lurk.getBroadcastId() == null || lurk.getBroadcastId().isEmpty()) {
                     ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
@@ -233,6 +235,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                                         new Thread() {
                                             public void run() {
                                                 Intent intent = new Intent(weakContext.get(), LurkService.class);
+                                                intent.setAction("MANUAL_LURK");
                                                 if (Build.VERSION.SDK_INT < 28) {
                                                     weakContext.get().startService(intent);
                                                 } else {
@@ -325,8 +328,6 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                             Thread.sleep(1000);
                             if (bot.isConnected()) {
                                 bot.sendIRC().message("#" + channel, message);
-                                bot.stopBotReconnect();
-                                bot.close();
                                 if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
                                     weakActivity.get().runOnUiThread(() ->
                                             Toast.makeText(weakActivity.get(), "Message sent", Toast.LENGTH_SHORT).show()
@@ -335,6 +336,9 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                             }
                         } catch (Exception e) {
                             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error sending to chat: " + e.toString(), true).run();
+                        } finally {
+                            bot.stopBotReconnect();
+                            bot.close();
                         }
                     }
                 }

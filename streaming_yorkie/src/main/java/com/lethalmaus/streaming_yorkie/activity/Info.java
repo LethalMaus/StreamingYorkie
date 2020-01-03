@@ -51,8 +51,7 @@ public class Info extends AppCompatActivity {
             if (showDevLogs > 0) {
                 showDevLogs--;
             } else {
-                Intent intent = new Intent(Info.this, Logs.class);
-                startActivity(intent);
+                startActivity(new Intent(Info.this, Logs.class));
             }
         });
 

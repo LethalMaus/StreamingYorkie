@@ -33,7 +33,7 @@ android {
         abortOnError true
         ignoreWarnings false
         checkAllWarnings true
-        warningsAsErrors true
+        warningsAsErrors false
         htmlReport true
     }
     testOptions {

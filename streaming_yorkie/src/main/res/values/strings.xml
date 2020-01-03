@@ -94,12 +94,14 @@
     <string name="guide_menu_updates">Github link to Updates</string>
     <string name="guide_menu_sourcecode">Github link to the source code</string>
     <string name="guide_menu_contact">Github link to Contact</string>
+    <string name="guide_menu_discord">Link to Discord</string>
     <string name="guide_menu_twitch">Link to developers stream</string>
     <string name="guide_menu_patreon">Membership</string>
     <string name="guide_menu_github">Projects</string>
     <string name="guide_menu_settings">The settings menu is split up into further features below</string>
-    <string name="guide_menu_autofollow">Settings for activating &amp; configuring the AutoFollow Service</string>
-    <string name="guide_menu_autovodexport">Settings for activating &amp; configuring the AutoVODExport Service</string>
+    <string name="guide_menu_autofollow">Settings for activating &amp; configuring the AutoFollow Worker</string>
+    <string name="guide_menu_autovodexport">Settings for activating &amp; configuring the AutoVODExport Worker</string>
+    <string name="guide_menu_autolurk">Settings for activating &amp; configuring the AutoLurk Worker</string>
     <string name="guide_menu_authorization">Logs out of StreamingYorkie &amp; Twitch as well as deleting any data relating to your Twitch account</string>
     <string name="guide_categories_title">Category Icons</string>
     <string name="guide_categories_description">Each Menu is split into 3&#8211;4 of the following categories:</string>
@@ -125,6 +127,8 @@
     <string name="guide_actions_multi">Start watching multiple streams at once on one screen</string>
     <string name="guide_actions_lurk">Initiate lurking given streamer</string>
     <string name="guide_actions_unlurk">Stop lurking chosen streamer</string>
+    <string name="guide_actions_message">Opens a dialog to send a message to the chosen channels chat</string>
+    <string name="guide_actions_send">Sends the message to channel chat</string>
     <string name="guide_actions_cancel">Cancels the current action being taken</string>
     <string name="guide_actions_refresh">Refreshes the current view (if internet is available)</string>
     <string name="guide_actions_authorization">Logs out of StreamingYorkie &amp; Twitch as well as deleting all device data</string>

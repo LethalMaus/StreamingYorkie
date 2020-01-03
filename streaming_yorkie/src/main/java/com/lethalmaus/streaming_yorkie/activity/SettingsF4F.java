@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_AUTOFOLLOW;
 import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_FOLLOW;
 import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_FOLLOWUNFOLLOW;
 import static com.lethalmaus.streaming_yorkie.Globals.SETTINGS_INTERVAL_UNIT_DAYS;
@@ -73,7 +74,7 @@ public class SettingsF4F extends AppCompatActivity {
             settings = new JSONObject(settingsFile);
             previousSettings = new JSONObject(settingsFile);
             //Ensures settings integrity
-            if (!settings.has(Globals.SETTINGS_AUTOFOLLOW) || !settings.has(Globals.SETTINGS_INTERVAL) || !settings.has(Globals.SETTINGS_INTERVAL_UNIT) || !settings.has(Globals.SETTINGS_NOTIFICATIONS)) {
+            if (!settings.has(SETTINGS_AUTOFOLLOW) || !settings.has(Globals.SETTINGS_INTERVAL) || !settings.has(Globals.SETTINGS_INTERVAL_UNIT) || !settings.has(Globals.SETTINGS_NOTIFICATIONS)) {
                 new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath("SETTINGS_F4F");
                 createSettingsFile();
             }
@@ -107,7 +108,7 @@ public class SettingsF4F extends AppCompatActivity {
     private void createSettingsFile() {
         settings = new JSONObject();
         try {
-            settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
+            settings.put(SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
             settings.put(Globals.SETTINGS_INTERVAL, 1);
             settings.put(Globals.SETTINGS_INTERVAL_UNIT, SETTINGS_INTERVAL_UNIT_DAYS);
             settings.put(Globals.SETTINGS_NOTIFICATIONS, false);
@@ -126,7 +127,7 @@ public class SettingsF4F extends AppCompatActivity {
     private void serviceActivation() {
         RadioGroup autoFollowRadioGroup = findViewById(R.id.settings_autoFollow);
         try {
-            switch (settings.getString(Globals.SETTINGS_AUTOFOLLOW)) {
+            switch (settings.getString(SETTINGS_AUTOFOLLOW)) {
                 case SETTINGS_FOLLOW:
                     autoFollowRadioGroup.check(R.id.settings_autoFollow_follow);
                     break;
@@ -142,29 +143,29 @@ public class SettingsF4F extends AppCompatActivity {
                     break;
             }
         } catch(JSONException e) {
-            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW + " | " + e.toString(), true).run();
+            Toast.makeText(SettingsF4F.this, "Error reading F4F Settings, " + SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading F4F Settings, " + SETTINGS_AUTOFOLLOW + " | " + e.toString(), true).run();
         }
         autoFollowRadioGroup.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
             try {
                 switch (checkedId) {
                     case R.id.settings_autoFollow_follow:
-                        settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_FOLLOW);
+                        settings.put(SETTINGS_AUTOFOLLOW, SETTINGS_FOLLOW);
                         break;
                     case R.id.settings_autoFollow_unfollow:
-                        settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_UNFOLLOW);
+                        settings.put(SETTINGS_AUTOFOLLOW, SETTINGS_UNFOLLOW);
                         break;
                     case R.id.settings_autoFollow_followUnfollow:
-                        settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_FOLLOWUNFOLLOW);
+                        settings.put(SETTINGS_AUTOFOLLOW, SETTINGS_FOLLOWUNFOLLOW);
                         break;
                     case R.id.settings_autoFollow_off:
                     default:
-                        settings.put(Globals.SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
+                        settings.put(SETTINGS_AUTOFOLLOW, SETTINGS_OFF);
                         break;
                 }
             } catch(JSONException e) {
-                Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error changing F4F Settings, " + Globals.SETTINGS_AUTOFOLLOW + " | " + e.toString(), true).run();
+                Toast.makeText(SettingsF4F.this, "Error changing F4F Settings, " + SETTINGS_AUTOFOLLOW, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error changing F4F Settings, " + SETTINGS_AUTOFOLLOW + " | " + e.toString(), true).run();
             }
         });
     }
@@ -321,12 +322,12 @@ public class SettingsF4F extends AppCompatActivity {
      */
     private void saveSettings() {
         try {
-            if (!previousSettings.getString(Globals.SETTINGS_AUTOFOLLOW).equals(settings.getString(Globals.SETTINGS_AUTOFOLLOW))||
+            if (!previousSettings.getString(SETTINGS_AUTOFOLLOW).equals(settings.getString(SETTINGS_AUTOFOLLOW))||
                     previousSettings.getInt(Globals.SETTINGS_INTERVAL) != settings.getInt(Globals.SETTINGS_INTERVAL) ||
                     !previousSettings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) ||
                     previousSettings.getBoolean(Globals.SETTINGS_NOTIFICATIONS) != settings.getBoolean(Globals.SETTINGS_NOTIFICATIONS) ||
                     (previousSettings.has(Globals.SETTINGS_SHARE_F4F_STATUS) && previousSettings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) != settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS))) {
-                if (!settings.getString(Globals.SETTINGS_AUTOFOLLOW).equals(Globals.SETTINGS_OFF)) {
+                if (!settings.getString(SETTINGS_AUTOFOLLOW).equals(Globals.SETTINGS_OFF)) {
                     promptActivatingAutoFollow();
                 } else {
                     promptUserSaveSettings();
@@ -370,9 +371,9 @@ public class SettingsF4F extends AppCompatActivity {
             new WriteFileHandler(weakActivity, weakContext, "SETTINGS_F4F", null, settings.toString(), false).run();
             Toast.makeText(SettingsF4F.this, "Changes saved", Toast.LENGTH_SHORT).show();
             try {
-                if (settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOW) || settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOWUNFOLLOW))) {
+                if (settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOW) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOWUNFOLLOW))) {
                     postToDiscord("**#USERNAME** is doing F4F automatically every **" + settings.getString(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + "**. Follow them here https://www.twitch.tv/#USERNAME");
-                } else if ((!settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && previousSettings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS)) || (previousSettings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && settings.getString(Globals.SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_OFF))) {
+                } else if ((!settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && previousSettings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS)) || (previousSettings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_OFF) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_UNFOLLOW)))) {
                     postToDiscord("```diff\n- #USERNAME is NOT doing F4F automatically anymore.\n```");
                 }
             } catch(JSONException e) {

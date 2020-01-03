@@ -16,7 +16,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -50,68 +49,46 @@ public class UserRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    InputStream inputStream = null;
-                    ByteArrayOutputStream byteArrayOutputStream = null;
-                    FileOutputStream fileOutputStream = null;
-                    try {
-                        URL url = new URL(response.getString("logo"));
-                        inputStream = new BufferedInputStream(url.openStream());
-                        byteArrayOutputStream = new ByteArrayOutputStream();
-                        byte[] buffer = new byte[1024];
-                        int byteNumber;
-                        while (-1 != (byteNumber = inputStream.read(buffer))) {
-                            byteArrayOutputStream.write(buffer, 0, byteNumber);
-                        }
-                        byteArrayOutputStream.flush();
-                        fileOutputStream = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/") + 1));
-                        fileOutputStream.write(byteArrayOutputStream.toByteArray());
-                        fileOutputStream.flush();
-                    } catch (Exception e) {
-                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
-                    }  finally {
-                        try {
-                            if (byteArrayOutputStream != null) {
-                                byteArrayOutputStream.close();
-                            }
-                            if (inputStream != null) {
-                                inputStream.close();
-                            }
-                            if (fileOutputStream != null) {
-                                fileOutputStream.close();
-                            }
-                        } catch (IOException e) {
-                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
-                        }
+        new Thread(() -> {
+            try {
+                URL url = new URL(response.getString("logo"));
+                try (InputStream inputStream = new BufferedInputStream(url.openStream());
+                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                     FileOutputStream fileOutputStream = new FileOutputStream(weakContext.get().getFilesDir() + File.separator + response.getString("logo").substring(response.getString("logo").lastIndexOf("/") + 1))
+                ) {
+                    byte[] buffer = new byte[1024];
+                    int byteNumber;
+                    while (-1 != (byteNumber = inputStream.read(buffer))) {
+                        byteArrayOutputStream.write(buffer, 0, byteNumber);
                     }
-                    ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChannelById(Integer.parseInt(response.getString("_id")));
-                    if (existingChannelEntity != null) {
-                        existingChannelEntity.setDisplay_name(response.getString("display_name"));
-                        existingChannelEntity.setLogo(response.getString("logo"));
-                        existingChannelEntity.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
-                        existingChannelEntity.setDescription(response.getString("bio"));
-                        streamingYorkieDB.channelDAO().updateChannel(existingChannelEntity);
-                    } else {
-                        ChannelEntity channelEntity = new ChannelEntity(Integer.parseInt(response.getString("_id")), response.getString("display_name"), response.getString("logo"), "", response.getString("created_at").replace("T", " ").replace("Z", ""), 0, 0, "", response.getString("bio"), "");
-                        streamingYorkieDB.channelDAO().insertChannel(channelEntity);
-                    }
-                    new UserView(weakActivity, weakContext).execute();
-                } catch (JSONException e) {
-                    if (weakActivity != null && weakActivity.get() != null) {
-                        weakActivity.get().runOnUiThread(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(weakContext.get(), "UserEntity can't be saved", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
-                    }
-                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error saving UserEntity | " + e.toString(), true).run();
+                    byteArrayOutputStream.flush();
+                    fileOutputStream.write(byteArrayOutputStream.toByteArray());
+                    fileOutputStream.flush();
+                } catch (Exception e) {
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
                 }
+                ChannelEntity existingChannelEntity = streamingYorkieDB.channelDAO().getChannelById(Integer.parseInt(response.getString("_id")));
+                if (existingChannelEntity != null) {
+                    existingChannelEntity.setDisplay_name(response.getString("display_name"));
+                    existingChannelEntity.setLogo(response.getString("logo"));
+                    existingChannelEntity.setCreated_at(response.getString("created_at").replace("T", " ").replace("Z", ""));
+                    existingChannelEntity.setDescription(response.getString("bio"));
+                    streamingYorkieDB.channelDAO().updateChannel(existingChannelEntity);
+                } else {
+                    ChannelEntity channelEntity = new ChannelEntity(Integer.parseInt(response.getString("_id")), response.getString("display_name"), response.getString("logo"), "", response.getString("created_at").replace("T", " ").replace("Z", ""), 0, 0, "", response.getString("bio"), "");
+                    streamingYorkieDB.channelDAO().insertChannel(channelEntity);
+                }
+                new UserView(weakActivity, weakContext).execute();
+            } catch (JSONException e) {
+                if (weakActivity != null && weakActivity.get() != null) {
+                    weakActivity.get().runOnUiThread(() ->
+                            Toast.makeText(weakContext.get(), "UserEntity can't be saved", Toast.LENGTH_SHORT).show()
+                    );
+                }
+                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error saving UserEntity | " + e.toString(), true).run();
+            } catch (Exception e) {
+                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Cannot download channel logo | " + e.toString(), true).run();
             }
         }).start();
     }
-
 }

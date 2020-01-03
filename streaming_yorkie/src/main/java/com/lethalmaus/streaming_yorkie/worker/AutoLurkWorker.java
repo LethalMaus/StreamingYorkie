@@ -27,6 +27,9 @@ import org.pircbotx.hooks.ListenerAdapter;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Worker for automating Lurking
@@ -61,7 +64,7 @@ public class AutoLurkWorker extends Worker {
             if (informChannel) {
                 new Thread() {
                     public void run() {
-                        channelName = streamingYorkieDB.channelDAO().getChannel().getDisplay_name().toLowerCase();
+                        channelName = streamingYorkieDB.channelDAO().getChannel().getDisplay_name();
                     }
                 }.start();
             }
@@ -78,7 +81,6 @@ public class AutoLurkWorker extends Worker {
     public @NonNull
     Result doWork() {
         if (!wifiOnly || checkIfWifiIsOnAndConnected()) {
-            //TODO change request to check if all users are online at once
             new Thread() {
                 public void run() {
                     int lurkCount = streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount();
@@ -108,7 +110,11 @@ public class AutoLurkWorker extends Worker {
                                             new WriteFileHandler(null, weakContext, "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
                                             new Thread() {
                                                 public void run() {
+                                                    //TODO delete me
+                                                    SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.GERMAN);
+                                                    new WriteFileHandler(null, weakContext, "WORKER.LOG", null, timestamp.format(new Date()), true).run();
                                                     Intent intent = new Intent(weakContext.get(), LurkService.class);
+                                                    intent.setAction("AUTO_LURK");
                                                     if (Build.VERSION.SDK_INT < 28) {
                                                         weakContext.get().startService(intent);
                                                     } else {
@@ -179,11 +185,12 @@ public class AutoLurkWorker extends Worker {
                         Thread.sleep(1000);
                         if (bot.isConnected()) {
                             bot.sendIRC().message("#" + channel, message);
-                            bot.stopBotReconnect();
-                            bot.close();
                         }
                     } catch (Exception e) {
                         new WriteFileHandler(null, weakContext, "ERROR", null, "Error sending to chat: " + e.toString(), true).run();
+                    } finally {
+                        bot.stopBotReconnect();
+                        bot.close();
                     }
                 }
             }
