@@ -378,11 +378,19 @@ This can take up to 15 minutes to activate.
 
 ## Updates
 
+<details>
+<summary>v2.x.x</summary>
+
 + [2.1.0-a](#210-a)
 + [2.0.3-a](#203-a)
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+</details>
+<details>
+<summary>v1.x.x</summary>
+
 + [1.3.1-a](#131-a)
 + [1.3.0-a](#130-a)
 + [1.2.1-a](#121-a)
@@ -396,6 +404,8 @@ This can take up to 15 minutes to activate.
 + [1.0.2-a](#102-a)
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
+
+</details>
 
 ### 2.1.0-a
 

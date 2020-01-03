@@ -46,8 +46,6 @@ https://github.com/LethalMaus/StreamingYorkie
 The following tasks and features are currently on the Roadmap & some of which are likely to be within the next release
 
  • Stream Info/Event tracker (views, hosts, followers, chats, markers)
- • Report Bug with error log feature
- • Sonarcloud improvements
  • <i>See GitHub for more...</i>
 
 <h2><b>Contact</b></h2>
