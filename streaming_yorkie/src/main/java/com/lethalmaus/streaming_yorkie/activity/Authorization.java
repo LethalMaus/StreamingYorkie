@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -96,7 +95,7 @@ public class Authorization extends AppCompatActivity {
                                 startActivity(intent);
                                 webView.destroy();
                                 finish();
-                                return true;
+                                return false;
                             }
                             view.loadUrl(request.getUrl().toString());
                             return false;
@@ -110,7 +109,7 @@ public class Authorization extends AppCompatActivity {
                         if (url.contains("localhost") && url.contains("access_token") && !url.contains("twitch.tv")) {
                             new WriteFileHandler(weakActivity, weakContext, "TOKEN", null, url.substring(url.indexOf("access_token") + 13, url.indexOf("access_token") + 43), false).writeToFileOrPath();
                             new UserRequestHandler(weakActivity, weakContext).sendRequest();
-                            view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read");
+                            view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read chat%3Aread+chat%3Aedit+channel%3Amoderate+whispers%3Aread+whispers%3Aedit+channel_editor");
                         } else if (!url.contains("twitch.tv")) {
                             setContentView(R.layout.error);
                         }
@@ -123,7 +122,7 @@ public class Authorization extends AppCompatActivity {
                     }
                 });
                 webView.getSettings().setJavaScriptEnabled(true);
-                webView.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.CLIENTID + "&redirect_uri=http://localhost&force_verify=true&scope=user_follows_edit user_read channel_read");
+                webView.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.CLIENTID + "&redirect_uri=http://localhost&force_verify=true&scope=user_follows_edit user_read channel_read chat%3Aread+chat%3Aedit+channel%3Amoderate+whispers%3Aread+whispers%3Aedit+channel_editor");
             } else {
                 setContentView(R.layout.error);
             }
@@ -142,13 +141,13 @@ public class Authorization extends AppCompatActivity {
     protected void promptUser() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Authorization.this, R.style.CustomDialog);
         builder.setPositiveButton("OK", (DialogInterface dialog, int id) -> {
-             new Thread() {
-                    public void run() {
-                        StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
-                        streamingYorkieDB.clearAllTables();
-                        new DeleteFileHandler(weakActivity, weakContext, "").deleteFileOrPath("");
-                    }
-                }.start();
+            new Thread() {
+                public void run() {
+                    StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
+                    streamingYorkieDB.clearAllTables();
+                    new DeleteFileHandler(weakActivity, weakContext, "").deleteFileOrPath("");
+                }
+            }.start();
             new DeleteFileHandler(weakActivity, weakContext, "").run();
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -228,4 +227,3 @@ public class Authorization extends AppCompatActivity {
         }
     }
 }
-

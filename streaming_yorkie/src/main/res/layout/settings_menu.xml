@@ -47,7 +47,7 @@
 
         <ImageButton
             android:id="@+id/menu_settings_f4f"
-            android:layout_width="80dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
@@ -57,7 +57,7 @@
 
         <ImageButton
             android:id="@+id/menu_settings_vod"
-            android:layout_width="80dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
@@ -66,14 +66,39 @@
             app:srcCompat="@drawable/vod_menu" />
 
         <ImageButton
-            android:id="@+id/menu_settings_logout"
-            android:layout_width="80dp"
+            android:id="@+id/menu_settings_lurk"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/menu_f4f"
+            android:contentDescription="@string/menu_lurk"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/lurk_menu" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menu2"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menu1">
+
+        <ImageButton
+            android:id="@+id/menu_settings_logout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/logout"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/authorization" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,12 +7,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -21,15 +24,26 @@ import androidx.core.app.NotificationManagerCompat;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.activity.Lurk;
+import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.util.NetworkUsageMonitor;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.pircbotx.Configuration;
+import org.pircbotx.PircBotX;
+import org.pircbotx.cap.EnableCapHandler;
+import org.pircbotx.hooks.ListenerAdapter;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service for creating a Background WebView Lurk
@@ -40,16 +54,28 @@ public class LurkService extends Service {
     private NotificationManagerCompat notificationManager;
     private WindowManager windowManager;
     private WebView webView;
-    private List<String> videos;
+    private StreamingYorkieDB streamingYorkieDB;
+    private List<String> channels = new ArrayList<>();
+    private StringBuilder channelNames;
+    private WifiManager wifiMgr;
     private Handler networkUsageHandler;
     private Runnable networkUsageRunnable;
     private boolean networkUsageMonitorRunning;
+    private String token = "";
+    private JSONObject settings;
+    private Map<String, PircBotX> botManager;
 
     @Override
     public void onCreate() {
         notificationManager =  NotificationManagerCompat.from(getApplicationContext());
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         networkUsageMonitorRunning = false;
+        streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
+        wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+            token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
+        }
+        botManager = new HashMap<>();
     }
 
     @Override
@@ -71,43 +97,57 @@ public class LurkService extends Service {
             webView = null;
             showNotification(true);
         } else {
-            videos = new ArrayList<>();
-            if (new ReadFileHandler(null, new WeakReference<Context>(this), Globals.LURK_PATH).countFiles() > 0) {
-                List<String> lurkDataset = new ReadFileHandler(null, new WeakReference<Context>(this), Globals.LURK_PATH).readFileNames();
-                for (int i = 0; i < lurkDataset.size(); i++) {
-                    String video = new ReadFileHandler(null, new WeakReference<Context>(this), Globals.LURK_PATH + File.separator + lurkDataset.get(i)).readFile();
-                    videos.add(video);
+            new Thread() {
+                public void run() {
+                    List<String> previousChannels = new ArrayList<>(channels);
+                    channels = Arrays.asList(streamingYorkieDB.lurkDAO().getChannelsToBeLurked());
+                    if (channels.size() > 0) {
+                        channelNames = new StringBuilder();
+                        for (int i = 0; i < channels.size(); i++) {
+                            activateChatBot(channels.get(i));
+                            channelNames.append(channels.get(i));
+                            if (i < (channels.size() - 1)) {
+                                channelNames.append(", ");
+                            }
+                        }
+                        for (int i = 0; i < previousChannels.size(); i++) {
+                            if (!channels.contains(previousChannels.get(i))) {
+                                PircBotX bot = botManager.get(previousChannels.get(i));
+                                if (bot != null) {
+                                    bot.stopBotReconnect();
+                                    bot.close();
+                                }
+                            }
+                        }
+                    }
+                    if (intent != null && intent.getAction() != null && intent.getAction().contentEquals("AUTO_LURK")) {
+                        try {
+                            settings = new JSONObject(new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "SETTINGS_LURK").readFile());
+                        } catch(JSONException e) {
+                            new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "LurkService: Error reading settings | " + e.toString(), true).run();
+                        }
+                    } else {
+                        settings = null;
+                    }
                 }
-            }
-            if (videos.size() > 0) {
-                WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                        ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                        : WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-                params.gravity = Gravity.TOP | Gravity.START;
-                params.x = 0;
-                params.y = 0;
-                params.width = 0;
-                params.height = 0;
+            }.start();
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                    ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                    : WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+            params.gravity = Gravity.TOP | Gravity.START;
+            params.x = 0;
+            params.y = 0;
+            params.width = 0;
+            params.height = 0;
 
-                webView = new WebView(this);
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setDomStorageEnabled(true);
-                webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+            webView = new WebView(LurkService.this);
+            webView.setWebViewClient(new WebViewClient());
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setDomStorageEnabled(true);
+            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 
-                StringBuilder htmlInjection = new StringBuilder();
-                for (int i = 0; i < videos.size(); i++) {
-                    htmlInjection.append(videos.get(i));
-                }
-                new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
-                String token = "";
-                if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-                    token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
-                }
-                HashMap<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "OAuth " + token);
-                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML", headers);
-                windowManager.addView(webView, params);
-            }
+            webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
+            windowManager.addView(webView, params);
             showNotification(false);
         }
         return START_STICKY;
@@ -126,6 +166,13 @@ public class LurkService extends Service {
         }
         if (notificationManager != null) {
             notificationManager.cancel(3);
+        }
+        if (botManager != null && !botManager.isEmpty()) {
+            for (Map.Entry<String, PircBotX> entry : botManager.entrySet()) {
+                PircBotX bot = entry.getValue();
+                bot.stopBotReconnect();
+                bot.close();
+            }
         }
         Toast.makeText(this,"Stopped lurking", Toast.LENGTH_SHORT).show();
     }
@@ -148,7 +195,7 @@ public class LurkService extends Service {
             startPauseLurkIntent.setAction("START_LURK");
             startPauseLurkDrawable = android.R.drawable.ic_media_play;
             startPauseLurkTitle = "Start";
-            contentText = "Service paused for '" + videos.size() + "' streamers...";
+            contentText = "Service paused for '" + channels.size() + "' streamers...";
 
             Intent stopLurkIntent = new Intent(this, LurkService.class);
             stopLurkIntent.setAction("STOP_LURK");
@@ -157,7 +204,7 @@ public class LurkService extends Service {
             startPauseLurkIntent.setAction("PAUSE_LURK");
             startPauseLurkDrawable = android.R.drawable.ic_media_pause;
             startPauseLurkTitle = "Pause";
-            contentText = "Service starting for '" + videos.size() + "' streamers...";
+            contentText = "Service starting for '" + channels.size() + "' streamers...";
         }
         PendingIntent startPauseLurk = PendingIntent.getService(this, 0, startPauseLurkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -184,11 +231,16 @@ public class LurkService extends Service {
                 @Override
                 public void run() {
                     try {
-                        mBuilder.setContentText("Currently lurking " + videos.size() + " streamers @" + (networkUsage.getNetworkUsageDifference() / 3) + "kbit/s");
+                        if (channels.isEmpty() || (settings != null && settings.getBoolean(Globals.SETTINGS_WIFI_ONLY) && !checkIfWifiIsOnAndConnected())) {
+                            stopSelf();
+                        }
+                        mBuilder.setContentText("@" + (networkUsage.getNetworkUsageDifference() / 3) + "kbit/s | " + channels.size() + " lurked: " + channelNames );
                         notificationManager.notify(3, mBuilder.build());
                         if (networkUsageHandler != null) {
                             networkUsageHandler.postDelayed(this, 3000);
                         }
+                    } catch (JSONException e) {
+                        new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get read settings for Lurk Service | " + e.toString(), true).run();
                     } catch (Exception e) {
                         new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
                     }
@@ -200,6 +252,56 @@ public class LurkService extends Service {
             notificationManager.notify(3, mBuilder.build());
         } else {
             startForeground(3, mBuilder.build());
+        }
+    }
+
+    /**
+     * Activates the a chat bot in the users name
+     * @author LethalMaus
+     * @param channel String
+     */
+    private void activateChatBot(String channel) {
+        if (!botManager.containsKey(channel)) {
+            new Thread() {
+                public void run() {
+                    ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
+                    if (channelEntity != null) {
+                        Configuration configuration = new Configuration.Builder()
+                                .setAutoReconnect(true)
+                                .setAutoNickChange(false)
+                                .setOnJoinWhoEnabled(false)
+                                .setCapEnabled(true)
+                                .addCapHandler(new EnableCapHandler("twitch.tv/membership"))
+                                .addServer("irc.twitch.tv")
+                                .setName(channelEntity.getDisplay_name())
+                                .setServerPassword("oauth:" + token)
+                                .addAutoJoinChannel("#" + channel.toLowerCase())
+                                .addListener(new ListenerAdapter() {
+                                })
+                                .buildConfiguration();
+                        try {
+                            PircBotX bot = new PircBotX(configuration);
+                            botManager.put(channel, bot);
+                            bot.startBot();
+                        } catch (Exception e) {
+                            new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Error starting chat: " + e.toString(), true).run();
+                        }
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Method for checking if on WiFi network
+     * @return boolean isOnAndConnected
+     */
+    private boolean checkIfWifiIsOnAndConnected() {
+        if (wifiMgr != null && wifiMgr.isWifiEnabled()) {
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+            return wifiInfo.getNetworkId() > 0;
+        } else {
+            return false;
         }
     }
 }

@@ -83,7 +83,7 @@
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toStartOf="@+id/vod_action_button2"
         app:layout_constraintTop_toBottomOf="@+id/vod_preview"
-        app:srcCompat="@drawable/export" />
+        app:srcCompat="@drawable/holder" />
 
     <ImageButton
         android:id="@+id/vod_action_button2"
@@ -98,7 +98,7 @@
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vod_preview"
-        app:srcCompat="@drawable/excluded" />
+        app:srcCompat="@drawable/holder" />
 
     <View
         android:id="@+id/divider"

@@ -49,7 +49,7 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
+        new Thread() {
             public void run() {
                 try {
                     long lastUpdated = 0;
@@ -101,6 +101,6 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "FollowingEntity Update response error | " + e.toString(), true).run();
                 }
             }
-        }).start();
+        }.start();
     }
 }

@@ -389,6 +389,34 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/imageView39"
+                    app:srcCompat="@drawable/discord"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_weight="0"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/guide_menu_discord" />
+
+                <TextView
+                    android:id="@+id/textView39"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/guide_menu_discord" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <ImageView
                     android:id="@+id/imageView35"
                     app:srcCompat="@drawable/twitch"
                     android:layout_width="40dp"
@@ -545,6 +573,34 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="@string/guide_menu_autovodexport" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView49"
+                    app:srcCompat="@drawable/lurk_menu"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_weight="0"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/guide_menu_autolurk" />
+
+                <TextView
+                    android:id="@+id/textView49"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/guide_menu_autolurk" />
             </LinearLayout>
 
             <LinearLayout

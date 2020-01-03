@@ -1,68 +1,67 @@
 ﻿<h2><b>Introduction</b></h2>
-Streaming Yorkie is designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers as well as offering a better overview of <i>Followers & Following</i>.
-After your stream any <i>VOD (Video On Demand)</i> can be seen & exported to <i>Youtube</i> in our VOD Overview.
-<b>Automatically Follow, Unfollow, F4F & export VODs to Youtube</b> simply by installing and configuring Streaming Yorkie.
-Share that you are <b>AutoFollowing</b> to our Discord Community & gain even more followers.
-Helps build a bigger community, simplifies/automates communication, become an <i>affiliate</i> sooner & free up time to stream more.
-Watch multiple streams on one screen at once with <b>Multi View</b> and cast it to a larger screen
-<b>Lurk</b> your favourite streamers with minimum possible network data usage (audio only) & increase their view count.
+Streaming Yorkie is a tool designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers
+The tool offers a better overview of <i>Followers, Following, Unfollowed & F4F</i>
+After your stream any <i>VOD (Video On Demand)</i> can be seen & exported to <i>Youtube</i> in our VODs Overview
+<b>Automatically Follow, Unfollow, F4F, Lurk & export VODs to Youtube</b> simply by installing and configuring Streaming Yorkie
+Share that you are <b>AutoFollowing</b> to our Discord Community & gain more followers
+Helps build a bigger community, simplifies/automates communication to become an <i>affiliate</i> or <i>partner</i> faster & free up time to stream more
+Watch multiple streams at once with <b>Multi View</b> and cast it to a TV
+<b>Lurk</b> your favourite streamers with minimum possible network data usage (audio only & chat) & increase their viewer count
+Use our Discord to get others to to Follow or Lurk and gain more viewers. Use the F4F L4L H4H Channel
 
-Currently it is in an <b>Alpha</b> state.
-It could be that a <i>Bug</i> may appear or the app behaves in an unexpected manner.
-Please report any problems or suspicions to help improve Streaming Yorkie for everyone.
+Currently it is in an <b>Alpha</b> state
+It could be that a <i>Bug</i> may appear or the app behaves in an unexpected manner
+Please report any problems or suspicions to help improve Streaming Yorkie for everyone
 
 <b>Guide</b>
 https://github.com/LethalMaus/StreamingYorkie#guide
 
-The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved.
-It is a gift back to a great community who I will continue to support for <b>free</b>.
+The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved
+It is a gift back to a great community who I will continue to support for <b>free</b>
 
-Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i> & <i>Twitch Multi View</i>.
-A login is required to be able to edit & see your Twitch data.
-Passwords are not saved, rather a unique Token given by Twitch is saved.
-This ensures that your account is as safe as can be.
+Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i> & <i>Twitch Multi View</i>
+A login is required to be able to edit & see your Twitch data
+Passwords are not seen or saved, rather a unique Token given by Twitch is used after the login
+This ensures that your account is as safe as can be
+All data is saved locally & only you have access to it
 VOD exports are done by Twitch, they are not downloaded & uploaded by Streaming Yorkie
-This ensures network data usage is kept to a minimum.
+This ensures network data usage is kept to a minimum
+A PircBotX bot is used to send a message to a lurked channel on demand or automatically
 
-Streaming Yorkie is developed with <i>Android Studio</i> in <i>Java</i>.
-<i>Lint</i> & <i>Sonarcloud</i> is used to acquire high quality standardized code while little complexity.
-The code is documented with <i>JavaDocs</i> & comments to allow for easier collaborations with other developers.
-<b>DRY</b> <i>(Don't Repeat Yourself)</i> & <b>KISS</b> <i>(Keep It Simple Stupid)</i> principles are enforced as much as possible.
-Variable naming conventions are also in place.
-The variable name must explain what it is or what it does, clearly, for any developer to understand.
+Streaming Yorkie is developed with <i>Android Studio</i> in <i>Java</i>
+<i>Lint</i> & <i>Sonarcloud</i> is used to acquire high quality standardized code while little complexity
+The code is documented with <i>JavaDocs</i> & comments to allow for easier collaborations with other developers
+<b>DRY</b> <i>(Don't Repeat Yourself)</i> & <b>KISS</b> <i>(Keep It Simple Stupid)</i> principles are enforced as much as possible
+Variable naming conventions are also in place
+The variable name must explain what it is or what it does, clearly, for any developer to understand
 
-Hopefully this can be used as an example for good coding as well as how to develop an Android App in Java.
-Any collaborations are welcome, so feel free to fork & ask for merge requests.
-See something inefficient? Let me know. I'm always trying to improve my coding & learn new things.
+Hopefully this can be used as an example for good coding as well as how to develop an Android App in Java
+Any collaborations are welcome, so feel free to fork & ask for merge requests
+See something inefficient? Let me know. I'm always trying to improve my coding & learn new things
 
 <b>Open Source Code</b>
 https://github.com/LethalMaus/StreamingYorkie
 
 <h2><b>Roadmap</b></h2>
-The following tasks and features are currently on the Roadmap & some of which are likely to be within the next release.
+The following tasks and features are currently on the Roadmap & some of which are likely to be within the next release
 
- • AutoLurk
  • Stream Info/Event tracker (views, hosts, followers, chats, markers)
- • Sonarcloud improvments
- • Single automated E2E test 
- • Firebase device farm
- • Unit tests until 100% code coverage
  • <i>See GitHub for more...</i>
 
 <h2><b>Contact</b></h2>
 <b>Discord</b>
 For any issues, questions or change requests, feel free to ask. I will get back to you as soon as I can
-https://discord.gg/asZsz2F
-
-<b>Twitch</b>
-I also love to entertain, game & stream as a hobby on Twitch. If you're interested, come & say 'Hi'
-https://www.twitch.tv/lethalmaus
+https://discord.gg/vkCHjVm
 
 <b>GitHub</b>
 For more ways of getting in contact with me, see the GitHub page
 https://github.com/LethalMaus/StreamingYorkie#contact
 
+<b>Twitch</b>
+Come & say 'Hi'
+https://www.twitch.tv/lethalmaus
+
 <small><i>
 Tags:
-StreamingYorkie Streaming Yorkie Twitch Stream Channel Follower Following Tool Helper Automatic Follow F4F Followers VOD VODs Videos Export Youtube Multi View Lurk Gain Views Increase Viewers Affiliate Partner Streamer Community Free Open Source
+StreamingYorkie Streaming Yorkie Twitch Stream Tool Helper Channel Follower Followers Following Unfollowed Automatic Follow Unfollow F4F L4L H4H VOD VODs Video Videos Export Youtube Multi View Cast TV Lurk Gain Views More Viewers Increase Viewer Count Affiliate Partner Chat Bot Streamer Discord Community Free Open Source
 </i></small>
