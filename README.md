@@ -1,7 +1,7 @@
 # StreamingYorkie
 
 <p align="center">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/streaming_yorkie-web.png">
+  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/streaming_yorkie-web.png"><br>
   <b>A Twitch Streamers Best Friend<b>
 </p>
 
