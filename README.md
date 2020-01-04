@@ -436,6 +436,15 @@ This can take up to 15 minutes to activate.
 
 </details>
 
+### 2.1.1-a
+
+<details>
+<summary>Hot fix for DB migration</summary>
+
+Issues:
++   Room - Database version upgrade & migration fix
+</details>
+
 ### 2.1.0-a
 
 <details>
