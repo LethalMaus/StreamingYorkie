@@ -410,6 +410,8 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.1.2-a](#212-a)
++ [2.1.1-a](#211-a)
 + [2.1.0-a](#210-a)
 + [2.0.3-a](#203-a)
 + [2.0.2-a](#202-a)
@@ -434,6 +436,24 @@ This can take up to 15 minutes to activate.
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
 
+</details>
+
+### 2.1.2-a
+
+<details>
+<summary>Hot fix for DB migration</summary>
+
+Issues:
++   Room - Database version upgrade & migration fix due to undefined constant in sql query
+</details>
+
+### 2.1.1-a
+
+<details>
+<summary>Hot fix for DB migration</summary>
+
+Issues:
++   Room - Database version upgrade & migration fix
 </details>
 
 ### 2.1.0-a

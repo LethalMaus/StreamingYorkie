@@ -14,9 +14,14 @@ android {
         applicationId 'com.lethalmaus.streaming_yorkie'
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 18
-        versionName "2.1.0-a"
+        versionCode 20
+        versionName "2.1.2-a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         debug {
