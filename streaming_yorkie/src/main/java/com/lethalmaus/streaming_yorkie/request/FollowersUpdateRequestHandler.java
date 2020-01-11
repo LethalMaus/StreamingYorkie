@@ -13,10 +13,10 @@ import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -58,7 +58,9 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                         lastUpdated = Long.parseLong(lastUpdatedString);
                     }
                     int[] lastFollowers = streamingYorkieDB.followerDAO().getLastUsers(lastUpdated);
-                    if (lastFollowers.length == response.getJSONArray("follows").length() && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWERS_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT").readFile())) {
+                    String totalCountFile = new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT").readFile();
+                    int twitchFollowerTotalCount = NumberUtils.isParsable(totalCountFile) ? Integer.parseInt(totalCountFile) : 0;
+                    if (lastFollowers.length == response.getJSONArray("follows").length() && response.getInt("_total") == twitchFollowerTotalCount) {
                         for (int i = 0; i < lastFollowers.length; i++) {
                             if (lastFollowers[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id"))) {
                                 new FollowersRequestHandler(weakActivity, weakContext, recyclerView){
@@ -72,11 +74,9 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                             }
                         }
                         if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
-                                }
-                            });
+                            weakActivity.get().runOnUiThread(() ->
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
+                            );
                         }
                         onCompletion();
                     } else {
@@ -90,12 +90,8 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                     }
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
-                        weakActivity.get().runOnUiThread(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+                        weakActivity.get().runOnUiThread(() ->
+                                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
                         );
                     }
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Followers Update response error | " + e.toString(), true).run();

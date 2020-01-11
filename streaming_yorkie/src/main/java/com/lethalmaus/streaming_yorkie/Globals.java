@@ -1,11 +1,15 @@
 package com.lethalmaus.streaming_yorkie;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.SystemClock;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -27,7 +31,6 @@ import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -102,6 +105,7 @@ public class Globals {
     public static final String LURKSERVICE_NOTIFICATION_CHANNEL_ID = "LURKSERVICE_NOTIFICATION";
     public static final String LURKSERVICE_NOTIFICATION_CHANNEL_NAME = "LurkService";
     public static final String LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION = "Notify channel if lurking is activated";
+    public static final int LURK_SERVICE_ALARM_ID = 1;
 
     //Flag Files
     public static final String FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE = "FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE";
@@ -165,43 +169,89 @@ public class Globals {
      * @param channelDescription notification channel description
      */
     public static void activateWorker(WeakReference<Context> weakContext, String settingsFileName, String workerName, Class<? extends Worker> workerClass, String channelID, String channelName, String channelDescription) {
-        if (weakContext != null && weakContext.get() != null && new File(weakContext.get().getFilesDir().toString() + File.separator + settingsFileName).exists()) {
             try {
-                JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, settingsFileName).readFile());
-                if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(weakContext, workerName)) {
-                    createNotificationChannel(weakContext, channelID, channelName, channelDescription);
-                    TimeUnit intervalUnit = TimeUnit.MINUTES;
-                    int interval = 15;
-                    if (settings.has(Globals.SETTINGS_INTERVAL_UNIT) && settings.has(Globals.SETTINGS_INTERVAL)) {
-                        switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
-                            case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
-                                intervalUnit = TimeUnit.MINUTES;
-                                break;
-                            case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
-                                intervalUnit = TimeUnit.HOURS;
-                                break;
-                            case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
-                            default:
-                                intervalUnit = TimeUnit.DAYS;
-                                break;
+                String settingsString = new ReadFileHandler(null, weakContext, settingsFileName).readFile();
+                if (weakContext != null && weakContext.get() != null && !settingsString.isEmpty()) {
+                    JSONObject settings = new JSONObject(settingsString);
+                    if (!settings.getString(workerName).equals(Globals.SETTINGS_OFF) && !isWorkerActive(weakContext, workerName)) {
+                        createNotificationChannel(weakContext, channelID, channelName, channelDescription);
+                        TimeUnit intervalUnit = TimeUnit.MINUTES;
+                        int interval = 15;
+                        if (settings.has(Globals.SETTINGS_INTERVAL_UNIT) && settings.has(Globals.SETTINGS_INTERVAL)) {
+                            switch (settings.getString(Globals.SETTINGS_INTERVAL_UNIT)) {
+                                case Globals.SETTINGS_INTERVAL_UNIT_MINUTES:
+                                    intervalUnit = TimeUnit.MINUTES;
+                                    break;
+                                case Globals.SETTINGS_INTERVAL_UNIT_HOURS:
+                                    intervalUnit = TimeUnit.HOURS;
+                                    break;
+                                case Globals.SETTINGS_INTERVAL_UNIT_DAYS:
+                                default:
+                                    intervalUnit = TimeUnit.DAYS;
+                                    break;
+                            }
+                            interval = settings.getInt(Globals.SETTINGS_INTERVAL);
                         }
-                        interval = settings.getInt(Globals.SETTINGS_INTERVAL);
+                        PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, interval, intervalUnit);
+                        Constraints constraints = new Constraints.Builder()
+                                .setRequiresBatteryNotLow(true)
+                                .setRequiresStorageNotLow(true)
+                                .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+                                .build();
+                        PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
+                        WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
+                    } else if (settings.getString(workerName).equals(Globals.SETTINGS_OFF) && isWorkerActive(weakContext, workerName)) {
+                        WorkManager.getInstance().cancelAllWorkByTag(workerName);
                     }
-                    PeriodicWorkRequest.Builder autoFollowBuilder = new PeriodicWorkRequest.Builder(workerClass, interval, intervalUnit);
-                    Constraints constraints = new Constraints.Builder()
-                            .setRequiresBatteryNotLow(true)
-                            .setRequiresStorageNotLow(true)
-                            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
-                            .build();
-                    PeriodicWorkRequest workRequest = autoFollowBuilder.setConstraints(constraints).addTag(workerName).build();
-                    WorkManager.getInstance().enqueueUniquePeriodicWork(workerName, ExistingPeriodicWorkPolicy.KEEP, workRequest);
-                } else if (settings.getString(workerName).equals(Globals.SETTINGS_OFF) && isWorkerActive(weakContext, workerName)) {
-                    WorkManager.getInstance().cancelAllWorkByTag(workerName);
                 }
             } catch (JSONException e) {
                 Toast.makeText(weakContext.get(), "Error reading settings for " + workerName, Toast.LENGTH_SHORT).show();
                 new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "Main: reading settings for '" + workerName + "'. " + e.toString(), true).run();
             }
+    }
+
+    /**
+     * Checks if settings were ever made for the Alarm type, then checks if the Alarm has been activated & with which preferences.
+     * AlarmManager is used to perform the Receiver process
+     * @author LethalMaus
+     * @param weakContext weak reference to context
+     * @param settingsFileName name of settings files
+     * @param alarmName name of alarm process
+     * @param alarmId id of the alarm process
+     * @param receiver name of receiver class
+     * @param channelID notification channel ID
+     * @param channelName notification channel name
+     * @param triggerIn trigger the alarm in x milliseconds
+     * @param channelDescription notification channel description
+     */
+    public static void activateAlarm(WeakReference<Context> weakContext, String settingsFileName, String alarmName, int alarmId, Class<? extends BroadcastReceiver> receiver, String channelID, String channelName, String channelDescription, long triggerIn) {
+        try {
+            String settingsString = new ReadFileHandler(null, weakContext, settingsFileName).readFile();
+            if (weakContext != null && weakContext.get() != null && !settingsString.isEmpty()) {
+                JSONObject settings = new JSONObject(settingsString);
+                if (!settings.getString(alarmName).equals(Globals.SETTINGS_OFF) && (PendingIntent.getBroadcast(weakContext.get(), alarmId, new Intent(weakContext.get(), receiver), PendingIntent.FLAG_NO_CREATE) == null)) {
+                    Intent intent = new Intent(weakContext.get(), receiver);
+                    intent.setAction("LURK_ALARM");
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(weakContext.get(), alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    AlarmManager alarmManager = (AlarmManager) weakContext.get().getSystemService(Context.ALARM_SERVICE);
+                    createNotificationChannel(weakContext, channelID, channelName, channelDescription);
+                    if (alarmManager != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + triggerIn, pendingIntent);
+                        } else {
+                            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 10000, AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                        }
+                    }
+                } else if (settings.getString(alarmName).equals(Globals.SETTINGS_OFF) && (PendingIntent.getBroadcast(weakContext.get(), alarmId, new Intent(weakContext.get(), receiver), PendingIntent.FLAG_NO_CREATE) != null)) {
+                    AlarmManager alarmManager = (AlarmManager) weakContext.get().getSystemService(Context.ALARM_SERVICE);
+                    if (alarmManager != null) {
+                        alarmManager.cancel(PendingIntent.getBroadcast(weakContext.get(), alarmId, new Intent(weakContext.get(), receiver), PendingIntent.FLAG_UPDATE_CURRENT));
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Toast.makeText(weakContext.get(), "Error reading settings for " + alarmName, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "Main: reading settings for '" + alarmName + "'. " + e.toString(), true).run();
         }
     }
 
