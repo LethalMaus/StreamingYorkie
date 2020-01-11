@@ -13,10 +13,10 @@ import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -58,7 +58,9 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                         lastUpdated = Long.parseLong(lastUpdatedString);
                     }
                     int[] lastFollowing = streamingYorkieDB.followingDAO().getLastUsers(lastUpdated);
-                    if (lastFollowing.length == response.getJSONArray("follows").length()  && new File(weakContext.get().getFilesDir() + File.separator + "TWITCH_FOLLOWING_TOTAL_COUNT").exists() && response.getInt("_total") == Integer.parseInt(new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile())) {
+                    String totalCountFile = new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile();
+                    int twitchFollowingTotalCount = NumberUtils.isParsable(totalCountFile) ? Integer.parseInt(totalCountFile) : 0;
+                    if (lastFollowing.length == response.getJSONArray("follows").length() && response.getInt("_total") == twitchFollowingTotalCount) {
                         for (int i = 0; i < lastFollowing.length; i++) {
                             if (lastFollowing[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id"))) {
                                 new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
@@ -72,11 +74,9 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                             }
                         }
                         if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
-                                }
-                            });
+                            weakActivity.get().runOnUiThread(() ->
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
+                            );
                         }
                         onCompletion();
                     } else {
@@ -90,12 +90,8 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                     }
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
-                        weakActivity.get().runOnUiThread(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+                        weakActivity.get().runOnUiThread(() ->
+                                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
                         );
                     }
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "FollowingEntity Update response error | " + e.toString(), true).run();

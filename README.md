@@ -410,6 +410,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.1.4-a](#214-a)
 + [2.1.3-a](#213-a)
 + [2.1.2-a](#212-a)
 + [2.1.1-a](#211-a)
@@ -436,6 +437,21 @@ This can take up to 15 minutes to activate.
 + [1.0.2-a](#102-a)
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
+
+</details>
+
+### 2.1.4-a
+
+<details>
+<summary>Improvements & Fixes</summary>
+
+Issues:
++   Info - Layout alignment fix
+
+Improvements:
++   AutoLurk - AlarmManager API specific calls
++   Lambda - more Lambda refactoring
+</details>
 
 </details>
 

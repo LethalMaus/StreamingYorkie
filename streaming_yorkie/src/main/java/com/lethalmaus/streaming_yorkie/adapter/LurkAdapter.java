@@ -234,8 +234,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                                         new WriteFileHandler(weakActivity, weakContext, "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
                                         new Thread() {
                                             public void run() {
-                                                Intent intent = new Intent(weakContext.get(), LurkService.class);
-                                                intent.setAction("MANUAL_LURK");
+                                                Intent intent = new Intent(weakContext.get(), LurkService.class).setAction("MANUAL_LURK");
                                                 if (Build.VERSION.SDK_INT < 28) {
                                                     weakContext.get().startService(intent);
                                                 } else {

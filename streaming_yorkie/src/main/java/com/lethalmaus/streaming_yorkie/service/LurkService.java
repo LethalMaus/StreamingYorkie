@@ -64,12 +64,17 @@ public class LurkService extends Service {
     private String token = "";
     private JSONObject settings;
     private Map<String, PircBotX> botManager;
+    private int noNetworkUsageCount;
+    private boolean serviceRestart;
+    private String previousIntentAction;
 
     @Override
     public void onCreate() {
         notificationManager =  NotificationManagerCompat.from(getApplicationContext());
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         networkUsageMonitorRunning = false;
+        noNetworkUsageCount = 10;
+        serviceRestart = false;
         streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
         wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
@@ -87,6 +92,9 @@ public class LurkService extends Service {
     //This is needed for the Lurk WebView, even though its not recommended & considered dangerous. Hence the Lint suppression
     @SuppressLint("SetJavaScriptEnabled")
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getAction() != null) {
+            previousIntentAction = intent.getAction();
+        }
         if (intent != null && intent.getAction() != null && intent.getAction().contentEquals("STOP_LURK")) {
             stopSelf();
         } else if (intent != null && intent.getAction() != null && intent.getAction().contentEquals("PAUSE_LURK")) {
@@ -174,7 +182,16 @@ public class LurkService extends Service {
                 bot.close();
             }
         }
-        Toast.makeText(this,"Stopped lurking", Toast.LENGTH_SHORT).show();
+        if (serviceRestart) {
+            Intent intent = new Intent(getApplicationContext(), LurkService.class).setAction(previousIntentAction);
+            if (Build.VERSION.SDK_INT < 28) {
+                startService(intent);
+            } else {
+                startForegroundService(intent);
+            }
+        } else {
+            Toast.makeText(this, "Stopped lurking", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -225,7 +242,7 @@ public class LurkService extends Service {
 
         if (!paused && !networkUsageMonitorRunning) {
             networkUsageMonitorRunning = true;
-            final NetworkUsageMonitor networkUsage = new NetworkUsageMonitor(new WeakReference<>(getApplicationContext()));
+            final NetworkUsageMonitor networkUsageMonitor = new NetworkUsageMonitor(new WeakReference<>(getApplicationContext()));
             networkUsageHandler = new Handler();
             networkUsageRunnable = new Runnable() {
                 @Override
@@ -234,7 +251,16 @@ public class LurkService extends Service {
                         if (channels.isEmpty() || (settings != null && settings.getBoolean(Globals.SETTINGS_WIFI_ONLY) && !checkIfWifiIsOnAndConnected())) {
                             stopSelf();
                         }
-                        mBuilder.setContentText("@" + (networkUsage.getNetworkUsageDifference() / 3) + "kbit/s | " + channels.size() + " lurked: " + channelNames );
+                        long networkUsage = (networkUsageMonitor.getNetworkUsageDifference() / 3);
+                        if (noNetworkUsageCount == 0) {
+                            serviceRestart = true;
+                            stopSelf();
+                        } else if (networkUsage == 0) {
+                            noNetworkUsageCount--;
+                        } else {
+                            noNetworkUsageCount = 10;
+                        }
+                        mBuilder.setContentText("@" + networkUsage + "kbit/s | " + channels.size() + " lurked: " + channelNames );
                         notificationManager.notify(3, mBuilder.build());
                         if (networkUsageHandler != null) {
                             networkUsageHandler.postDelayed(this, 3000);

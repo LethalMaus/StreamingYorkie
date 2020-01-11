@@ -1,14 +1,13 @@
-package com.lethalmaus.streaming_yorkie.worker;
+package com.lethalmaus.streaming_yorkie.receiver;
 
+import android.app.AlarmManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-
-import androidx.annotation.NonNull;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
+import android.os.PowerManager;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
@@ -29,10 +28,10 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
- * Worker for automating Lurking
+ * Receiver for automating Lurking
  * @author LethalMaus
  */
-public class AutoLurkWorker extends Worker {
+public class AutoLurkReceiver extends BroadcastReceiver {
 
     private WeakReference<Context> weakContext;
     private StreamingYorkieDB streamingYorkieDB;
@@ -42,18 +41,15 @@ public class AutoLurkWorker extends Worker {
     private int lurkResponseCount;
     private String channelName;
 
-    /**
-     * Constructor for AutoLurkWorker for automating Lurking
-     * @author LethalMaus
-     * @param context app context
-     * @param params parameters for worker.super()
-     */
-    public AutoLurkWorker(
-            @NonNull Context context,
-            @NonNull WorkerParameters params) {
-        super(context, params);
-        this.weakContext = new WeakReference<>(context);
-        streamingYorkieDB = StreamingYorkieDB.getInstance(weakContext.get());
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        weakContext = new WeakReference<>(context);
+        if (streamingYorkieDB == null) {
+            streamingYorkieDB = StreamingYorkieDB.getInstance(context);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Globals.activateAlarm(weakContext, Globals.FILE_SETTINGS_LURK, Globals.SETTINGS_AUTOLURK, Globals.LURK_SERVICE_ALARM_ID, AutoLurkReceiver.class, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION, AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+        }
         try {
             JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, "SETTINGS_LURK").readFile());
             wifiOnly = settings.getBoolean(Globals.SETTINGS_WIFI_ONLY);
@@ -72,11 +68,6 @@ public class AutoLurkWorker extends Worker {
         } catch(JSONException e) {
             new WriteFileHandler(null, weakContext, "ERROR", null, "AutoLurk: Error reading settings | " + e.toString(), true).run();
         }
-    }
-
-    @Override
-    public @NonNull
-    Result doWork() {
         if (!wifiOnly || checkIfWifiIsOnAndConnected()) {
             new Thread() {
                 public void run() {
@@ -89,7 +80,7 @@ public class AutoLurkWorker extends Worker {
                             new LurkRequestHandler(null, weakContext, null) {
                                 @Override
                                 public void onCompletion() {
-                                    if (weakContext != null && weakContext.get() != null) {
+                                    if (weakContext.get() != null) {
                                         lurkResponseCount++;
                                         if (lurk.getHtml() != null && !lurk.getHtml().isEmpty() && lurk.isChannelIsToBeLurked()) {
                                             htmlInjection.append(lurk.getHtml());
@@ -125,7 +116,6 @@ public class AutoLurkWorker extends Worker {
                 }
             }.start();
         }
-       return Result.success();
     }
 
     /**
@@ -153,7 +143,7 @@ public class AutoLurkWorker extends Worker {
                 if (new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
                     String token = new ReadFileHandler(null, new WeakReference<>(weakContext.get()), "TOKEN").readFile();
                     Configuration configuration = new Configuration.Builder()
-                            .setAutoReconnect(false)
+                            .setAutoReconnect(true)
                             .setAutoNickChange(false)
                             .setOnJoinWhoEnabled(false)
                             .setCapEnabled(true)
