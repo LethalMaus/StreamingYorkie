@@ -35,8 +35,6 @@ import org.pircbotx.hooks.ListenerAdapter;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * RecyclerView Adapter for Lurk Objects
@@ -218,9 +216,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
     private void getStreamersOnlineStatus() {
         new Thread() {
             public void run() {
-                int lurkCount = streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount();
-                if (lurkCount > 0) {
-                    List<String> userIds = Arrays.asList(streamingYorkieDB.lurkDAO().getChannelsToBeLurked());
+                if (streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount() > 0) {
                     new StreamStatusRequestHandler(weakActivity, weakContext, weakRecyclerView) {
                         @Override
                         public void onCompletion() {
@@ -242,7 +238,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                                 }
                             }
                         }
-                    }.newRequest(userIds).initiate().sendRequest();
+                    }.newRequest(streamingYorkieDB.lurkDAO().getChannelIdsToBeLurked()).initiate().sendRequest();
                 }
             }
         }.start();
@@ -254,10 +250,10 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      * @param updateViewOnly boolean to update view only or db as well
      */
     public void datasetChanged(boolean updateViewOnly) {
-        new Thread(){
-            public void run() {
-                setLurkCount();
-                if (!updateViewOnly) {
+        if (!updateViewOnly) {
+            new Thread(){
+                public void run() {
+                    setLurkCount();
                     if (streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount() > 0) {
                         getStreamersOnlineStatus();
                     } else {
@@ -265,8 +261,8 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                         weakActivity.get().stopService(intent);
                     }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     /**

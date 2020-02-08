@@ -25,6 +25,15 @@ public interface LurkDAO {
     LurkEntity getLurkByChannelName(String channelName);
 
     /**
+     * Get LurkEntity by Channel ID
+     * @author LethalMaus
+     * @param channelId LurkEntity Channel ID
+     * @return LurkEntity
+     */
+    @Query("SELECT * FROM lurk WHERE channelId = :channelId")
+    LurkEntity getLurkByChannelId(String channelId);
+
+    /**
      * Get current Lurks by position
      * @author LethalMaus
      * @param offset position
@@ -43,12 +52,28 @@ public interface LurkDAO {
     LurkEntity getChannelsToBeLurkedByPosition(int offset);
 
     /**
-     * Get current Lurks by position
+     * Get list of channel names to be lurked
+     * @author LethalMaus
+     * @return ArrayList of Int
+     */
+    @Query("SELECT channelId FROM lurk WHERE channelIsToBeLurked = 1")
+    int[] getChannelIdsToBeLurked();
+
+    /**
+     * Get list of channels that are online
      * @author LethalMaus
      * @return ArrayList of Strings
      */
-    @Query("SELECT channelName FROM lurk WHERE channelIsToBeLurked = 1 AND html IS NOT NULL")
-    String[] getChannelsToBeLurked();
+    @Query("SELECT * FROM lurk WHERE channelIsToBeLurked = 1 AND html IS NOT NULL")
+    LurkEntity[] getOnlineLurks();
+
+    /**
+     * Get list of channel names that are offline
+     * @author LethalMaus
+     * @return ArrayList of Strings
+     */
+    @Query("SELECT channelName FROM lurk WHERE html IS NULL")
+    String[] getOfflineLurks();
 
     /**
      * Get total LurkEntity count

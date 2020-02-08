@@ -107,7 +107,7 @@ public class Info extends AppCompatActivity {
 
         findViewById(R.id.info_discord).setOnClickListener(
                 (View v) ->
-                        openLink("https://discord.gg/vkCHjVm"));
+                        openLink("https://discord.gg/66EpTMj"));
 
         TextView appVersion = findViewById(R.id.info_app_version);
         appVersion.setText(BuildConfig.VERSION_NAME);

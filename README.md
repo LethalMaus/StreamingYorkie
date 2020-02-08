@@ -410,6 +410,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.1.5-a](#215-a)
 + [2.1.4-a](#214-a)
 + [2.1.3-a](#213-a)
 + [2.1.2-a](#212-a)
@@ -437,6 +438,23 @@ This can take up to 15 minutes to activate.
 + [1.0.2-a](#102-a)
 + [1.0.1-a](#101-a)
 + [1.0.0-a](#100-a)
+
+</details>
+
+### 2.1.5-a
+
+<details>
+<summary>Improvements & Fixes</summary>
+
+Issues:
++   Lurk - Alarm & doze mode
++   Lurk - Error handling
+
+Improvements:
++   Lurk - Sing request for online users
++   Discord - Permanent links
++   Lambda - more Lambda refactoring
+</details>
 
 </details>
 
@@ -893,7 +911,7 @@ The following tasks and features are currently on the roadmap & some of which ar
 ## Issues
 
 Please report any issues you may come across to help improve Streaming Yorkie.
-You can either use [Githubs Issue Tab](https://github.com/LethalMaus/StreamingYorkie/issues/new) or contact me on [Discord](https://discord.gg/vkCHjVm).
+You can either use [Githubs Issue Tab](https://github.com/LethalMaus/StreamingYorkie/issues/new) or contact me on [Discord](https://discord.gg/66EpTMj).
 Please try to use the following template to help resolve the issue quicker.
 
 ```

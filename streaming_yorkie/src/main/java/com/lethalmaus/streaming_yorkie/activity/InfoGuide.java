@@ -37,7 +37,7 @@ public class InfoGuide extends AppCompatActivity {
                 resetViews();
                 menus_button.setBackgroundResource(R.drawable.button_selected);
                 View menus = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_menus, menus_view, false);
-                menus_view.addView(menus, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+                menus_view.addView(menus, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             } else {
                 resetViews();
             }
@@ -50,7 +50,7 @@ public class InfoGuide extends AppCompatActivity {
                 resetViews();
                 categories_button.setBackgroundResource(R.drawable.button_selected);
                 View categories = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_categories, categories_view, false);
-                categories_view.addView(categories, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+                categories_view.addView(categories, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             } else {
                 resetViews();
             }
@@ -63,7 +63,7 @@ public class InfoGuide extends AppCompatActivity {
                 resetViews();
                 actions_button.setBackgroundResource(R.drawable.button_selected);
                 View actions = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_actions, actions_view, false);
-                actions_view.addView(actions, new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+                actions_view.addView(actions, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             } else {
                 resetViews();
             }

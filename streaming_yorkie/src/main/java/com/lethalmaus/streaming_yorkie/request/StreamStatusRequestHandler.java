@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,13 +57,14 @@ public class StreamStatusRequestHandler extends RequestHandler {
      * @param userIds String user Ids
      * @return instance of itself for method building
      */
-    public StreamStatusRequestHandler newRequest(List<String> userIds) {
-        this.userIds = userIds;
+    public StreamStatusRequestHandler newRequest(int[] userIds) {
+        this.userIds = new ArrayList<>();
         userIdsFormatted = new StringBuilder();
-        for (int i = 0; i < userIds.size(); i++) {
+        for (int userId : userIds) {
             userIdsFormatted.append("user_id=");
-            userIdsFormatted.append(userIds.get(i));
+            userIdsFormatted.append(userId);
             userIdsFormatted.append("&");
+            this.userIds.add(String.valueOf(userId));
         }
         return this;
     }
@@ -73,37 +75,40 @@ public class StreamStatusRequestHandler extends RequestHandler {
             public void run() {
                 try {
                     usersToBeLurked = 0;
-                    for (int i = 0; i < userIds.size(); i++) {
-                        String user = response.getJSONArray("data").getJSONObject(i).getString("user_name");
-                        if (userIds.contains(user)) {
-                            usersToBeLurked++;
-                            new LurkRequestHandler(weakActivity, weakContext, recyclerView) {
-                                @Override
-                                public void onCompletion() {
-                                    try {
-                                        if (usersToBeLurked == response.getJSONArray("data").length()) {
-                                            StreamStatusRequestHandler.this.onCompletion();
-                                        }
-                                    } catch (JSONException e) {
-                                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting stream status | " + e.toString(), true).run();
+                    if (response.getJSONArray("data").length() <= 0) {
+                        StreamStatusRequestHandler.this.onCompletion();
+                    }
+                    for (int i = 0; i < response.getJSONArray("data").length(); i++) {
+                        String userName = response.getJSONArray("data").getJSONObject(i).getString("user_name");
+                        new LurkRequestHandler(weakActivity, weakContext, recyclerView) {
+                            @Override
+                            public void onCompletion() {
+                                try {
+                                    usersToBeLurked++;
+                                    if (usersToBeLurked == response.getJSONArray("data").length()) {
+                                        StreamStatusRequestHandler.this.onCompletion();
                                     }
-                                }
-                            }.newRequest(user.toLowerCase()).initiate().sendRequest();
-                        } else {
-                            LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(user);
-                            if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
-                                FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(lurk.getChannelId());
-                                if (following != null) {
-                                    String logo = following.getLogo();
-                                    lurk.setLogo(logo);
+                                } catch (JSONException e) {
+                                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting stream status | " + e.toString(), true).run();
                                 }
                             }
-                            lurk.setBroadcastId(null);
-                            lurk.setHtml(null);
-                            lurk.setChannelInformedOfLurk(false);
-                            lurk.setChannelIsToBeLurked(true);
-                            streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                        }.newRequest(userName.toLowerCase()).initiate().sendRequest();
+                        userIds.remove(userID);
+                    }
+                    for (int i = 0; i < userIds.size(); i++) {
+                        LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelId(userIds.get(i));
+                        if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
+                            FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(lurk.getChannelId());
+                            if (following != null) {
+                                String logo = following.getLogo();
+                                lurk.setLogo(logo);
+                            }
                         }
+                        lurk.setBroadcastId(null);
+                        lurk.setHtml(null);
+                        lurk.setChannelInformedOfLurk(false);
+                        lurk.setChannelIsToBeLurked(true);
+                        streamingYorkieDB.lurkDAO().updateLurk(lurk);
                     }
                 } catch (JSONException e) {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting stream status | " + e.toString(), true).run();
@@ -119,7 +124,7 @@ public class StreamStatusRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (recyclerView != null && recyclerView.get() != null && weakActivity.get() != null) {
+        if (weakActivity != null && weakActivity.get() != null) {
             weakActivity.get().runOnUiThread(() ->
                     Toast.makeText(weakActivity.get(), "OFFLINE: Cannot get stream status when offline", Toast.LENGTH_SHORT).show()
             );
