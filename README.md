@@ -410,6 +410,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.1.6-a](#216-a)
 + [2.1.5-a](#215-a)
 + [2.1.4-a](#214-a)
 + [2.1.3-a](#213-a)
@@ -441,6 +442,17 @@ This can take up to 15 minutes to activate.
 
 </details>
 
+### 2.1.6-a
+
+<details>
+<summary>Lurk Hot Fix</summary>
+
+Issues:
++   Lurk - Handler & Looper fix
+</details>
+
+---
+
 ### 2.1.5-a
 
 <details>
@@ -456,7 +468,7 @@ Improvements:
 +   Lambda - more Lambda refactoring
 </details>
 
-</details>
+---
 
 ### 2.1.4-a
 
@@ -471,7 +483,7 @@ Improvements:
 +   Lambda - more Lambda refactoring
 </details>
 
-</details>
+---
 
 ### 2.1.3-a
 
@@ -482,6 +494,8 @@ Issues:
 +   Room - Database version upgrade & migration fix due to undefined constant in sql query
 </details>
 
+---
+
 ### 2.1.2-a
 
 <details>
@@ -491,6 +505,8 @@ Issues:
 +   Room - Database version upgrade & migration fix due to undefined constant in sql query
 </details>
 
+---
+
 ### 2.1.1-a
 
 <details>
@@ -499,6 +515,8 @@ Issues:
 Issues:
 +   Room - Database version upgrade & migration fix
 </details>
+
+---
 
 ### 2.1.0-a
 
