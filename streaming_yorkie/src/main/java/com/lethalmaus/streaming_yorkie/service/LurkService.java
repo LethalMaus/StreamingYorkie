@@ -12,7 +12,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -123,6 +122,29 @@ public class LurkService extends Service {
                     break;
                 default:
                     if (!wifiOnly || checkIfWifiIsOnAndConnected()) {
+                        Handler serviceHandler = new Handler();
+                        Runnable serviceRunnable = () -> {
+                            WindowManager.LayoutParams params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                                    ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                                    : WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+                            params.gravity = Gravity.TOP | Gravity.START;
+                            params.x = 0;
+                            params.y = 0;
+                            params.width = 0;
+                            params.height = 0;
+                            if (webView != null) {
+                                webView = new WebView(LurkService.this);
+                                webView.setWebViewClient(new WebViewClient());
+                                webView.getSettings().setJavaScriptEnabled(true);
+                                webView.getSettings().setDomStorageEnabled(true);
+                                webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+                                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
+                            }
+                            if (windowManager != null) {
+                                windowManager.addView(webView, params);
+                                showNotification(false);
+                            }
+                        };
                         showNotification(false);
                         new Thread() {
                             @Override
@@ -157,26 +179,7 @@ public class LurkService extends Service {
                                                 streamingYorkieDB.lurkDAO().updateLurk(lurk);
                                             }
                                             new WriteFileHandler(null, weakContext, "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
-                                            new Handler(Looper.getMainLooper()).post(() -> {
-                                                WindowManager.LayoutParams params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                                                        ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                                                        : WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-                                                params.gravity = Gravity.TOP | Gravity.START;
-                                                params.x = 0;
-                                                params.y = 0;
-                                                params.width = 0;
-                                                params.height = 0;
-
-                                                webView = new WebView(LurkService.this);
-                                                webView.setWebViewClient(new WebViewClient());
-                                                webView.getSettings().setJavaScriptEnabled(true);
-                                                webView.getSettings().setDomStorageEnabled(true);
-                                                webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-
-                                                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
-                                                windowManager.addView(webView, params);
-                                                showNotification(false);
-                                            });
+                                            serviceHandler.post(serviceRunnable);
                                         }
                                     }.newRequest(streamingYorkieDB.lurkDAO().getChannelIdsToBeLurked()).initiate().sendRequest();
                                 }
@@ -264,30 +267,27 @@ public class LurkService extends Service {
             networkUsageMonitorRunning = true;
             final NetworkUsageMonitor networkUsageMonitor = new NetworkUsageMonitor(new WeakReference<>(getApplicationContext()));
             networkUsageHandler = new Handler();
-            networkUsageRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (lurks.length <= 0 || wifiOnly && !checkIfWifiIsOnAndConnected()) {
-                            stopSelf();
-                        }
-                        long networkUsage = (networkUsageMonitor.getNetworkUsageDifference() / 5);
-                        if (noNetworkUsageCount == 0) {
-                            serviceRestart = true;
-                            stopSelf();
-                        } else if (networkUsage == 0) {
-                            noNetworkUsageCount--;
-                        } else {
-                            noNetworkUsageCount = 10;
-                        }
-                        mBuilder.setContentText("@" + networkUsage + "kbit/s | " + lurks.length + " lurked: " + channelNames.toString());
-                        notificationManager.notify(3, mBuilder.build());
-                        if (networkUsageHandler != null) {
-                            networkUsageHandler.postDelayed(this, 3000);
-                        }
-                    } catch (Exception e) {
-                        new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
+            networkUsageRunnable = () -> {
+                try {
+                    if (lurks.length <= 0 || wifiOnly && !checkIfWifiIsOnAndConnected()) {
+                        stopSelf();
                     }
+                    long networkUsage = (networkUsageMonitor.getNetworkUsageDifference() / 5);
+                    if (noNetworkUsageCount == 0) {
+                        serviceRestart = true;
+                        stopSelf();
+                    } else if (networkUsage == 0) {
+                        noNetworkUsageCount--;
+                    } else {
+                        noNetworkUsageCount = 10;
+                    }
+                    mBuilder.setContentText("@" + networkUsage + "kbit/s | " + lurks.length + " lurked: " + channelNames.toString());
+                    notificationManager.notify(3, mBuilder.build());
+                    if (networkUsageHandler != null) {
+                        networkUsageHandler.postDelayed(networkUsageRunnable, 3000);
+                    }
+                } catch (Exception e) {
+                    new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
                 }
             };
             networkUsageHandler.postDelayed(networkUsageRunnable, 5000);

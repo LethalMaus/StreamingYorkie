@@ -102,7 +102,7 @@ public class LurkRequestHandler extends RequestHandler {
     }
 
     /**
-     * Gets the audio only lurl url
+     * Gets the audio only lurk url
      * @author LethalMaus
      * @param channelId String of channel ID
      */
@@ -113,7 +113,7 @@ public class LurkRequestHandler extends RequestHandler {
                                 public void run() {
                                     LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(channel);
                                     String broadcastId = response.substring(response.indexOf("BROADCAST-ID=\"") + 14);
-                                    if (lurk.getBroadcastId() == null || !broadcastId.contentEquals(lurk.getBroadcastId())) {
+                                    if (lurk != null && (lurk.getBroadcastId() == null || !broadcastId.contentEquals(lurk.getBroadcastId()))) {
                                         String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"") + 18);
                                         broadcastId = broadcastId.substring(0, broadcastId.indexOf("\","));
                                         String htmlBlock = "<div id='" + channel.toLowerCase().trim() + "'>"
