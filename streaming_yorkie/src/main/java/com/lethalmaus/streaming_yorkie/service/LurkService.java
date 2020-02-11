@@ -68,9 +68,9 @@ public class LurkService extends Service {
     private boolean serviceRestart;
     private StringBuilder channelNames;
 
-    private boolean wifiOnly;
-    private boolean informChannel;
-    private String message;
+    private boolean wifiOnly = false;
+    private boolean informChannel = false;
+    private String message = "";
 
     @Override
     public void onCreate() {
@@ -86,16 +86,18 @@ public class LurkService extends Service {
             token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
         }
         botManager = new HashMap<>();
-        try {
-            JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, "SETTINGS_LURK").readFile());
-            wifiOnly = settings.getBoolean(Globals.SETTINGS_WIFI_ONLY);
-            informChannel = settings.getBoolean(Globals.SETTINGS_LURK_INFORM);
-            message = settings.getString(Globals.SETTINGS_LURK_MESSAGE);
-            if (message.isEmpty()) {
-                message = "!lurk";
+        if (new File(getFilesDir().toString() + File.separator + "SETTINGS_LURK").exists()) {
+            try {
+                JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, "SETTINGS_LURK").readFile());
+                wifiOnly = settings.getBoolean(Globals.SETTINGS_WIFI_ONLY);
+                informChannel = settings.getBoolean(Globals.SETTINGS_LURK_INFORM);
+                message = settings.getString(Globals.SETTINGS_LURK_MESSAGE);
+                if (message.isEmpty()) {
+                    message = "!lurk";
+                }
+            } catch (JSONException e) {
+                new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "AutoLurk: Error reading settings | " + e.toString(), true).run();
             }
-        } catch(JSONException e) {
-            new WriteFileHandler(null, weakContext, Globals.FILE_ERROR, null, "AutoLurk: Error reading settings | " + e.toString(), true).run();
         }
     }
 
@@ -132,14 +134,12 @@ public class LurkService extends Service {
                             params.y = 0;
                             params.width = 0;
                             params.height = 0;
-                            if (webView != null) {
-                                webView = new WebView(LurkService.this);
-                                webView.setWebViewClient(new WebViewClient());
-                                webView.getSettings().setJavaScriptEnabled(true);
-                                webView.getSettings().setDomStorageEnabled(true);
-                                webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-                                webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
-                            }
+                            webView = new WebView(LurkService.this);
+                            webView.setWebViewClient(new WebViewClient());
+                            webView.getSettings().setJavaScriptEnabled(true);
+                            webView.getSettings().setDomStorageEnabled(true);
+                            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+                            webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
                             if (windowManager != null) {
                                 windowManager.addView(webView, params);
                                 showNotification(false);
