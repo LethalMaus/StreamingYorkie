@@ -410,6 +410,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.1.7-a](#217-a)
 + [2.1.6-a](#216-a)
 + [2.1.5-a](#215-a)
 + [2.1.4-a](#214-a)
@@ -441,6 +442,17 @@ This can take up to 15 minutes to activate.
 + [1.0.0-a](#100-a)
 
 </details>
+
+### 2.1.7-a
+
+<details>
+<summary>Lurk Hot Fix</summary>
+
+Issues:
++   Lurk - Handler & Looper fix
+</details>
+
+---
 
 ### 2.1.6-a
 
