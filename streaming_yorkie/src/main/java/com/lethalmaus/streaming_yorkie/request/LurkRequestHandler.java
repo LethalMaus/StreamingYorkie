@@ -85,15 +85,17 @@ public class LurkRequestHandler extends RequestHandler {
 
     @Override
     void errorHandler(VolleyError error) {
-        if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+        if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+            weakActivity.get().runOnUiThread(() ->
+                    Toast.makeText(weakActivity.get(), "Unable to find channel '" + channel + "'", Toast.LENGTH_SHORT).show()
+            );
+        }
+        if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND) {
             new Thread() {
                 public void run() {
                     streamingYorkieDB.lurkDAO().deleteLurkByChannelName(channel);
                 }
             }.start();
-            weakActivity.get().runOnUiThread(() ->
-                    Toast.makeText(weakActivity.get(), "Unable to find channel '" + channel + "'", Toast.LENGTH_SHORT).show()
-            );
         } else {
             String errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();

@@ -97,18 +97,20 @@ public class StreamStatusRequestHandler extends RequestHandler {
                     }
                     for (int i = 0; i < userIds.size(); i++) {
                         LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelId(userIds.get(i));
-                        if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
-                            FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(lurk.getChannelId());
-                            if (following != null) {
-                                String logo = following.getLogo();
-                                lurk.setLogo(logo);
+                        if (lurk != null) {
+                            if (lurk.getLogo() == null || lurk.getLogo().isEmpty()) {
+                                FollowingEntity following = streamingYorkieDB.followingDAO().getUserById(lurk.getChannelId());
+                                if (following != null) {
+                                    String logo = following.getLogo();
+                                    lurk.setLogo(logo);
+                                }
                             }
+                            lurk.setBroadcastId(null);
+                            lurk.setHtml(null);
+                            lurk.setChannelInformedOfLurk(false);
+                            lurk.setChannelIsToBeLurked(true);
+                            streamingYorkieDB.lurkDAO().updateLurk(lurk);
                         }
-                        lurk.setBroadcastId(null);
-                        lurk.setHtml(null);
-                        lurk.setChannelInformedOfLurk(false);
-                        lurk.setChannelIsToBeLurked(true);
-                        streamingYorkieDB.lurkDAO().updateLurk(lurk);
                     }
                 } catch (JSONException e) {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting stream status | " + e.toString(), true).run();

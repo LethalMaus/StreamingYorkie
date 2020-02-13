@@ -7,8 +7,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -58,7 +58,7 @@ public class LurkService extends Service {
     private WebView webView;
     private StreamingYorkieDB streamingYorkieDB;
     private LurkEntity[] lurks;
-    private WifiManager wifiMgr;
+    private ConnectivityManager connectivityManager;
     private Handler networkUsageHandler;
     private Runnable networkUsageRunnable;
     private boolean networkUsageMonitorRunning;
@@ -74,14 +74,15 @@ public class LurkService extends Service {
 
     @Override
     public void onCreate() {
-        weakContext = new WeakReference<>(getApplicationContext());
         notificationManager =  NotificationManagerCompat.from(getApplicationContext());
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         networkUsageMonitorRunning = false;
+        showNotification(false);
+        weakContext = new WeakReference<>(getApplicationContext());
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         noNetworkUsageCount = 10;
         serviceRestart = false;
         streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
-        wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
             token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
         }
@@ -145,7 +146,6 @@ public class LurkService extends Service {
                                 showNotification(false);
                             }
                         };
-                        showNotification(false);
                         new Thread() {
                             @Override
                             public void run() {
@@ -223,7 +223,6 @@ public class LurkService extends Service {
                 startForegroundService(intent);
             }
         } else {
-            Toast.makeText(this, "Stopped lurking", Toast.LENGTH_SHORT).show();
             new DeleteFileHandler(null, weakContext, "LURK.HTML").run();
         }
     }
@@ -353,9 +352,11 @@ public class LurkService extends Service {
      * @return boolean isOnAndConnected
      */
     private boolean checkIfWifiIsOnAndConnected() {
-        if (wifiMgr != null && wifiMgr.isWifiEnabled()) {
-            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-            return wifiInfo.getNetworkId() > 0;
+        if (connectivityManager != null) {
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+            boolean isMetered = connectivityManager.isActiveNetworkMetered();
+            return isConnected && !isMetered;
         } else {
             return false;
         }
