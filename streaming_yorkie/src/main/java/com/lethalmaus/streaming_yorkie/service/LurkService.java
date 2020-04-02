@@ -133,8 +133,8 @@ public class LurkService extends Service {
                             params.gravity = Gravity.TOP | Gravity.START;
                             params.x = 0;
                             params.y = 0;
-                            params.width = 0;
-                            params.height = 0;
+                            params.width = 1;
+                            params.height = 1;
                             webView = new WebView(LurkService.this);
                             webView.setWebViewClient(new WebViewClient());
                             webView.getSettings().setJavaScriptEnabled(true);
