@@ -410,6 +410,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.1.9-a](#219-a)
 + [2.1.8-a](#218-a)
 + [2.1.7-a](#217-a)
 + [2.1.6-a](#216-a)
@@ -444,13 +445,25 @@ This can take up to 15 minutes to activate.
 
 </details>
 
+### 2.1.9-a
+
+<details>
+<summary>Improvements & Fixes</summary>
+
+Improvements:
++   Lurk - Ensuring the lurk counts as a view
+
+Issues fixed:
++   Login - adapting to changes in Twitch login procedure
+</details>
+
 
 ### 2.1.8-a
 
 <details>
 <summary>Lurk Hot Fix</summary>
 
-Issues:
+Issues fixed:
 +   Lurk - RemoteServiceException fix
 </details>
 
@@ -461,7 +474,7 @@ Issues:
 <details>
 <summary>Lurk Hot Fix</summary>
 
-Issues:
+Issues fixed:
 +   Lurk - Handler & Looper fix
 </details>
 
@@ -472,7 +485,7 @@ Issues:
 <details>
 <summary>Lurk Hot Fix</summary>
 
-Issues:
+Issues fixed:
 +   Lurk - Handler & Looper fix
 </details>
 
@@ -483,7 +496,7 @@ Issues:
 <details>
 <summary>Improvements & Fixes</summary>
 
-Issues:
+Issues fixed:
 +   Lurk - Alarm & doze mode
 +   Lurk - Error handling
 
@@ -500,7 +513,7 @@ Improvements:
 <details>
 <summary>Improvements & Fixes</summary>
 
-Issues:
+Issues fixed:
 +   Info - Layout alignment fix
 
 Improvements:
@@ -515,7 +528,7 @@ Improvements:
 <details>
 <summary>Hot fix for DB migration</summary>
 
-Issues:
+Issues fixed:
 +   Room - Database version upgrade & migration fix due to undefined constant in sql query
 </details>
 
@@ -526,7 +539,7 @@ Issues:
 <details>
 <summary>Hot fix for DB migration</summary>
 
-Issues:
+Issues fixed:
 +   Room - Database version upgrade & migration fix due to undefined constant in sql query
 </details>
 
@@ -537,7 +550,7 @@ Issues:
 <details>
 <summary>Hot fix for DB migration</summary>
 
-Issues:
+Issues fixed:
 +   Room - Database version upgrade & migration fix
 </details>
 
@@ -552,7 +565,7 @@ Features:
 +   AutoLurk
 +   Lurk Messaging with PircBotX
 
-Issues:
+Issues fixed:
 +   Lurk - lurk not counted as view fix
 +   Adapter - threading fix
 
@@ -573,7 +586,7 @@ Improvements:
 <details>
 <summary>Patch for minor fixes</summary>
 
-Issues:
+Issues fixed:
 +   RecyclerView - crash reduction per post method IndexOutOfBoundsException fix
 +   Worker - fix activating/deactivating worker
 
@@ -588,7 +601,7 @@ Improvements:
 <details>
 <summary>Patch for minor fixes</summary>
 
-Issues:
+Issues fixed:
 +   Lurk - Redundant API call replacement fix
 +   RecyclerView - crash IndexOutOfBoundsException fix
 +   WriteFileHandler - toasts on error only when activity is present fix
@@ -608,7 +621,7 @@ Other:
 <details>
 <summary>Patch for minor fixes</summary>
 
-Issues:
+Issues fixed:
 +   UserView crash on displaying chanel name fix
 +   RecyclerView crash IndexOutOfBoundsException fix
 +   FollowRequestHandler NumberFormatException crash fix
@@ -656,7 +669,7 @@ Features:
 +   Lurk Service
 +   Share F4F to Discord
 
-Issues:
+Issues fixed:
 +	Login Crash due to 2FA
 +   Twitch APIv3 Shutdown
 
@@ -691,7 +704,7 @@ Other:
 <details>
 <summary>Patch for fixing issues below</summary>
 
-Issues:
+Issues fixed:
 +	Empty VOD Crash fix
 +   Following toast typo
 +   Changed min api to 21 due to WebView restrictions
@@ -719,7 +732,7 @@ Features:
 +   MultiView
 +   Guides, Help & Links
 
-Issues:
+Issues fixed:
 +	Follow Requests fix
 +   User view fix
 +	VOD exports during stream
@@ -737,7 +750,7 @@ Other:
 <details>
 <summary>Patch for fixing issues below</summary>
 
-Issues:
+Issues fixed:
 +	Removed Auth custom timeout
 +   Offline User Logo
 +   60 Day token refresh
@@ -762,7 +775,7 @@ Improvements:
 <details>
 <summary>Patch for fixing issues below</summary>
 
-Issues:
+Issues fixed:
 +	Removed Auth custom timeout
 +   Offline User Logo
 +   60 Day token refresh
@@ -789,7 +802,7 @@ Features:
 +   VOD Export
 +   VOD Export Automation
 
-Issues:
+Issues fixed:
 +	F4F Settings fix
 +   WriteFile append with line break
 +	VOD Export while streaming fix
@@ -808,7 +821,7 @@ Features:
 +   VOD Export
 +   VOD Export Automation
 
-Issues:
+Issues fixed:
 +	Request & file writing synchronization
 +   Login/Logout correction fix
 +	Encoding issues fix (UTF-8)
@@ -829,7 +842,7 @@ Other:
 <details>
 <summary>Patch for fixes listed below.</summary>
 
-Issues:
+Issues fixed:
 +	Follow/Unfollow all action implementation (was missing after recycler view)
 +	Updates for Google Play Policies (code was not pushed)
 </details>
@@ -841,7 +854,7 @@ Issues:
 <details>
 <summary>Patch for fixes listed below.</summary>
 
-Issues:
+Issues fixed:
 +	F4F Menu Users movement correction
 +	Updates for Google Play Listing Policies
 </details>
@@ -853,7 +866,7 @@ Issues:
 <details>
 <summary>Patch for fixes listed below.</summary>
 
-Issues:
+Issues fixed:
 +	Link to Guide/Manual in Info
 +	User list order wrong (due to Collections reverse order mistake)
 +	Weak References checked against null
@@ -872,7 +885,7 @@ Issues:
 <details>
 <summary>Patch for fixes listed below.</summary>
 
-Issues:
+Issues fixed:
 +	User list order wrong (previous code was not implemented)
 +	Activity refreshes on screen rotation fix
 +	Exclusion lists inconsistency fix (wrong path & decision to keep)
@@ -893,7 +906,7 @@ Features:
 +	AutoFollow implemented
 +	Login/Logout implemented
 
-Issues:
+Issues fixed:
 +	User list view lag
 +	User list order wrong
 +	Action buttons functionality fix

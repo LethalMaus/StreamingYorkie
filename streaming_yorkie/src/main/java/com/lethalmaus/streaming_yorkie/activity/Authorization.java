@@ -87,6 +87,10 @@ public class Authorization extends AppCompatActivity {
                     @Override
                     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                         if (request.getUrl().toString().contains("twitch.tv")) {
+                            if (request.getUrl().toString().contains("https://www.twitch.tv/?no-reload=true")){
+                                finish();
+                                return false;
+                            }
                             if (request.getUrl().toString().contains("https://www.twitch.tv/passport-callback#access_token")) {
                                 new WriteFileHandler(weakActivity, weakContext, "TWITCH_TOKEN", null, request.getUrl().toString().substring(request.getUrl().toString().indexOf("access_token") + 13, request.getUrl().toString().indexOf("access_token") + 43), false).writeToFileOrPath();
                                 Toast.makeText(Authorization.this, "Login Successful", Toast.LENGTH_SHORT).show();
