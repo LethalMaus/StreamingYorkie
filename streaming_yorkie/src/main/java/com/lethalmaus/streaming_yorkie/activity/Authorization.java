@@ -88,6 +88,10 @@ public class Authorization extends AppCompatActivity {
                     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                         if (request.getUrl().toString().contains("twitch.tv")) {
                             if (request.getUrl().toString().contains("https://www.twitch.tv/?no-reload=true")){
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                webView.destroy();
                                 finish();
                                 return false;
                             }
@@ -103,6 +107,8 @@ public class Authorization extends AppCompatActivity {
                             }
                             view.loadUrl(request.getUrl().toString());
                             return false;
+                        } else if (request.getUrl().toString().contains("http://localhost/?error=access_denied")) {
+                            setContentView(R.layout.error);
                         }
                         return true;
                     }
@@ -136,6 +142,10 @@ public class Authorization extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**

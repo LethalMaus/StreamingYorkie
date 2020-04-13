@@ -2,7 +2,7 @@
     <string name="app_name">StreamingYorkie</string>
     <string name="error_symbol">Error Symbol</string>
     <string name="authorization_failed">Authorization Failed!</string>
-    <string name="error_message">This can be caused by one of the following: No Internet Wrong User and/or Password Undiscovered bug / Feature impediment</string>
+    <string name="error_message">This can be caused by one of the following: user denying access, no internet, wrong user and/or password, undiscovered bug / feature impediment</string>
     <string name="user_logo">User Logo</string>
     <string name="username">UserName</string>
     <string name="refresh_symbol">Refresh Symbol</string>
@@ -16,7 +16,7 @@
     <string name="export">Export</string>
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
-    <string name="follow_unfollow"><![CDATA[Follow & Unfollow]]></string>
+    <string name="follow_unfollow">Follow &amp; Unfollow></string>
     <string name="auto_follow_service">AutoFollow Service</string>
     <string name="auto_vod_export_service">AutoVODExport Service</string>
     <string name="enable_notifications">Enable Notifications</string>
@@ -58,7 +58,7 @@
     <string name="do_split">Split</string>
     <string name="enter_title">Enter a title&#8230;</string>
     <string name="enter_description">Enter a description&#8230;</string>
-    <string name="enter_tags">Enter tags.  ..</string>
+    <string name="enter_tags">Enter tags&#8230;</string>
     <string name="vod_action_button">VOD Action Button</string>
     <string name="menu_followers">Followers Menu</string>
     <string name="menu_following">Following Menu</string>
