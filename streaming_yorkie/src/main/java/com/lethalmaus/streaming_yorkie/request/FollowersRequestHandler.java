@@ -82,13 +82,9 @@ public class FollowersRequestHandler extends RequestHandler {
                         sendRequest();
                     } else {
                         if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(
-                                    new Runnable() {
-                                        public void run() {
-                                            Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'Followers' is out of sync. Total should be '" + twitchTotal
-                                                    + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
+                            weakActivity.get().runOnUiThread(() ->
+                                    Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'Followers' is out of sync. Total should be '" + twitchTotal
+                                            + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show()
                             );
                         }
                         new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWERS_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).run();
@@ -101,34 +97,25 @@ public class FollowersRequestHandler extends RequestHandler {
                             final UserAdapter userAdapter = (UserAdapter) recyclerView.get().getAdapter();
                             if (userAdapter != null && weakActivity != null && weakActivity.get() != null) {
                                 userAdapter.setPageCounts();
-                                weakActivity.get().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        recyclerView.get().stopScroll();
-                                        recyclerView.get().scrollToPosition(0);
-                                        recyclerView.get().getRecycledViewPool().clear();
-                                        userAdapter.datasetChanged();
-                                    }
+                                weakActivity.get().runOnUiThread(() -> {
+                                    recyclerView.get().stopScroll();
+                                    recyclerView.get().scrollToPosition(0);
+                                    recyclerView.get().getRecycledViewPool().clear();
+                                    userAdapter.datasetChanged();
                                 });
                             }
                         }
                         if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                }
-                            });
+                            weakActivity.get().runOnUiThread(() ->
+                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
+                            );
                         }
                         onCompletion();
                     }
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
-                        weakActivity.get().runOnUiThread(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+                        weakActivity.get().runOnUiThread(() ->
+                                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
                         );
                     }
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Followers response error | " + e.toString(), true).run();

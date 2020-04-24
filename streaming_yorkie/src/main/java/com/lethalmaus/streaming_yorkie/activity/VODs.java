@@ -63,42 +63,29 @@ public class VODs extends AppCompatActivity {
 
         ImageButton refreshPage = findViewById(R.id.refresh);
         progressBar = findViewById(R.id.progressbar);
-        refreshPage.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
-                            mLastClickTime = SystemClock.elapsedRealtime();
-                            progressBar.setVisibility(View.VISIBLE);
-                            requestHandler.initiate().sendRequest();
-                        }
-                    }
-                });
+        refreshPage.setOnClickListener((View v) -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
+                mLastClickTime = SystemClock.elapsedRealtime();
+                progressBar.setVisibility(View.VISIBLE);
+                requestHandler.initiate().sendRequest();
+            }
+        });
+
         final ImageButton vodButton = findViewById(R.id.page1);
-        vodButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE");
-                    }
-                });
+        vodButton.setOnClickListener((View v) ->
+            pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE")
+        );
 
         final ImageButton exportedButton = findViewById(R.id.page2);
-        exportedButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pageButtonListenerAction(exportedButton, "Exported", "EXPORTED", null, "DELETE");
-                    }
-                });
+        exportedButton.setOnClickListener((View v) ->
+                pageButtonListenerAction(exportedButton, "Exported", "EXPORTED", null, "DELETE")
+        );
+
         final ImageButton excludedButton = findViewById(R.id.page3);
-        excludedButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pageButtonListenerAction(excludedButton, "Excluded", "EXCLUDED", null, "INCLUDE");
-                    }
-                });
+        excludedButton.setOnClickListener((View v) ->
+                pageButtonListenerAction(excludedButton, "Excluded", "EXCLUDED", null, "INCLUDE")
+        );
+
         pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE");
 
         requestHandler = new VODUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
@@ -121,14 +108,12 @@ public class VODs extends AppCompatActivity {
      * @author LethalMaus
      */
     private void deleteNotifications() {
-        new Thread(new Runnable() {
-            public void run() {
-                if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_VODEXPORT).exists()) {
-                    new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_VODEXPORT).run();
-                }
-                if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()) {
-                    new DeleteFileHandler(weakActivity, weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
-                }
+        new Thread(() -> {
+            if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_VODEXPORT).exists()) {
+                new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_VODEXPORT).run();
+            }
+            if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).exists()) {
+                new DeleteFileHandler(weakActivity, weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE).run();
             }
         }).start();
     }
@@ -196,12 +181,9 @@ public class VODs extends AppCompatActivity {
             recyclerView.getRecycledViewPool().clear();
             VODAdapter vodAdapter = (VODAdapter) recyclerView.getAdapter();
             if (vodAdapter != null) {
-                recyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        vodAdapter.setDisplayPreferences(vodsType, actionButtonType1, actionButtonType2).datasetChanged();
-                    }
-                });
+                recyclerView.post(() ->
+                        vodAdapter.setDisplayPreferences(vodsType, actionButtonType1, actionButtonType2).datasetChanged()
+                );
             }
         } else {
             Toast.makeText(this, "Updating VODs, please be patient.", Toast.LENGTH_SHORT).show();

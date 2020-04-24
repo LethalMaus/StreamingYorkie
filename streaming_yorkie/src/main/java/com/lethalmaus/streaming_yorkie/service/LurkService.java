@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -79,17 +78,17 @@ public class LurkService extends Service {
         showNotification(false);
         weakContext = new WeakReference<>(getApplicationContext());
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        noNetworkUsageCount = 10;
+        noNetworkUsageCount = 12;
         serviceRestart = false;
         streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
         connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (new File(getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-            token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), "TOKEN").readFile();
+        if (new File(getFilesDir().toString() + File.separator + Globals.FILE_TOKEN).exists()) {
+            token = new ReadFileHandler(null, new WeakReference<>(getApplicationContext()), Globals.FILE_TOKEN).readFile();
         }
         botManager = new HashMap<>();
-        if (new File(getFilesDir().toString() + File.separator + "SETTINGS_LURK").exists()) {
+        if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SETTINGS_LURK).exists()) {
             try {
-                JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, "SETTINGS_LURK").readFile());
+                JSONObject settings = new JSONObject(new ReadFileHandler(null, weakContext, Globals.FILE_SETTINGS_LURK).readFile());
                 wifiOnly = settings.getBoolean(Globals.SETTINGS_WIFI_ONLY);
                 informChannel = settings.getBoolean(Globals.SETTINGS_LURK_INFORM);
                 message = settings.getString(Globals.SETTINGS_LURK_MESSAGE);
@@ -113,10 +112,10 @@ public class LurkService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction() != null) {
             switch (intent.getAction()) {
-                case "STOP_LURK":
+                case Globals.STOP_LURK:
                     stopSelf();
                     break;
-                case "PAUSE_LURK":
+                case Globals.PAUSE_LURK:
                     networkUsageHandler.removeCallbacks(networkUsageRunnable);
                     networkUsageMonitorRunning = false;
                     webView.destroy();
@@ -140,7 +139,7 @@ public class LurkService extends Service {
                             webView.getSettings().setJavaScriptEnabled(true);
                             webView.getSettings().setDomStorageEnabled(true);
                             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-                            webView.loadUrl("file:///" + getFilesDir() + File.separator + "LURK.HTML");
+                            webView.loadUrl("file:///" + getFilesDir() + File.separator + Globals.FILE_LURK_HTML);
                             if (windowManager != null) {
                                 windowManager.addView(webView, params);
                                 showNotification(false);
@@ -178,7 +177,7 @@ public class LurkService extends Service {
                                                 lurk.setChannelInformedOfLurk(true);
                                                 streamingYorkieDB.lurkDAO().updateLurk(lurk);
                                             }
-                                            new WriteFileHandler(null, weakContext, "LURK.HTML", null, htmlInjection.toString(), false).writeToFileOrPath();
+                                            new WriteFileHandler(null, weakContext, Globals.FILE_LURK_HTML, null, htmlInjection.toString(), false).writeToFileOrPath();
                                             serviceHandler.post(serviceRunnable);
                                         }
                                     }.newRequest(streamingYorkieDB.lurkDAO().getChannelIdsToBeLurked()).initiate().sendRequest();
@@ -216,14 +215,14 @@ public class LurkService extends Service {
             }
         }
         if (serviceRestart) {
-            Intent intent = new Intent(getApplicationContext(), LurkService.class).setAction("RESTART_LURK");
+            Intent intent = new Intent(getApplicationContext(), LurkService.class).setAction(Globals.RESTART_LURK);
             if (Build.VERSION.SDK_INT < 28) {
                 startService(intent);
             } else {
                 startForegroundService(intent);
             }
         } else {
-            new DeleteFileHandler(null, weakContext, "LURK.HTML").run();
+            new DeleteFileHandler(null, weakContext, Globals.FILE_LURK_HTML).run();
         }
     }
 
@@ -246,14 +245,14 @@ public class LurkService extends Service {
                 .setOngoing(true);
         if (paused) {
             mBuilder.setContentText("Service paused for '" + lurks.length + "' streamers...");
-            mBuilder.addAction(android.R.drawable.ic_media_play, "Start", PendingIntent.getService(this, 0,  new Intent(this, LurkService.class).setAction("START_LURK"), PendingIntent.FLAG_UPDATE_CURRENT));
-            mBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction("STOP_LURK"), PendingIntent.FLAG_CANCEL_CURRENT));
+            mBuilder.addAction(android.R.drawable.ic_media_play, "Start", PendingIntent.getService(this, 0,  new Intent(this, LurkService.class).setAction(Globals.START_LURK), PendingIntent.FLAG_UPDATE_CURRENT));
+            mBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction(Globals.STOP_LURK), PendingIntent.FLAG_CANCEL_CURRENT));
         } else if (!networkUsageMonitorRunning && lurks != null) {
             mBuilder.setContentText("Service starting for '" + lurks.length + "' streamers...");
-            mBuilder.addAction(android.R.drawable.ic_media_pause, "Pause", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction("PAUSE_LURK"), PendingIntent.FLAG_UPDATE_CURRENT));
+            mBuilder.addAction(android.R.drawable.ic_media_pause, "Pause", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction(Globals.PAUSE_LURK), PendingIntent.FLAG_UPDATE_CURRENT));
         } else {
             mBuilder.setContentText("Lurk Service is starting...");
-            mBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction("STOP_LURK"), PendingIntent.FLAG_CANCEL_CURRENT));
+            mBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction(Globals.STOP_LURK), PendingIntent.FLAG_CANCEL_CURRENT));
         }
 
         if (Build.VERSION.SDK_INT < 28) {
@@ -278,7 +277,7 @@ public class LurkService extends Service {
                     } else if (networkUsage == 0) {
                         noNetworkUsageCount--;
                     } else {
-                        noNetworkUsageCount = 10;
+                        noNetworkUsageCount = 12;
                     }
                     mBuilder.setContentText("@" + networkUsage + "kbit/s | " + lurks.length + " lurked: " + channelNames.toString());
                     notificationManager.notify(3, mBuilder.build());
@@ -286,10 +285,19 @@ public class LurkService extends Service {
                         networkUsageHandler.postDelayed(networkUsageRunnable, 3000);
                     }
                 } catch (Exception e) {
-                    new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
+                    new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), Globals.FILE_ERROR, null, "Could not get Lurk Service network usage | " + e.toString(), true).run();
                 }
             };
             networkUsageHandler.postDelayed(networkUsageRunnable, 5000);
+        } else if (!paused) {
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if (lurks == null || lurks.length <= 0) {
+                    new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), Globals.FILE_ERROR, null, "Failed to start Lurk Service", true).run();
+                    serviceRestart = false;
+                    stopSelf();
+                }
+            }, 60000);
         }
     }
 
@@ -327,7 +335,7 @@ public class LurkService extends Service {
                                         botManager.put(channel, bot);
                                         bot.startBot();
                                     } catch (Exception e) {
-                                        new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Error starting chat: " + e.toString(), true).run();
+                                        new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), Globals.FILE_ERROR, null, "Error starting chat: " + e.toString(), true).run();
                                     }
                                 }
                             }.start();
@@ -339,7 +347,7 @@ public class LurkService extends Service {
                                 }
                             }
                         } catch (Exception e) {
-                            new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), "ERROR", null, "Error initializing & sending to chat: " + e.toString(), true).run();
+                            new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), Globals.FILE_ERROR, null, "Error initializing & sending to chat: " + e.toString(), true).run();
                         }
                     }
                 }

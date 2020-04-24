@@ -26,7 +26,6 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        System.out.println( new String(Base64.decode("aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvNjA3Mjc1MjA3OTU4MzMxNDYyLzJYWUNpS3BVMWhiWDN0Z0dwUUM1bktOM2VFTUlELWlpbHdnbGU4bGUxRUIwbmhzVXpXX2NkbUlRLTRGNmFvNVVRZ2xF", Base64.DEFAULT)));
         return new String(Base64.decode("aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvNjA3Mjc1MjA3OTU4MzMxNDYyLzJYWUNpS3BVMWhiWDN0Z0dwUUM1bktOM2VFTUlELWlpbHdnbGU4bGUxRUIwbmhzVXpXX2NkbUlRLTRGNmFvNVVRZ2xF", Base64.DEFAULT));
     }
 
@@ -41,24 +40,18 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
      */
-    public ShareF4FStatusRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
+    protected ShareF4FStatusRequestHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext) {
         super(weakActivity, weakContext, null);
         requestType = "SHARE_F4F";
     }
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
-            public void run() {
-                if (weakActivity != null && weakActivity.get() != null) {
-                    weakActivity.get().runOnUiThread(
-                            new Runnable() {
-                                public void run() {
-                                    Toast.makeText(weakActivity.get(), "Shared F4F Status to Discord", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                    );
-                }
+        new Thread(() -> {
+            if (weakActivity != null && weakActivity.get() != null) {
+                weakActivity.get().runOnUiThread(
+                        () -> Toast.makeText(weakActivity.get(), "Shared F4F Status to Discord", Toast.LENGTH_SHORT).show()
+                );
             }
         }).start();
     }
@@ -70,10 +63,8 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
                 String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
                 return Response.success(
                         new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
-            } catch (UnsupportedEncodingException e) {
+            } catch (JSONException | UnsupportedEncodingException e) {
                 return Response.error(new ParseError(e));
-            } catch (JSONException je) {
-                return Response.error(new ParseError(je));
             }
         } else {
             return Response.success(null, HttpHeaderParser.parseCacheHeaders(response));

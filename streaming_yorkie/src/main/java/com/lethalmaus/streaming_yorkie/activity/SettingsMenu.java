@@ -60,7 +60,7 @@ public class SettingsMenu extends AppCompatActivity {
         super.onResume();
         Globals.activateWorker(new WeakReference<>(getApplicationContext()), Globals.FILE_SETTINGS_F4F, Globals.SETTINGS_AUTOFOLLOW, AutoFollowWorker.class, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_ID, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_NAME, Globals.AUTOFOLLOW_NOTIFICATION_CHANNEL_DESCRIPTION);
         Globals.activateWorker(new WeakReference<>(getApplicationContext()), Globals.FILE_SETTINGS_VOD, Globals.SETTINGS_AUTOVODEXPORT, AutoVODExportWorker.class, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_ID, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_NAME, Globals.AUTOVODEXPORT_NOTIFICATION_CHANNEL_DESCRIPTION);
-        Globals.activateAlarm(new WeakReference<>(getApplicationContext()), Globals.FILE_SETTINGS_LURK, Globals.SETTINGS_AUTOLURK, Globals.LURK_SERVICE_ALARM_ID, AutoLurkReceiver.class, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION, 10000);
+        Globals.activateAlarm(new WeakReference<>(getApplicationContext()), Globals.SETTINGS_AUTOLURK, 10000);
     }
 
     //Back to Settings Menu

@@ -27,7 +27,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.WorkManager;
 
 /**
  * Activity with common methods for sub-activities
@@ -57,17 +56,13 @@ public class FollowParent extends AppCompatActivity {
 
         ImageButton refreshPage = findViewById(R.id.refresh);
         progressBar = findViewById(R.id.progressbar);
-        refreshPage.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
-                            mLastClickTime = SystemClock.elapsedRealtime();
-                            progressBar.setVisibility(View.VISIBLE);
-                            requestHandler.initiate().sendRequest();
-                        }
-                    }
-                });
+        refreshPage.setOnClickListener((View v) -> {
+            if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
+                mLastClickTime = SystemClock.elapsedRealtime();
+                progressBar.setVisibility(View.VISIBLE);
+                requestHandler.initiate().sendRequest();
+            }
+        });
         cancelRequests();
         deleteNotifications();
         recyclerView = findViewById(R.id.table);
@@ -93,17 +88,15 @@ public class FollowParent extends AppCompatActivity {
      * @author LethalMaus
      */
     private void deleteNotifications() {
-        new Thread(new Runnable() {
-            public void run() {
-                if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_FOLLOW).exists()) {
-                    new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_FOLLOW).run();
-                }
-                if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_UNFOLLOW).exists()) {
-                    new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
-                }
-                if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()) {
-                    new DeleteFileHandler(weakActivity, weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
-                }
+        new Thread(() -> {
+            if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_FOLLOW).exists()) {
+                new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_FOLLOW).run();
+            }
+            if (new File(getFilesDir() + File.separator + Globals.NOTIFICATION_UNFOLLOW).exists()) {
+                new DeleteFileHandler(weakActivity, weakContext, Globals.NOTIFICATION_UNFOLLOW).run();
+            }
+            if (new File(getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()) {
+                new DeleteFileHandler(weakActivity, weakContext, Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).run();
             }
         }).start();
     }
@@ -121,7 +114,7 @@ public class FollowParent extends AppCompatActivity {
             volleySingleton.getRequestQueue().cancelAll("FOLLOWERS");
             volleySingleton.getRequestQueue().cancelAll("FOLLOW");
         }
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -179,12 +172,9 @@ public class FollowParent extends AppCompatActivity {
             recyclerView.getRecycledViewPool().clear();
             UserAdapter userAdapter = (UserAdapter) recyclerView.getAdapter();
             if (userAdapter != null) {
-                recyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged();
-                    }
-                });
+                recyclerView.post(() ->
+                        userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged()
+                );
             }
         } else {
             Toast.makeText(this, "Updating Users, please be patient.", Toast.LENGTH_SHORT).show();
