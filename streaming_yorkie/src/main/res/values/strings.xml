@@ -68,6 +68,7 @@
     <string name="menu_lurk">Lurk</string>
     <string name="menu_userinfo">UserInfo Menu</string>
     <string name="menu_info">Info Menu</string>
+    <string name="menu_shop">Shop Menu</string>
     <string name="menu_settings">Settings Menu</string>
     <string name="info_twitch">Live Streams</string>
     <string name="info_readme">Read Me</string>
@@ -147,5 +148,10 @@
     <string name="settings_autolurk_inform_channel">Inform channel of lurk</string>
     <string name="settings_autolurk_wifi_only">Lurk on WiFi only</string>
     <string name="settings_lurk_share_status">Share Lurk status to Discord</string>
+    <string name="shop_button">Purchase</string>
+    <string name="supporter_title">Official Supporter!</string>
+    <string name="supporter">Thank you for supporting Streaming Yorkie! Be sure to get on our discord for your free gifts!</string>
+    <string name="login_error_title">An error has occurred.</string>
+    <string name="login_error_message">The server failed to communicate. Try again later</string>
 
 </resources>

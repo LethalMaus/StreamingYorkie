@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/streaming_yorkie-web.png"><br>
-  <b>A Twitch Streamers Best Friend<b>
+  <b>A Twitch Streamers Best Friend</b>
 </p>
 
 ---
@@ -50,9 +50,10 @@ Please report any problems, suspicions or confirmations to help improve Streamin
 
 The code is **Open Source**, contains **no costs & no advertisements** are involved.
 It is a gift back to a great community who I will continue to support for **free**.
+The option to support us and gain extra benefits such as Follows or Lurks is available as in-app purchases and subscriptions
  
-Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv) and [Twitch Multi View](https://github.com/LethalMaus/TwitchMultiView).
-A login is required to be able to edit & see your Twitch data.
+Streaming Yorkie communicates exclusively with the [Twitch API](https://dev.twitch.tv/), [Twitch Website](https://twitch.tv), [Twitch Multi View](https://github.com/LethalMaus/TwitchMultiView) & our [Discord](https://discord.gg/vkCHjVm)
+A login is required to be able to utilize your Twitch data.
 Passwords are not seen or saved, rather a unique Token given by Twitch is used after the login.
 This ensures that your account is as safe as can be.
 All data is saved locally & only you have access to it.
@@ -71,18 +72,23 @@ Hopefully this can be used as an example for good coding as well as how to devel
 The code includes examples of:
 
 + RecyclerView, Adapter
-+ Room & SQLite
++ Room, SQLite, DAO & Entity
 + Volley library for HTTP requests
 + Glide library for image rendering
 + Notifications, Window Manager
 + Foreground Service, Background Service
-+ Worker, Async Task
-+ Network Usage Monitor
-+ Threading
-+ Programmatic permission, views
++ Worker, Async Task, AlarmManager
++ Network Usage Monitor, Broadcast Receiver
++ Thread, Handler, Runnable
++ Programmatic permissions, Mira casting
++ In-app purchases & subscriptions
 + File read, write & delete operations
++ Custom views, Scroll View, ...
++ Constraint, Relative & Linear Layouts
 + WebView, TextView, ImageView, ...
 + Activity, Intent, Listener, ...
++ Gradle, Checkstyle, Lint & Sonar
++ Productive deployments to Google Play Store
 
 Any collaborations are welcome, so feel free to fork & ask for merge requests.
 See something inefficient? [Let me know](#contact). I'm always trying to improve my coding & learn new things.
@@ -93,22 +99,24 @@ See something inefficient? [Let me know](#contact). I'm always trying to improve
 
 Email: [DescriptiveAnimals@gmail.com](mailto:DescriptiveAnimals@gmail.com?subject=[GitHub]%20StreamingYorkie)
 
-For any issues, questions or change requests, feel free to ask. I will get back to you as soon as I can.
+For any issues, questions or change requests, feel free to ask on [Discord](https://discord.gg/vkCHjVm). I will get back to you as soon as I can.
 
-Become a Patron. Help decide what my main focus should be & get extra benefits.
+Become a [Patron](https://www.patreon.com/LethalMaus). Help decide what my main focus should be & get extra benefits.
 
-Any support or donations are highly appreciated (but not expected) & go towards improving development & entertainment.
+Any [support or donations](https://paypal.me/JamesCullimore/2,50) are highly appreciated (but not expected) & go towards improving development & entertainment.
 
-I also love to entertain, game & stream as a hobby on Twitch. If you're interested, come & say 'Hi'.
+I also love to entertain, game & stream as a hobby on [Twitch](https://www.twitch.tv/lethalmaus). If you're interested, come & say 'Hi'.
+
+I'm also on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my development preferences & experiences.
+
+Click on one of the images below to be redirected a designated site.
 
 <p align="center">
   <a href="https://discord.gg/vkCHjVm"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.webp" height="60"></a>
   <a href="https://www.twitch.tv/lethalmaus"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.webp" height="60"></a>
-  <a href="https://www.patreon.com/LethalMaus/creators"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.webp" height="60"></a>
+  <a href="https://www.patreon.com/LethalMaus"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.webp" height="60"></a>
   <a href="https://paypal.me/JamesCullimore/2,50"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.webp" height="60"></a>
 </p>
-
-I'm also on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). Here you will find my development preferences & experiences.
 
 ---
 
@@ -126,6 +134,7 @@ I'm also on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). H
 + [User Info](#-user-info)
 + [Info](#-info)
   + [Logs](#logs)
++ [Shop](#-shop)
 + [Settings](#-settings)
   + [AutoFollow](#-autofollow)
   + [AutoVODExport](#-autovodexport)
@@ -160,6 +169,7 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="20" width="20"> Lurk streamers and add to their view count</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.webp" height="20" width="20"> Quick overview about your Twitch account</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.webp" height="20" width="20"> Shows different platforms for further information such as a <i>Twitch</i> & <i>Contact</i></li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/shop.webp" height="20" width="20"> Shop for in-app purchase and subscriptions</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/guide.webp" height="20" width="20"> Github link to ReadMe guide</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/help.webp" height="20" width="20"> Offline help guide</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Github link to Updates</li>
@@ -214,6 +224,8 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.webp" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> Saves the current changes (if any have been made)</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20"> Starts the purchase flow for the respective item</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20"> Signals that the purchase is not possible</li>
 </ul>
 </details>
 
@@ -224,6 +236,8 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 Here you can see who you follow (a.k.a. *Following*), who follows you (a.k.a. *Followers*), who unfollowed you & an excluded list from the AutoFollow.
 
 To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20">
+
+Click on the user logo to be redirected to their account on Twitch.
 
 > Each Menu has its own exclusion list for view customization that do **not** reflect in other lists.
 >
@@ -350,6 +364,20 @@ Tapping the *Developer Logo* **8** times will give you access to the app logs & 
 
 ---
 
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/shop.webp" height="30" width="30"> Shop
+
+Here you can support Streaming Yorkie with either in-app purchases or subscriptions.
+
+Some items can be purchased multiple times. Only one subscription can be active at one given time.
+
+To purchase an item, click on <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20">
+
+If an item is not available for purchase, it will be displayed with <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20">
+
+Thank you for any purchases made and your continuous support regardless.
+
+---
+
 ### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.webp" height="30" width="30"> Settings
 
 #### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="30" width="30"> Autofollow
@@ -410,6 +438,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.2.0-a](#220-a)
 + [2.1.9-a](#219-a)
 + [2.1.8-a](#218-a)
 + [2.1.7-a](#217-a)
@@ -445,6 +474,28 @@ This can take up to 15 minutes to activate.
 
 </details>
 
+### 2.2.0-a
+
+<details>
+<summary>New features, improvements & fixes</summary>
+
+Features:
++   Shop for in-app purchases & subscriptions
++   User logo redirects to Twitch
+
+Improvements:
++   Complexity reduction
++   Lambda replacements
++   Removed irrelevant test classes
++   Defined constants
+
+Issues fixed:
++   New followers not showing in list fix
++   Login process not following defined flow fix
+</details>
+
+---
+
 ### 2.1.9-a
 
 <details>
@@ -457,6 +508,7 @@ Issues fixed:
 +   Login - adapting to changes in Twitch login procedure
 </details>
 
+---
 
 ### 2.1.8-a
 

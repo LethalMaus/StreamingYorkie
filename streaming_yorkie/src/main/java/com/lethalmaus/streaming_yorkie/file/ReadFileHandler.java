@@ -3,6 +3,8 @@ package com.lethalmaus.streaming_yorkie.file;
 import android.app.Activity;
 import android.content.Context;
 
+import com.lethalmaus.streaming_yorkie.Globals;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -55,12 +57,12 @@ public class ReadFileHandler {
             File file = new File(appDirectory + File.separator + filename);
             if (file.exists() && !file.isDirectory()) {
                 fileInputStream = new FileInputStream(file);
-                inputStreamReader = new InputStreamReader(fileInputStream, Charset.forName("UTF-8"));
+                inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
                 bufferedReader = new BufferedReader(inputStreamReader);
                 StringBuilder stringBuilder = new StringBuilder();
-                //Appends new lines to error log
+                //Appends new lines to error, supporter & subscriber files
                 String newLine = "";
-                if (filename.contains("ERROR")) {
+                if (filename.contains(Globals.FILE_ERROR) || filename.contains(Globals.FILE_SUPPORTER) || filename.contains(Globals.FILE_SUBSCRIBER)) {
                     newLine = "\n";
                 }
                 String temp;
@@ -71,9 +73,9 @@ public class ReadFileHandler {
                 return stringBuilder.toString();
             }
         } catch (FileNotFoundException e) {
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error finding file '" + filename + "' | " + e.toString(), true).run();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, "Error finding file '" + filename + "' | " + e.toString(), true).run();
         } catch (IOException e) {
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Errors reading from file '" + filename + "' | " + e.toString(), true).run();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, "Errors reading from file '" + filename + "' | " + e.toString(), true).run();
         } finally {
             try {
                 if (bufferedReader != null) {
@@ -86,7 +88,7 @@ public class ReadFileHandler {
                     fileInputStream.close();
                 }
             } catch (IOException e) {
-                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error closing file '" + filename + "' | " + e.toString(), true).run();
+                new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, "Error closing file '" + filename + "' | " + e.toString(), true).run();
             }
         }
         return "";
@@ -97,7 +99,7 @@ public class ReadFileHandler {
      * @author LethalMaus
      * @return List of files
      */
-    public ArrayList<String> readFileNames() {
+    ArrayList<String> readFileNames() {
         ArrayList<String> files = new ArrayList<>();
         String[] fileArray = new File(appDirectory + File.separator + filename).list();
         if (fileArray != null && fileArray.length > 0) {

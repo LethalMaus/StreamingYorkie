@@ -146,67 +146,87 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                 if (!lurk.isChannelIsToBeLurked()) {
                     ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
                     button1.setImageResource(R.drawable.lurk);
-                    button1.setOnClickListener((View v) ->
-                            new Thread() {
-                                public void run() {
-                                    lurk.setChannelIsToBeLurked(true);
-                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
-                                    lurkAdapter.datasetChanged(false);
-                                }
-                            }.start()
-                    );
+                    button1.setOnClickListener((View v) -> {
+                        new Thread() {
+                            public void run() {
+                                lurk.setChannelIsToBeLurked(true);
+                                streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                lurkAdapter.datasetChanged(false);
+                            }
+                        }.start();
+                        setupMessageButton(lurk);
+                    });
                 } else {
                     ImageButton button1 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button1);
                     button1.setImageResource(R.drawable.unlurk);
-                    button1.setOnClickListener((View v) ->
-                            new Thread() {
-                                public void run() {
-                                    lurk.setChannelIsToBeLurked(false);
-                                    lurk.setHtml(null);
-                                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
-                                    lurkAdapter.datasetChanged(false);
-                                }
-                            }.start()
-                    );
-                }
-                if (lurk.getHtml() == null || lurk.getHtml().isEmpty()) {
-                    ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
-                    button2.setImageResource(R.drawable.delete);
-                    button2.setOnClickListener((View v) ->
-                            new Thread() {
-                                public void run() {
-                                    streamingYorkieDB.lurkDAO().deleteLurkByChannelName(lurk.getChannelName());
-                                    lurkAdapter.datasetChanged(false);
-                                }
-                            }.start()
-                    );
-                } else {
-                    ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
-                    button2.setImageResource(R.drawable.message);
-                    button2.setOnClickListener((View v) -> {
-                        final Dialog dialog = new Dialog(weakActivity.get());
-                        dialog.setTitle(R.string.lurk_dialog_title);
-                        dialog.setContentView(R.layout.lurk_message_dialog);
-                        dialog.findViewById(R.id.dialog_cancel).setOnClickListener((View view) ->
-                                dialog.dismiss()
-                        );
-                        dialog.findViewById(R.id.dialog_send).setOnClickListener((View view) -> {
-                            EditText editText = dialog.findViewById(R.id.dialog_message);
-                            if (!editText.getText().toString().trim().isEmpty()) {
-                                lurkAdapter.sendLurkMessage(lurk.getChannelName().toLowerCase(), editText.getText().toString());
-                                dialog.dismiss();
+                    button1.setOnClickListener((View v) -> {
+                        new Thread() {
+                            public void run() {
+                                lurk.setChannelIsToBeLurked(false);
+                                lurk.setHtml(null);
+                                streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                                lurkAdapter.datasetChanged(false);
                             }
-                        });
-                        dialog.show();
+                        }.start();
+                        setupDeleteButton(lurk);
                     });
                 }
+                if (lurk.getHtml() == null || lurk.getHtml().isEmpty()) {
+                    setupDeleteButton(lurk);
+                } else {
+                    setupMessageButton(lurk);
+                }
             }
+        }
+
+        /**
+         * Sets up the message button icon and listener
+         * @author LethalMaus
+         * @param lurk LurkEntity
+         */
+        private void setupMessageButton(LurkEntity lurk) {
+            ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
+            button2.setImageResource(R.drawable.message);
+            button2.setOnClickListener((View v) -> {
+                final Dialog dialog = new Dialog(weakActivity.get());
+                dialog.setTitle(R.string.lurk_dialog_title);
+                dialog.setContentView(R.layout.lurk_message_dialog);
+                dialog.findViewById(R.id.dialog_cancel).setOnClickListener((View view) ->
+                        dialog.dismiss()
+                );
+                dialog.findViewById(R.id.dialog_send).setOnClickListener((View view) -> {
+                    EditText editText = dialog.findViewById(R.id.dialog_message);
+                    if (!editText.getText().toString().trim().isEmpty()) {
+                        lurkAdapter.sendLurkMessage(lurk.getChannelName().toLowerCase(), editText.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            });
+        }
+
+        /**
+         * Sets up the delete button icon and listener
+         * @author LethalMaus
+         * @param lurk LurkEntity
+         */
+        private void setupDeleteButton(LurkEntity lurk) {
+            ImageButton button2 = lurkViewHolder.lurkRow.findViewById(R.id.lurkrow_button2);
+            button2.setImageResource(R.drawable.delete);
+            button2.setOnClickListener((View v) ->
+                    new Thread() {
+                        public void run() {
+                            streamingYorkieDB.lurkDAO().deleteLurkByChannelName(lurk.getChannelName());
+                            lurkAdapter.datasetChanged(false);
+                        }
+                    }.start()
+            );
         }
     }
 
     @Override
     public int getItemCount() {
-        return  lurkCount < 0 ? 0 : lurkCount;
+        return Math.max(lurkCount, 0);
     }
 
     /**

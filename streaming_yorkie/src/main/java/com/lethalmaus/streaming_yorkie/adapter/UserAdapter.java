@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.bumptech.glide.Glide;
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
@@ -48,7 +49,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private int pageCount3;
     private int pageCount4;
     private int currentPageCount = 0;
-    private int previousPageCount = 0;
     private StreamingYorkieDB streamingYorkieDB;
 
     /**
@@ -113,11 +113,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final UserViewHolder userViewHolder, final int position) {
-        weakActivity.get().runOnUiThread(new Runnable() {
-            public void run() {
-                new UserAsyncTask(weakActivity, weakContext, UserAdapter.this, userViewHolder, streamingYorkieDB, userType, userStatus, position, actionButtonType1, actionButtonType2, actionButtonType3).execute();
-            }
-        });
+        weakActivity.get().runOnUiThread(() ->
+                new UserAsyncTask(weakActivity, weakContext, UserAdapter.this, userViewHolder, streamingYorkieDB, userType, userStatus, position, actionButtonType1, actionButtonType2, actionButtonType3).execute()
+        );
     }
 
     /**
@@ -203,19 +201,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
                     ImageView imageView = userViewHolder.userRow.findViewById(R.id.userrow_logo);
                     Glide.with(weakContext.get()).load(userEntity.getLogo()).placeholder(R.drawable.user).into(imageView);
+                    imageView.setOnClickListener((View v) ->
+                        Globals.openLink(weakActivity, weakContext, "https://twitch.tv/" + userEntity.getDisplay_name())
+                    );
 
                     final ImageButton button1 = userViewHolder.userRow.findViewById(R.id.userrow_button1);
                     final ImageButton button2 = userViewHolder.userRow.findViewById(R.id.userrow_button2);
                     final ImageButton button3 = userViewHolder.userRow.findViewById(R.id.userrow_button3);
-                    new Thread(new Runnable() {
-                        public void run() {
-                            userAdapter.editButton(button1, actionButtonType1, userEntity.getId());
-                            userAdapter.editButton(button2, actionButtonType2, userEntity.getId());
-                            userAdapter.editButton(button3, actionButtonType3, userEntity.getId());
-                        }
+                    new Thread(() -> {
+                        userAdapter.editButton(button1, actionButtonType1, userEntity.getId());
+                        userAdapter.editButton(button2, actionButtonType2, userEntity.getId());
+                        userAdapter.editButton(button3, actionButtonType3, userEntity.getId());
                     }).start();
                 }
-                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
             }
         }
     }
@@ -225,48 +224,41 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @author LethalMaus
      */
     public void datasetChanged() {
-        new Thread(new Runnable() {
-            public void run() {
-                setPageCounts();
-                if (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
-                    actionAllButton(true);
-                } else if (userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
-                    actionAllButton(false);
-                } else {
-                    weakActivity.get().runOnUiThread(new Runnable() {
-                        public void run() {
-                            weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
-                        }
-                    });
-                }
-                weakActivity.get().runOnUiThread(
-                        new Runnable() {
-                            public void run() {
-                                setPageCountViews();
-                                //An empty row or table can be displayed based on if the dataset is empty or not
-                                if (currentPageCount > 0) {
-                                    if (currentPageCount > 1 && (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING"))) {
-                                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
-                                    } else {
-                                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
-                                    }
-                                    weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
-                                    weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
-                                } else {
-                                    weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
-                                    weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
-                                    weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                }
-                            }
-                        });
+        new Thread(() -> {
+            setPageCounts();
+            if (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+                actionAllButton(true);
+            } else if (userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+                actionAllButton(false);
+            } else {
+                weakActivity.get().runOnUiThread(() ->
+                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE)
+                );
             }
+            weakActivity.get().runOnUiThread(() -> {
+                setPageCountViews();
+                //An empty row or table can be displayed based on if the dataset is empty or not
+                if (currentPageCount > 0) {
+                    if (currentPageCount > 1 && (userStatus.contentEquals("FOLLOWED_NOTFOLLOWING") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING"))) {
+                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.VISIBLE);
+                    } else {
+                        weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                    }
+                    weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
+                    weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
+                } else {
+                    weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
+                    weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
+                    weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
+                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                }
+            });
         }).start();
     }
 
     @Override
     public int getItemCount() {
-        return currentPageCount < 0 ? 0 : currentPageCount;
+        return Math.max(currentPageCount, 0);
     }
 
     /**
@@ -296,12 +288,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     break;
             }
         } else {
-            weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            button.setVisibility(View.INVISIBLE);
-                        }
-                    });
+            weakActivity.get().runOnUiThread(() ->
+                    button.setVisibility(View.INVISIBLE)
+            );
         }
     }
 
@@ -312,28 +301,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param userID user to be deleted
      */
     private void deleteButton(final ImageButton imageButton, final int userID) {
-        weakActivity.get().runOnUiThread(
-                new Runnable() {
-                    public void run() {
-                        imageButton.setImageResource(R.drawable.delete);
-                        imageButton.setTag("DELETE_BUTTON");
-                        imageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        if (userType.contentEquals("FOLLOWERS")) {
-                                            streamingYorkieDB.followerDAO().deleteUserById(userID);
-                                        } else {
-                                            streamingYorkieDB.followingDAO().deleteUserById(userID);
-                                        }
-                                        datasetChanged();
-                                    }
-                                }).start();
-                            }
-                        });
-                    }
-                });
+        weakActivity.get().runOnUiThread(() -> {
+            imageButton.setImageResource(R.drawable.delete);
+            imageButton.setTag("DELETE_BUTTON");
+            imageButton.setOnClickListener((View v) ->
+                    new Thread(() -> {
+                        if (userType.contentEquals("FOLLOWERS")) {
+                            streamingYorkieDB.followerDAO().deleteUserById(userID);
+                        } else {
+                            streamingYorkieDB.followingDAO().deleteUserById(userID);
+                        }
+                        datasetChanged();
+                    }).start()
+            );
+        });
     }
 
     /**
@@ -343,34 +324,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param userID user to be excluded
      */
     private void excludeButton(final ImageButton imageButton, final int userID) {
-        weakActivity.get().runOnUiThread(
-                new Runnable() {
-                    public void run() {
-                        imageButton.setImageResource(R.drawable.excluded);
-                        imageButton.setTag("EXCLUDE_BUTTON");
-                        imageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        UserEntity userEntity = streamingYorkieDB.followerDAO().getUserById(userID);
-                                        if (userEntity == null) {
-                                            userEntity = streamingYorkieDB.followingDAO().getUserById(userID);
-                                        }
-                                        if (userType.contentEquals("FOLLOWERS")) {
-                                            streamingYorkieDB.followerDAO().updateUserStatusById("EXCLUDED", userID);
-                                        } else if (userType.contentEquals("FOLLOWING")) {
-                                            streamingYorkieDB.followingDAO().updateUserStatusById("EXCLUDED", userID);
-                                        } else if (userType.contentEquals("F4FEntity")) {
-                                            streamingYorkieDB.f4fDAO().insertUser(new F4FEntity(userEntity.getId(), userEntity.getDisplay_name(), userEntity.getLogo(), userEntity.getCreated_at(), userEntity.isNotifications(), userEntity.getLast_updated()));
-                                        }
-                                        datasetChanged();
-                                    }
-                                }).start();
-                            }
-                        });
-                    }
-                });
+        weakActivity.get().runOnUiThread(() -> {
+            imageButton.setImageResource(R.drawable.excluded);
+            imageButton.setTag("EXCLUDE_BUTTON");
+            imageButton.setOnClickListener((View v) -> new Thread(() -> {
+                UserEntity userEntity = streamingYorkieDB.followerDAO().getUserById(userID);
+                if (userEntity == null) {
+                    userEntity = streamingYorkieDB.followingDAO().getUserById(userID);
+                }
+                if (userType.contentEquals("FOLLOWERS")) {
+                    streamingYorkieDB.followerDAO().updateUserStatusById("EXCLUDED", userID);
+                } else if (userType.contentEquals("FOLLOWING")) {
+                    streamingYorkieDB.followingDAO().updateUserStatusById("EXCLUDED", userID);
+                } else if (userType.contentEquals("F4FEntity")) {
+                    streamingYorkieDB.f4fDAO().insertUser(new F4FEntity(userEntity.getId(), userEntity.getDisplay_name(), userEntity.getLogo(), userEntity.getCreated_at(), userEntity.isNotifications(), userEntity.getLast_updated()));
+                }
+                datasetChanged();
+            }).start());
+        });
     }
 
     /**
@@ -380,48 +351,38 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param userID user to be included
      */
     private void includeButton(final ImageButton imageButton, final int userID) {
-        weakActivity.get().runOnUiThread(
-                new Runnable() {
-                    public void run() {
-                        imageButton.setImageResource(R.drawable.include);
-                        imageButton.setTag("INCLUDE_BUTTON");
-                        imageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        if (userType.contentEquals("FOLLOWERS")) {
-                                            String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS_TIMESTAMP").readFile();
-                                            if (timestamp.isEmpty()) {
-                                                timestamp = "0";
-                                            }
-                                            FollowerEntity followerEntity = streamingYorkieDB.followerDAO().getUserById(userID);
-                                            if (followerEntity.getLast_updated() == Long.parseLong(timestamp)) {
-                                                streamingYorkieDB.followerDAO().updateUserStatusById("CURRENT", userID);
-                                            } else {
-                                                streamingYorkieDB.followerDAO().updateUserStatusById("UNFOLLOWED", userID);
-                                            }
-                                        } else if (userType.contentEquals("FOLLOWING")) {
-                                            String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
-                                            if (timestamp.isEmpty()) {
-                                                timestamp = "0";
-                                            }
-                                            FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
-                                            if (followingEntity.getLast_updated() == Long.parseLong(timestamp)) {
-                                                streamingYorkieDB.followingDAO().updateUserStatusById("CURRENT", userID);
-                                            } else {
-                                                streamingYorkieDB.followingDAO().updateUserStatusById("UNFOLLOWED", userID);
-                                            }
-                                        } else if (userType.contentEquals("F4FEntity")) {
-                                            streamingYorkieDB.f4fDAO().deleteUserById(userID);
-                                        }
-                                        datasetChanged();
-                                    }
-                                }).start();
-                            }
-                        });
+        weakActivity.get().runOnUiThread(() -> {
+            imageButton.setImageResource(R.drawable.include);
+            imageButton.setTag("INCLUDE_BUTTON");
+            imageButton.setOnClickListener((View v) -> new Thread(() -> {
+                if (userType.contentEquals("FOLLOWERS")) {
+                    String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWERS_TIMESTAMP").readFile();
+                    if (timestamp.isEmpty()) {
+                        timestamp = "0";
                     }
-                });
+                    FollowerEntity followerEntity = streamingYorkieDB.followerDAO().getUserById(userID);
+                    if (followerEntity.getLast_updated() == Long.parseLong(timestamp)) {
+                        streamingYorkieDB.followerDAO().updateUserStatusById("CURRENT", userID);
+                    } else {
+                        streamingYorkieDB.followerDAO().updateUserStatusById("UNFOLLOWED", userID);
+                    }
+                } else if (userType.contentEquals("FOLLOWING")) {
+                    String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                    if (timestamp.isEmpty()) {
+                        timestamp = "0";
+                    }
+                    FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
+                    if (followingEntity.getLast_updated() == Long.parseLong(timestamp)) {
+                        streamingYorkieDB.followingDAO().updateUserStatusById("CURRENT", userID);
+                    } else {
+                        streamingYorkieDB.followingDAO().updateUserStatusById("UNFOLLOWED", userID);
+                    }
+                } else if (userType.contentEquals("F4FEntity")) {
+                    streamingYorkieDB.f4fDAO().deleteUserById(userID);
+                }
+                datasetChanged();
+            }).start());
+        });
     }
 
     /**
@@ -465,20 +426,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                         if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
                                                             datasetChanged();
                                                         } else {
-                                                            weakActivity.get().runOnUiThread(
-                                                                    new Runnable() {
-                                                                        public void run() {
-                                                                            imageButton.setImageResource(R.drawable.unfollow);
-                                                                            ViewGroup row = (ViewGroup) imageButton.getParent();
-                                                                            final ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
-                                                                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                                            new Thread(new Runnable() {
-                                                                                public void run() {
-                                                                                    editButton(imageButton2, "NOTIFICATIONS_BUTTON", userID);
-                                                                                }
-                                                                            }).start();
-                                                                        }
-                                                                    });
+                                                            weakActivity.get().runOnUiThread(() -> {
+                                                                imageButton.setImageResource(R.drawable.unfollow);
+                                                                ViewGroup row = (ViewGroup) imageButton.getParent();
+                                                                final ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
+                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                                new Thread(() ->
+                                                                        editButton(imageButton2, "NOTIFICATIONS_BUTTON", userID)
+                                                                ).start();
+                                                            });
                                                         }
                                                     }
                                                 }.setRequestParameters(Request.Method.PUT, userID, false)
@@ -491,27 +447,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                                         if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
                                                             datasetChanged();
                                                         } else {
-                                                            weakActivity.get().runOnUiThread(
-                                                                    new Runnable() {
-                                                                        public void run() {
-                                                                            imageButton.setImageResource(R.drawable.follow);
-                                                                            ViewGroup row = (ViewGroup) imageButton.getParent();
-                                                                            row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
-                                                                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                                        }
-                                                                    });
+                                                            weakActivity.get().runOnUiThread(() -> {
+                                                                imageButton.setImageResource(R.drawable.follow);
+                                                                ViewGroup row = (ViewGroup) imageButton.getParent();
+                                                                row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
+                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                            });
                                                         }
                                                     }
                                                 }.setRequestParameters(Request.Method.DELETE, userID, false)
                                                         .sendRequest();
                                             }
                                         } else if (weakActivity != null && weakActivity.get() != null) {
-                                            weakActivity.get().runOnUiThread(
-                                                    new Runnable() {
-                                                        public void run() {
-                                                            Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
+                                            weakActivity.get().runOnUiThread(() ->
+                                                    Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show()
+                                            );
                                         }
                                     }
                                 }).start();
@@ -529,64 +479,44 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      */
     private void notificationsButton(final ImageButton imageButton, final int userID) {
         final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
-        weakActivity.get().runOnUiThread(
-                new Runnable() {
-                    public void run() {
-                        if (followingEntity == null || followingEntity.getStatus().contentEquals("UNFOLLOWED")) {
-                            imageButton.setVisibility(View.INVISIBLE);
-                        } else {
-                            if (followingEntity.isNotifications()) {
-                                imageButton.setImageResource(R.drawable.deactivate_notifications);
-                            } else {
-                                imageButton.setImageResource(R.drawable.notifications);
-                            }
-                            imageButton.setVisibility(View.VISIBLE);
-                            imageButton.setTag("NOTIFICATIONS_BUTTON");
-                            imageButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new Thread(new Runnable() {
-                                        public void run() {
-                                            final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
-                                            if (RequestHandler.networkIsAvailable(weakContext)) {
-                                                if (followingEntity.isNotifications()) {
-                                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false)
-                                                            .sendRequest();
-                                                    weakActivity.get().runOnUiThread(
-                                                            new Runnable() {
-                                                                public void run() {
-                                                                    imageButton.setImageResource(R.drawable.notifications);
-                                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                                }
-                                                            }
-                                                    );
-                                                } else {
-                                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, true)
-                                                            .sendRequest();
-                                                    weakActivity.get().runOnUiThread(
-                                                            new Runnable() {
-                                                                public void run() {
-                                                                    imageButton.setImageResource(R.drawable.deactivate_notifications);
-                                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                                }
-                                                            }
-                                                    );
-                                                }
-                                            } else if (weakActivity != null && weakActivity.get() != null) {
-                                                weakActivity.get().runOnUiThread(
-                                                        new Runnable() {
-                                                            public void run() {
-                                                                Toast.makeText(weakActivity.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
+        weakActivity.get().runOnUiThread(() -> {
+            if (followingEntity == null || followingEntity.getStatus().contentEquals("UNFOLLOWED")) {
+                imageButton.setVisibility(View.INVISIBLE);
+            } else {
+                if (followingEntity.isNotifications()) {
+                    imageButton.setImageResource(R.drawable.deactivate_notifications);
+                } else {
+                    imageButton.setImageResource(R.drawable.notifications);
+                }
+                imageButton.setVisibility(View.VISIBLE);
+                imageButton.setTag("NOTIFICATIONS_BUTTON");
+                imageButton.setOnClickListener((View v) ->
+                        new Thread(() -> {
+                            if (RequestHandler.networkIsAvailable(weakContext)) {
+                                if (followingEntity.isNotifications()) {
+                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false)
+                                            .sendRequest();
+                                    weakActivity.get().runOnUiThread(() -> {
+                                                imageButton.setImageResource(R.drawable.notifications);
+                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
                                             }
-                                        }
-                                    }).start();
+                                    );
+                                } else {
+                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, true)
+                                            .sendRequest();
+                                    weakActivity.get().runOnUiThread(() -> {
+                                                imageButton.setImageResource(R.drawable.deactivate_notifications);
+                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                            }
+                                    );
                                 }
-                            });
-                        }
-                    }
-                });
+                            } else if (weakActivity != null && weakActivity.get() != null) {
+                                weakActivity.get().runOnUiThread(() ->
+                                        Toast.makeText(weakActivity.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show());
+                            }
+                        }).start());
+            }
+        });
     }
 
     /**
@@ -610,64 +540,53 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 imageButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        new Thread(new Runnable() {
-                                            public void run() {
-                                                weakActivity.get().runOnUiThread(
-                                                        new Runnable() {
-                                                            public void run() {
-                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                            }
-                                                        });
-                                                if (followAll) {
-                                                    FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
-                                                        @Override
-                                                        public void onCompletion() {
-                                                            super.onCompletion();
-                                                            UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
-                                                            if (userEntity != null) {
-                                                                setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
-                                                                        .sendRequest();
-                                                            } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                                                datasetChanged();
-                                                                weakActivity.get().runOnUiThread(
-                                                                        new Runnable() {
-                                                                            public void run() {
-                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                                            }
-                                                                        });
-                                                            }
+                                        new Thread(() -> {
+                                            weakActivity.get().runOnUiThread(() ->
+                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
+                                            );
+                                            if (followAll) {
+                                                FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
+                                                    @Override
+                                                    public void onCompletion() {
+                                                        super.onCompletion();
+                                                        UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
+                                                        if (userEntity != null) {
+                                                            setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
+                                                                    .sendRequest();
+                                                        } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                                            datasetChanged();
+                                                            weakActivity.get().runOnUiThread(() ->
+                                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
+                                                            );
                                                         }
-                                                    };
-                                                    UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
-                                                    if (userEntity != null) {
-                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
-                                                                .sendRequest();
                                                     }
-                                                } else {
-                                                    FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
-                                                        @Override
-                                                        public void onCompletion() {
-                                                            super.onCompletion();
-                                                            UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
-                                                            if (userEntity != null) {
-                                                                setRequestParameters(Request.Method.DELETE, userEntity.getId(), false)
-                                                                        .sendRequest();
-                                                            } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                                                datasetChanged();
-                                                                weakActivity.get().runOnUiThread(
-                                                                        new Runnable() {
-                                                                            public void run() {
-                                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
-                                                                            }
-                                                                        });
-                                                            }
+                                                };
+                                                UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserByPosition(0);
+                                                if (userEntity != null) {
+                                                    followRequestHandler.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
+                                                            .sendRequest();
+                                                }
+                                            } else {
+                                                FollowRequestHandler followRequestHandler =  new FollowRequestHandler(weakActivity, weakContext) {
+                                                    @Override
+                                                    public void onCompletion() {
+                                                        super.onCompletion();
+                                                        UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
+                                                        if (userEntity != null) {
+                                                            setRequestParameters(Request.Method.DELETE, userEntity.getId(), false)
+                                                                    .sendRequest();
+                                                        } else if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                                            datasetChanged();
+                                                            weakActivity.get().runOnUiThread(() ->
+                                                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
+                                                            );
                                                         }
-                                                    };
-                                                    UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
-                                                    if (userEntity != null) {
-                                                        followRequestHandler.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
-                                                                .sendRequest();
                                                     }
+                                                };
+                                                UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserByPosition(0);
+                                                if (userEntity != null) {
+                                                    followRequestHandler.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
+                                                            .sendRequest();
                                                 }
                                             }
                                         }).start();
@@ -702,20 +621,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             pageCount3 = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserCount();
             pageCount4 = streamingYorkieDB.f4fDAO().getExcludedFollow4FollowUserCount();
         }
-        recyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (userStatus.contentEquals("NEW") || userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
-                    currentPageCount = pageCount1;
-                } else if (userStatus.contentEquals("CURRENT") || userStatus.contentEquals("FOLLOW4FOLLOW")) {
-                    currentPageCount = pageCount2;
-                } else if (userStatus.contentEquals("UNFOLLOWED") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
-                    currentPageCount = pageCount3;
-                } else if (userStatus.contentEquals("EXCLUDED")) {
-                    currentPageCount = pageCount4;
-                }
-                notifyDataSetChanged();
+        recyclerView.post(() -> {
+            if (userStatus.contentEquals("NEW") || userStatus.contentEquals("FOLLOWED_NOTFOLLOWING")) {
+                currentPageCount = pageCount1;
+            } else if (userStatus.contentEquals("CURRENT") || userStatus.contentEquals("FOLLOW4FOLLOW")) {
+                currentPageCount = pageCount2;
+            } else if (userStatus.contentEquals("UNFOLLOWED") || userStatus.contentEquals("NOTFOLLOWED_FOLLOWING")) {
+                currentPageCount = pageCount3;
+            } else if (userStatus.contentEquals("EXCLUDED")) {
+                currentPageCount = pageCount4;
             }
+            notifyDataSetChanged();
         });
     }
 
@@ -737,19 +653,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             pageCount4 = 0;
         }
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-            weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            TextView page1 = weakActivity.get().findViewById(R.id.count1);
-                            TextView page2 = weakActivity.get().findViewById(R.id.count2);
-                            TextView page3 = weakActivity.get().findViewById(R.id.count3);
-                            TextView page4 = weakActivity.get().findViewById(R.id.count4);
-                            page1.setText(String.valueOf(pageCount1));
-                            page2.setText(String.valueOf(pageCount2));
-                            page3.setText(String.valueOf(pageCount3));
-                            page4.setText(String.valueOf(pageCount4));
-                        }
-                    });
+            weakActivity.get().runOnUiThread(() -> {
+                TextView page1 = weakActivity.get().findViewById(R.id.count1);
+                TextView page2 = weakActivity.get().findViewById(R.id.count2);
+                TextView page3 = weakActivity.get().findViewById(R.id.count3);
+                TextView page4 = weakActivity.get().findViewById(R.id.count4);
+                page1.setText(String.valueOf(pageCount1));
+                page2.setText(String.valueOf(pageCount2));
+                page3.setText(String.valueOf(pageCount3));
+                page4.setText(String.valueOf(pageCount4));
+            });
         }
     }
 }
