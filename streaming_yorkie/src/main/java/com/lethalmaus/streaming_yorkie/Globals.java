@@ -299,7 +299,7 @@ public class Globals {
     private static boolean isWorkerActive(WeakReference<Context> weakContext, String workerName) {
         if (weakContext != null && weakContext.get() != null) {
             try {
-                if (WorkManager.getInstance().getWorkInfosForUniqueWork(workerName).get().isEmpty()) {
+                if (!WorkManager.getInstance().getWorkInfosForUniqueWork(workerName).get().isEmpty()) {
                     WorkInfo.State state = WorkManager.getInstance().getWorkInfosForUniqueWork(workerName)
                             .get().get(0).getState();
                     return (state == WorkInfo.State.ENQUEUED || state == WorkInfo.State.RUNNING);

@@ -375,7 +375,7 @@ public class SettingsF4F extends AppCompatActivity {
             try {
                 if (settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOW) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOWUNFOLLOW))) {
                     postToDiscord("**#USERNAME** is doing F4F automatically every **" + settings.getString(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + "**. Follow them here https://www.twitch.tv/#USERNAME", true);
-                } else if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SHARE_F4F).exists() && (!settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_OFF) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_UNFOLLOW))) {
+                } else if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SHARE_F4F).exists() && (settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_OFF) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_UNFOLLOW))) {
                     postToDiscord("```diff\n- #USERNAME is NOT doing F4F automatically anymore.\n```", false);
                 }
             } catch(JSONException e) {

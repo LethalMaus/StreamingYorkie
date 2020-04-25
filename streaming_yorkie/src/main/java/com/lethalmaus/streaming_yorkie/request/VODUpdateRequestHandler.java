@@ -21,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class for requesting VODs to check if an Update is needed
@@ -53,55 +53,47 @@ public class VODUpdateRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    long lastUpdated = 0;
-                    String lastUpdatedString = new ReadFileHandler(weakActivity, weakContext, "VOD_TIMESTAMP").readFile();
-                    if (!lastUpdatedString.isEmpty()) {
-                        lastUpdated = Long.parseLong(lastUpdatedString);
-                    }
-                    int[] lastVODs = streamingYorkieDB.vodDAO().getLastVODs(lastUpdated);
-                    if (lastVODs.length == response.getJSONArray("videos").length() && response.getInt("_total") == streamingYorkieDB.vodDAO().getVODsCount()) {
-                        for (int i = 0; i < lastVODs.length; i++) {
-                            if (lastVODs[i] != Integer.parseInt(response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""))) {
-                                new VODRequestHandler(weakActivity, weakContext, recyclerView){
-                                    @Override
-                                    public void onCompletion() {
-                                        VODUpdateRequestHandler.this.onCompletion();
-                                    }
-                                }.initiate().sendRequest();
-                                return;
-                            }
-                        }
-                        if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+        new Thread(() -> {
+            try {
+                long lastUpdated = 0;
+                String lastUpdatedString = new ReadFileHandler(weakActivity, weakContext, "VOD_TIMESTAMP").readFile();
+                if (!lastUpdatedString.isEmpty()) {
+                    lastUpdated = Long.parseLong(lastUpdatedString);
+                }
+                int[] lastVODs = streamingYorkieDB.vodDAO().getLastVODs(lastUpdated);
+                if (lastVODs.length == response.getJSONArray("videos").length() && response.getInt("_total") == streamingYorkieDB.vodDAO().getVODsCount()) {
+                    for (int i = 0; i < lastVODs.length; i++) {
+                        if (lastVODs[i] != Integer.parseInt(response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""))) {
+                            new VODRequestHandler(weakActivity, weakContext, recyclerView){
+                                @Override
+                                public void onCompletion() {
+                                    VODUpdateRequestHandler.this.onCompletion();
                                 }
-                            });
+                            }.initiate().sendRequest();
+                            return;
                         }
-                        onCompletion();
-                    } else {
-                        new VODRequestHandler(weakActivity, weakContext, recyclerView){
-                            @Override
-                            public void onCompletion() {
-                                VODUpdateRequestHandler.this.onCompletion();
-                            }
-                        }.initiate().sendRequest();
                     }
-                } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
-                        weakActivity.get().runOnUiThread(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+                        weakActivity.get().runOnUiThread(() ->
+                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
                         );
                     }
-                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "VODUpdate response error | " + e.toString(), true).run();
+                    onCompletion();
+                } else {
+                    new VODRequestHandler(weakActivity, weakContext, recyclerView){
+                        @Override
+                        public void onCompletion() {
+                            VODUpdateRequestHandler.this.onCompletion();
+                        }
+                    }.initiate().sendRequest();
                 }
+            } catch (JSONException e) {
+                if (weakActivity != null && weakActivity.get() != null) {
+                    weakActivity.get().runOnUiThread(() ->
+                            Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
+                    );
+                }
+                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "VODUpdate response error | " + e.toString(), true).run();
             }
         }).start();
     }
@@ -109,7 +101,7 @@ public class VODUpdateRequestHandler extends RequestHandler {
     @Override
     public Response<JSONObject> parseRequestNetworkResponse(NetworkResponse response, String PROTOCOL_CHARSET) {
         try {
-            String utf8String = new String(response.data, Charset.forName("UTF-8"));
+            String utf8String = new String(response.data, StandardCharsets.UTF_8);
             return Response.success(new JSONObject(utf8String), HttpHeaderParser.parseCacheHeaders(response));
         } catch (JSONException e) {
             return Response.error(new ParseError(e));

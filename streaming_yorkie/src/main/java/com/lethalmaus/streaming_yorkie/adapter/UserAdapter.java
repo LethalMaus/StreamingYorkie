@@ -214,7 +214,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                         userAdapter.editButton(button3, actionButtonType3, userEntity.getId());
                     }).start();
                 }
-                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -250,7 +250,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                     weakActivity.get().findViewById(R.id.table).setVisibility(View.GONE);
                     weakActivity.get().findViewById(R.id.follow_unfollow_all).setVisibility(View.GONE);
                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.VISIBLE);
-                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                 }
             });
         }).start();
@@ -407,66 +407,61 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             imageButton.setImageResource(R.drawable.unfollow);
                         }
                         imageButton.setTag("FOLLOW_BUTTON");
-                        imageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        if (RequestHandler.networkIsAvailable(weakContext)) {
-                                            final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
-                                            if (followingEntity == null ||
-                                                    followingEntity.getStatus().contentEquals("UNFOLLOWED") ||
-                                                    (followingEntity.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
-                                                            followingEntity.getLast_updated() != Long.parseLong(timestamp)
-                                                    )) {
-                                                new FollowRequestHandler(weakActivity, weakContext){
-                                                    @Override
-                                                    public void onCompletion() {
-                                                        super.onCompletion();
-                                                        if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
-                                                            datasetChanged();
-                                                        } else {
-                                                            weakActivity.get().runOnUiThread(() -> {
-                                                                imageButton.setImageResource(R.drawable.unfollow);
-                                                                ViewGroup row = (ViewGroup) imageButton.getParent();
-                                                                final ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
-                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
-                                                                new Thread(() ->
-                                                                        editButton(imageButton2, "NOTIFICATIONS_BUTTON", userID)
-                                                                ).start();
-                                                            });
-                                                        }
-                                                    }
-                                                }.setRequestParameters(Request.Method.PUT, userID, false)
-                                                        .sendRequest();
-                                            } else {
-                                                new FollowRequestHandler(weakActivity, weakContext){
-                                                    @Override
-                                                    public void onCompletion() {
-                                                        super.onCompletion();
-                                                        if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
-                                                            datasetChanged();
-                                                        } else {
-                                                            weakActivity.get().runOnUiThread(() -> {
-                                                                imageButton.setImageResource(R.drawable.follow);
-                                                                ViewGroup row = (ViewGroup) imageButton.getParent();
-                                                                row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
-                                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
-                                                            });
-                                                        }
-                                                    }
-                                                }.setRequestParameters(Request.Method.DELETE, userID, false)
-                                                        .sendRequest();
+                        imageButton.setOnClickListener((View v) ->
+                            new Thread(() -> {
+                                if (RequestHandler.networkIsAvailable(weakContext)) {
+                                    final FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(userID);
+                                    if (followingEntity == null ||
+                                            followingEntity.getStatus().contentEquals("UNFOLLOWED") ||
+                                            (followingEntity.getStatus().contentEquals("EXCLUDED") && !timestamp.isEmpty() &&
+                                                    followingEntity.getLast_updated() != Long.parseLong(timestamp)
+                                            )) {
+                                        new FollowRequestHandler(weakActivity, weakContext){
+                                            @Override
+                                            public void onCompletion() {
+                                                super.onCompletion();
+                                                if ((userType.contentEquals("FOLLOWING") && userStatus.contentEquals("UNFOLLOWED")) || userStatus.contains("FOLLOWED_NOTFOLLOWING")) {
+                                                    datasetChanged();
+                                                } else {
+                                                    weakActivity.get().runOnUiThread(() -> {
+                                                        imageButton.setImageResource(R.drawable.unfollow);
+                                                        ViewGroup row = (ViewGroup) imageButton.getParent();
+                                                        final ImageButton imageButton2 = row.findViewById(R.id.userrow_button2);
+                                                        weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                        new Thread(() ->
+                                                                editButton(imageButton2, "NOTIFICATIONS_BUTTON", userID)
+                                                        ).start();
+                                                    });
+                                                }
                                             }
-                                        } else if (weakActivity != null && weakActivity.get() != null) {
-                                            weakActivity.get().runOnUiThread(() ->
-                                                    Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show()
-                                            );
-                                        }
+                                        }.setRequestParameters(Request.Method.PUT, userID, false)
+                                                .sendRequest();
+                                    } else {
+                                        new FollowRequestHandler(weakActivity, weakContext){
+                                            @Override
+                                            public void onCompletion() {
+                                                super.onCompletion();
+                                                if (userType.contentEquals("FOLLOWING") || userStatus.contains("NOTFOLLOWED_FOLLOWING") || userStatus.contains("FOLLOW4FOLLOW")) {
+                                                    datasetChanged();
+                                                } else {
+                                                    weakActivity.get().runOnUiThread(() -> {
+                                                        imageButton.setImageResource(R.drawable.follow);
+                                                        ViewGroup row = (ViewGroup) imageButton.getParent();
+                                                        row.findViewById(R.id.userrow_button2).setVisibility(View.INVISIBLE);
+                                                        weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
+                                                    });
+                                                }
+                                            }
+                                        }.setRequestParameters(Request.Method.DELETE, userID, false)
+                                                .sendRequest();
                                     }
-                                }).start();
-                            }
-                        });
+                                } else if (weakActivity != null && weakActivity.get() != null) {
+                                    weakActivity.get().runOnUiThread(() ->
+                                            Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show()
+                                    );
+                                }
+                            }).start()
+                        );
                     }
                 });
     }
@@ -492,13 +487,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 imageButton.setTag("NOTIFICATIONS_BUTTON");
                 imageButton.setOnClickListener((View v) ->
                         new Thread(() -> {
+                            final FollowingEntity followingEntityAfter = streamingYorkieDB.followingDAO().getUserById(userID);
                             if (RequestHandler.networkIsAvailable(weakContext)) {
-                                if (followingEntity.isNotifications()) {
+                                if (followingEntityAfter.isNotifications()) {
                                     new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false)
                                             .sendRequest();
                                     weakActivity.get().runOnUiThread(() -> {
                                                 imageButton.setImageResource(R.drawable.notifications);
-                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                             }
                                     );
                                 } else {
@@ -506,7 +502,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                             .sendRequest();
                                     weakActivity.get().runOnUiThread(() -> {
                                                 imageButton.setImageResource(R.drawable.deactivate_notifications);
-                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE);
+                                                weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE);
                                             }
                                     );
                                 }

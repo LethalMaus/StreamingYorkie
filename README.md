@@ -438,6 +438,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.2.1-a](#221-a)
 + [2.2.0-a](#220-a)
 + [2.1.9-a](#219-a)
 + [2.1.8-a](#218-a)
@@ -473,6 +474,17 @@ This can take up to 15 minutes to activate.
 + [1.0.0-a](#100-a)
 
 </details>
+
+### 2.2.1-a
+
+<details>
+<summary>Worker Hotfix</summary>
+
+Issues fixed:
++   Worker crash on start fix
+</details>
+
+---
 
 ### 2.2.0-a
 

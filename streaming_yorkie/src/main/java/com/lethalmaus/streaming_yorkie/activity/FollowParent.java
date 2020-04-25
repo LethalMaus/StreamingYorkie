@@ -114,7 +114,7 @@ public class FollowParent extends AppCompatActivity {
             volleySingleton.getRequestQueue().cancelAll("FOLLOWERS");
             volleySingleton.getRequestQueue().cancelAll("FOLLOW");
         }
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override

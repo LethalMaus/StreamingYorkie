@@ -125,7 +125,7 @@ public class VODs extends AppCompatActivity {
     protected void cancelRequests() {
         VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("VOD");
         VolleySingleton.getInstance(weakContext).getRequestQueue().cancelAll("VOD_EXPORT");
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
