@@ -31,7 +31,7 @@
 ## Introduction
 
 Streaming Yorkie is a tool designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers.
-The tool offers a better overview of *Followers, Following, Unfollowed & F4F*.
+The tool tracks & offers a better overview of *Followers, Following, Unfollowed & F4F*.
 After your stream any *VOD (Video On Demand)* can be seen & exported to *Youtube* in our VODs Overview.
 **Automatically Follow, Unfollow, F4F, Lurk & export VODs to Youtube** simply by installing and configuring Streaming Yorkie.
 Share that you are **AutoFollowing** to our Discord Community & gain more followers.
@@ -56,7 +56,7 @@ A login is required to be able to edit & see your Twitch data.
 Passwords are not seen or saved, rather a unique Token given by Twitch is used after the login.
 This ensures that your account is as safe as can be.
 All data is saved locally & only you have access to it.
-VOD exports are done by Twitch, they are not downloaded & uploaded by Streaming Yorkie.
+VOD exports are done by Twitch, they are not downloaded & uploaded to Youtube by Streaming Yorkie.
 This ensures network data usage is kept to a minimum.
 
 Streaming Yorkie is developed with *Android Studio* in *Java*.

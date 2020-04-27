@@ -1,10 +1,10 @@
 ﻿<h2><b>Introduction</b></h2>
 Streaming Yorkie is a tool designed to help <i>Twitch Streamers</i> to efficiently <i>Follow & Unfollow</i> other Streamers
-The tool offers a better overview of <i>Followers, Following, Unfollowed & F4F</i>
+The tool tracks & offers a better overview of <i>Followers, Following, Unfollowed & F4F</i>
 After your stream any <i>VOD (Video On Demand)</i> can be seen & exported to <i>Youtube</i> in our VODs Overview
-<b>Automatically Follow, Unfollow, F4F, Lurk & export VODs to Youtube</b> simply by installing and configuring Streaming Yorkie
-Share that you are <b>AutoFollowing</b> to our Discord Community & gain more followers
-Helps build a bigger community, simplifies/automates communication to become an <i>affiliate</i> or <i>partner</i> faster & free up time to stream more
+<b>Automatically Follow, Unfollow, F4F, Lurk & export Videos to Youtube</b> simply by installing and configuring Streaming Yorkie
+Share that you are <b>AutoFollowing</b> to our Discord Community & gain more followers and viewers
+Helps build a bigger community, simplifies/automates communication to become an <i>affiliate</i> or <i>partner</i> faster & free up more time to stream
 Watch multiple streams at once with <b>Multi View</b> and cast it to a TV
 <b>Lurk</b> your favourite streamers with minimum possible network data usage (audio only & chat) & increase their viewer count
 Use our Discord to get others to to Follow or Lurk and gain more viewers. Use the F4F L4L H4H Channel
@@ -18,13 +18,14 @@ https://github.com/LethalMaus/StreamingYorkie#guide
 
 The code is <u><b>Open Source</b></u>, contains <u><b>no costs & no advertisements</b></u> are involved
 It is a gift back to a great community who I will continue to support for <b>free</b>
+The option to support us and gain extra benefits such as Follows or Lurks is available as in-app purchases and subscriptions
 
-Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i> & <i>Twitch Multi View</i>
-A login is required to be able to edit & see your Twitch data
+Streaming Yorkie communicates exclusively with the <i>Twitch API</i>, <i>Twitch Website</i>, <i>Twitch Multi View</i> & our Discord
+A login is required to be able to utilize your Twitch data
 Passwords are not seen or saved, rather a unique Token given by Twitch is used after the login
 This ensures that your account is as safe as can be
 All data is saved locally & only you have access to it
-VOD exports are done by Twitch, they are not downloaded & uploaded by Streaming Yorkie
+VOD exports are done by Twitch, they are not downloaded & uploaded to Youtube by Streaming Yorkie
 This ensures network data usage is kept to a minimum
 A PircBotX bot is used to send a message to a lurked channel on demand or automatically
 
@@ -60,8 +61,3 @@ https://github.com/LethalMaus/StreamingYorkie#contact
 <b>Twitch</b>
 Come & say 'Hi'
 https://www.twitch.tv/lethalmaus
-
-<small><i>
-Tags:
-StreamingYorkie Streaming Yorkie Twitch Stream Tool Helper Channel Follower Followers Following Unfollowed Automatic Follow Unfollow F4F L4L H4H VOD VODs Video Videos Export Youtube Multi View Cast TV Lurk Gain Views More Viewers Increase Viewer Count Affiliate Partner Chat Bot Streamer Discord Community Free Open Source
-</i></small>
