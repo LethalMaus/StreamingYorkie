@@ -5,3 +5,12 @@ local.properties
 .DS_Store
 /captures
 .externalNativeBuild
+/gradle/wrapper/gradle-wrapper.properties
+/gradle.properties
+/build/sonar/report-task.txt
+/build/sonar/.sonar_lock
+/build/sonar/ucfg2/java/
+/settings.gradle
+/gradlew
+/gradlew.bat
+/gradle/wrapper/

@@ -43,7 +43,6 @@ public class RequestHandler {
     private String token;
     String userID;
     String requestType;
-    int method;
     int offset;
     int twitchTotal;
     int itemCount;
@@ -123,16 +122,12 @@ public class RequestHandler {
      */
     public void sendRequest() {
         if (weakActivity != null && weakActivity.get() != null) {
-            weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            View progressbar = weakActivity.get().findViewById(R.id.progressbar);
-                            if (progressbar != null) {
-                                progressbar.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    }
-            );
+            weakActivity.get().runOnUiThread(() -> {
+                View progressbar = weakActivity.get().findViewById(R.id.progressbar);
+                if (progressbar != null) {
+                    progressbar.setVisibility(View.VISIBLE);
+                }
+            });
         }
         new Thread() {
             public void run() {
@@ -148,17 +143,9 @@ public class RequestHandler {
                     }
                     if (networkIsAvailable(weakContext)) {
                         JsonObjectRequest jsObjRequest = new JsonObjectRequest(method(), url(), postBody,
-                                new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(final JSONObject response) {
-                                        responseHandler(response);
-                                    }
-                                }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                errorHandler(error);
-                            }
-                        }) {
+                                RequestHandler.this::responseHandler,
+                                RequestHandler.this::errorHandler
+                        ) {
                             @Override
                             public Map<String, String> getHeaders() {
                                 return getRequestHeaders();
@@ -192,12 +179,8 @@ public class RequestHandler {
      */
     protected void offlineResponseHandler() {
         if (recyclerView != null && recyclerView.get() != null && weakActivity.get() != null) {
-            weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            Toast.makeText(weakActivity.get(), "OFFLINE: Showing locally saved data", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+            weakActivity.get().runOnUiThread(() ->
+                    Toast.makeText(weakActivity.get(), "OFFLINE: Showing locally saved data", Toast.LENGTH_SHORT).show()
             );
         }
     }
@@ -209,12 +192,8 @@ public class RequestHandler {
      */
     void errorHandler(VolleyError error) {
         if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
-            weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            Toast.makeText(weakActivity.get(), "Error requesting " + requestType, Toast.LENGTH_SHORT).show();
-                        }
-                    }
+            weakActivity.get().runOnUiThread(() ->
+                    Toast.makeText(weakActivity.get(), "Error requesting " + requestType, Toast.LENGTH_SHORT).show()
             );
         }
         String errorMessage = error.toString();
@@ -249,10 +228,8 @@ public class RequestHandler {
         try {
             String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
+        } catch (JSONException | UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
         }
     }
 

@@ -25,14 +25,13 @@ public class Channel extends AppCompatActivity {
 
     //All contexts are weak referenced to avoid memory leaks
     protected WeakReference<Context> weakContext;
-    private ChannelRequestHandler channelRequestHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.weakContext = new WeakReference<>(getApplicationContext());
         setContentView(R.layout.channel);
-        channelRequestHandler = new ChannelRequestHandler(new WeakReference<>(this), weakContext);
+        ChannelRequestHandler channelRequestHandler = new ChannelRequestHandler(new WeakReference<>(this), weakContext);
         channelRequestHandler.sendRequest();
 
         ImageButton refreshPage = findViewById(R.id.user_refresh);

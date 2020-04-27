@@ -20,11 +20,11 @@ public class AutoLurkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Globals.activateAlarm(new WeakReference<>(context), Globals.FILE_SETTINGS_LURK, Globals.SETTINGS_AUTOLURK, Globals.LURK_SERVICE_ALARM_ID, AutoLurkReceiver.class, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION, AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+            Globals.activateAlarm(new WeakReference<>(context), Globals.SETTINGS_AUTOLURK, AlarmManager.INTERVAL_FIFTEEN_MINUTES);
         }
 
         Intent lurkIntent = new Intent(context, LurkService.class);
-        lurkIntent.setAction("AUTO_LURK");
+        lurkIntent.setAction(Globals.AUTO_LURK);
         if (Build.VERSION.SDK_INT < 28) {
             context.startService(lurkIntent);
         } else {

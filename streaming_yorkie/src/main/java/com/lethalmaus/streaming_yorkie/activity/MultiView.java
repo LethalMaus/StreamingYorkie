@@ -37,25 +37,22 @@ public class MultiView extends AppCompatActivity {
         setContentView(R.layout.multi_view);
 
         ImageView multi_start = findViewById(R.id.multi_start);
-        multi_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (RequestHandler.networkIsAvailable(new WeakReference<>(getApplicationContext()))) {
-                    getChannels();
-                    if (!channels.isEmpty()) {
-                        findViewById(R.id.multi_input).setVisibility(View.GONE);
-                        WebView multi_view = findViewById(R.id.multi_view);
-                        multi_view.setVisibility(View.VISIBLE);
-                        multi_view.getSettings().setJavaScriptEnabled(true);
-                        multi_view.loadUrl("https://lethalmaus.github.io/TwitchMultiView/?channels=" + channels.replaceAll("\\s", ""));
-                        if (getSupportActionBar() != null) {
-                            getSupportActionBar().hide();
-                        }
-                        hideSystemUI();
+        multi_start.setOnClickListener((View v) -> {
+            if (RequestHandler.networkIsAvailable(new WeakReference<>(getApplicationContext()))) {
+                getChannels();
+                if (!channels.isEmpty()) {
+                    findViewById(R.id.multi_input).setVisibility(View.GONE);
+                    WebView multi_view = findViewById(R.id.multi_view);
+                    multi_view.setVisibility(View.VISIBLE);
+                    multi_view.getSettings().setJavaScriptEnabled(true);
+                    multi_view.loadUrl("https://lethalmaus.github.io/TwitchMultiView/?channels=" + channels.replaceAll("\\s", ""));
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().hide();
                     }
-                } else {
-                    Toast.makeText(MultiView.this, "OFFLINE: Cannot MultiView when offline", Toast.LENGTH_SHORT).show();
+                    hideSystemUI();
                 }
+            } else {
+                Toast.makeText(MultiView.this, "OFFLINE: Cannot MultiView when offline", Toast.LENGTH_SHORT).show();
             }
         });
     }

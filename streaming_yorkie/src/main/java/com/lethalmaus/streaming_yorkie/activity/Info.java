@@ -3,17 +3,16 @@ package com.lethalmaus.streaming_yorkie.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.BuildConfig;
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.request.DevInfoRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
@@ -57,7 +56,7 @@ public class Info extends AppCompatActivity {
 
         //Link to StreamingYorkie Guide on Github
         findViewById(R.id.info_readme).setOnClickListener(
-                (View v) -> openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide")
+                (View v) -> Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#guide")
         );
 
         //Offline help/guide
@@ -69,45 +68,43 @@ public class Info extends AppCompatActivity {
         //Link to Updates done available on Github
         findViewById(R.id.info_updates).setOnClickListener(
                 (View v) ->
-                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates")
-
+                        Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#updates")
         );
 
         //Link to Source Code on Github
         findViewById(R.id.info_source_code).setOnClickListener(
                 (View v) ->
-                        openLink("https://github.com/LethalMaus/StreamingYorkie?files=1")
+                        Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie?files=1")
         );
 
         //Link to Contact options on Github for donations
         findViewById(R.id.info_contact).setOnClickListener(
                 (View v) ->
-                        openLink("https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact")
-
+                        Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact")
         );
 
         //Link to Twitch for entertainment
         findViewById(R.id.info_twitch).setOnClickListener(
                 (View v) ->
-                        openLink("https://twitch.tv/LethalMaus")
-
+                        Globals.openLink(weakActivity, weakContext, "https://twitch.tv/LethalMaus")
         );
 
         //Link to Patreon for membership
         findViewById(R.id.info_patreon).setOnClickListener(
                 (View v) ->
-                        openLink("https://patreon.com/LethalMaus")
+                        Globals.openLink(weakActivity, weakContext, "https://patreon.com/LethalMaus")
         );
 
         //Link to Github for Open Source Projects
         findViewById(R.id.info_github).setOnClickListener(
                 (View v) ->
-                        openLink("https://github.com/LethalMaus/")
+                        Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/")
         );
 
         findViewById(R.id.info_discord).setOnClickListener(
                 (View v) ->
-                        openLink("https://discord.gg/66EpTMj"));
+                        Globals.openLink(weakActivity, weakContext, "https://discord.gg/66EpTMj")
+        );
 
         TextView appVersion = findViewById(R.id.info_app_version);
         appVersion.setText(BuildConfig.VERSION_NAME);
@@ -123,19 +120,5 @@ public class Info extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         finish();
         return true;
-    }
-
-    /**
-     * Method for opening a link in relation to the developer
-     * @author LethalMaus
-     * @param url a link to eg. Github
-     */
-    private void openLink(String url) {
-        if (RequestHandler.networkIsAvailable(weakContext)) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
-        } else {
-            Toast.makeText(weakActivity.get(), "OFFLINE: Can't open link", Toast.LENGTH_SHORT).show();
-        }
     }
 }
