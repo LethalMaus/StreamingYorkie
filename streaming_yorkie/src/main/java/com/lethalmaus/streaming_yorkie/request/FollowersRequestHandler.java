@@ -79,7 +79,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                 streamingYorkieDB.followerDAO().insertUser(followerEntity);
                             }
                         }
-                        sendRequest();
+                        sendRequest(true);
                     } else {
                         if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
                             weakActivity.get().runOnUiThread(() ->
@@ -105,12 +105,7 @@ public class FollowersRequestHandler extends RequestHandler {
                                 });
                             }
                         }
-                        if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(() ->
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
-                            );
-                        }
-                        onCompletion();
+                        onCompletion(true);
                     }
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {

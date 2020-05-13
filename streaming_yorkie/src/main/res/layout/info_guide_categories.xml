@@ -33,35 +33,9 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/imageView11"
-                    app:srcCompat="@drawable/new_button"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="0"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/guide_categories_new" />
-
-                <TextView
-                    android:id="@+id/textView11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="@string/guide_categories_new" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal">
-
-                <ImageView
                     android:id="@+id/imageView12"
-                    app:srcCompat="@drawable/follow"
+                    app:srcCompat="@drawable/followed"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -71,7 +45,8 @@
                 <TextView
                     android:id="@+id/textView12"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -81,6 +56,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
@@ -88,7 +64,8 @@
 
                 <ImageView
                     android:id="@+id/imageView13"
-                    app:srcCompat="@drawable/unfollow"
+                    app:srcCompat="@drawable/unfollowed"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -98,7 +75,8 @@
                 <TextView
                     android:id="@+id/textView13"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -116,6 +94,7 @@
                 <ImageView
                     android:id="@+id/imageView14"
                     app:srcCompat="@drawable/excluded"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -125,7 +104,8 @@
                 <TextView
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -143,6 +123,7 @@
                 <ImageView
                     android:id="@+id/imageView15"
                     app:srcCompat="@drawable/notfollowing_followers"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -152,7 +133,8 @@
                 <TextView
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -170,6 +152,7 @@
                 <ImageView
                     android:id="@+id/imageView16"
                     app:srcCompat="@drawable/follow4follow"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -179,7 +162,8 @@
                 <TextView
                     android:id="@+id/textView16"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -197,6 +181,7 @@
                 <ImageView
                     android:id="@+id/imageView17"
                     app:srcCompat="@drawable/following_nonfollowers"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -206,7 +191,8 @@
                 <TextView
                     android:id="@+id/textView17"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -224,6 +210,7 @@
                 <ImageView
                     android:id="@+id/imageView18"
                     app:srcCompat="@drawable/vods"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -233,7 +220,8 @@
                 <TextView
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
@@ -242,7 +230,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
@@ -251,6 +239,7 @@
                 <ImageView
                     android:id="@+id/imageView19"
                     app:srcCompat="@drawable/export"
+                    android:layout_gravity="center"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_weight="0"
@@ -260,7 +249,8 @@
                 <TextView
                     android:id="@+id/textView19"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"

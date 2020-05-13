@@ -26,7 +26,9 @@ public class Follow4Follow extends FollowParent {
         super.onCreate(savedInstanceState);
 
         final String daoType = "F4FEntity";
+        findViewById(R.id.count1).setVisibility(View.VISIBLE);
         final ImageButton notFollowingFollowersButton = findViewById(R.id.page1);
+        notFollowingFollowersButton.setVisibility(View.VISIBLE);
         notFollowingFollowersButton.setImageResource(R.drawable.notfollowing_followers);
         notFollowingFollowersButton.setOnClickListener((View v) ->
                 pageButtonListenerAction(notFollowingFollowersButton, "Followers not Followed", daoType, "FOLLOWED_NOTFOLLOWING", Globals.EXCLUDE_BUTTON, null)
@@ -41,7 +43,7 @@ public class Follow4Follow extends FollowParent {
         final ImageButton followingNonFollowersButton = findViewById(R.id.page3);
         followingNonFollowersButton.setImageResource(R.drawable.following_nonfollowers);
         followingNonFollowersButton.setOnClickListener((View v) ->
-                pageButtonListenerAction(followingNonFollowersButton, "FollowingEntity not FollowingEntity back", daoType, "NOTFOLLOWED_FOLLOWING", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
+                pageButtonListenerAction(followingNonFollowersButton, "Following not Following back", daoType, "NOTFOLLOWED_FOLLOWING", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
         );
 
         final ImageButton exclusionsButton = findViewById(R.id.page4);
@@ -49,19 +51,14 @@ public class Follow4Follow extends FollowParent {
         exclusionsButton.setOnClickListener((View v) ->
                 pageButtonListenerAction(exclusionsButton, "Excluded", daoType, "EXCLUDED", Globals.INCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
         );
-        pageButtonListenerAction(notFollowingFollowersButton, "Followers not Followed", daoType, "FOLLOWED_NOTFOLLOWING", Globals.EXCLUDE_BUTTON, null);
         followingUpdateRequestHandler = new FollowingUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
         requestHandler = new FollowersUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)) {
             @Override
-            public void onCompletion() {
-                super.onCompletion();
-                runOnUiThread(() ->
-                        progressBar.setVisibility(View.VISIBLE)
-                );
-                followingUpdateRequestHandler.initiate().sendRequest();
+            public void onCompletion(boolean hideProgressBar) {
+                super.onCompletion(false);
+                followingUpdateRequestHandler.initiate().sendRequest(true);
             }
         };
-        progressBar.setVisibility(View.VISIBLE);
-        requestHandler.initiate().sendRequest();
+        pageButtonListenerAction(notFollowingFollowersButton, "Followers not Followed", daoType, "FOLLOWED_NOTFOLLOWING", Globals.EXCLUDE_BUTTON, null);
     }
 }

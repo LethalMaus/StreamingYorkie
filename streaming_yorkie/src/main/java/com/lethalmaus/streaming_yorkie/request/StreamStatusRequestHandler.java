@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -76,23 +78,23 @@ public class StreamStatusRequestHandler extends RequestHandler {
                 try {
                     usersToBeLurked = 0;
                     if (response.getJSONArray("data").length() <= 0) {
-                        StreamStatusRequestHandler.this.onCompletion();
+                        StreamStatusRequestHandler.this.onCompletion(false);
                     }
                     for (int i = 0; i < response.getJSONArray("data").length(); i++) {
                         String userName = response.getJSONArray("data").getJSONObject(i).getString("user_name");
                         new LurkRequestHandler(weakActivity, weakContext, recyclerView) {
                             @Override
-                            public void onCompletion() {
+                            public void onCompletion(boolean showProgress) {
                                 try {
                                     usersToBeLurked++;
                                     if (usersToBeLurked == response.getJSONArray("data").length()) {
-                                        StreamStatusRequestHandler.this.onCompletion();
+                                        StreamStatusRequestHandler.this.onCompletion(false);
                                     }
                                 } catch (JSONException e) {
                                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error getting stream status | " + e.toString(), true).run();
                                 }
                             }
-                        }.newRequest(userName.toLowerCase()).initiate().sendRequest();
+                        }.newRequest(userName.toLowerCase()).initiate().sendRequest(false);
                         userIds.remove(userID);
                     }
                     for (int i = 0; i < userIds.size(); i++) {
@@ -117,6 +119,16 @@ public class StreamStatusRequestHandler extends RequestHandler {
                 }
             }
         }.start();
+    }
+
+    @Override
+    HashMap<String, String> getRequestHeaders() {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/vnd.twitchtv.v5+json");
+        headers.put("Client-ID", Globals.CLIENTID);
+        headers.put("Content-Type", "application/json; charset=utf-8");
+        headers.put("Authorization", "Bearer " + token);
+        return headers;
     }
 
     @Override

@@ -415,7 +415,7 @@ public class SettingsF4F extends AppCompatActivity {
                             new DeleteFileHandler(weakActivity, weakContext, Globals.FILE_SHARE_F4F).run();
                         }
                     }
-                }.setPostBody(postBody).sendRequest();
+                }.setPostBody(postBody).sendRequest(false);
             } catch(JSONException e) {
                 Toast.makeText(SettingsF4F.this, "Error sharing F4F status", Toast.LENGTH_SHORT).show();
                 new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_f4f_settings) + getString(R.string.comma) + Globals.SETTINGS_SHARE_F4F_STATUS + getString(R.string.pipe) + e.toString(), true).run();

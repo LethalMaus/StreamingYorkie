@@ -32,11 +32,11 @@ public class Channel extends AppCompatActivity {
         this.weakContext = new WeakReference<>(getApplicationContext());
         setContentView(R.layout.channel);
         ChannelRequestHandler channelRequestHandler = new ChannelRequestHandler(new WeakReference<>(this), weakContext);
-        channelRequestHandler.sendRequest();
+        channelRequestHandler.sendRequest(false);
 
         ImageButton refreshPage = findViewById(R.id.user_refresh);
         refreshPage.setOnClickListener((View v) ->
-            channelRequestHandler.sendRequest()
+            channelRequestHandler.sendRequest(false)
         );
     }
 

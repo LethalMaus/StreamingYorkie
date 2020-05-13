@@ -65,28 +65,23 @@ public class FollowersUpdateRequestHandler extends RequestHandler {
                             if (lastFollowers[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id"))) {
                                 new FollowersRequestHandler(weakActivity, weakContext, recyclerView){
                                     @Override
-                                    public void onCompletion() {
-                                        super.onCompletion();
-                                        FollowersUpdateRequestHandler.this.onCompletion();
+                                    public void onCompletion(boolean hideProgressBar) {
+                                        super.onCompletion(false);
+                                        FollowersUpdateRequestHandler.this.onCompletion(hideProgressBar);
                                     }
-                                }.initiate().sendRequest();
+                                }.initiate().sendRequest(true);
                                 return;
                             }
                         }
-                        if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(() ->
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
-                            );
-                        }
-                        onCompletion();
+                        onCompletion(true);
                     } else {
                         new FollowersRequestHandler(weakActivity, weakContext, recyclerView){
                             @Override
-                            public void onCompletion() {
-                                super.onCompletion();
-                                FollowersUpdateRequestHandler.this.onCompletion();
+                            public void onCompletion(boolean hideProgressBar) {
+                                super.onCompletion(false);
+                                FollowersUpdateRequestHandler.this.onCompletion(hideProgressBar);
                             }
-                        }.initiate().sendRequest();
+                        }.initiate().sendRequest(true);
                     }
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {

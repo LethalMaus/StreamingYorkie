@@ -100,16 +100,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/menu1">
 
                 <ImageButton
-                    android:id="@+id/menu_vod"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu_vods"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/vod_menu" />
-
-                <ImageButton
                     android:id="@+id/menu_multi"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -118,6 +108,16 @@
                     android:contentDescription="@string/menu_multi"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/multi_menu" />
+
+                <ImageButton
+                    android:id="@+id/menu_vod"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu_vods"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/vod_menu" />
 
                 <ImageButton
                     android:id="@+id/menu_lurk"
@@ -145,16 +145,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/menu2">
 
                 <ImageButton
-                    android:id="@+id/menu_userinfo"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu_userinfo"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/userinfo" />
-
-                <ImageButton
                     android:id="@+id/menu_info"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -164,6 +154,17 @@
                     android:contentDescription="@string/menu_info"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/info" />
+
+                <ImageButton
+                    android:id="@+id/menu_userinfo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu_userinfo"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/userinfo" />
+
 
                 <ImageButton
                     android:id="@+id/menu_shop"
@@ -190,6 +191,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/menu3">
+
 
                 <ImageButton
                     android:id="@+id/menu_settings"

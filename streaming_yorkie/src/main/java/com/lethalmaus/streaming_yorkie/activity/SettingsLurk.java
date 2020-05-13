@@ -54,21 +54,21 @@ public class SettingsLurk extends AppCompatActivity {
             getSupportActionBar().setSubtitle("Lurk");
         }
 
-        if (!new File(getFilesDir().toString() + File.separator + "SETTINGS_LURK").exists()) {
+        if (!new File(getFilesDir().toString() + File.separator + Globals.FILE_SETTINGS_LURK).exists()) {
             createSettingsFile();
         }
         try {
-            String settingsFile = new ReadFileHandler(weakActivity, weakContext, "SETTINGS_LURK").readFile();
+            String settingsFile = new ReadFileHandler(weakActivity, weakContext, Globals.FILE_SETTINGS_LURK).readFile();
             settings = new JSONObject(settingsFile);
             previousSettings = new JSONObject(settingsFile);
             //Ensures settings integrity
             if (!settings.has(Globals.SETTINGS_AUTOLURK) || !settings.has(Globals.SETTINGS_WIFI_ONLY) || !settings.has(Globals.SETTINGS_LURK_INFORM) || !settings.has(Globals.SETTINGS_LURK_MESSAGE)) {
-                new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath("SETTINGS_LURK");
+                new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.FILE_SETTINGS_LURK);
                 createSettingsFile();
             }
         } catch (JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error reading Lurk Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading Lurk Settings | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings), Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + e.toString(), true).run();
         }
 
         serviceActivationSwitch();
@@ -99,10 +99,10 @@ public class SettingsLurk extends AppCompatActivity {
             settings.put(Globals.SETTINGS_WIFI_ONLY, true);
             settings.put(Globals.SETTINGS_LURK_INFORM, false);
             settings.put(Globals.SETTINGS_LURK_MESSAGE, "");
-            new WriteFileHandler(weakActivity, weakContext, "SETTINGS_LURK", null, settings.toString(), false).writeToFileOrPath();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_SETTINGS_LURK, null, settings.toString(), false).writeToFileOrPath();
         } catch (JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error creating Lurk Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error creating Lurk Settings | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_creating_lurk_settings), Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_creating_lurk_settings) + getString(R.string.pipe) + e.toString(), true).run();
         }
     }
 
@@ -119,8 +119,8 @@ public class SettingsLurk extends AppCompatActivity {
                 autoLurkActivation.setChecked(true);
             }
         } catch(JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error reading Lurk Settings, " + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null,"Error reading Lurk Settings, " + Globals.SETTINGS_AUTOLURK + " | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK + getString(R.string.pipe) + e.toString(), true).run();
         }
         autoLurkActivation.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             try {
@@ -130,8 +130,8 @@ public class SettingsLurk extends AppCompatActivity {
                     settings.put(Globals.SETTINGS_AUTOLURK, Globals.SETTINGS_OFF);
                 }
             } catch(JSONException e) {
-                Toast.makeText(SettingsLurk.this, "Error changing Lurk Settings, " + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error changing Lurk Settings, " + Globals.SETTINGS_AUTOLURK + " | " + e.toString(), true).run();
+                Toast.makeText(SettingsLurk.this, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK + getString(R.string.pipe) + e.toString(), true).run();
             }
         });
     }
@@ -145,15 +145,15 @@ public class SettingsLurk extends AppCompatActivity {
         try {
             wifiOnly.setChecked(settings.getBoolean(Globals.SETTINGS_WIFI_ONLY));
         } catch(JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error reading Lurk Settings, " + Globals.SETTINGS_WIFI_ONLY, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null,"Error reading Lurk Settings, " + Globals.SETTINGS_WIFI_ONLY + " | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_WIFI_ONLY, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_WIFI_ONLY + getString(R.string.pipe) + e.toString(), true).run();
         }
         wifiOnly.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             try {
                 settings.put(Globals.SETTINGS_WIFI_ONLY, isChecked);
             } catch(JSONException e) {
-                Toast.makeText(SettingsLurk.this, "Error changing Lurk Settings, " + Globals.SETTINGS_WIFI_ONLY, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error changing Lurk Settings, " + Globals.SETTINGS_WIFI_ONLY + " | " + e.toString(), true).run();
+                Toast.makeText(SettingsLurk.this, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_WIFI_ONLY, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_WIFI_ONLY + getString(R.string.pipe) + e.toString(), true).run();
             }
         });
     }
@@ -167,15 +167,15 @@ public class SettingsLurk extends AppCompatActivity {
         try {
             informChannel.setChecked(settings.getBoolean(Globals.SETTINGS_LURK_INFORM));
         } catch(JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error reading Lurk Settings, " + Globals.SETTINGS_LURK_INFORM, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null,"Error reading Lurk Settings, " + Globals.SETTINGS_LURK_INFORM + " | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_INFORM, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_INFORM + getString(R.string.pipe) + e.toString(), true).run();
         }
         informChannel.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
             try {
                 settings.put(Globals.SETTINGS_LURK_INFORM, isChecked);
             } catch(JSONException e) {
-                Toast.makeText(SettingsLurk.this, "Error changing Lurk Settings, " + Globals.SETTINGS_LURK_INFORM, Toast.LENGTH_SHORT).show();
-                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error changing Lurk Settings, " + Globals.SETTINGS_LURK_INFORM + " | " + e.toString(), true).run();
+                Toast.makeText(SettingsLurk.this, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_INFORM, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_INFORM + getString(R.string.pipe) + e.toString(), true).run();
             }
         });
     }
@@ -189,8 +189,8 @@ public class SettingsLurk extends AppCompatActivity {
         try {
             informChannelMessage.setText(settings.getString(Globals.SETTINGS_LURK_MESSAGE));
         } catch(JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error reading Lurk Settings, " + Globals.SETTINGS_LURK_MESSAGE, Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null,"Error reading Lurk Settings, " + Globals.SETTINGS_LURK_MESSAGE + " | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_MESSAGE, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_MESSAGE + getString(R.string.pipe) + e.toString(), true).run();
         }
         informChannelMessage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -198,8 +198,8 @@ public class SettingsLurk extends AppCompatActivity {
                 try {
                     settings.put(Globals.SETTINGS_LURK_MESSAGE, s.toString().trim());
                 } catch (JSONException e) {
-                    Toast.makeText(SettingsLurk.this, "Error changing Lurk Settings, " + Globals.SETTINGS_LURK_MESSAGE, Toast.LENGTH_SHORT).show();
-                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error changing Lurk Settings, " + Globals.SETTINGS_LURK_MESSAGE + " | " + e.toString(), true).run();
+                    Toast.makeText(SettingsLurk.this, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_MESSAGE, Toast.LENGTH_SHORT).show();
+                    new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_LURK_MESSAGE + getString(R.string.pipe) + e.toString(), true).run();
                 }
             }
             @Override
@@ -229,8 +229,8 @@ public class SettingsLurk extends AppCompatActivity {
                 finish();
             }
         } catch(JSONException e) {
-            Toast.makeText(SettingsLurk.this, "Error reading Lurk Settings", Toast.LENGTH_SHORT).show();
-            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading Lurk Settings | " + e.toString(), true).run();
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings), Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + e.toString(), true).run();
         }
     }
 
@@ -260,7 +260,7 @@ public class SettingsLurk extends AppCompatActivity {
     private void promptUserSaveSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsLurk.this, R.style.CustomDialog);
         builder.setPositiveButton("SAVE", (DialogInterface dialog, int id) ->  {
-            new WriteFileHandler(weakActivity, weakContext, "SETTINGS_LURK", null, settings.toString(), false).run();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_SETTINGS_LURK, null, settings.toString(), false).run();
             Toast.makeText(SettingsLurk.this, "Changes saved", Toast.LENGTH_SHORT).show();
             finish();
         });

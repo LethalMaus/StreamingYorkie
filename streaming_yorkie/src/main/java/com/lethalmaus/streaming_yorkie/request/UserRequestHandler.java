@@ -5,6 +5,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 import com.lethalmaus.streaming_yorkie.view.UserView;
@@ -80,7 +81,7 @@ public class UserRequestHandler extends RequestHandler {
                 }
                 new UserView(weakActivity, weakContext).execute();
             } catch (JSONException e) {
-                if (weakActivity != null && weakActivity.get() != null) {
+                if (Globals.checkWeakActivity(weakActivity)) {
                     weakActivity.get().runOnUiThread(() ->
                             Toast.makeText(weakContext.get(), "UserEntity can't be saved", Toast.LENGTH_SHORT).show()
                     );

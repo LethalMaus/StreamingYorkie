@@ -111,7 +111,7 @@ public class FollowRequestHandler extends RequestHandler {
                         followingEntity.setLast_updated(System.currentTimeMillis());
                         streamingYorkieDB.followingDAO().updateUser(followingEntity);
                     }
-                    onCompletion();
+                    onCompletion(true);
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
                         weakActivity.get().runOnUiThread(

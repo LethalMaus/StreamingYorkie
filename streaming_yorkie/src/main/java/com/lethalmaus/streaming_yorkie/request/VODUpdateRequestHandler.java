@@ -66,10 +66,10 @@ public class VODUpdateRequestHandler extends RequestHandler {
                         if (lastVODs[i] != Integer.parseInt(response.getJSONArray("videos").getJSONObject(i).getString("_id").replace("v", ""))) {
                             new VODRequestHandler(weakActivity, weakContext, recyclerView){
                                 @Override
-                                public void onCompletion() {
-                                    VODUpdateRequestHandler.this.onCompletion();
+                                public void onCompletion(boolean hideProgressBar) {
+                                    VODUpdateRequestHandler.this.onCompletion(hideProgressBar);
                                 }
-                            }.initiate().sendRequest();
+                            }.initiate().sendRequest(true);
                             return;
                         }
                     }
@@ -78,14 +78,14 @@ public class VODUpdateRequestHandler extends RequestHandler {
                                 weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
                         );
                     }
-                    onCompletion();
+                    onCompletion(true);
                 } else {
                     new VODRequestHandler(weakActivity, weakContext, recyclerView){
                         @Override
-                        public void onCompletion() {
-                            VODUpdateRequestHandler.this.onCompletion();
+                        public void onCompletion(boolean hideProgressBar) {
+                            VODUpdateRequestHandler.this.onCompletion(hideProgressBar);
                         }
-                    }.initiate().sendRequest();
+                    }.initiate().sendRequest(true);
                 }
             } catch (JSONException e) {
                 if (weakActivity != null && weakActivity.get() != null) {

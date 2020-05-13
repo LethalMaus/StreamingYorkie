@@ -2,8 +2,10 @@
 <resources>
     <string name="pipe"> | </string>
     <string name="comma">, </string>
-    <string name="error_reading_f4f_settings">Error reading F4F Settings</string>
-    <string name="error_creating_f4f_settings">Error creating F4F Settings</string>
-    <string name="error_changing_f4f_settings">Error changing F4F Settings,</string>
-
+    <string name="error_reading_f4f_settings">Error reading F4F settings</string>
+    <string name="error_creating_f4f_settings">Error creating F4F settings</string>
+    <string name="error_changing_f4f_settings">Error changing F4F settings,</string>
+    <string name="error_reading_lurk_settings">Error reading Lurk settings</string>
+    <string name="error_creating_lurk_settings">Error creating Lurk settings</string>
+    <string name="error_changing_lurk_settings">Error changing Lurk settings</string>
 </resources>

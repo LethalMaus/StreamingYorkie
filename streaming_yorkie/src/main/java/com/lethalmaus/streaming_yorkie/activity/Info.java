@@ -44,7 +44,7 @@ public class Info extends AppCompatActivity {
         }
         showDevLogs = 7;
         requestHandler = new DevInfoRequestHandler(weakActivity, weakContext);
-        requestHandler.sendRequest();
+        requestHandler.sendRequest(false);
 
         findViewById(R.id.info_developer).setOnClickListener((View v) -> {
             if (showDevLogs > 0) {
@@ -81,6 +81,12 @@ public class Info extends AppCompatActivity {
         findViewById(R.id.info_contact).setOnClickListener(
                 (View v) ->
                         Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#contact")
+        );
+
+        //Link to Shout-outs on Github
+        findViewById(R.id.info_thankyou).setOnClickListener(
+                (View v) ->
+                        Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#shout-outs")
         );
 
         //Link to Twitch for entertainment

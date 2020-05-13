@@ -66,8 +66,8 @@ public class AutoFollowWorker extends Worker {
     public @NonNull Result doWork() {
         final FollowingUpdateRequestHandler followingUpdateRequestHandler = new FollowingUpdateRequestHandler(null, weakContext, null) {
             @Override
-            public void onCompletion() {
-                super.onCompletion();
+            public void onCompletion(boolean hideProgressBar) {
+                super.onCompletion(false);
                 if (autoFollow != null && (autoFollow.equals("FOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
                     UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserForAutoFollow();
                     if (userEntity != null) {
@@ -75,19 +75,19 @@ public class AutoFollowWorker extends Worker {
                         new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                         new FollowRequestHandler(null, weakContext) {
                             @Override
-                            public void onCompletion() {
-                                super.onCompletion();
+                            public void onCompletion(boolean hideProgressBar) {
+                                super.onCompletion(false);
                                 UserEntity userEntity = streamingYorkieDB.f4fDAO().getFollowedNotFollowingUserForAutoFollow();
                                 if (userEntity != null) {
                                     new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_FOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                                     setRequestParameters(Request.Method.PUT, userEntity.getId(), autoFollowNotifications)
-                                            .sendRequest();
+                                            .sendRequest(false);
                                 } else {
                                     notifyUser(weakContext);
                                 }
                             }
                         }.setRequestParameters(Request.Method.PUT, userEntity.getId(), false)
-                                .sendRequest();
+                                .sendRequest(false);
                     }
                 }
                 if (autoFollow != null && (autoFollow.equals("UNFOLLOW") || autoFollow.equals("FOLLOW_UNFOLLOW"))) {
@@ -97,31 +97,31 @@ public class AutoFollowWorker extends Worker {
                         new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                         new FollowRequestHandler(null, weakContext) {
                             @Override
-                            public void onCompletion() {
-                                super.onCompletion();
+                            public void onCompletion(boolean hideProgressBar) {
+                                super.onCompletion(false);
                                 UserEntity userEntity = streamingYorkieDB.f4fDAO().getNotFollowedFollowingUserForAutoFollow();
                                 if (userEntity != null) {
                                     new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_UNFOLLOW + File.separator + userEntity.getId(), null, null, false).writeToFileOrPath();
                                     setRequestParameters(Request.Method.DELETE, userEntity.getId(), autoFollowNotifications)
-                                            .sendRequest();
+                                            .sendRequest(false);
                                 } else {
                                     notifyUser(weakContext);
                                 }
                             }
                         }.setRequestParameters(Request.Method.DELETE, userEntity.getId(), autoFollowNotifications)
-                                .sendRequest();
+                                .sendRequest(false);
                     }
                 }
             }
         };
         final FollowersUpdateRequestHandler followersUpdateRequestHandler = new FollowersUpdateRequestHandler(null, weakContext, null) {
             @Override
-            public void onCompletion() {
-                super.onCompletion();
-                followingUpdateRequestHandler.initiate().sendRequest();
+            public void onCompletion(boolean hideProgressBar) {
+                super.onCompletion(false);
+                followingUpdateRequestHandler.initiate().sendRequest(false);
             }
         };
-        followersUpdateRequestHandler.initiate().sendRequest();
+        followersUpdateRequestHandler.initiate().sendRequest(false);
         return Result.success();
     }
 

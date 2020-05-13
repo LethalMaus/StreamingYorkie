@@ -112,13 +112,41 @@ public class Authorization extends AppCompatActivity {
                 }
                 return true;
             }
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.contains(Globals.TWITCH_URL)) {
+                    if (url.contains("https://www.twitch.tv/?no-reload=true")){
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        webView.destroy();
+                        finish();
+                        return false;
+                    }
+                    if (url.contains("https://www.twitch.tv/passport-callback#access_token")) {
+                        new WriteFileHandler(weakActivity, weakContext, Globals.FILE_TWITCH_TOKEN, null, url.substring(url.indexOf(Globals.ACCESS_TOKEN) + 13, url.indexOf(Globals.ACCESS_TOKEN) + 43), false).writeToFileOrPath();
+                        Toast.makeText(Authorization.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        webView.destroy();
+                        finish();
+                        return false;
+                    }
+                    view.loadUrl(url);
+                    return false;
+                } else if (url.contains("http://localhost/?error=access_denied")) {
+                    setContentView(R.layout.error);
+                }
+                return true;
+            }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (url.contains("localhost") && url.contains(Globals.ACCESS_TOKEN) && !url.contains(Globals.TWITCH_URL)) {
                     new WriteFileHandler(weakActivity, weakContext, Globals.FILE_TOKEN, null, url.substring(url.indexOf(Globals.ACCESS_TOKEN) + 13, url.indexOf(Globals.ACCESS_TOKEN) + 43), false).writeToFileOrPath();
-                    new UserRequestHandler(weakActivity, weakContext).sendRequest();
+                    new UserRequestHandler(weakActivity, weakContext).sendRequest(false);
                     view.loadUrl("https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=" + Globals.TWITCHID + "&redirect_uri=https://www.twitch.tv/passport-callback&scope=chat_login user_read user_subscriptions user_presence_friends_read chat%3Aread+chat%3Aedit+channel%3Amoderate+whispers%3Aread+whispers%3Aedit+channel_editor");
                 } else if (!url.contains(Globals.TWITCH_URL)) {
                     setContentView(R.layout.error);

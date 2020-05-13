@@ -100,7 +100,7 @@ public class LurkRequestHandler extends RequestHandler {
             String errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error requesting " + requestType + ": " + errorMessage, true).run();
         }
-        onCompletion();
+        onCompletion(false);
     }
 
     /**
@@ -139,7 +139,7 @@ public class LurkRequestHandler extends RequestHandler {
                                         }
                                         streamingYorkieDB.lurkDAO().updateLurk(lurk);
                                     }
-                                    onCompletion();
+                                    onCompletion(true);
                                 }
                             }.start()
                     , (VolleyError error)  -> {
@@ -167,7 +167,7 @@ public class LurkRequestHandler extends RequestHandler {
                                         lurk.setChannelInformedOfLurk(false);
                                         lurk.setChannelIsToBeLurked(lurk.isChannelIsToBeLurked());
                                         streamingYorkieDB.lurkDAO().updateLurk(lurk);
-                                        onCompletion();
+                                        onCompletion(false);
                                     }
                                 }.start();
                             }
@@ -192,7 +192,7 @@ public class LurkRequestHandler extends RequestHandler {
 
     @Override
     protected void offlineResponseHandler() {
-        if (recyclerView != null && recyclerView.get() != null && weakActivity.get() != null) {
+        if (Globals.checkWeakActivity(weakActivity)) {
             weakActivity.get().runOnUiThread(() ->
                     Toast.makeText(weakActivity.get(), "OFFLINE: Cannot lurk when offline", Toast.LENGTH_SHORT).show()
             );

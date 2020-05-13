@@ -69,8 +69,8 @@ public class AutoVODExportWorker extends Worker {
     public @NonNull Result doWork() {
         new VODUpdateRequestHandler(null, weakContext, null) {
             @Override
-            public void onCompletion() {
-                super.onCompletion();
+            public void onCompletion(boolean hideProgressBar) {
+                super.onCompletion(false);
                 final int vodCount = streamingYorkieDB.vodDAO().getCurrentVODsCount();
                 if (vodCount > 0) {
                     new WriteFileHandler(null, weakContext, Globals.FLAG_AUTOVODEXPORT_NOTIFICATION_UPDATE, null, null, false).writeToFileOrPath();
@@ -90,18 +90,18 @@ public class AutoVODExportWorker extends Worker {
                             }
                             new VODExportRequestHandler(null, weakContext, null) {
                                 @Override
-                                public void onCompletion() {
+                                public void onCompletion(boolean hideProgressBar) {
                                     new WriteFileHandler(null, weakContext, Globals.NOTIFICATION_VODEXPORT + File.separator + getVodId(), null, null, false).writeToFileOrPath();
                                     if (vodCount == new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_VODEXPORT).countFiles()) {
                                         notifyUser(weakContext);
                                     }
                                 }
-                            }.setVodId(vodId).setPostBody(body).sendRequest();
+                            }.setVodId(vodId).setPostBody(body).sendRequest(false);
                         }
                     }
                 }
             }
-        }.initiate().sendRequest();
+        }.initiate().sendRequest(false);
         return Result.success();
     }
 

@@ -86,12 +86,12 @@ public class Lurk extends AppCompatActivity {
                                     lurkDAO.insertLurk(new LurkEntity(channelInputText, 0, null, null, null, true, true));
                                     new LurkRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)) {
                                         @Override
-                                        public void onCompletion() {
+                                        public void onCompletion(boolean hideProgressBar) {
                                             recyclerView.post(() ->
                                                     lurkAdapter.datasetChanged(false)
                                             );
                                         }
-                                    }.newRequest(channelInputText).initiate().sendRequest();
+                                    }.newRequest(channelInputText).initiate().sendRequest(false);
                                 }
                             }.start();
                         }
