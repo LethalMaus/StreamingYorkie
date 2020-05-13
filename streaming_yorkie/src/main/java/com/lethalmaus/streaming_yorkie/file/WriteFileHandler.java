@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.lethalmaus.streaming_yorkie.Globals;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +40,7 @@ public class WriteFileHandler implements Runnable {
      */
     public WriteFileHandler(WeakReference<Activity> weakActivity, WeakReference<Context> weakContext, String fileOrPathName, ArrayList<String> files, String data, boolean append) {
         this.weakActivity = weakActivity;
-        if (weakContext != null && weakContext.get() != null) {
+        if (Globals.checkWeakReference(weakContext)) {
             this.appDirectory = weakContext.get().getFilesDir().toString();
         }
         this.fileOrPathName = fileOrPathName;
@@ -80,14 +82,14 @@ public class WriteFileHandler implements Runnable {
             File file = new File(appDirectory + File.separator + fileOrPathName);
             if (!file.exists()) {
                 if (file.getParent() != null && !new File(file.getParent()).exists() && !new File(file.getParent()).mkdirs()) {
-                    if (weakActivity != null && weakActivity.get() != null) {
+                    if (Globals.checkWeakActivity(weakActivity)) {
                         Toast.makeText(weakActivity.get(), "Error creating directories for '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
                     } else {
                         System.out.println("Error creating directory '" + fileOrPathName + "'");
                     }
                 }
                 if (!file.createNewFile()) {
-                    if (weakActivity != null && weakActivity.get() != null) {
+                    if (Globals.checkWeakActivity(weakActivity)) {
                         Toast.makeText(weakActivity.get(), "Error creating file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
                     } else {
                         System.out.println("Error creating file '" + fileOrPathName + "'");
@@ -105,13 +107,13 @@ public class WriteFileHandler implements Runnable {
                 bufferedWriter.flush();
             }
         } catch (FileNotFoundException e) {
-            if (weakActivity != null && weakActivity.get() != null) {
+            if (Globals.checkWeakActivity(weakActivity)) {
                 Toast.makeText(weakActivity.get(), "Error retrieving file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
             } else {
                 System.out.println("Error retrieving file '" + fileOrPathName + "'");
             }
         } catch (IOException e) {
-            if (weakActivity != null && weakActivity.get() != null) {
+            if (Globals.checkWeakActivity(weakActivity)) {
                 Toast.makeText(weakActivity.get(), "Error writing to file '" + fileOrPathName + "'", Toast.LENGTH_SHORT).show();
             } else {
                 System.out.println("Error writing to file '" + fileOrPathName + "'");

@@ -1,98 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:id="@+id/user_Logo"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/user_logo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/user" />
-
-    <TextView
-        android:id="@+id/user_Username"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="center_vertical"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:text="@string/username"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/refresh"
-        app:layout_constraintStart_toEndOf="@+id/user_Logo"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/update"
-        android:contentDescription="@string/refresh_symbol"
-        app:layout_constraintBottom_toBottomOf="@+id/user_Username"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/user_Username"
-        app:srcCompat="@android:color/transparent" />
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_Username">
+        tools:layout_editor_absoluteY="56dp">
 
         <ImageButton
             android:id="@+id/page1"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="2dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/category"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/new_button" />
+            app:srcCompat="@drawable/notfollowing_followers" />
 
         <ImageButton
             android:id="@+id/page2"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="2dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/category"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/follow" />
+            app:srcCompat="@drawable/followed" />
 
         <ImageButton
             android:id="@+id/page3"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="2dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/category"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/unfollow" />
+            app:srcCompat="@drawable/unfollowed" />
 
         <ImageButton
             android:id="@+id/page4"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:padding="2dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/category"
             android:scaleType="centerInside"
@@ -104,8 +68,8 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -149,35 +113,17 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressbar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="17dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:indeterminate="true"
-        android:indeterminateOnly="true"
-        android:progress="@android:integer/config_shortAnimTime"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/emptyuserrow"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressbar"
-        tools:visibility="gone">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <ImageView
             android:id="@+id/emptyuserrow_logo"
@@ -212,31 +158,64 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/table"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toTopOf="@+id/follow_unfollow_all"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressbar" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/table"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/streaming_yorkie_background"
+            android:paddingBottom="1px"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/follow_unfollow_all"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginBottom="8dp"
-        android:background="@android:color/transparent"
+        android:padding="2dp"
+        android:background="@drawable/highlight_page_button"
         android:contentDescription="@string/actionAll"
         android:scaleType="centerInside"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/follow" />
+        app:srcCompat="@drawable/followed" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#33000000"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:indeterminateTint="@color/colorPrimary"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

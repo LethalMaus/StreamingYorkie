@@ -67,7 +67,7 @@ public class VODs extends AppCompatActivity {
             if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
                 mLastClickTime = SystemClock.elapsedRealtime();
                 progressBar.setVisibility(View.VISIBLE);
-                requestHandler.initiate().sendRequest();
+                requestHandler.initiate().sendRequest(true);
             }
         });
 
@@ -89,7 +89,7 @@ public class VODs extends AppCompatActivity {
         pageButtonListenerAction(vodButton, "VODs", "CURRENT", "EXPORT", "EXCLUDE");
 
         requestHandler = new VODUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
-        requestHandler.initiate().sendRequest();
+        requestHandler.initiate().sendRequest(true);
     }
 
     @Override

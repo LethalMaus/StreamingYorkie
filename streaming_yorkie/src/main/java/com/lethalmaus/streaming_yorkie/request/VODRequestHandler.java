@@ -104,9 +104,9 @@ public class VODRequestHandler extends RequestHandler {
                             }
                         }
                     }
-                    sendRequest();
+                    sendRequest(true);
                 } else {
-                    if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+                    if (twitchTotal != itemCount && Globals.checkWeakActivity(weakActivity)) {
                         weakActivity.get().runOnUiThread(() ->
                                 Toast.makeText(weakActivity.get(), "Twitch Data for 'VODs' is out of sync. Total should be '" + twitchTotal + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show()
                         );
@@ -126,15 +126,15 @@ public class VODRequestHandler extends RequestHandler {
                             });
                         }
                     }
-                    if (weakActivity != null && weakActivity.get() != null) {
+                    if (Globals.checkWeakActivity(weakActivity)) {
                         weakActivity.get().runOnUiThread(() ->
                                 weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
                         );
                     }
-                    onCompletion();
+                    onCompletion(true);
                 }
             } catch (JSONException e) {
-                if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+                if (twitchTotal != itemCount && Globals.checkWeakActivity(weakActivity)) {
                     weakActivity.get().runOnUiThread(() ->
                             Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
                     );

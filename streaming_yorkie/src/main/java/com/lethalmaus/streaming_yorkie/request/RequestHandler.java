@@ -40,7 +40,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
  */
 public class RequestHandler {
 
-    private String token;
+    String token;
     String userID;
     String requestType;
     int offset;
@@ -119,9 +119,10 @@ public class RequestHandler {
      * Must have called initiate() at least once.
      * This method is overridden in every sub-class.
      * @author LethalMaus
+     * @param showProgress boolean whether to show progress or not
      */
-    public void sendRequest() {
-        if (weakActivity != null && weakActivity.get() != null) {
+    public void sendRequest(boolean showProgress) {
+        if (showProgress && Globals.checkWeakActivity(weakActivity)) {
             weakActivity.get().runOnUiThread(() -> {
                 View progressbar = weakActivity.get().findViewById(R.id.progressbar);
                 if (progressbar != null) {
@@ -131,7 +132,7 @@ public class RequestHandler {
         }
         new Thread() {
             public void run() {
-                if (weakContext != null && weakContext.get() != null) {
+                if (Globals.checkWeakReference(weakContext)) {
                     if (userID == null) {
                         if (new File(weakContext.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
                             token = new ReadFileHandler(weakActivity, weakContext, "TOKEN").readFile();
@@ -244,9 +245,15 @@ public class RequestHandler {
     /**
      * Method to be called once all requests are complete
      * @author LethalMaus
+     * @param hideProgressBar boolean whether to hide progress bar if visible
      */
-    public void onCompletion() {
+    public void onCompletion(boolean hideProgressBar) {
         new WriteFileHandler(weakActivity, weakContext, requestType + "_TIMESTAMP", null, Long.toString(timestamp), false).run();
+        if (hideProgressBar && Globals.checkWeakActivity(weakActivity)) {
+            weakActivity.get().runOnUiThread(() ->
+                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
+            );
+        }
     }
 
     /**

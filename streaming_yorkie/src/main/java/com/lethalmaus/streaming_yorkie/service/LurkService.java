@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -107,8 +108,6 @@ public class LurkService extends Service {
     }
 
     @Override
-    //This is needed for the Lurk WebView, even though its not recommended & considered dangerous. Hence the Lint suppression
-    @SuppressLint("SetJavaScriptEnabled")
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction() != null) {
             switch (intent.getAction()) {
@@ -116,74 +115,19 @@ public class LurkService extends Service {
                     stopSelf();
                     break;
                 case Globals.PAUSE_LURK:
-                    networkUsageHandler.removeCallbacks(networkUsageRunnable);
+                    if (networkUsageHandler != null) {
+                        networkUsageHandler.removeCallbacks(networkUsageRunnable);
+                    }
                     networkUsageMonitorRunning = false;
-                    webView.destroy();
-                    webView = null;
+                    if (webView != null) {
+                        webView.destroy();
+                        webView = null;
+                    }
                     showNotification(true);
                     break;
                 default:
                     if (!wifiOnly || checkIfWifiIsOnAndConnected()) {
-                        Handler serviceHandler = new Handler();
-                        Runnable serviceRunnable = () -> {
-                            WindowManager.LayoutParams params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                                    ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                                    : WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
-                            params.gravity = Gravity.TOP | Gravity.START;
-                            params.x = 0;
-                            params.y = 0;
-                            params.width = 1;
-                            params.height = 1;
-                            webView = new WebView(LurkService.this);
-                            webView.setWebViewClient(new WebViewClient());
-                            webView.getSettings().setJavaScriptEnabled(true);
-                            webView.getSettings().setDomStorageEnabled(true);
-                            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-                            webView.loadUrl("file:///" + getFilesDir() + File.separator + Globals.FILE_LURK_HTML);
-                            if (windowManager != null) {
-                                windowManager.addView(webView, params);
-                                showNotification(false);
-                            }
-                        };
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                if (streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount() > 0) {
-                                    final StringBuilder htmlInjection = new StringBuilder();
-                                    new StreamStatusRequestHandler(null, weakContext, null) {
-                                        @Override
-                                        public void onCompletion() {
-                                            lurks = streamingYorkieDB.lurkDAO().getOnlineLurks();
-                                            if (lurks.length <= 0) {
-                                                stopSelf();
-                                                return;
-                                            }
-                                            String[] offline = streamingYorkieDB.lurkDAO().getOfflineLurks();
-                                            for (String offlineStreamer : offline) {
-                                                PircBotX bot = botManager.get(offlineStreamer);
-                                                if (bot != null) {
-                                                    bot.stopBotReconnect();
-                                                    bot.close();
-                                                }
-                                            }
-                                            channelNames = new StringBuilder();
-                                            String prefix = "";
-                                            for (LurkEntity lurk : lurks) {
-                                                htmlInjection.append(lurk.getHtml());
-                                                channelNames.append(prefix);
-                                                prefix = ", ";
-                                                channelNames.append(lurk.getChannelName());
-                                                activateChatBot(lurk.getChannelName(), informChannel && !lurk.isChannelInformedOfLurk());
-                                                lurk.setChannelInformedOfLurk(true);
-                                                streamingYorkieDB.lurkDAO().updateLurk(lurk);
-                                            }
-                                            new WriteFileHandler(null, weakContext, Globals.FILE_LURK_HTML, null, htmlInjection.toString(), false).writeToFileOrPath();
-                                            serviceHandler.post(serviceRunnable);
-                                        }
-                                    }.newRequest(streamingYorkieDB.lurkDAO().getChannelIdsToBeLurked()).initiate().sendRequest();
-                                }
-                            }
-                        }.start();
+                        getStreamsToLurk();
                     } else {
                         stopSelf();
                     }
@@ -191,6 +135,89 @@ public class LurkService extends Service {
             }
         }
         return START_STICKY;
+    }
+
+    /**
+     * Sends request to get streams to be lurked
+     * @author LethalMaus
+     */
+    private void getStreamsToLurk() {
+        new Thread() {
+            @Override
+            public void run() {
+                if (streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount() > 0) {
+                    final StringBuilder htmlInjection = new StringBuilder();
+                    new StreamStatusRequestHandler(null, weakContext, null) {
+                        @Override
+                        public void onCompletion(boolean hideProgressBar) {
+                            writeLurkHTML(htmlInjection);
+                        }
+                    }.newRequest(streamingYorkieDB.lurkDAO().getChannelIdsToBeLurked()).initiate().sendRequest(false);
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * Writes streams to be lurked to a html file, activates chat bot & opens WebView
+     * @author LethalMaus
+     * @param htmlInjection StringBuilder
+     */
+    //This is needed for the Lurk WebView, even though its not recommended & considered dangerous. Hence the Lint suppression
+    @SuppressLint("SetJavaScriptEnabled")
+    private void writeLurkHTML(StringBuilder htmlInjection) {
+        Handler serviceHandler = new Handler(Looper.getMainLooper());
+        Runnable serviceRunnable = () -> {
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                    ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                    : WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+            params.gravity = Gravity.TOP | Gravity.START;
+            params.x = 0;
+            params.y = 0;
+            params.width = 1;
+            params.height = 1;
+            webView = new WebView(LurkService.this);
+            webView.setWebViewClient(new WebViewClient());
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.getSettings().setDomStorageEnabled(true);
+            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+            webView.loadUrl("file:///" + getFilesDir() + File.separator + Globals.FILE_LURK_HTML);
+            if (windowManager != null) {
+                windowManager.addView(webView, params);
+                showNotification(false);
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                lurks = streamingYorkieDB.lurkDAO().getOnlineLurks();
+                if (lurks.length <= 0) {
+                    stopSelf();
+                    return;
+                }
+                String[] offline = streamingYorkieDB.lurkDAO().getOfflineLurks();
+                for (String offlineStreamer : offline) {
+                    PircBotX bot = botManager.get(offlineStreamer);
+                    if (bot != null) {
+                        bot.stopBotReconnect();
+                        bot.close();
+                    }
+                }
+                channelNames = new StringBuilder();
+                String prefix = "";
+                for (LurkEntity lurk : lurks) {
+                    htmlInjection.append(lurk.getHtml());
+                    channelNames.append(prefix);
+                    prefix = ", ";
+                    channelNames.append(lurk.getChannelName());
+                    activateChatBot(lurk.getChannelName(), informChannel && !lurk.isChannelInformedOfLurk());
+                    lurk.setChannelInformedOfLurk(true);
+                    streamingYorkieDB.lurkDAO().updateLurk(lurk);
+                }
+                new WriteFileHandler(null, weakContext, Globals.FILE_LURK_HTML, null, htmlInjection.toString(), false).writeToFileOrPath();
+                serviceHandler.post(serviceRunnable);
+            }
+        }.start();
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.lethalmaus.streaming_yorkie.Globals;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +49,7 @@ public class ShareF4FStatusRequestHandler extends RequestHandler {
     @Override
     public void responseHandler(final JSONObject response) {
         new Thread(() -> {
-            if (weakActivity != null && weakActivity.get() != null) {
+            if (Globals.checkWeakActivity(weakActivity)) {
                 weakActivity.get().runOnUiThread(
                         () -> Toast.makeText(weakActivity.get(), "Shared F4F Status to Discord", Toast.LENGTH_SHORT).show()
                 );

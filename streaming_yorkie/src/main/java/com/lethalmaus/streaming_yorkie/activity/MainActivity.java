@@ -16,7 +16,6 @@ import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
-import com.lethalmaus.streaming_yorkie.receiver.AutoLurkReceiver;
 import com.lethalmaus.streaming_yorkie.request.PurchaseMadeRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             }
             @Override
             public void onBillingServiceDisconnected() {
-                Toast.makeText(getApplicationContext(), "Cannot connect to Google Play Store", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Cannot connect to Google Play Store", Toast.LENGTH_SHORT).show();
             }
         });
         if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SUPPORTER).exists() || new File(getFilesDir().toString() + File.separator + Globals.FILE_SUBSCRIBER).exists()) {
@@ -140,16 +139,18 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     private void checkForActiveSubs() {
         Purchase.PurchasesResult purchasesResult = billingClient.queryPurchases(BillingClient.SkuType.SUBS);
         boolean subActive = false;
-        for (Purchase purchase : purchasesResult.getPurchasesList()) {
-            if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED && purchase.isAutoRenewing()) {
-                subActive = true;
+        if (purchasesResult.getPurchasesList() != null) {
+            for (Purchase purchase : purchasesResult.getPurchasesList()) {
+                if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED && purchase.isAutoRenewing()) {
+                    subActive = true;
+                }
+                if (!purchasesResult.getPurchasesList().isEmpty() && !new File(getFilesDir().toString() + File.separator + Globals.FILE_SUPPORTER).exists()) {
+                    new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), Globals.FILE_SUPPORTER, null, purchase.getPurchaseToken(), true).run();
+                }
             }
-            if (!purchasesResult.getPurchasesList().isEmpty() && !new File(getFilesDir().toString() + File.separator + Globals.FILE_SUPPORTER).exists()) {
-                new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), Globals.FILE_SUPPORTER, null, purchase.getPurchaseToken(), true).run();
+            if (!subActive && new File(getFilesDir().toString() + File.separator + Globals.FILE_SUBSCRIBER).exists()) {
+                subNowInactive();
             }
-        }
-        if (!subActive && new File(getFilesDir().toString() + File.separator + Globals.FILE_SUBSCRIBER).exists()) {
-            subNowInactive();
         }
     }
 
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                     public void responseHandler(final JSONObject response) {
                         new DeleteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), Globals.FILE_SUBSCRIBER).run();
                     }
-                }.setPostBody(postBody).sendRequest();
+                }.setPostBody(postBody).sendRequest(false);
             } catch (JSONException e) {
                 new WriteFileHandler(new WeakReference<>(MainActivity.this), new WeakReference<>(getApplicationContext()), Globals.FILE_ERROR, null, "Error informing developer of subscription status" + " | " + e.toString(), true).run();
             }
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             startActivity(new Intent(MainActivity.this, Authorization.class));
             return false;
         }
-        new UserRequestHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext())).sendRequest();
+        new UserRequestHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext())).sendRequest(false);
         return true;
     }
 

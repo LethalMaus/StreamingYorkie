@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#EDEDED" />
-    <corners android:radius="10dp" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center">
+        <shape>
+            <solid android:color="?android:colorBackground"/>
+            <corners android:radius="5dp" />
+            <stroke android:width="1dp" android:color="@color/colorPrimary"/>
+            <size android:height="40dp" android:width="40dp" />
+        </shape>
+    </item>
+</layer-list>

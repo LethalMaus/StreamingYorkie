@@ -104,7 +104,7 @@ public class VODExportRequestHandler extends RequestHandler {
                         });
                     }
                 }
-                onCompletion();
+                onCompletion(true);
             }
         }).start();
     }

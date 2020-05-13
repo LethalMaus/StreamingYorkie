@@ -56,7 +56,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     private StreamingYorkieDB streamingYorkieDB;
     private VODExportRequestHandler vodExportRequestHandler;
 
-    //VODEntity export properties
+    //VOD export properties
     private String title;
     private String description;
     private String tags;
@@ -72,8 +72,8 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         View vodRow;
 
         /**
-         * Holder for VODEntity View
-         * @param vodRow View for VODEntity Row
+         * Holder for VOD View
+         * @param vodRow View for VOD Row
          */
         VODViewHolder(View vodRow) {
             super(vodRow);
@@ -82,7 +82,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Adapter for displaying a VODEntity Dataset
+     * Adapter for displaying a VOD Dataset
      * @author LethalMaus
      * @param weakActivity weak referenced activity
      * @param weakContext weak referenced context
@@ -134,7 +134,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Async Task to request VODEntity and display it
+     * Async Task to request VOD and display it
      * @author LethalMaus
      */
     private static class VODAsyncTask extends AsyncTask<Void, Void, VODEntity> {
@@ -235,19 +235,12 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         new Thread(new Runnable() {
             public void run() {
                 setPageCounts();
-                if (currentPageCount > 1) {
-                    actionAllButton();
-                }
+                actionAllButton();
                 weakActivity.get().runOnUiThread(
                         new Runnable() {
                             public void run() {
                                 setPageCountViews();
                                 if (currentPageCount > 0) {
-                                    if (currentPageCount > 1) {
-                                        weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.VISIBLE);
-                                    } else {
-                                        weakActivity.get().findViewById(R.id.action_all_button).setVisibility(View.GONE);
-                                    }
                                     weakActivity.get().findViewById(R.id.table).setVisibility(View.VISIBLE);
                                     weakActivity.get().findViewById(R.id.emptyuserrow).setVisibility(View.GONE);
                                 } else {
@@ -291,7 +284,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for deleting a VODEntity from the exported view and current view (if expired in twitch)
+     * Button for deleting a VOD from the exported view and current view (if expired in twitch)
      * @author LethalMaus
      * @param imageButton button view
      * @param vodEntity exported VODEntity to be deleted
@@ -313,7 +306,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for exporting a VODEntity that hasn't already been exported
+     * Button for exporting a VOD that hasn't already been exported
      * @author LethalMaus
      * @param imageButton button view
      * @param vodEntity VODEntity to be exported
@@ -336,7 +329,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                 new Runnable() {
                                                     public void run() {
                                                         final Dialog dialog = new Dialog(weakActivity.get());
-                                                        dialog.setTitle("VODEntity Export");
+                                                        dialog.setTitle("VOD Export");
                                                         dialog.setContentView(R.layout.vod_export_dialog);
 
                                                         final EditText exportDialogTitle = dialog.findViewById(R.id.vod_export_dialog_title_text);
@@ -427,7 +420,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                                                                             }
                                                                             new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
                                                                         }
-                                                                        vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest();
+                                                                        vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest(true);
                                                                         if (weakActivity != null && weakActivity.get() != null) {
                                                                             weakActivity.get().runOnUiThread(
                                                                                     new Runnable() {
@@ -454,7 +447,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for excluding a VODEntity from automation and other views
+     * Button for excluding a VOD from automation and other views
      * @author LethalMaus
      * @param imageButton button view
      * @param vodEntity VOD to be excluded
@@ -481,7 +474,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
     }
 
     /**
-     * Button for including a VODEntity to automation and other views
+     * Button for including a VOD to automation and other views
      * @author LethalMaus
      * @param imageButton button view
      * @param vodEntity VODEntity to be included
@@ -490,7 +483,7 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
         weakActivity.get().runOnUiThread(
                 new Runnable() {
                     public void run() {
-                        imageButton.setImageResource(R.drawable.include);
+                        imageButton.setImageResource(R.drawable.included);
                         imageButton.setTag("INCLUDE_BUTTON");
                         imageButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -516,93 +509,99 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
                 new Runnable() {
                     public void run() {
                         final ImageButton imageButton = weakActivity.get().findViewById(R.id.action_all_button);
-                        imageButton.setVisibility(View.VISIBLE);
-                        if (vodsType.contentEquals("CURRENT")) {
-                            imageButton.setImageResource(R.drawable.export);
-                            imageButton.setTag("EXPORT_ALL_BUTTON");
-                            imageButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new Thread(new Runnable() {
-                                        public void run() {
-                                            for (int i = 0; i < currentPageCount; i++) {
-                                                VODEntity vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
-                                                if (!vodEntity.isExported()) {
-                                                    try {
-                                                        boolean visibility = false;
-                                                        boolean split = false;
-                                                        if (new File(weakContext.get().getFilesDir() + File.separator + "SETTINGS_VOD").exists()) {
-                                                            JSONObject settings = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "SETTINGS_VOD").readFile());
-                                                            visibility = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
-                                                            split = settings.getBoolean(Globals.SETTINGS_SPLIT);
-                                                        }
-                                                        JSONObject body = new JSONObject();
+                        if (currentPageCount > 1) {
+                            imageButton.setVisibility(View.VISIBLE);
+                            if (vodsType.contentEquals("CURRENT")) {
+                                imageButton.setImageResource(R.drawable.export);
+                                imageButton.setTag("EXPORT_ALL_BUTTON");
+                                imageButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        new Thread(new Runnable() {
+                                            public void run() {
+                                                for (int i = 0; i < currentPageCount; i++) {
+                                                    VODEntity vodEntity = streamingYorkieDB.vodDAO().getCurrentVODByPosition(i);
+                                                    if (!vodEntity.isExported()) {
                                                         try {
-                                                            body.put("title", vodEntity.getTitle());
-                                                            body.put("description", vodEntity.getDescription());
-                                                            body.put("tag_list", vodEntity.getTag_list());
-                                                            body.put("private", !visibility);
-                                                            body.put("do_split", split);
+                                                            boolean visibility = false;
+                                                            boolean split = false;
+                                                            if (new File(weakContext.get().getFilesDir() + File.separator + "SETTINGS_VOD").exists()) {
+                                                                JSONObject settings = new JSONObject(new ReadFileHandler(weakActivity, weakContext, "SETTINGS_VOD").readFile());
+                                                                visibility = settings.getBoolean(Globals.SETTINGS_VISIBILITY);
+                                                                split = settings.getBoolean(Globals.SETTINGS_SPLIT);
+                                                            }
+                                                            JSONObject body = new JSONObject();
+                                                            try {
+                                                                body.put("title", vodEntity.getTitle());
+                                                                body.put("description", vodEntity.getDescription());
+                                                                body.put("tag_list", vodEntity.getTag_list());
+                                                                body.put("private", !visibility);
+                                                                body.put("do_split", split);
+                                                            } catch (JSONException e) {
+                                                                if (weakActivity != null && weakActivity.get() != null) {
+                                                                    weakActivity.get().runOnUiThread(
+                                                                            new Runnable() {
+                                                                                public void run() {
+                                                                                    Toast.makeText(weakActivity.get(), "Twitch export content could not be set.", Toast.LENGTH_SHORT).show();
+                                                                                }
+                                                                            }
+                                                                    );
+                                                                }
+                                                                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
+                                                            }
+                                                            vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest(true);
                                                         } catch (JSONException e) {
                                                             if (weakActivity != null && weakActivity.get() != null) {
                                                                 weakActivity.get().runOnUiThread(
                                                                         new Runnable() {
                                                                             public void run() {
-                                                                                Toast.makeText(weakActivity.get(), "Twitch export content could not be set.", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(weakActivity.get(), "All Twitch exports could not be initiated.", Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         }
                                                                 );
                                                             }
-                                                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Twitch export content could not be set. | " + e.toString(), true).run();
+                                                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "All Twitch exports could not be initiated. | " + e.toString(), true).run();
                                                         }
-                                                        vodExportRequestHandler.setVodId(vodEntity.getId()).setPostBody(body).sendRequest();
-                                                    } catch (JSONException e) {
-                                                        if (weakActivity != null && weakActivity.get() != null) {
-                                                            weakActivity.get().runOnUiThread(
-                                                                    new Runnable() {
-                                                                        public void run() {
-                                                                            Toast.makeText(weakActivity.get(), "All Twitch exports could not be initiated.", Toast.LENGTH_SHORT).show();
-                                                                        }
-                                                                    }
-                                                            );
-                                                        }
-                                                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "All Twitch exports could not be initiated. | " + e.toString(), true).run();
                                                     }
                                                 }
+                                                datasetChanged();
                                             }
-                                            datasetChanged();
-                                        }
-                                    }).start();
-                                }
-                            });
-                        } else if (vodsType.contentEquals("EXPORTED")) {
-                            imageButton.setImageResource(R.drawable.delete);
-                            imageButton.setTag("DELETE_ALL_BUTTON");
-                            imageButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new Thread(new Runnable() {
-                                        public void run() {
-                                            streamingYorkieDB.vodDAO().removeExportedStatus();
-                                            datasetChanged();
-                                        }
-                                    }).start();
-                                }
-                            });
-                        } else if (vodsType.contentEquals("EXCLUDED")) {
-                            imageButton.setImageResource(R.drawable.include);
-                            imageButton.setTag("INCLUDE_ALL_BUTTON");
-                            imageButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new Thread(new Runnable() {
-                                        public void run() {
-                                            streamingYorkieDB.vodDAO().removeExcludedStatus();
-                                            datasetChanged();
-                                        }
-                                    }).start();
-                                }
-                            });
+                                        }).start();
+                                    }
+                                });
+                            } else if (vodsType.contentEquals("EXPORTED")) {
+                                imageButton.setImageResource(R.drawable.delete);
+                                imageButton.setTag("DELETE_ALL_BUTTON");
+                                imageButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        new Thread(new Runnable() {
+                                            public void run() {
+                                                streamingYorkieDB.vodDAO().removeExportedStatus();
+                                                datasetChanged();
+                                            }
+                                        }).start();
+                                    }
+                                });
+                            } else if (vodsType.contentEquals("EXCLUDED")) {
+                                imageButton.setImageResource(R.drawable.included);
+                                imageButton.setTag("INCLUDE_ALL_BUTTON");
+                                imageButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        new Thread(new Runnable() {
+                                            public void run() {
+                                                streamingYorkieDB.vodDAO().removeExcludedStatus();
+                                                datasetChanged();
+                                            }
+                                        }).start();
+                                    }
+                                });
+                            } else {
+                                imageButton.setVisibility(View.GONE);
+                            }
+                        } else {
+                            imageButton.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -636,15 +635,6 @@ public class VODAdapter extends RecyclerView.Adapter<VODAdapter.VODViewHolder> {
      * @author LethalMaus
      */
     private void setPageCountViews() {
-        if (pageCount1 < 0) {
-            pageCount1 = 0;
-        }
-        if (pageCount2 < 0) {
-            pageCount2 = 0;
-        }
-        if (pageCount3 < 0) {
-            pageCount3 = 0;
-        }
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
             weakActivity.get().runOnUiThread(
                     new Runnable() {

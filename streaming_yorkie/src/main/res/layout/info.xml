@@ -157,7 +157,7 @@
                     app:srcCompat="@drawable/update" />
 
                 <ImageButton
-                    android:id="@+id/info_twitch"
+                    android:id="@+id/info_thankyou"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
                     android:layout_weight="1"
@@ -165,7 +165,7 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/info_twitch"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/twitch" />
+                    app:srcCompat="@drawable/thankyou" />
 
                 <ImageButton
                     android:id="@+id/info_source_code"
@@ -201,11 +201,11 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/info_twitch_text"
+                    android:id="@+id/info_thankyou_text"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/info_twitch"
+                    android:text="@string/info_thankyou"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -245,6 +245,17 @@
                     android:contentDescription="@string/info_discord"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/discord" />
+
+                <ImageButton
+                    android:id="@+id/info_twitch"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/info_twitch"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/twitch" />
 
                 <ImageButton
                     android:id="@+id/info_patreon"
@@ -288,6 +299,16 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:text="@string/info_discord"
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/info_twitch_text"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="@string/info_twitch"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />

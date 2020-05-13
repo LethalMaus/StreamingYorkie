@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
-import com.lethalmaus.streaming_yorkie.receiver.AutoLurkReceiver;
 import com.lethalmaus.streaming_yorkie.view.UserView;
 import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
 import com.lethalmaus.streaming_yorkie.worker.AutoVODExportWorker;

@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.lethalmaus.streaming_yorkie.Globals;
@@ -18,13 +17,13 @@ import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.request.RequestHandler;
 import com.lethalmaus.streaming_yorkie.request.VolleySingleton;
-import com.lethalmaus.streaming_yorkie.view.UserView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,7 +40,7 @@ public class FollowParent extends AppCompatActivity {
     protected RecyclerView recyclerView;
     protected RecyclerView.LayoutManager layoutManager;
 
-    protected ProgressBar progressBar;
+    protected ConstraintLayout progressBar;
     //Timer between clicks to prevent multiple requests
     private long mLastClickTime = 0;
 
@@ -52,17 +51,8 @@ public class FollowParent extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.follow_parent);
-        new UserView(weakActivity, weakContext).execute();
 
-        ImageButton refreshPage = findViewById(R.id.refresh);
         progressBar = findViewById(R.id.progressbar);
-        refreshPage.setOnClickListener((View v) -> {
-            if (SystemClock.elapsedRealtime() - mLastClickTime > 5000 && progressBar.getVisibility() != View.VISIBLE) {
-                mLastClickTime = SystemClock.elapsedRealtime();
-                progressBar.setVisibility(View.VISIBLE);
-                requestHandler.initiate().sendRequest();
-            }
-        });
         cancelRequests();
         deleteNotifications();
         recyclerView = findViewById(R.id.table);
@@ -172,9 +162,10 @@ public class FollowParent extends AppCompatActivity {
             recyclerView.getRecycledViewPool().clear();
             UserAdapter userAdapter = (UserAdapter) recyclerView.getAdapter();
             if (userAdapter != null) {
-                recyclerView.post(() ->
-                        userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2, "FOLLOW_BUTTON").datasetChanged()
-                );
+                recyclerView.post(() -> {
+                    userAdapter.setDisplayPreferences(daoType, entityStatus, actionButtonType1, actionButtonType2).datasetChanged();
+                    requestHandler.initiate().sendRequest(true);
+                });
             }
         } else {
             Toast.makeText(this, "Updating Users, please be patient.", Toast.LENGTH_SHORT).show();

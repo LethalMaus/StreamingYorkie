@@ -23,10 +23,9 @@ public class Following extends FollowParent {
         super.onCreate(savedInstanceState);
 
         final String daoType = "FOLLOWING";
-        final ImageButton newButton = findViewById(R.id.page1);
-        newButton.setOnClickListener(View ->
-                pageButtonListenerAction(newButton, "New", daoType, "NEW", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
-        );
+        findViewById(R.id.page1).setVisibility(View.GONE);
+        findViewById(R.id.count1).setVisibility(View.GONE);
+
         final ImageButton currentButton = findViewById(R.id.page2);
         currentButton.setOnClickListener(View ->
                 pageButtonListenerAction(currentButton, "Current", daoType, "CURRENT", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
@@ -39,9 +38,7 @@ public class Following extends FollowParent {
         exclusionsButton.setOnClickListener(View ->
                 pageButtonListenerAction(exclusionsButton, "Excluded", daoType, "EXCLUDED", Globals.INCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
         );
-        pageButtonListenerAction(newButton, "New", daoType, "NEW", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON);
         requestHandler = new FollowingUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
-        progressBar.setVisibility(View.VISIBLE);
-        requestHandler.initiate().sendRequest();
+        pageButtonListenerAction(currentButton, "Current", daoType, "CURRENT", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON);
     }
 }

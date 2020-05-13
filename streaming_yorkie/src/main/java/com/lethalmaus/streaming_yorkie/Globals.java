@@ -261,7 +261,7 @@ public class Globals {
     public static void activateAlarm(WeakReference<Context> weakContext, String alarmName, long triggerIn) {
         try {
             String settingsString = new ReadFileHandler(null, weakContext, Globals.FILE_SETTINGS_LURK).readFile();
-            if (weakContext != null && weakContext.get() != null && !settingsString.isEmpty()) {
+            if (checkWeakReference(weakContext) && !settingsString.isEmpty()) {
                 JSONObject settings = new JSONObject(settingsString);
                 if (!settings.getString(alarmName).equals(Globals.SETTINGS_OFF) && (PendingIntent.getBroadcast(weakContext.get(), Globals.LURK_SERVICE_ALARM_ID, new Intent(weakContext.get(), AutoLurkReceiver.class), PendingIntent.FLAG_NO_CREATE) == null)) {
                     Intent intent = new Intent(weakContext.get(), AutoLurkReceiver.class);
@@ -386,10 +386,30 @@ public class Globals {
                 JSONObject postBody = new JSONObject();
                 String username = StreamingYorkieDB.getInstance(weakContext.get()).channelDAO().getChannel().getDisplay_name();
                 postBody.put("content", username + " | " + purchase.getSku() + " | " + purchase.getOrderId());
-                new PurchaseMadeRequestHandler(weakActivity, weakContext).setPostBody(postBody).sendRequest();
+                new PurchaseMadeRequestHandler(weakActivity, weakContext).setPostBody(postBody).sendRequest(false);
             } catch (JSONException e) {
                 new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, "Error informing developer of subscription status" + " | " + e.toString(), true).run();
             }
         }).start();
+    }
+
+    /**
+     * Checks if a weak activity is still usable
+     * @author LethalMaus
+     * @param weakReference weak activity
+     * @return boolean if usable
+     */
+    public static boolean checkWeakActivity(WeakReference<Activity> weakReference) {
+        return checkWeakReference(weakReference) && !weakReference.get().isDestroyed() && !weakReference.get().isFinishing();
+    }
+
+    /**
+     * Checks if a weak reference is still usable
+     * @author LethalMaus
+     * @param weakReference weak reference
+     * @return boolean if usable
+     */
+    public static boolean checkWeakReference(WeakReference weakReference) {
+        return weakReference != null && weakReference.get() != null;
     }
 }

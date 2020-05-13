@@ -162,8 +162,10 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder
             }
             @Override
             public void onBillingServiceDisconnected() {
-                Toast.makeText(weakContext.get(), "Cannot connect to Google Play Store", Toast.LENGTH_SHORT).show();
-                weakActivity.get().onBackPressed();
+                if (Globals.checkWeakActivity(weakActivity)) {
+                    Toast.makeText(weakActivity.get(), "Cannot connect to Google Play Store", Toast.LENGTH_SHORT).show();
+                    weakActivity.get().onBackPressed();
+                }
             }
         });
     }

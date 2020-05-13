@@ -20,6 +20,7 @@
 
 + [Introduction](#introduction)
 + [Contact](#contact)
++ [Shout-outs](#shout-outs)
 + [Guide](#guide)
 + [Updates](#updates)
 + [Release Prerequisites](#release-prerequisites)
@@ -30,15 +31,15 @@
 
 ## Introduction
 
-Streaming Yorkie is a tool designed to help *Twitch Streamers* to efficiently *Follow & Unfollow* other Streamers.
-The tool tracks & offers a better overview of *Followers, Following, Unfollowed & F4F*.
+Streaming Yorkie is a tool designed to help *Twitch streamers* to efficiently *follow & unfollow* other streamers.
+The tool tracks & offers a better overview of *followers, following, unfollowed & F4F*.
 After your stream any *VOD (Video On Demand)* can be seen & exported to *Youtube* in our VODs Overview.
-**Automatically Follow, Unfollow, F4F, Lurk & export VODs to Youtube** simply by installing and configuring Streaming Yorkie.
-Share that you are **AutoFollowing** to our Discord Community & gain more followers.
+**Automatically follow, unfollow, F4F, lurk & export VODs to Youtube** simply by installing and configuring Streaming Yorkie.
+Share that you are **AutoFollowing** to our Discord community & gain more followers.
 Helps build a bigger community, simplifies/automates communication, become an *affiliate* or *partner* faster & free up time to stream more.
 Watch multiple streams at once with **Multi View** and cast it to a TV.
 **Lurk** your favourite streamers with minimum possible network data usage (audio only & chat) & increase their viewer count.
-Use our Discord to get others to to Follow or Lurk and gain more viewers. Use the F4F L4L H4H Channel.
+Use our Discord to get others to to follow or lurk and gain more viewers. Use the F4F-L4L-H4H Channel.
 
 <p align="center">
     <a href='https://play.google.com/store/apps/details?id=com.lethalmaus.streaming_yorkie&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
@@ -61,8 +62,8 @@ VOD exports are done by Twitch, they are not downloaded & uploaded to Youtube by
 This ensures network data usage is kept to a minimum.
 
 Streaming Yorkie is developed with *Android Studio* in *Java*.
-*Lint* & [Sonarcloud](https://sonarcloud.io/dashboard?id=LethalMaus_StreamingYorkie) is used to acquire high quality standardized code with little complexity.
-The code is documented with *JavaDocs* & comments to allow for easier collaborations with other developers.
+*Lint* & [Sonarcloud](https://sonarcloud.io/dashboard?id=LethalMaus_StreamingYorkie) is used to acquire high quality standardized code with as little complexity possible.
+The code is documented with *JavaDocs* & comments to allow for easier collaborations with other developers. JavaDocs are enforced & without them the build fails
 **DRY** *(Don't Repeat Yourself)* & **KISS** *(Keep It Simple Stupid)* principles are enforced as much as possible.
 Variable naming conventions are also in place.
 
@@ -75,6 +76,7 @@ The code includes examples of:
 + Room, SQLite, DAO & Entity
 + Volley library for HTTP requests
 + Glide library for image rendering
++ Lottie animations & UX design
 + Notifications, Window Manager
 + Foreground Service, Background Service
 + Worker, Async Task, AlarmManager
@@ -87,7 +89,8 @@ The code includes examples of:
 + Constraint, Relative & Linear Layouts
 + WebView, TextView, ImageView, ...
 + Activity, Intent, Listener, ...
-+ Gradle, Checkstyle, Lint & Sonar
++ Gradle, Build relies on, 
++ Checkstyle, JavaDocs, Lint & Sonar
 + Productive deployments to Google Play Store
 
 Any collaborations are welcome, so feel free to fork & ask for merge requests.
@@ -117,6 +120,15 @@ Click on one of the images below to be redirected a designated site.
   <a href="https://www.patreon.com/LethalMaus"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.webp" height="60"></a>
   <a href="https://paypal.me/JamesCullimore/2,50"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.webp" height="60"></a>
 </p>
+
+---
+
+## Shout-outs
+
+A big thank you to for going out of their way to support Streaming Yorkie goes out to:
+
++ [Werwuermchen](https://www.twitch.tv/werwuermchen) & [biaxxation](https://www.twitch.tv/biaxxation)
++ [techno17ad](https://www.twitch.tv/techno17ad)
 
 ---
 
@@ -191,9 +203,8 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <details>
 <summary>Each Menu is split into 3-4 of the following categories:</summary>
 <ul>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/new_button.webp" height="20" width="20"> All new Followers/Following</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/follow.webp" height="20" width="20"> All current Followers/Following (including New)</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollow.webp" height="20" width="20"> All Followers who Unfollowed you or Following you Unfollowed</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followed.webp" height="20" width="20"> All current Followers/Following (including New)</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollowed.webp" height="20" width="20"> All Followers who Unfollowed you or Following you Unfollowed</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Users/VODs that are excluded from AutoFollow/AutoExport as well as being excluded from the other menus</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> Users who Follow you, but you dont Follow them back</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/follow4follow.webp" height="20" width="20"> Followers who also Follow you</li>
@@ -207,12 +218,12 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <details>
 <summary>Each category contains up to 3 of the following actions:</summary>
 <ul>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/follow.webp" height="20" width="20"> Follows the chosen User</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollow.webp" height="20" width="20"> Unfollows the chosen User</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notifications.webp" height="20" width="20"> Activates notifications received from the User</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/deactivate_notifications.webp" height="20" width="20"> Deactivates notifications received from the User</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Excludes Users/VODs from other categories & from AutoFollow</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/include.webp" height="20" width="20"> Includes Users/VODs from other categories & from AutoFollow</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followed.webp" height="20" width="20"> Currently following & unfollows the chosen user when pressed</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollowed.webp" height="20" width="20"> Currently not following & follows the chosen user when pressed</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notifications_activated.webp" height="20" width="20"> Notifications are active, pressing deactivates it</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notifications_deactivated.webp" height="20" width="20"> Notifications are not active, pressing activates it</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/included.webp" height="20" width="20"> Currently included & excludes Users/VODs from other categories & from AutoFollow</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Currently excluded & includes Users/VODs from other categories & from AutoFollow</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/delete.webp" height="20" width="20"> Deletes User/VOD from the Device (not Twitch)</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/export.webp" height="20" width="20"> Exports a VOD from Twitch to Youtube</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi.webp" height="20" width="20"> Start watching multiple streams at once on one screen</li>
@@ -220,11 +231,11 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20"> Stop lurking chosen streamer</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/message.webp" height="20" width="20"> Opens a dialog to send a message to the chosen channels chat</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/send.webp" height="20" width="20"> Sends the message to channel chat</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20"> Starts the purchase flow for the respective item</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/cancel.webp" height="20" width="20"> Cancels the current action being taken</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.webp" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> Saves the current changes (if any have been made)</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20"> Starts the purchase flow for the respective item</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20"> Signals that the purchase is not possible</li>
 </ul>
 </details>
@@ -235,17 +246,21 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 
 Here you can see who you follow (a.k.a. *Following*), who follows you (a.k.a. *Followers*), who unfollowed you & an excluded list from the AutoFollow.
 
-To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20">
+New followers/following will be marked with a <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/new_button.webp" height="20" width="20"> on the top right of their logo
 
-Click on the user logo to be redirected to their account on Twitch.
+Click on the user logo to be redirected to their profile on Twitch.
 
-> Each Menu has its own exclusion list for view customization that do **not** reflect in other lists.
->
-> Once excluded from any **single** list, it will be excluded from *AutoFollow*.
->
+The data can/will be refreshed on entering a menu, or changing a category
+
+An action-all button will appear on the bottom in cases where all user actions are the same.
+
+> **_Example:_** In F4F at the end of <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> or <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.webp" height="20" width="20"> there is an option to **Follow/Unfollow all users** within the category.
+
+Each Menu has its own exclusion list for view customization that do **not** reflect in other lists.
+
+Once excluded from any **single** list, it will be excluded from *AutoFollow*.
+
 > **_Example:_** Excluding a user in *Follower* will **not** exclude the user in *F4F*, but **will** exclude it from *AutoFollow*.
-
-> In F4F at the end of <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> or <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.webp" height="20" width="20"> there is an option to **Follow/Unfollow all users** within the category.
 
 ---
 
@@ -360,7 +375,11 @@ On the bottom of the screen, the current app version should be shown.
 
 #### Logs
 
-Tapping the *Developer Logo* **8** times will give you access to the app logs & files. An error log is available along with much more for support.
+Tapping the *Developer Logo* **8** times will give you access to the app logs & files. An error log is available along with much more for support purposes.
+
+> **Warning**
+>
+> We cannot gain or have access to these files due to security reasons.
 
 ---
 
@@ -398,6 +417,8 @@ Please be wary, due to a high battery consumption & inefficiency from other Apps
 > **Warning**
 >
 > Please make sure you have excluded Followers & Following you wish to be left alone from the AutoFollow Service.
+>
+> Be wary when following/unfollowing when AutoFollow is active, new users will have to handled accordingly
 
 If you run into problems with the AutoFollow Service, deactivate it & [contact](#contact) me.
 
@@ -438,6 +459,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.2.2-a](#222-a)
 + [2.2.1-a](#221-a)
 + [2.2.0-a](#220-a)
 + [2.1.9-a](#219-a)
@@ -455,25 +477,25 @@ This can take up to 15 minutes to activate.
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
 
-</details>
+---
+
+### 2.2.2-a
+
 <details>
-<summary>v1.x.x</summary>
+<summary>Lottie animations & UI/UX improvements</summary>
 
-+ [1.3.1-a](#131-a)
-+ [1.3.0-a](#130-a)
-+ [1.2.1-a](#121-a)
-+ [1.2.0-a](#120-a)
-+ [1.1.3-a](#113-a)
-+ [1.1.2-a](#112-a)
-+ [1.1.1-a](#111-a)
-+ [1.1.0-a](#110-a)
-+ [1.0.4-a](#104-a)
-+ [1.0.3-a](#103-a)
-+ [1.0.2-a](#102-a)
-+ [1.0.1-a](#101-a)
-+ [1.0.0-a](#100-a)
+Improvements:
++   Lottie animations & UI/UX
++   Shout-outs link
 
+Issues fixed:
++   Login issue on older devices fixed
++   VOD export issue due to Twitch changes fixed
++   Lurking issue due to Twitch changes fixed
++   Toasts outside of app fix
 </details>
+
+---
 
 ### 2.2.1-a
 
@@ -720,6 +742,26 @@ Other:
 +   SDK update
 +   Java update
 </details>
+
+---
+
+</details>
+<details>
+<summary>v1.x.x</summary>
+
++ [1.3.1-a](#131-a)
++ [1.3.0-a](#130-a)
++ [1.2.1-a](#121-a)
++ [1.2.0-a](#120-a)
++ [1.1.3-a](#113-a)
++ [1.1.2-a](#112-a)
++ [1.1.1-a](#111-a)
++ [1.1.0-a](#110-a)
++ [1.0.4-a](#104-a)
++ [1.0.3-a](#103-a)
++ [1.0.2-a](#102-a)
++ [1.0.1-a](#101-a)
++ [1.0.0-a](#100-a)
 
 ---
 
@@ -981,6 +1023,10 @@ Issues fixed:
 
 ---
 
+</details>
+
+---
+
 ## Roadmap
 
 The following tasks and features are currently on the roadmap & some of which are likely to be within the next release.
@@ -988,6 +1034,8 @@ The following tasks and features are currently on the roadmap & some of which ar
 + Stream Info/Event tracker (views, hosts, followers, chats, markers)
 + Report Bug with error log
 + Sonarcloud improvements
++ Pipeline for tests & sonarcloud
++ Use more lottie animations & improve UI/UX
 + Single automated E2E test 
 + Firebase device farm
 + Unit tests until 100% code coverage

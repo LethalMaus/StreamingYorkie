@@ -65,28 +65,23 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                             if (lastFollowing[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id"))) {
                                 new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
                                     @Override
-                                    public void onCompletion() {
-                                        super.onCompletion();
-                                        FollowingUpdateRequestHandler.this.onCompletion();
+                                    public void onCompletion(boolean hideProgressBar) {
+                                        super.onCompletion(false);
+                                        FollowingUpdateRequestHandler.this.onCompletion(hideProgressBar);
                                     }
-                                }.initiate().sendRequest();
+                                }.initiate().sendRequest(true);
                                 return;
                             }
                         }
-                        if (weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(() ->
-                                    weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.GONE)
-                            );
-                        }
-                        onCompletion();
+                        onCompletion(true);
                     } else {
                         new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
                             @Override
-                            public void onCompletion() {
-                                super.onCompletion();
-                                FollowingUpdateRequestHandler.this.onCompletion();
+                            public void onCompletion(boolean hideProgressBar) {
+                                super.onCompletion(false);
+                                FollowingUpdateRequestHandler.this.onCompletion(hideProgressBar);
                             }
-                        }.initiate().sendRequest();
+                        }.initiate().sendRequest(true);
                     }
                 } catch (JSONException e) {
                     if (weakActivity != null && weakActivity.get() != null) {
