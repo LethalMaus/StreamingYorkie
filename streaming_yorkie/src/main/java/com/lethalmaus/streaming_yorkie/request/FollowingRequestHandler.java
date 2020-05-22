@@ -95,15 +95,16 @@ public class FollowingRequestHandler extends RequestHandler {
                             unfollowing.get(i).setStatus("UNFOLLOWED");
                             streamingYorkieDB.followingDAO().updateUser(unfollowing.get(i));
                         }
-                        if (recyclerView != null && recyclerView.get() != null && recyclerView.get().getAdapter() != null) {
+                        //TODO this can be added to onCompletion by extending a base adapter
+
+                        if (Globals.checkWeakActivity(weakActivity) && Globals.checkWeakRecyclerView(recyclerView)) {
                             final UserAdapter userAdapter = (UserAdapter) recyclerView.get().getAdapter();
-                            if (userAdapter != null && weakActivity != null && weakActivity.get() != null) {
-                                userAdapter.setPageCounts();
+                            if (userAdapter != null) {
                                 weakActivity.get().runOnUiThread(() -> {
                                     recyclerView.get().stopScroll();
                                     recyclerView.get().scrollToPosition(0);
                                     recyclerView.get().getRecycledViewPool().clear();
-                                    userAdapter.datasetChanged();
+                                    recyclerView.get().post(userAdapter::datasetChanged);
                                 });
                             }
                         }

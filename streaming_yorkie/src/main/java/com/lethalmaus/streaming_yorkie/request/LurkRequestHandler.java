@@ -12,13 +12,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import com.lethalmaus.streaming_yorkie.Globals;
+import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.entity.LurkEntity;
+import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
@@ -116,7 +119,29 @@ public class LurkRequestHandler extends RequestHandler {
                                     LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelName(channel);
                                     String broadcastId = response.substring(response.indexOf("BROADCAST-ID=\"") + 14);
                                     if (lurk != null && (lurk.getBroadcastId() == null || !broadcastId.contentEquals(lurk.getBroadcastId()))) {
-                                        String lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"") + 18);
+                                        String lurkUrl = "";
+                                        if (Globals.checkWeakReference(weakContext) && new File(weakContext.get().getFilesDir().toString() + File.separator + Globals.FILE_SETTINGS_LURK).exists()) {
+                                            String settingsString = new ReadFileHandler(null, weakContext, Globals.FILE_SETTINGS_LURK).readFile();
+                                            if (!settingsString.isEmpty()) {
+                                                try {
+                                                    JSONObject settings = new JSONObject(settingsString);
+                                                    if (settings.has(Globals.SETTINGS_AUDIO_ONLY) && !settings.getBoolean(Globals.SETTINGS_AUDIO_ONLY)) {
+                                                        if (response.contains("VIDEO=\"160p30\"")) {
+                                                            lurkUrl = response.substring(response.indexOf("VIDEO=\"160p30\"") + 15);
+                                                        } else {
+                                                            lurkUrl = response.substring(response.indexOf("VIDEO=\"chunked\"") + 16);
+                                                        }
+                                                        lurkUrl = lurkUrl.substring(0, lurkUrl.indexOf("\n"));
+                                                    }
+                                                } catch (JSONException e) {
+                                                    Toast.makeText(weakContext.get(), "Error reading settings for " + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
+                                                    new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,weakContext.get().getString(R.string.error_reading_lurk_settings) + weakContext.get().getString(R.string.pipe) + Globals.SETTINGS_AUDIO_ONLY + weakContext.get().getString(R.string.pipe) + e.toString(), true).run();
+                                                }
+                                            }
+                                        }
+                                        if (lurkUrl.isEmpty()) {
+                                            lurkUrl = response.substring(response.indexOf("VIDEO=\"audio_only\"") + 18);
+                                        }
                                         broadcastId = broadcastId.substring(0, broadcastId.indexOf("\","));
                                         String htmlBlock = "<div id='" + channel.toLowerCase().trim() + "'>"
                                                 + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.010001'>"
@@ -147,7 +172,7 @@ public class LurkRequestHandler extends RequestHandler {
                     if (error.networkResponse != null) {
                         errorMessage = error.networkResponse.statusCode + " | " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
                         if (error.networkResponse.statusCode == HttpURLConnection.HTTP_NOT_FOUND || error.networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
-                            if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                            if (Globals.checkWeakActivity(weakActivity)) {
                                 weakActivity.get().runOnUiThread(() ->
                                         Toast.makeText(weakActivity.get(), "'" + channel + "' is offline", Toast.LENGTH_SHORT).show()
                                 );

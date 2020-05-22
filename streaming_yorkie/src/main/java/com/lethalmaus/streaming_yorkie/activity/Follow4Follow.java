@@ -6,13 +6,14 @@ import android.widget.ImageButton;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
+import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import com.lethalmaus.streaming_yorkie.request.FollowersUpdateRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.FollowingUpdateRequestHandler;
 
 import java.lang.ref.WeakReference;
 
 /**
- * Activity for F4FEntity view that extends FollowParent. Requests both Followers & FollowingEntity anew
+ * Activity for F4FEntity view that extends FollowParent. Requests both Followers & Following anew
  * @author LethalMaus
  */
 public class Follow4Follow extends FollowParent {
@@ -51,8 +52,24 @@ public class Follow4Follow extends FollowParent {
         exclusionsButton.setOnClickListener((View v) ->
                 pageButtonListenerAction(exclusionsButton, "Excluded", daoType, "EXCLUDED", Globals.INCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
         );
-        followingUpdateRequestHandler = new FollowingUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
-        requestHandler = new FollowersUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)) {
+        followingUpdateRequestHandler = new FollowingUpdateRequestHandler(weakActivity, weakContext, null) {
+            @Override
+            public void onCompletion(boolean hideProgressBar) {
+                super.onCompletion(true);
+                if (Globals.checkWeakActivity(weakActivity) && recyclerView != null) {
+                    final UserAdapter userAdapter = (UserAdapter) recyclerView.getAdapter();
+                    if (userAdapter != null) {
+                        weakActivity.get().runOnUiThread(() -> {
+                            recyclerView.stopScroll();
+                            recyclerView.scrollToPosition(0);
+                            recyclerView.getRecycledViewPool().clear();
+                            recyclerView.post(userAdapter::datasetChanged);
+                        });
+                    }
+                }
+            }
+        };
+        requestHandler = new FollowersUpdateRequestHandler(weakActivity, weakContext, null) {
             @Override
             public void onCompletion(boolean hideProgressBar) {
                 super.onCompletion(false);

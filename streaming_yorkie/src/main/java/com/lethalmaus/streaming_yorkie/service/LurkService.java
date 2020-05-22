@@ -270,7 +270,7 @@ public class LurkService extends Service {
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(false)
                 .setOngoing(true);
-        if (paused) {
+        if (paused && lurks != null) {
             mBuilder.setContentText("Service paused for '" + lurks.length + "' streamers...");
             mBuilder.addAction(android.R.drawable.ic_media_play, "Start", PendingIntent.getService(this, 0,  new Intent(this, LurkService.class).setAction(Globals.START_LURK), PendingIntent.FLAG_UPDATE_CURRENT));
             mBuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,"Stop", PendingIntent.getService(this, 0, new Intent(this, LurkService.class).setAction(Globals.STOP_LURK), PendingIntent.FLAG_CANCEL_CURRENT));

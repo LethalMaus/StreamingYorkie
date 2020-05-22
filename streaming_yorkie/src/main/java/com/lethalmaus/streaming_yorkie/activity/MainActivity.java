@@ -119,9 +119,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                 }
             }
             @Override
-            public void onBillingServiceDisconnected() {
-                Toast.makeText(MainActivity.this, "Cannot connect to Google Play Store", Toast.LENGTH_SHORT).show();
-            }
+            public void onBillingServiceDisconnected() { /* Do nothing */ }
         });
         if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SUPPORTER).exists() || new File(getFilesDir().toString() + File.separator + Globals.FILE_SUBSCRIBER).exists()) {
             findViewById(R.id.supporterTitle).setVisibility(View.VISIBLE);

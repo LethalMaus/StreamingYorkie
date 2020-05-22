@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -97,6 +98,7 @@ public class Globals {
     public static final String SETTINGS_VISIBILITY = "Visibility";
     public static final String SETTINGS_SPLIT = "Split";
     public static final String SETTINGS_WIFI_ONLY = "WIFI_ONLY";
+    public static final String SETTINGS_AUDIO_ONLY = "AUDIO_ONLY";
     public static final String SETTINGS_LURK_INFORM = "LURK_INFORM";
     public static final String SETTINGS_LURK_MESSAGE = "LURK_MESSAGE";
 
@@ -401,6 +403,16 @@ public class Globals {
      */
     public static boolean checkWeakActivity(WeakReference<Activity> weakReference) {
         return checkWeakReference(weakReference) && !weakReference.get().isDestroyed() && !weakReference.get().isFinishing();
+    }
+
+    /**
+     * Checks if a weak recycler view is still usable
+     * @author LethalMaus
+     * @param weakReference weak recyclerview
+     * @return boolean if usable
+     */
+    public static boolean checkWeakRecyclerView(WeakReference<RecyclerView> weakReference) {
+        return checkWeakReference(weakReference) && weakReference.get().getAdapter() != null;
     }
 
     /**

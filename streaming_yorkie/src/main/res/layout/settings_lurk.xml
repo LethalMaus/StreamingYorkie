@@ -37,6 +37,15 @@
                 android:textSize="16sp" />
 
             <Switch
+                android:id="@+id/settings_autolurk_audio_only"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:layout_weight="1"
+                android:text="@string/settings_autolurk_audio_only"
+                android:textSize="16sp" />
+
+            <Switch
                 android:id="@+id/settings_autolurk_wifi_only"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
