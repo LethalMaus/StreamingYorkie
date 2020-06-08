@@ -44,6 +44,17 @@
             android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleInstance"/>
         <activity
+            android:name=".activity.UserParent"
+            android:label="User Parent"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Host"
+            android:configChanges="orientation|screenSize"
+            android:label="Host"
+            android:parentActivityName=".activity.UserParent"
+            android:launchMode="singleInstance"/>
+        <activity
             android:name=".activity.FollowParent"
             android:label="Follow Parent"
             android:parentActivityName=".activity.MainActivity"
@@ -65,6 +76,12 @@
             android:configChanges="orientation|screenSize"
             android:label="Following"
             android:parentActivityName=".activity.FollowParent"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Dashboard"
+            android:configChanges="orientation|screenSize"
+            android:label="Dashboard"
+            android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.VODs"

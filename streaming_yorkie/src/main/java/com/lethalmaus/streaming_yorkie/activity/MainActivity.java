@@ -76,16 +76,20 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             startActivity(new Intent(MainActivity.this, Lurk.class))
         );
 
+        findViewById(R.id.menu_host).setOnClickListener((View v) ->
+                startActivity(new Intent(MainActivity.this, Host.class))
+        );
+
         findViewById(R.id.menu_userinfo).setOnClickListener((View v) ->
             startActivity(new Intent(MainActivity.this, Channel.class))
         );
 
-        findViewById(R.id.menu_info).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Info.class))
-        );
-
         findViewById(R.id.menu_shop).setOnClickListener((View v) ->
                 startActivity(new Intent(MainActivity.this, Shop.class))
+        );
+
+        findViewById(R.id.menu_info).setOnClickListener((View v) ->
+            startActivity(new Intent(MainActivity.this, Info.class))
         );
 
         findViewById(R.id.menu_settings).setOnClickListener((View v) ->

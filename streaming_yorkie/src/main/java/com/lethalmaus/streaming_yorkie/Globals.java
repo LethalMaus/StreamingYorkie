@@ -151,7 +151,7 @@ public class Globals {
     public static final String NOTIFICATIONS_BUTTON = "NOTIFICATIONS_BUTTON";
     public static final String INCLUDE_BUTTON = "INCLUDE_BUTTON";
     public static final String DELETE_BUTTON = "DELETE_BUTTON";
-
+    public static final String HOST_BUTTON = "HOST_BUTTON";
 
     /**
      * Options menu to be available throughout app

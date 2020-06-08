@@ -145,15 +145,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/menu2">
 
                 <ImageButton
-                    android:id="@+id/menu_info"
+                    android:id="@+id/menu_host"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/menu_info"
+                    android:contentDescription="@string/menu_host"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/info" />
+                    app:srcCompat="@drawable/host_menu" />
 
                 <ImageButton
                     android:id="@+id/menu_userinfo"
@@ -192,6 +192,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/menu3">
 
+                <ImageButton
+                    android:id="@+id/menu_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/menu_info"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/info" />
 
                 <ImageButton
                     android:id="@+id/menu_settings"

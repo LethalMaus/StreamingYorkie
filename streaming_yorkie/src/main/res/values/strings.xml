@@ -68,11 +68,12 @@
     <string name="menu_lurk">Lurk</string>
     <string name="menu_userinfo">UserInfo Menu</string>
     <string name="menu_info">Info Menu</string>
+    <string name="menu_host">Host Menu</string>
     <string name="menu_shop">Shop Menu</string>
     <string name="menu_settings">Settings Menu</string>
     <string name="menu_dashboard">Dashboard Menu</string>
     <string name="info_twitch">Twitch</string>
-    <string name="info_thankyou">Thank you</string>
+    <string name="info_shoutout">Shout-outs</string>
     <string name="info_readme">Guide</string>
     <string name="info_contact">Contact</string>
     <string name="info_discord">Discord</string>

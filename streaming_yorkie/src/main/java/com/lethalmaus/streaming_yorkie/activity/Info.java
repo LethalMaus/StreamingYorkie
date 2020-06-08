@@ -84,7 +84,7 @@ public class Info extends AppCompatActivity {
         );
 
         //Link to Shout-outs on Github
-        findViewById(R.id.info_thankyou).setOnClickListener(
+        findViewById(R.id.info_shoutout).setOnClickListener(
                 (View v) ->
                         Globals.openLink(weakActivity, weakContext, "https://github.com/LethalMaus/StreamingYorkie/blob/master/README.md#shout-outs")
         );
