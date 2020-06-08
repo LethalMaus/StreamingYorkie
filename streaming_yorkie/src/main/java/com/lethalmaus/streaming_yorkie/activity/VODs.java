@@ -103,6 +103,11 @@ public class VODs extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        Globals.onBackPressed(this);
+    }
+
     /**
      * Deletes any notification files when the activity is started
      * @author LethalMaus

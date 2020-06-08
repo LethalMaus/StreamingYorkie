@@ -48,4 +48,9 @@ public class Host extends UserParent {
         requestHandler = new FollowersUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));
         pageButtonListenerAction(autoHost, "Auto Host", daoType,"AUTOHOST", Globals.HOST_BUTTON, Globals.DELETE_BUTTON);
     }
+
+    @Override
+    public void onBackPressed() {
+        Globals.onBackPressed(this);
+    }
 }

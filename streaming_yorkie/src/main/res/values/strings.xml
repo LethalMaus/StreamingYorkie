@@ -16,7 +16,7 @@
     <string name="export">Export</string>
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
-    <string name="follow_unfollow">Follow &amp; Unfollow></string>
+    <string name="follow_unfollow">Follow &amp; Unfollow</string>
     <string name="auto_follow_service">AutoFollow Service</string>
     <string name="auto_vod_export_service">AutoVODExport Service</string>
     <string name="enable_notifications">Enable Notifications</string>

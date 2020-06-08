@@ -30,6 +30,7 @@ import com.android.billingclient.api.Purchase;
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
 import com.lethalmaus.streaming_yorkie.activity.InfoGuide;
+import com.lethalmaus.streaming_yorkie.activity.MainActivity;
 import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
@@ -177,6 +178,17 @@ public class Globals {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Starts the main activity with a fresh stack
+     * @author LethalMaus
+     * @param activity Activity
+     */
+    public static void onBackPressed(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
     }
 
     /**

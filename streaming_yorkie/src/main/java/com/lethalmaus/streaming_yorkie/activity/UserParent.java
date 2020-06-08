@@ -69,6 +69,11 @@ public class UserParent extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        Globals.onBackPressed(this);
+    }
+
     /**
      * Requests are cancelled when activity ends as they are not needed
      * @author LethalMaus
