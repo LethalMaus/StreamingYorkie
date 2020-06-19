@@ -53,6 +53,7 @@ public class FollowingRequestHandler extends RequestHandler {
     @Override
     public void responseHandler(final JSONObject response) {
         new Thread() {
+            @Override
             public void run() {
                 try {
                     offset += Globals.USER_REQUEST_LIMIT;
@@ -95,27 +96,28 @@ public class FollowingRequestHandler extends RequestHandler {
                             unfollowing.get(i).setStatus("UNFOLLOWED");
                             streamingYorkieDB.followingDAO().updateUser(unfollowing.get(i));
                         }
-                        if (recyclerView != null && recyclerView.get() != null && recyclerView.get().getAdapter() != null) {
+                        //TODO this can be added to onCompletion by extending a base adapter
+
+                        if (Globals.checkWeakActivity(weakActivity) && Globals.checkWeakRecyclerView(recyclerView)) {
                             final UserAdapter userAdapter = (UserAdapter) recyclerView.get().getAdapter();
-                            if (userAdapter != null && weakActivity != null && weakActivity.get() != null) {
-                                userAdapter.setPageCounts();
+                            if (userAdapter != null) {
                                 weakActivity.get().runOnUiThread(() -> {
                                     recyclerView.get().stopScroll();
                                     recyclerView.get().scrollToPosition(0);
                                     recyclerView.get().getRecycledViewPool().clear();
-                                    userAdapter.datasetChanged();
+                                    recyclerView.get().post(userAdapter::datasetChanged);
                                 });
                             }
                         }
                         onCompletion(true);
                     }
                 } catch (JSONException e) {
-                    if (weakActivity != null && weakActivity.get() != null) {
+                    if (Globals.checkWeakActivity(weakActivity)) {
                         weakActivity.get().runOnUiThread(() ->
                                 Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
                         );
                     }
-                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "FollowingEntity response error | " + e.toString(), true).run();
+                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Following response error | " + e.toString(), true).run();
                 }
             }
         }.start();

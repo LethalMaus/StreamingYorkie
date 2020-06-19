@@ -111,6 +111,11 @@ public class Lurk extends AppCompatActivity {
         return Globals.onOptionsItemsSelected(this, item);
     }
 
+    @Override
+    public void onBackPressed() {
+        Globals.onBackPressed(this);
+    }
+
     public final static int REQUEST_CODE = 6421;
 
     /**

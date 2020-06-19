@@ -62,7 +62,8 @@ public class SettingsLurk extends AppCompatActivity {
             settings = new JSONObject(settingsFile);
             previousSettings = new JSONObject(settingsFile);
             //Ensures settings integrity
-            if (!settings.has(Globals.SETTINGS_AUTOLURK) || !settings.has(Globals.SETTINGS_WIFI_ONLY) || !settings.has(Globals.SETTINGS_LURK_INFORM) || !settings.has(Globals.SETTINGS_LURK_MESSAGE)) {
+            if (!settings.has(Globals.SETTINGS_AUTOLURK) || !settings.has(Globals.SETTINGS_WIFI_ONLY) || !settings.has(Globals.SETTINGS_AUDIO_ONLY) || !settings.has(Globals.SETTINGS_LURK_INFORM) || !settings.has(Globals.SETTINGS_LURK_MESSAGE)) {
+                Toast.makeText(SettingsLurk.this, getString(R.string.settings_integrity), Toast.LENGTH_SHORT).show();
                 new DeleteFileHandler(weakActivity, weakContext, null).deleteFileOrPath(Globals.FILE_SETTINGS_LURK);
                 createSettingsFile();
             }
@@ -73,6 +74,7 @@ public class SettingsLurk extends AppCompatActivity {
 
         serviceActivationSwitch();
         wifiOnlySwitch();
+        audioOnlySwitch();
         informChannelSwitch();
         informChannelMessage();
 
@@ -97,6 +99,7 @@ public class SettingsLurk extends AppCompatActivity {
         try {
             settings.put(Globals.SETTINGS_AUTOLURK, Globals.SETTINGS_OFF);
             settings.put(Globals.SETTINGS_WIFI_ONLY, true);
+            settings.put(Globals.SETTINGS_AUDIO_ONLY, true);
             settings.put(Globals.SETTINGS_LURK_INFORM, false);
             settings.put(Globals.SETTINGS_LURK_MESSAGE, "");
             new WriteFileHandler(weakActivity, weakContext, Globals.FILE_SETTINGS_LURK, null, settings.toString(), false).writeToFileOrPath();
@@ -154,6 +157,29 @@ public class SettingsLurk extends AppCompatActivity {
             } catch(JSONException e) {
                 Toast.makeText(SettingsLurk.this, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_WIFI_ONLY, Toast.LENGTH_SHORT).show();
                 new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_WIFI_ONLY + getString(R.string.pipe) + e.toString(), true).run();
+            }
+        });
+    }
+
+    /**
+     * Reads settings and changes the Audio only activation switch. Also adds the Listener
+     * @author LethalMaus
+     */
+    private void audioOnlySwitch() {
+        Switch audioOnly = findViewById(R.id.settings_autolurk_audio_only);
+        try {
+            audioOnly.setChecked(settings.getBoolean(Globals.SETTINGS_AUDIO_ONLY));
+        } catch(JSONException e) {
+            Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUDIO_ONLY, Toast.LENGTH_SHORT).show();
+            new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUDIO_ONLY + getString(R.string.pipe) + e.toString(), true).run();
+        }
+        audioOnly.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+            try {
+                Toast.makeText(SettingsLurk.this, getString(R.string.settings_autolurk_audio_only_info), Toast.LENGTH_SHORT).show();
+                settings.put(Globals.SETTINGS_AUDIO_ONLY, isChecked);
+            } catch(JSONException e) {
+                Toast.makeText(SettingsLurk.this, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUDIO_ONLY, Toast.LENGTH_SHORT).show();
+                new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null, getString(R.string.error_changing_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUDIO_ONLY + getString(R.string.pipe) + e.toString(), true).run();
             }
         });
     }
@@ -217,6 +243,7 @@ public class SettingsLurk extends AppCompatActivity {
         try {
             if (!previousSettings.getString(Globals.SETTINGS_AUTOLURK).equals(settings.getString(Globals.SETTINGS_AUTOLURK)) ||
                     previousSettings.getBoolean(Globals.SETTINGS_WIFI_ONLY) != settings.getBoolean(Globals.SETTINGS_WIFI_ONLY) ||
+                    previousSettings.getBoolean(Globals.SETTINGS_AUDIO_ONLY) != settings.getBoolean(Globals.SETTINGS_AUDIO_ONLY) ||
                     previousSettings.getBoolean(Globals.SETTINGS_LURK_INFORM) != settings.getBoolean(Globals.SETTINGS_LURK_INFORM) ||
                     !previousSettings.getString(Globals.SETTINGS_LURK_MESSAGE).equals(settings.getString(Globals.SETTINGS_LURK_MESSAGE))) {
                 if (!settings.getString(Globals.SETTINGS_AUTOLURK).equals(Globals.SETTINGS_OFF) && (!settings.getBoolean(Globals.SETTINGS_WIFI_ONLY) || (settings.getBoolean(Globals.SETTINGS_LURK_INFORM) && settings.getString(Globals.SETTINGS_LURK_MESSAGE).isEmpty()))) {

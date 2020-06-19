@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -29,6 +30,7 @@ import com.android.billingclient.api.Purchase;
 import com.lethalmaus.streaming_yorkie.activity.Authorization;
 import com.lethalmaus.streaming_yorkie.activity.Info;
 import com.lethalmaus.streaming_yorkie.activity.InfoGuide;
+import com.lethalmaus.streaming_yorkie.activity.MainActivity;
 import com.lethalmaus.streaming_yorkie.activity.SettingsMenu;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
@@ -97,6 +99,7 @@ public class Globals {
     public static final String SETTINGS_VISIBILITY = "Visibility";
     public static final String SETTINGS_SPLIT = "Split";
     public static final String SETTINGS_WIFI_ONLY = "WIFI_ONLY";
+    public static final String SETTINGS_AUDIO_ONLY = "AUDIO_ONLY";
     public static final String SETTINGS_LURK_INFORM = "LURK_INFORM";
     public static final String SETTINGS_LURK_MESSAGE = "LURK_MESSAGE";
 
@@ -149,7 +152,7 @@ public class Globals {
     public static final String NOTIFICATIONS_BUTTON = "NOTIFICATIONS_BUTTON";
     public static final String INCLUDE_BUTTON = "INCLUDE_BUTTON";
     public static final String DELETE_BUTTON = "DELETE_BUTTON";
-
+    public static final String HOST_BUTTON = "HOST_BUTTON";
 
     /**
      * Options menu to be available throughout app
@@ -172,9 +175,27 @@ public class Globals {
             case R.id.menu_logout:
                 activity.startActivity(new Intent(activity, Authorization.class));
                 return true;
+            case android.R.id.home:
+                if (activity.isTaskRoot()) {
+                    Globals.onBackPressed(activity);
+                    return true;
+                }
+                return false;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Starts the main activity with a fresh stack
+     * @author LethalMaus
+     * @param activity Activity
+     */
+    public static void onBackPressed(Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);
+        activity.finish();
     }
 
     /**
@@ -401,6 +422,16 @@ public class Globals {
      */
     public static boolean checkWeakActivity(WeakReference<Activity> weakReference) {
         return checkWeakReference(weakReference) && !weakReference.get().isDestroyed() && !weakReference.get().isFinishing();
+    }
+
+    /**
+     * Checks if a weak recycler view is still usable
+     * @author LethalMaus
+     * @param weakReference weak recyclerview
+     * @return boolean if usable
+     */
+    public static boolean checkWeakRecyclerView(WeakReference<RecyclerView> weakReference) {
+        return checkWeakReference(weakReference) && weakReference.get().getAdapter() != null;
     }
 
     /**

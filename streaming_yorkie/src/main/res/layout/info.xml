@@ -157,7 +157,7 @@
                     app:srcCompat="@drawable/update" />
 
                 <ImageButton
-                    android:id="@+id/info_thankyou"
+                    android:id="@+id/info_shoutout"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
                     android:layout_weight="1"
@@ -165,7 +165,7 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/info_twitch"
                     android:scaleType="centerInside"
-                    app:srcCompat="@drawable/thankyou" />
+                    app:srcCompat="@drawable/shout_out"/>
 
                 <ImageButton
                     android:id="@+id/info_source_code"
@@ -201,11 +201,11 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/info_thankyou_text"
+                    android:id="@+id/info_shoutout_text"
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:text="@string/info_thankyou"
+                    android:text="@string/info_shoutout"
                     android:textAlignment="center"
                     android:textSize="14sp"
                     android:textStyle="bold" />

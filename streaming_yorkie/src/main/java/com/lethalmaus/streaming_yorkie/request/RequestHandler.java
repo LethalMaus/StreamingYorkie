@@ -131,6 +131,7 @@ public class RequestHandler {
             });
         }
         new Thread() {
+            @Override
             public void run() {
                 if (Globals.checkWeakReference(weakContext)) {
                     if (userID == null) {
@@ -179,7 +180,7 @@ public class RequestHandler {
      * @author LethalMaus
      */
     protected void offlineResponseHandler() {
-        if (recyclerView != null && recyclerView.get() != null && weakActivity.get() != null) {
+        if (Globals.checkWeakActivity(weakActivity)) {
             weakActivity.get().runOnUiThread(() ->
                     Toast.makeText(weakActivity.get(), "OFFLINE: Showing locally saved data", Toast.LENGTH_SHORT).show()
             );
@@ -192,7 +193,7 @@ public class RequestHandler {
      * @param error Volley Error
      */
     void errorHandler(VolleyError error) {
-        if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+        if (twitchTotal != itemCount && Globals.checkWeakActivity(weakActivity)) {
             weakActivity.get().runOnUiThread(() ->
                     Toast.makeText(weakActivity.get(), "Error requesting " + requestType, Toast.LENGTH_SHORT).show()
             );
@@ -264,7 +265,7 @@ public class RequestHandler {
      */
     public static boolean networkIsAvailable(WeakReference<Context> weakContext) {
         NetworkInfo activeNetwork = null;
-        if (weakContext != null && weakContext.get() != null) {
+        if (Globals.checkWeakReference(weakContext)) {
             ConnectivityManager systemService = (ConnectivityManager) weakContext.get().getSystemService(CONNECTIVITY_SERVICE);
             if (systemService != null) {
                 activeNetwork = systemService.getActiveNetworkInfo();

@@ -2,14 +2,12 @@ package com.lethalmaus.streaming_yorkie.request;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -26,9 +24,11 @@ import java.util.List;
  */
 public class FollowersRequestHandler extends RequestHandler {
 
+    private String cursor = "";
+
     @Override
     public String url() {
-        return "https://api.twitch.tv/kraken/channels/" + userID + "/follows?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=desc&offset=" + this.offset;
+        return "https://api.twitch.tv/kraken/channels/" + userID + "/follows?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=desc&cursor=" + cursor;
     }
 
     @Override
@@ -53,35 +53,35 @@ public class FollowersRequestHandler extends RequestHandler {
         new Thread() {
             public void run() {
                 try {
-                    offset += Globals.USER_REQUEST_LIMIT;
+                    cursor = response.getString("_cursor");
                     if (twitchTotal == 0) {
                         twitchTotal = response.getInt("_total");
                     }
                     itemCount += response.getJSONArray("follows").length();
-                    if (response.getJSONArray("follows").length() > 0) {
-                        for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
-                            FollowerEntity followerEntity = new FollowerEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id")),
-                                    response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("display_name"),
-                                    response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("logo").replace("300x300", "50x50"),
-                                    response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
-                                    response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
-                                    timestamp);
-                            FollowerEntity existingFollowerEntity = streamingYorkieDB.followerDAO().getUserById(followerEntity.getId());
-                            if (existingFollowerEntity != null) {
-                                if (existingFollowerEntity.getStatus() != null && existingFollowerEntity.getStatus().contentEquals("EXCLUDED")) {
-                                    followerEntity.setStatus("EXCLUDED");
-                                } else {
-                                    followerEntity.setStatus("CURRENT");
-                                }
-                                streamingYorkieDB.followerDAO().updateUser(followerEntity);
+                    for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
+                        FollowerEntity followerEntity = new FollowerEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("_id")),
+                                response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("display_name"),
+                                response.getJSONArray("follows").getJSONObject(i).getJSONObject("user").getString("logo").replace("300x300", "50x50"),
+                                response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
+                                response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
+                                timestamp);
+                        FollowerEntity existingFollowerEntity = streamingYorkieDB.followerDAO().getUserById(followerEntity.getId());
+                        if (existingFollowerEntity != null) {
+                            if (existingFollowerEntity.getStatus() != null && existingFollowerEntity.getStatus().contentEquals("EXCLUDED")) {
+                                followerEntity.setStatus("EXCLUDED");
                             } else {
-                                followerEntity.setStatus("NEW");
-                                streamingYorkieDB.followerDAO().insertUser(followerEntity);
+                                followerEntity.setStatus("CURRENT");
                             }
+                            streamingYorkieDB.followerDAO().updateUser(followerEntity);
+                        } else {
+                            followerEntity.setStatus("NEW");
+                            streamingYorkieDB.followerDAO().insertUser(followerEntity);
                         }
+                    }
+                    if (response.getJSONArray("follows").length() == Globals.USER_REQUEST_LIMIT && itemCount < twitchTotal) {
                         sendRequest(true);
                     } else {
-                        if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
+                        if (twitchTotal != itemCount && Globals.checkWeakActivity(weakActivity)) {
                             weakActivity.get().runOnUiThread(() ->
                                     Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'Followers' is out of sync. Total should be '" + twitchTotal
                                             + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show()
@@ -93,22 +93,22 @@ public class FollowersRequestHandler extends RequestHandler {
                             unfollowed.get(i).setStatus("UNFOLLOWED");
                             streamingYorkieDB.followerDAO().updateUser(unfollowed.get(i));
                         }
-                        if (recyclerView != null && recyclerView.get() != null && recyclerView.get().getAdapter() != null) {
+                        //TODO this can be added to onCompletion by extending a base adapter
+                        if (Globals.checkWeakActivity(weakActivity) && Globals.checkWeakRecyclerView(recyclerView)) {
                             final UserAdapter userAdapter = (UserAdapter) recyclerView.get().getAdapter();
-                            if (userAdapter != null && weakActivity != null && weakActivity.get() != null) {
-                                userAdapter.setPageCounts();
+                            if (userAdapter != null) {
                                 weakActivity.get().runOnUiThread(() -> {
                                     recyclerView.get().stopScroll();
                                     recyclerView.get().scrollToPosition(0);
                                     recyclerView.get().getRecycledViewPool().clear();
-                                    userAdapter.datasetChanged();
+                                    recyclerView.get().post(userAdapter::datasetChanged);
                                 });
                             }
                         }
                         onCompletion(true);
                     }
                 } catch (JSONException e) {
-                    if (weakActivity != null && weakActivity.get() != null) {
+                    if (Globals.checkWeakActivity(weakActivity)) {
                         weakActivity.get().runOnUiThread(() ->
                                 Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
                         );

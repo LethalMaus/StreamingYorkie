@@ -133,7 +133,7 @@ public class AutoFollowWorker extends Worker {
     private static void notifyUser(WeakReference<Context> weakContext) {
         int autoFollowCount = new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_FOLLOW).countFiles();
         int autoUnfollowCount = new ReadFileHandler(null, weakContext, Globals.NOTIFICATION_UNFOLLOW).countFiles();
-        if (weakContext != null && weakContext.get() != null
+        if (Globals.checkWeakReference(weakContext)
                 && new File(weakContext.get().getFilesDir() + File.separator + Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE).exists()
                 && (autoFollowCount > 0 || autoUnfollowCount > 0)) {
             new DeleteFileHandler(null, weakContext, null).deleteFileOrPath(Globals.FLAG_AUTOFOLLOW_NOTIFICATION_UPDATE);

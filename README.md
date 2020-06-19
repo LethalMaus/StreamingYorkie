@@ -39,6 +39,8 @@ Share that you are **AutoFollowing** to our Discord community & gain more follow
 Helps build a bigger community, simplifies/automates communication, become an *affiliate* or *partner* faster & free up time to stream more.
 Watch multiple streams at once with **Multi View** and cast it to a TV.
 **Lurk** your favourite streamers with minimum possible network data usage (audio only & chat) & increase their viewer count.
+Increase channel points & chances of drops or gifted subs.
+Add, remove and re-prioritize hosting streamers on your AutoHost list. 
 Use our Discord to get others to to follow or lurk and gain more viewers. Use the F4F-L4L-H4H Channel.
 
 <p align="center">
@@ -72,7 +74,7 @@ Variable naming conventions are also in place.
 Hopefully this can be used as an example for good coding as well as how to develop an Android App in Java.
 The code includes examples of:
 
-+ RecyclerView, Adapter
++ RecyclerView, Adapter, Drag & Drop
 + Room, SQLite, DAO & Entity
 + Volley library for HTTP requests
 + Glide library for image rendering
@@ -143,6 +145,7 @@ A big thank you to for going out of their way to support Streaming Yorkie goes o
 + [VODs](#-vods)
 + [MultiView](#-multiview)
 + [Lurk](#-lurk)
++ [Host](#-host)
 + [User Info](#-user-info)
 + [Info](#-info)
   + [Logs](#logs)
@@ -179,6 +182,7 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="20" width="20"> Overview for VODs (Videos On Demand) & exporting VODs</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi_menu.webp" height="20" width="20"> Watch multiple streams at once on one screen</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="20" width="20"> Lurk streamers and add to their view count</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host_menu.webp" height="20" width="20"> Adding removing & re-prioritizing hosting streamers in your AutoHost list</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.webp" height="20" width="20"> Quick overview about your Twitch account</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.webp" height="20" width="20"> Shows different platforms for further information such as a <i>Twitch</i> & <i>Contact</i></li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/shop.webp" height="20" width="20"> Shop for in-app purchase and subscriptions</li>
@@ -229,6 +233,9 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi.webp" height="20" width="20"> Start watching multiple streams at once on one screen</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk.webp" height="20" width="20"> Initiate lurking given streamer</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20"> Stop lurking chosen streamer</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host.webp" height="20" width="20"> Adds a streamer to the AutoHost list</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unhost.webp" height="20" width="20"> Removes a streamer from the AutoHost list</li>
+<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/move.webp" height="20" width="20"> Moves a streamer to a different priority ranking</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/message.webp" height="20" width="20"> Opens a dialog to send a message to the chosen channels chat</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/send.webp" height="20" width="20"> Sends the message to channel chat</li>
 <li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20"> Starts the purchase flow for the respective item</li>
@@ -333,6 +340,19 @@ The service can be paused, stopped & started from the notification.
 The notification only disappears once the service has ended.
 
 > Using the Twitch App will disable the lurk service. Use MultiView or another device to watch while lurking.
+
+---
+
+### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host_menu.webp" height="30" width="30"> Host
+
+Here you can add, remove and re-prioritize hosting streamers on your AutoHost list.
+
+Enter a channel name, then click the host button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host.webp" height="20" width="20">.
+If the user exists, they will be added at the bottom of the AutoHost list.
+
+Click <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unhost.webp" height="20" width="20"> to remove them from the list.
+
+By holding <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/move.webp" height="20" width="20"> or the view in general, you can give the user a higher/lower priority in the list.
 
 ---
 
@@ -459,6 +479,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.3.0-a](#230-a)
 + [2.2.2-a](#222-a)
 + [2.2.1-a](#221-a)
 + [2.2.0-a](#220-a)
@@ -476,6 +497,30 @@ This can take up to 15 minutes to activate.
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+---
+
+### 2.3.0-a
+
+<details>
+<summary>AutoHost List & bug fixes</summary>
+
+Features:
++   AutoHost list
++   Additional lurk settings
+
+Improvements:
++   Sonarcloud lint fixes
++   Complexity reduction
++   Changed close icon in notifications bar
+
+Issues fixed:
++   Added cursor to followers request to avoid 1600 limit
++   Pressing back and navigating correctly to the dashboard
++   Removed support for Android < 6.0
++   Removed Google Play connectivity toast
+
+</details>
 
 ---
 

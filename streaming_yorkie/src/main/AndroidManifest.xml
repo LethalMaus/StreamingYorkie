@@ -44,9 +44,14 @@
             android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleInstance"/>
         <activity
+            android:name=".activity.UserParent"
+            android:label="User Parent"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
             android:name=".activity.FollowParent"
             android:label="Follow Parent"
-            android:parentActivityName=".activity.MainActivity"
+            android:parentActivityName=".activity.UserParent"
             android:launchMode="singleInstance"/>
         <activity
             android:name=".activity.Follow4Follow"
@@ -67,6 +72,12 @@
             android:parentActivityName=".activity.FollowParent"
             android:launchMode="singleInstance"/>
         <activity
+            android:name=".activity.Dashboard"
+            android:configChanges="orientation|screenSize"
+            android:label="Dashboard"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
             android:name=".activity.VODs"
             android:configChanges="orientation|screenSize"
             android:label="VODs"
@@ -82,6 +93,12 @@
             android:name=".activity.Lurk"
             android:configChanges="orientation|screenSize"
             android:label="Lurk"
+            android:parentActivityName=".activity.MainActivity"
+            android:launchMode="singleInstance"/>
+        <activity
+            android:name=".activity.Host"
+            android:configChanges="orientation|screenSize"
+            android:label="Host"
             android:parentActivityName=".activity.MainActivity"
             android:launchMode="singleInstance"/>
         <activity

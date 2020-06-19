@@ -3,7 +3,6 @@ package com.lethalmaus.streaming_yorkie.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
@@ -76,16 +75,20 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             startActivity(new Intent(MainActivity.this, Lurk.class))
         );
 
+        findViewById(R.id.menu_host).setOnClickListener((View v) ->
+                startActivity(new Intent(MainActivity.this, Host.class))
+        );
+
         findViewById(R.id.menu_userinfo).setOnClickListener((View v) ->
             startActivity(new Intent(MainActivity.this, Channel.class))
         );
 
-        findViewById(R.id.menu_info).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Info.class))
-        );
-
         findViewById(R.id.menu_shop).setOnClickListener((View v) ->
                 startActivity(new Intent(MainActivity.this, Shop.class))
+        );
+
+        findViewById(R.id.menu_info).setOnClickListener((View v) ->
+            startActivity(new Intent(MainActivity.this, Info.class))
         );
 
         findViewById(R.id.menu_settings).setOnClickListener((View v) ->
@@ -119,9 +122,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
                 }
             }
             @Override
-            public void onBillingServiceDisconnected() {
-                Toast.makeText(MainActivity.this, "Cannot connect to Google Play Store", Toast.LENGTH_SHORT).show();
-            }
+            public void onBillingServiceDisconnected() { /* Do nothing */ }
         });
         if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SUPPORTER).exists() || new File(getFilesDir().toString() + File.separator + Globals.FILE_SUBSCRIBER).exists()) {
             findViewById(R.id.supporterTitle).setVisibility(View.VISIBLE);

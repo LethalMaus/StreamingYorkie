@@ -16,7 +16,7 @@
     <string name="export">Export</string>
     <string name="follow">Follow</string>
     <string name="unfollow">Unfollow</string>
-    <string name="follow_unfollow">Follow &amp; Unfollow></string>
+    <string name="follow_unfollow">Follow &amp; Unfollow</string>
     <string name="auto_follow_service">AutoFollow Service</string>
     <string name="auto_vod_export_service">AutoVODExport Service</string>
     <string name="enable_notifications">Enable Notifications</string>
@@ -68,11 +68,12 @@
     <string name="menu_lurk">Lurk</string>
     <string name="menu_userinfo">UserInfo Menu</string>
     <string name="menu_info">Info Menu</string>
+    <string name="menu_host">Host Menu</string>
     <string name="menu_shop">Shop Menu</string>
     <string name="menu_settings">Settings Menu</string>
     <string name="menu_dashboard">Dashboard Menu</string>
     <string name="info_twitch">Twitch</string>
-    <string name="info_thankyou">Thank you</string>
+    <string name="info_shoutout">Shout-outs</string>
     <string name="info_readme">Guide</string>
     <string name="info_contact">Contact</string>
     <string name="info_discord">Discord</string>
@@ -148,9 +149,12 @@
     <string name="lurk_dialog_message_hint">Enter a message</string>
     <string name="lurk_dialog_send">Send</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="settings_integrity">Settings structure has changed, please update</string>
     <string name="settings_autolurk_activate">Activate AutoLurk</string>
     <string name="settings_autolurk_inform_channel">Inform channel of lurk</string>
     <string name="settings_autolurk_wifi_only">Lurk on WiFi only</string>
+    <string name="settings_autolurk_audio_only">Audio only</string>
+    <string name="settings_autolurk_audio_only_info">Audio only sometimes does not count as a view however deactivating it increases bandwidth usage.</string>
     <string name="settings_lurk_share_status">Share Lurk status to Discord</string>
     <string name="shop_button">Purchase</string>
     <string name="supporter_title">Official Supporter!</string>
