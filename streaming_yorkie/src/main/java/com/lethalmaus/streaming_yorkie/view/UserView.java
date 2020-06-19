@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
 import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
@@ -61,7 +62,7 @@ public class UserView extends AsyncTask<Void, View, Void> {
     @Override
     protected void onPostExecute(Void v) {
         try {
-            if (weakContext != null && weakContext.get() != null && weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+            if (Globals.checkWeakReference(weakContext) && Globals.checkWeakActivity(weakActivity)) {
                 if (!displayName.isEmpty() && !logo.isEmpty()) {
                     ImageView user_Logo = weakActivity.get().findViewById(R.id.user_Logo);
                     if (user_Logo != null) {

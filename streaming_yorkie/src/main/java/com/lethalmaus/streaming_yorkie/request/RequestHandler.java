@@ -131,6 +131,7 @@ public class RequestHandler {
             });
         }
         new Thread() {
+            @Override
             public void run() {
                 if (Globals.checkWeakReference(weakContext)) {
                     if (userID == null) {

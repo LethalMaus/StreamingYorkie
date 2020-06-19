@@ -782,7 +782,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * Method for counting files within user directories
      * @author LethalMaus
      */
-    public void setPageCounts() {
+    private void setPageCounts() {
         if (userType.contentEquals("FOLLOWERS")){
             pageCount1 = streamingYorkieDB.followerDAO().countUsersByStatus("NEW");
             pageCount2 = streamingYorkieDB.followerDAO().countUsersByStatus("CURRENT") + pageCount1;

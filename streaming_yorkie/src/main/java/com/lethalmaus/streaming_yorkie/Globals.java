@@ -175,6 +175,12 @@ public class Globals {
             case R.id.menu_logout:
                 activity.startActivity(new Intent(activity, Authorization.class));
                 return true;
+            case android.R.id.home:
+                if (activity.isTaskRoot()) {
+                    Globals.onBackPressed(activity);
+                    return true;
+                }
+                return false;
             default:
                 return false;
         }
@@ -187,8 +193,9 @@ public class Globals {
      */
     public static void onBackPressed(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(intent);
+        activity.finish();
     }
 
     /**

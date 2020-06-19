@@ -7,9 +7,11 @@ Share that you are <b>AutoFollowing</b> to our Discord Community & gain more fol
 Helps build a bigger community, simplifies/automates communication to become an <i>affiliate</i> or <i>partner</i> faster & free up more time to stream
 Watch multiple streams at once with <b>Multi View</b> and cast it to a TV
 <b>Lurk</b> your favourite streamers with minimum possible network data usage (audio only & chat) & increase their viewer count
+Increase channel points & chances of drops or gifted subs
+Add, remove and re-prioritize hosting streamers on your AutoHost list
 Use our Discord to get others to to Follow or Lurk and gain more viewers. Use the F4F L4L H4H Channel
 
-Currently it is in an <b>Alpha</b> state
+Currently it is in an <b>Alpha</b> state until automated tests have been introduced.
 It could be that a <i>Bug</i> may appear or the app behaves in an unexpected manner
 Please report any problems or suspicions to help improve Streaming Yorkie for everyone
 
