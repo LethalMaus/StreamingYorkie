@@ -1,7 +1,7 @@
 # StreamingYorkie
 
 <p align="center">
-  <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/streaming_yorkie-web.png"><br>
+  <img src="/streaming_yorkie/src/main/streaming_yorkie-web.png"><br>
   <b>A Twitch Streamers Best Friend</b>
 </p>
 
@@ -117,10 +117,10 @@ I'm also on [LinkedIn](https://www.linkedin.com/in/james-cullimore-042ab397/). H
 Click on one of the images below to be redirected a designated site.
 
 <p align="center">
-  <a href="https://discord.gg/vkCHjVm"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.webp" height="60"></a>
-  <a href="https://www.twitch.tv/lethalmaus"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.webp" height="60"></a>
-  <a href="https://www.patreon.com/LethalMaus"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.webp" height="60"></a>
-  <a href="https://paypal.me/JamesCullimore/2,50"><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/paypal.webp" height="60"></a>
+  <a href="https://discord.gg/vkCHjVm"><img src="/streaming_yorkie/src/main/res/drawable/discord.webp" height="60"></a>
+  <a href="https://www.twitch.tv/lethalmaus"><img src="/streaming_yorkie/src/main/res/drawable/twitch.webp" height="60"></a>
+  <a href="https://www.patreon.com/LethalMaus"><img src="/streaming_yorkie/src/main/res/drawable/patreon.webp" height="60"></a>
+  <a href="https://paypal.me/JamesCullimore/2,50"><img src="/streaming_yorkie/src/main/res/drawable/paypal.webp" height="60"></a>
 </p>
 
 ---
@@ -155,7 +155,7 @@ A big thank you to for going out of their way to support Streaming Yorkie goes o
   + [AutoVODExport](#-autovodexport)
   + [AutoLurk](#-autolurk)
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.webp" height="30" width="30"> Login & Logout
+### <img src="/streaming_yorkie/src/main/res/drawable/authorization.webp" height="30" width="30"> Login & Logout
 
 Here you will be asked for your *Username & Password* which will be given directly to *Twitch*.
 Streaming Yorkie needs to be authorized to be allow you to edit & change you account.
@@ -176,30 +176,30 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <details>
 <summary>Several menus are available to divide StreamingYorkie into each feature it offers:</summary>
 <ul>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followers_menu.webp" height="20" width="20"> Shows all <i>Followers</i> from Twitch including who has unfollowed</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_menu.webp" height="20" width="20"> Shows all <i>Following</i> from Twitch including who you have unfollowed</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="20" width="20"> Overview & simplification users who <i>F4F (Follow for Follow)</i></li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="20" width="20"> Overview for VODs (Videos On Demand) & exporting VODs</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi_menu.webp" height="20" width="20"> Watch multiple streams at once on one screen</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="20" width="20"> Lurk streamers and add to their view count</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host_menu.webp" height="20" width="20"> Adding removing & re-prioritizing hosting streamers in your AutoHost list</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.webp" height="20" width="20"> Quick overview about your Twitch account</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.webp" height="20" width="20"> Shows different platforms for further information such as a <i>Twitch</i> & <i>Contact</i></li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/shop.webp" height="20" width="20"> Shop for in-app purchase and subscriptions</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/guide.webp" height="20" width="20"> Github link to ReadMe guide</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/help.webp" height="20" width="20"> Offline help guide</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Github link to Updates</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/sourcecode.webp" height="20" width="20"> Github link to the source code</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/contact.webp" height="20" width="20"> Github link to Contact</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/discord.webp" height="20" width="20"> Link to Discord</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.webp" height="20" width="20"> Link to developers stream</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.webp" height="20" width="20"> Membership</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.webp" height="20" width="20"> Projects</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.webp" height="20" width="20"> The settings menu is split up into further features below</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="20" width="20"> Settings for activating & configuring the AutoFollow Worker</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="20" width="20"> Settings for activating & configuring the AutoVODExport Worker</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="20" width="20"> Settings for activating & configuring the AutoLurk Worker</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.webp" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/followers_menu.webp" height="20" width="20"> Shows all <i>Followers</i> from Twitch including who has unfollowed</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/following_menu.webp" height="20" width="20"> Shows all <i>Following</i> from Twitch including who you have unfollowed</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="20" width="20"> Overview & simplification users who <i>F4F (Follow for Follow)</i></li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="20" width="20"> Overview for VODs (Videos On Demand) & exporting VODs</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/multi_menu.webp" height="20" width="20"> Watch multiple streams at once on one screen</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="20" width="20"> Lurk streamers and add to their view count</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/host_menu.webp" height="20" width="20"> Adding removing & re-prioritizing hosting streamers in your AutoHost list</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/userinfo.webp" height="20" width="20"> Quick overview about your Twitch account</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/info.webp" height="20" width="20"> Shows different platforms for further information such as a <i>Twitch</i> & <i>Contact</i></li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/shop.webp" height="20" width="20"> Shop for in-app purchase and subscriptions</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/guide.webp" height="20" width="20"> Github link to ReadMe guide</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/help.webp" height="20" width="20"> Offline help guide</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Github link to Updates</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/sourcecode.webp" height="20" width="20"> Github link to the source code</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/contact.webp" height="20" width="20"> Github link to Contact</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/discord.webp" height="20" width="20"> Link to Discord</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/twitch.webp" height="20" width="20"> Link to developers stream</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/patreon.webp" height="20" width="20"> Membership</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/github.webp" height="20" width="20"> Projects</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/settings.webp" height="20" width="20"> The settings menu is split up into further features below</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="20" width="20"> Settings for activating & configuring the AutoFollow Worker</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="20" width="20"> Settings for activating & configuring the AutoVODExport Worker</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="20" width="20"> Settings for activating & configuring the AutoLurk Worker</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/authorization.webp" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account</li>
 </ul>
 </details>
 
@@ -207,14 +207,14 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <details>
 <summary>Each Menu is split into 3-4 of the following categories:</summary>
 <ul>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followed.webp" height="20" width="20"> All current Followers/Following (including New)</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollowed.webp" height="20" width="20"> All Followers who Unfollowed you or Following you Unfollowed</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Users/VODs that are excluded from AutoFollow/AutoExport as well as being excluded from the other menus</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> Users who Follow you, but you dont Follow them back</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/follow4follow.webp" height="20" width="20"> Followers who also Follow you</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.webp" height="20" width="20"> Users you Follow, who dont Follow you back</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vods.webp" height="20" width="20"> VODs (Videos On Demand) that are available on your Twitch account</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/export.webp" height="20" width="20"> Exported VODs done by StreamingYorkie will be found here</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/followed.webp" height="20" width="20"> All current Followers/Following (including New)</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/unfollowed.webp" height="20" width="20"> All Followers who Unfollowed you or Following you Unfollowed</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Users/VODs that are excluded from AutoFollow/AutoExport as well as being excluded from the other menus</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> Users who Follow you, but you dont Follow them back</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/follow4follow.webp" height="20" width="20"> Followers who also Follow you</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/following_nonfollowers.webp" height="20" width="20"> Users you Follow, who dont Follow you back</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/vods.webp" height="20" width="20"> VODs (Videos On Demand) that are available on your Twitch account</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/export.webp" height="20" width="20"> Exported VODs done by StreamingYorkie will be found here</li>
 </ul>
 </details>
 
@@ -222,38 +222,38 @@ To help towards internationalization (i18n) I decided to use symbols/icons that 
 <details>
 <summary>Each category contains up to 3 of the following actions:</summary>
 <ul>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followed.webp" height="20" width="20"> Currently following & unfollows the chosen user when pressed</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unfollowed.webp" height="20" width="20"> Currently not following & follows the chosen user when pressed</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notifications_activated.webp" height="20" width="20"> Notifications are active, pressing deactivates it</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notifications_deactivated.webp" height="20" width="20"> Notifications are not active, pressing activates it</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/included.webp" height="20" width="20"> Currently included & excludes Users/VODs from other categories & from AutoFollow</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Currently excluded & includes Users/VODs from other categories & from AutoFollow</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/delete.webp" height="20" width="20"> Deletes User/VOD from the Device (not Twitch)</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/export.webp" height="20" width="20"> Exports a VOD from Twitch to Youtube</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi.webp" height="20" width="20"> Start watching multiple streams at once on one screen</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk.webp" height="20" width="20"> Initiate lurking given streamer</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20"> Stop lurking chosen streamer</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host.webp" height="20" width="20"> Adds a streamer to the AutoHost list</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unhost.webp" height="20" width="20"> Removes a streamer from the AutoHost list</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/move.webp" height="20" width="20"> Moves a streamer to a different priority ranking</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/message.webp" height="20" width="20"> Opens a dialog to send a message to the chosen channels chat</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/send.webp" height="20" width="20"> Sends the message to channel chat</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20"> Starts the purchase flow for the respective item</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/cancel.webp" height="20" width="20"> Cancels the current action being taken</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/authorization.webp" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> Saves the current changes (if any have been made)</li>
-<li><img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20"> Signals that the purchase is not possible</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/followed.webp" height="20" width="20"> Currently following & unfollows the chosen user when pressed</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/unfollowed.webp" height="20" width="20"> Currently not following & follows the chosen user when pressed</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/notifications_activated.webp" height="20" width="20"> Notifications are active, pressing deactivates it</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/notifications_deactivated.webp" height="20" width="20"> Notifications are not active, pressing activates it</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/included.webp" height="20" width="20"> Currently included & excludes Users/VODs from other categories & from AutoFollow</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/excluded.webp" height="20" width="20"> Currently excluded & includes Users/VODs from other categories & from AutoFollow</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/delete.webp" height="20" width="20"> Deletes User/VOD from the Device (not Twitch)</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/export.webp" height="20" width="20"> Exports a VOD from Twitch to Youtube</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/multi.webp" height="20" width="20"> Start watching multiple streams at once on one screen</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/lurk.webp" height="20" width="20"> Initiate lurking given streamer</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20"> Stop lurking chosen streamer</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/host.webp" height="20" width="20"> Adds a streamer to the AutoHost list</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/unhost.webp" height="20" width="20"> Removes a streamer from the AutoHost list</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/move.webp" height="20" width="20"> Moves a streamer to a different priority ranking</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/message.webp" height="20" width="20"> Opens a dialog to send a message to the chosen channels chat</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/send.webp" height="20" width="20"> Sends the message to channel chat</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20"> Starts the purchase flow for the respective item</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/cancel.webp" height="20" width="20"> Cancels the current action being taken</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Refreshes the current view (if internet is available, a request for new data is sent to Twitch)</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/authorization.webp" height="20" width="20"> Logs out of StreamingYorkie & Twitch as well as deleting any data relating to your Twitch account</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> Saves the current changes (if any have been made)</li>
+<li><img src="/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20"> Signals that the purchase is not possible</li>
 </ul>
 </details>
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/followers_menu.webp" height="30" width="30">Followers, <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_menu.webp" height="30" width="30">Following & <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="30" width="30">F4F
+### <img src="/streaming_yorkie/src/main/res/drawable/followers_menu.webp" height="30" width="30">Followers, <img src="/streaming_yorkie/src/main/res/drawable/following_menu.webp" height="30" width="30">Following & <img src="/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="30" width="30">F4F
 
 Here you can see who you follow (a.k.a. *Following*), who follows you (a.k.a. *Followers*), who unfollowed you & an excluded list from the AutoFollow.
 
-New followers/following will be marked with a <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/new_button.webp" height="20" width="20"> on the top right of their logo
+New followers/following will be marked with a <img src="/streaming_yorkie/src/main/res/drawable/new_button.webp" height="20" width="20"> on the top right of their logo
 
 Click on the user logo to be redirected to their profile on Twitch.
 
@@ -261,7 +261,7 @@ The data can/will be refreshed on entering a menu, or changing a category
 
 An action-all button will appear on the bottom in cases where all user actions are the same.
 
-> **_Example:_** In F4F at the end of <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> or <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/following_nonfollowers.webp" height="20" width="20"> there is an option to **Follow/Unfollow all users** within the category.
+> **_Example:_** In F4F at the end of <img src="/streaming_yorkie/src/main/res/drawable/notfollowing_followers.webp" height="20" width="20"> or <img src="/streaming_yorkie/src/main/res/drawable/following_nonfollowers.webp" height="20" width="20"> there is an option to **Follow/Unfollow all users** within the category.
 
 Each Menu has its own exclusion list for view customization that do **not** reflect in other lists.
 
@@ -271,7 +271,7 @@ Once excluded from any **single** list, it will be excluded from *AutoFollow*.
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="30" width="30"> VODs
+### <img src="/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="30" width="30"> VODs
 
 Here VODs *(Videos On Demand)* that are currently available from your profile on Twitch.
 The title, game & creation date will be displayed with a preview image of the VOD as well.
@@ -289,18 +289,18 @@ A dialog will appear to edit any information such as:
 Exported VODs will be visible under the *Exported* menu category.
 VODs that are unavailable on Twitch & have been exported can be deleted.
 
-To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20">
+To *refresh* the view & send a new request press the refresh button <img src="/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20">
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi_menu.webp" height="30" width="30"> MultiView
+### <img src="/streaming_yorkie/src/main/res/drawable/multi_menu.webp" height="30" width="30"> MultiView
 
 Here you can watch multiple streams at once on one screen.
 
-Enter up to 4 channel names that are currently online and press the MultiView start button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/multi.webp" height="20" width="20">.
+Enter up to 4 channel names that are currently online and press the MultiView start button <img src="/streaming_yorkie/src/main/res/drawable/multi.webp" height="20" width="20">.
 The view has been optimized to fit any screen and utilize as much space as it can.
 
-A cast button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/cast.webp" height="20" width="20"> directs to the Mirror Cast settings on any device.
+A cast button <img src="/streaming_yorkie/src/main/res/drawable/cast.webp" height="20" width="20"> directs to the Mirror Cast settings on any device.
 
 The MultiView uses an external website [TwitchMultiView](https://lethalmaus.github.io/TwitchMultiView?channels=lethalmaus), designed and hosted by the same developer.
 
@@ -308,25 +308,25 @@ The soft keys can be seen either by swiping from the bottom up, or from the top 
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="30" width="30"> Lurk
+### <img src="/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="30" width="30"> Lurk
 
 Here you can lurk any live stream and add to their viewer count. Lurking helps other channels get higher on list to increase the chances of more viewers, followers, etc.
 
-Enter the channel name and to start lurking press the lurk button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk.webp" height="20" width="20">.
+Enter the channel name and to start lurking press the lurk button <img src="/streaming_yorkie/src/main/res/drawable/lurk.webp" height="20" width="20">.
 Channels that are being lurked will be shown in a table below the input bar.
 The channel picture will only be displayed if you are also currently following the channel.
 
 When a channel is being lurked, you will have the option to write to chat.
-Pressing the message button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/message.webp" height="20" width="20"> will open a dialog
-In the dialog, enter the message you would like to be sent then press the send button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/send.webp" height="20" width="20">
+Pressing the message button <img src="/streaming_yorkie/src/main/res/drawable/message.webp" height="20" width="20"> will open a dialog
+In the dialog, enter the message you would like to be sent then press the send button <img src="/streaming_yorkie/src/main/res/drawable/send.webp" height="20" width="20">
 This creates a temporary Bot with your name, sends the message & disconnects.
 
-To stop lurking a channel press the unlurk button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20">.
+To stop lurking a channel press the unlurk button <img src="/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20">.
 This will also stop it form being lurked automatically with AutoLurk.
 
-To include it in the AutoLurk, press the Lurk button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20"> when the user is offline.
+To include it in the AutoLurk, press the Lurk button <img src="/streaming_yorkie/src/main/res/drawable/unlurk.webp" height="20" width="20"> when the user is offline.
 
-To remove a channel from the list press the delete button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/delete.webp" height="20" width="20">.
+To remove a channel from the list press the delete button <img src="/streaming_yorkie/src/main/res/drawable/delete.webp" height="20" width="20">.
 
 Lurking starts a separate service which requires the **Overlay Permission**.
 An invisible browser is shown in the Overlay to make the browser think you are watching the stream (as a viewer would).
@@ -343,20 +343,20 @@ The notification only disappears once the service has ended.
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host_menu.webp" height="30" width="30"> Host
+### <img src="/streaming_yorkie/src/main/res/drawable/host_menu.webp" height="30" width="30"> Host
 
 Here you can add, remove and re-prioritize hosting streamers on your AutoHost list.
 
-Enter a channel name, then click the host button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/host.webp" height="20" width="20">.
+Enter a channel name, then click the host button <img src="/streaming_yorkie/src/main/res/drawable/host.webp" height="20" width="20">.
 If the user exists, they will be added at the bottom of the AutoHost list.
 
-Click <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/unhost.webp" height="20" width="20"> to remove them from the list.
+Click <img src="/streaming_yorkie/src/main/res/drawable/unhost.webp" height="20" width="20"> to remove them from the list.
 
-By holding <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/move.webp" height="20" width="20"> or the view in general, you can give the user a higher/lower priority in the list.
+By holding <img src="/streaming_yorkie/src/main/res/drawable/move.webp" height="20" width="20"> or the view in general, you can give the user a higher/lower priority in the list.
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/userinfo.webp" height="30" width="30"> User Info
+### <img src="/streaming_yorkie/src/main/res/drawable/userinfo.webp" height="30" width="30"> User Info
 
 This is an overview of the *User* who is currently logged in, that shows the following:
 + **Logo:** Your profile picture
@@ -372,24 +372,24 @@ This is an overview of the *User* who is currently logged in, that shows the fol
 
 Not all information can be shown unless 2FA (Two Factor Authentication) is activated and the user has streamed before.
 
-To *refresh* the view & send a new request press the refresh button <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20">
+To *refresh* the view & send a new request press the refresh button <img src="/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20">
 
 If you would like anything else to be displayed, or have the info display differently, [let me know](#contact).
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/info.webp" height="30" width="30"> Info
+### <img src="/streaming_yorkie/src/main/res/drawable/info.webp" height="30" width="30"> Info
 
 Here you can find external links, offline guides and more in relation to the Streaming Yorkie & its developer:
  
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/guide.webp" height="20" width="20"> Github link to ReadMe guide
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/help.webp" height="20" width="20"> Offline help guide
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Github link to Updates
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/sourcecode.webp" height="20" width="20"> Github link to the source code
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/contact.webp" height="20" width="20"> Github link to Contact
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/twitch.webp" height="20" width="20"> Link to developers stream
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/patreon.webp" height="20" width="20"> Membership
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/github.webp" height="20" width="20"> Projects
++ <img src="/streaming_yorkie/src/main/res/drawable/guide.webp" height="20" width="20"> Github link to ReadMe guide
++ <img src="/streaming_yorkie/src/main/res/drawable/help.webp" height="20" width="20"> Offline help guide
++ <img src="/streaming_yorkie/src/main/res/drawable/update.webp" height="20" width="20"> Github link to Updates
++ <img src="/streaming_yorkie/src/main/res/drawable/sourcecode.webp" height="20" width="20"> Github link to the source code
++ <img src="/streaming_yorkie/src/main/res/drawable/contact.webp" height="20" width="20"> Github link to Contact
++ <img src="/streaming_yorkie/src/main/res/drawable/twitch.webp" height="20" width="20"> Link to developers stream
++ <img src="/streaming_yorkie/src/main/res/drawable/patreon.webp" height="20" width="20"> Membership
++ <img src="/streaming_yorkie/src/main/res/drawable/github.webp" height="20" width="20"> Projects
 
 On the bottom of the screen, the current app version should be shown.
 
@@ -403,23 +403,23 @@ Tapping the *Developer Logo* **8** times will give you access to the app logs & 
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/shop.webp" height="30" width="30"> Shop
+### <img src="/streaming_yorkie/src/main/res/drawable/shop.webp" height="30" width="30"> Shop
 
 Here you can support Streaming Yorkie with either in-app purchases or subscriptions.
 
 Some items can be purchased multiple times. Only one subscription can be active at one given time.
 
-To purchase an item, click on <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20">
+To purchase an item, click on <img src="/streaming_yorkie/src/main/res/drawable/buy.webp" height="20" width="20">
 
-If an item is not available for purchase, it will be displayed with <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20">
+If an item is not available for purchase, it will be displayed with <img src="/streaming_yorkie/src/main/res/drawable/error.webp" height="20" width="20">
 
 Thank you for any purchases made and your continuous support regardless.
 
 ---
 
-### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/settings.webp" height="30" width="30"> Settings
+### <img src="/streaming_yorkie/src/main/res/drawable/settings.webp" height="30" width="30"> Settings
 
-#### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="30" width="30"> Autofollow
+#### <img src="/streaming_yorkie/src/main/res/drawable/f4f_menu.webp" height="30" width="30"> Autofollow
 
 Here you can configure the *AutoFollow* to run in the background.
 
@@ -432,7 +432,7 @@ Please be wary, due to a high battery consumption & inefficiency from other Apps
 
 + **Share F4F Status:** You can share that you are AutoFollowing to our Discord channel for others to know that when they follow you, they get followed back.
 
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a file.
++ <img src="/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a file.
 
 > **Warning**
 >
@@ -442,7 +442,7 @@ Please be wary, due to a high battery consumption & inefficiency from other Apps
 
 If you run into problems with the AutoFollow Service, deactivate it & [contact](#contact) me.
 
-#### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="30" width="30"> AutoVODExport
+#### <img src="/streaming_yorkie/src/main/res/drawable/vod_menu.webp" height="30" width="30"> AutoVODExport
 
 Here you can configure the *AutoVODExport* to run in the background.
 
@@ -455,9 +455,9 @@ We recommend you not to do it too often as it will affect unnecessary battery & 
 
 + **Split:** If the VODs should be split into 15 Min segments
 
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a file.
++ <img src="/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a file.
 
-#### <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="30" width="30"> AutoLurk
+#### <img src="/streaming_yorkie/src/main/res/drawable/lurk_menu.webp" height="30" width="30"> AutoLurk
 
 Here you can configure the *AutoLurk* to run in the background and Lurk streamers when they come online.
 This can take up to 15 minutes to activate.
@@ -470,7 +470,7 @@ This can take up to 15 minutes to activate.
 
 + **Message:** The message to be sent to the chat, if empty it defaults to '!lurk'
 
-+ <img src="https://github.com/LethalMaus/StreamingYorkie/blob/master/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a file.
++ <img src="/streaming_yorkie/src/main/res/drawable/save.webp" height="20" width="20"> **Save:** Once you are done and changes have been made, it will be saved locally as a file.
 
 ---
 
