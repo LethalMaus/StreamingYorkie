@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.lethalmaus.streaming_yorkie",
+    "sha256_cert_fingerprints":
+    ["A0:6D:F0:42:43:FA:CF:5B:0D:B4:A4:72:5C:76:44:5A:73:68:D3:70:C9:31:6B:2F:06:F4:6D:DF:41:65:91:3F"]
+  }
+}]
