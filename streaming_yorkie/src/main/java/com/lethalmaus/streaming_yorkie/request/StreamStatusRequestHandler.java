@@ -82,6 +82,7 @@ public class StreamStatusRequestHandler extends RequestHandler {
                     }
                     for (int i = 0; i < response.getJSONArray("data").length(); i++) {
                         String userName = response.getJSONArray("data").getJSONObject(i).getString("user_name");
+                        String userId = response.getJSONArray("data").getJSONObject(i).getString("user_id");
                         new LurkRequestHandler(weakActivity, weakContext, recyclerView) {
                             @Override
                             public void onCompletion(boolean showProgress) {
@@ -95,7 +96,7 @@ public class StreamStatusRequestHandler extends RequestHandler {
                                 }
                             }
                         }.newRequest(userName.toLowerCase()).initiate().sendRequest(false);
-                        userIds.remove(userID);
+                        userIds.remove(userId);
                     }
                     for (int i = 0; i < userIds.size(); i++) {
                         LurkEntity lurk = streamingYorkieDB.lurkDAO().getLurkByChannelId(userIds.get(i));

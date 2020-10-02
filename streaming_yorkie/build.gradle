@@ -14,8 +14,8 @@ android {
         applicationId 'com.lethalmaus.streaming_yorkie'
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 34
-        versionName "2.3.0-a"
+        versionCode 35
+        versionName "2.3.1-a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {

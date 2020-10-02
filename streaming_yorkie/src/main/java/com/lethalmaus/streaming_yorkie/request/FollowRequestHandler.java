@@ -71,59 +71,54 @@ public class FollowRequestHandler extends RequestHandler {
 
     @Override
     public void responseHandler(final JSONObject response) {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    if (response != null && !response.toString().equals("") && requestMethod != Request.Method.DELETE) {
-                        String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
-                        if (timestamp.isEmpty()) {
-                            timestamp = "0";
-                        }
-                        FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONObject("channel").getString("_id")),
-                                response.getJSONObject("channel").getString("display_name"),
-                                response.getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
-                                response.getString("created_at"),
-                                response.getBoolean("notifications"),
-                                Long.parseLong(timestamp));
-                        FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
-                        if (existingFollowingEntity != null) {
-                            if (existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
-                                followingEntity.setStatus("EXCLUDED");
-                            } else {
-                                followingEntity.setStatus("CURRENT");
-                            }
-                            streamingYorkieDB.followingDAO().updateUser(followingEntity);
+        new Thread(() -> {
+            try {
+                if (response != null && !response.toString().equals("") && requestMethod != Request.Method.DELETE) {
+                    String timestamp = new ReadFileHandler(weakActivity, weakContext, "FOLLOWING_TIMESTAMP").readFile();
+                    if (timestamp.isEmpty()) {
+                        timestamp = "0";
+                    }
+                    FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONObject("channel").getString("_id")),
+                            response.getJSONObject("channel").getString("display_name"),
+                            response.getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
+                            response.getString("created_at"),
+                            response.getBoolean("notifications"),
+                            Long.parseLong(timestamp), 0);
+                    FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
+                    if (existingFollowingEntity != null) {
+                        if (existingFollowingEntity.getStatus().contentEquals("EXCLUDED")
+                                && existingFollowingEntity.getExcludeUntil() > System.currentTimeMillis()) {
+                            followingEntity.setStatus("EXCLUDED");
                         } else {
-                            followingEntity.setStatus("NEW");
-                            streamingYorkieDB.followingDAO().insertUser(followingEntity);
+                            followingEntity.setStatus("CURRENT");
                         }
-                    } else {
-                        String followingCountString = new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile();
-                        if (!followingCountString.isEmpty()) {
-                            int followingCount = Integer.parseInt(followingCountString);
-                            new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(followingCount - 1), false).writeToFileOrPath();
-                        }
-
-                        FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(followId);
-                        if (!followingEntity.getStatus().contentEquals("EXCLUDED")) {
-                            followingEntity.setStatus("UNFOLLOWED");
-                        }
-                        followingEntity.setLast_updated(System.currentTimeMillis());
                         streamingYorkieDB.followingDAO().updateUser(followingEntity);
+                    } else {
+                        followingEntity.setStatus("NEW");
+                        streamingYorkieDB.followingDAO().insertUser(followingEntity);
                     }
-                    onCompletion(true);
-                } catch (JSONException e) {
-                    if (weakActivity != null && weakActivity.get() != null) {
-                        weakActivity.get().runOnUiThread(
-                                new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
+                } else {
+                    String followingCountString = new ReadFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT").readFile();
+                    if (!followingCountString.isEmpty()) {
+                        int followingCount = Integer.parseInt(followingCountString);
+                        new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(followingCount - 1), false).writeToFileOrPath();
                     }
-                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Follow response error | " + e.toString(), true).run();
+
+                    FollowingEntity followingEntity = streamingYorkieDB.followingDAO().getUserById(followId);
+                    if (!followingEntity.getStatus().contentEquals("EXCLUDED")) {
+                        followingEntity.setStatus("UNFOLLOWED");
+                    }
+                    followingEntity.setLast_updated(System.currentTimeMillis());
+                    streamingYorkieDB.followingDAO().updateUser(followingEntity);
                 }
+                onCompletion(true);
+            } catch (JSONException e) {
+                if (weakActivity != null && weakActivity.get() != null) {
+                    weakActivity.get().runOnUiThread(
+                            () -> Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
+                    );
+                }
+                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Follow response error | " + e.toString(), true).run();
             }
         }).start();
     }
@@ -135,10 +130,8 @@ public class FollowRequestHandler extends RequestHandler {
                 String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
                 return Response.success(
                         new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
-            } catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException | JSONException e) {
                 return Response.error(new ParseError(e));
-            } catch (JSONException je) {
-                return Response.error(new ParseError(je));
             }
         } else {
             return Response.success(null, HttpHeaderParser.parseCacheHeaders(response));
@@ -149,11 +142,7 @@ public class FollowRequestHandler extends RequestHandler {
     protected void offlineResponseHandler() {
         if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
             weakActivity.get().runOnUiThread(
-                    new Runnable() {
-                        public void run() {
-                            Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    () -> Toast.makeText(weakActivity.get(), "Cannot change FollowingEntity preferences when offline", Toast.LENGTH_SHORT).show()
             );
         }
     }

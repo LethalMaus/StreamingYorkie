@@ -6,6 +6,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.lethalmaus.streaming_yorkie.entity.F4FEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.entity.UserEntity;
 
 /**
@@ -19,10 +21,10 @@ public interface F4FDAO {
      * Get Follow4Follow UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return UserEntity
+     * @return FollowerEntity
      */
     @Query("SELECT * FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    UserEntity getFollow4FollowUserByPosition(int offset);
+    FollowerEntity getFollow4FollowUserByPosition(int offset);
 
     /**
      * Get Follow4Follow UserEntity count
@@ -36,18 +38,18 @@ public interface F4FDAO {
      * Get Followed_NotFollowing UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return UserEntity
+     * @return FollowerEntity
      */
     @Query("SELECT * FROM follower WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    UserEntity getFollowedNotFollowingUserByPosition(int offset);
+    FollowerEntity getFollowedNotFollowingUserByPosition(int offset);
 
     /**
      * Get Followed_NotFollowing UserEntity for AutoFollow
      * @author LethalMaus
-     * @return UserEntity
+     * @return FollowerEntity
      */
     @Query("SELECT * FROM follower WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') AND id NOT IN (SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1")
-    UserEntity getFollowedNotFollowingUserForAutoFollow();
+    FollowerEntity getFollowedNotFollowingUserForAutoFollow();
 
     /**
      * Get Followed_NotFollowing UserEntity count
@@ -61,18 +63,18 @@ public interface F4FDAO {
      * Get NotFollowed_Following UserEntity by position
      * @author LethalMaus
      * @param offset int
-     * @return UserEntity
+     * @return FollowingEntity
      */
     @Query("SELECT * FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    UserEntity getNotFollowedFollowingUserByPosition(int offset);
+    FollowingEntity getNotFollowedFollowingUserByPosition(int offset);
 
     /**
      * Get NotFollowed_Following UserEntity for AutoFollow
      * @author LethalMaus
-     * @return UserEntity
+     * @return FollowingEntity
      */
     @Query("SELECT * FROM following WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') AND id NOT IN (SELECT id FROM follower WHERE status NOT LIKE 'UNFOLLOWED') AND id NOT IN (SELECT id FROM f4f_excluded) ORDER BY created_at DESC LIMIT 1")
-    UserEntity getNotFollowedFollowingUserForAutoFollow();
+    FollowingEntity getNotFollowedFollowingUserForAutoFollow();
 
     /**
      * Get NotFollowed_Following UserEntity count

@@ -1,6 +1,7 @@
 package com.lethalmaus.streaming_yorkie.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,11 +11,14 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.FollowingEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
+import com.lethalmaus.streaming_yorkie.request.FollowRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.PurchaseMadeRequestHandler;
 import com.lethalmaus.streaming_yorkie.request.UserRequestHandler;
 import com.lethalmaus.streaming_yorkie.worker.AutoFollowWorker;
@@ -25,6 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -52,27 +57,27 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         Globals.createNotificationChannel(new WeakReference<>(getApplicationContext()), Globals.LURKSERVICE_NOTIFICATION_CHANNEL_ID, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_NAME, Globals.LURKSERVICE_NOTIFICATION_CHANNEL_DESCRIPTION);
 
         findViewById(R.id.menu_followers).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Followers.class))
+                startActivity(new Intent(MainActivity.this, Followers.class))
         );
 
         findViewById(R.id.menu_following).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Following.class))
+                startActivity(new Intent(MainActivity.this, Following.class))
         );
 
         findViewById(R.id.menu_f4f).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Follow4Follow.class))
+                startActivity(new Intent(MainActivity.this, Follow4Follow.class))
         );
 
         findViewById(R.id.menu_vod).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, VODs.class))
+                startActivity(new Intent(MainActivity.this, VODs.class))
         );
 
         findViewById(R.id.menu_multi).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, MultiView.class))
+                startActivity(new Intent(MainActivity.this, MultiView.class))
         );
 
         findViewById(R.id.menu_lurk).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Lurk.class))
+                startActivity(new Intent(MainActivity.this, Lurk.class))
         );
 
         findViewById(R.id.menu_host).setOnClickListener((View v) ->
@@ -80,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         );
 
         findViewById(R.id.menu_userinfo).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Channel.class))
+                startActivity(new Intent(MainActivity.this, Channel.class))
         );
 
         findViewById(R.id.menu_shop).setOnClickListener((View v) ->
@@ -88,12 +93,48 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         );
 
         findViewById(R.id.menu_info).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, Info.class))
+                startActivity(new Intent(MainActivity.this, Info.class))
         );
 
         findViewById(R.id.menu_settings).setOnClickListener((View v) ->
-            startActivity(new Intent(MainActivity.this, SettingsMenu.class))
+                startActivity(new Intent(MainActivity.this, SettingsMenu.class))
         );
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    /**
+     * Method for handling intents for deep linking
+     * @param intent Intent
+     */
+    private void handleIntent(Intent intent) {
+        String appLinkAction = intent.getAction();
+        Uri appLinkData = intent.getData();
+        if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null) {
+            String user = appLinkData.getLastPathSegment();
+            if (user != null) {
+                int userId = Integer.parseInt(user);
+                new Thread(() -> new FollowRequestHandler(new WeakReference<>(this), new WeakReference<>(getApplicationContext())) {
+                    @Override
+                    public void onCompletion(boolean hideProgressBar) {
+                        super.onCompletion(false);
+                        String excludeParam = appLinkData.getQueryParameter("exclude");
+                        if (excludeParam != null) {
+                            long excludeUntil = (Long.parseLong(excludeParam) * 60 * 1000) + System.currentTimeMillis();
+                            StreamingYorkieDB streamingYorkieDB = StreamingYorkieDB.getInstance(getApplicationContext());
+                            FollowingEntity userEntity = streamingYorkieDB.followingDAO().getUserById(userId);
+                            userEntity.setExcludeUntil(excludeUntil);
+                            userEntity.setStatus("EXCLUDED");
+                            streamingYorkieDB.followingDAO().updateUser(userEntity);
+                        }
+                    }
+                }.setRequestParameters(Request.Method.PUT, userId, false).sendRequest(false)).start();
+            }
+        }
     }
 
     @Override
@@ -115,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         billingClient = BillingClient.newBuilder(this).setListener(this).enablePendingPurchases().build();
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
-            public void onBillingSetupFinished(BillingResult billingResult) {
+            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && billingClient.isReady()) {
                     checkForActiveSubs();
                     checkPurchaseHistory(BillingClient.SkuType.INAPP, false);
@@ -183,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
      * @param purchaseType subs or in-app
      * @param checkedBoth stops loop after both types are checked
      */
-    private void checkPurchaseHistory(String purchaseType, Boolean checkedBoth) {
+    private void checkPurchaseHistory(String purchaseType, boolean checkedBoth) {
         if (!new File(getFilesDir().toString() + File.separator + Globals.FILE_SUPPORTER).exists()) {
             billingClient.queryPurchaseHistoryAsync(purchaseType, (BillingResult billingResult, List<PurchaseHistoryRecord> purchasesList) -> {
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK

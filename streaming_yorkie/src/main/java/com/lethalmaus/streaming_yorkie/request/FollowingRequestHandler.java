@@ -68,10 +68,12 @@ public class FollowingRequestHandler extends RequestHandler {
                                     response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
                                     response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
                                     response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
-                                    timestamp);
+                                    timestamp, 0);
                             FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
                             if (existingFollowingEntity != null) {
-                                if (existingFollowingEntity.getStatus() != null && existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
+                                if (existingFollowingEntity.getStatus() != null
+                                        && existingFollowingEntity.getStatus().contentEquals("EXCLUDED")
+                                        && existingFollowingEntity.getExcludeUntil() > System.currentTimeMillis()) {
                                     followingEntity.setStatus("EXCLUDED");
                                 } else {
                                     followingEntity.setStatus("CURRENT");

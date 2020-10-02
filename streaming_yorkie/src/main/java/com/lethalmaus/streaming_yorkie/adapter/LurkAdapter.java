@@ -199,7 +199,7 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                     dialog.findViewById(R.id.dialog_send).setOnClickListener((View view) -> {
                         EditText editText = dialog.findViewById(R.id.dialog_message);
                         if (!editText.getText().toString().trim().isEmpty()) {
-                            lurkAdapter.sendLurkMessage(lurk.getChannelName().toLowerCase(), editText.getText().toString());
+                            sendLurkMessage(lurk.getChannelName().toLowerCase(), editText.getText().toString());
                             dialog.dismiss();
                         }
                     });
@@ -227,6 +227,65 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
                         }
                     }.start()
             );
+        }
+
+        /**
+         * Method for sending a message to the lurked channel chat
+         * @author LethalMaus
+         * @param channel String channel name
+         * @param message String message to be sent
+         */
+        private void sendLurkMessage(String channel, String message) {
+            new Thread() {
+                @Override
+                public void run() {
+                    if (new File(weakActivity.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
+                        String token = new ReadFileHandler(null, new WeakReference<>(weakContext.get()), "TOKEN").readFile();
+                        ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
+                        if (channelEntity != null) {
+                            Configuration configuration = new Configuration.Builder()
+                                    .setAutoNickChange(false)
+                                    .setOnJoinWhoEnabled(false)
+                                    .setCapEnabled(true)
+                                    .addCapHandler(new EnableCapHandler("twitch.tv/membership"))
+                                    .addServer("irc.twitch.tv")
+                                    .setName(channelEntity.getDisplay_name())
+                                    .setServerPassword("oauth:" + token)
+                                    .addAutoJoinChannel("#" + channel)
+                                    .addListener(new ListenerAdapter() {})
+                                    .buildConfiguration();
+                            PircBotX bot = new PircBotX(configuration);
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        bot.startBot();
+                                    } catch (Exception e) {
+                                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error starting chat: " + e.toString(), true).run();
+                                    }
+                                }
+                            }.start();
+                            try {
+                                //Wait for bot to start as the above method blocks the thread
+                                Thread.sleep(1000);
+                                if (bot.isConnected()) {
+                                    bot.sendIRC().message("#" + channel, message);
+                                    if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
+                                        weakActivity.get().runOnUiThread(() ->
+                                                Toast.makeText(weakActivity.get(), "Message sent", Toast.LENGTH_SHORT).show()
+                                        );
+                                    }
+                                }
+                            } catch (Exception e) {
+                                new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error sending to chat: " + e.toString(), true).run();
+                            } finally {
+                                bot.stopBotReconnect();
+                                bot.close();
+                            }
+                        }
+                    }
+                }
+            }.start();
         }
     }
 
@@ -280,7 +339,8 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
      */
     public void datasetChanged(boolean updateViewOnly) {
         if (!updateViewOnly) {
-            new Thread(){
+            new Thread() {
+                @Override
                 public void run() {
                     setLurkCount();
                     if (streamingYorkieDB.lurkDAO().getChannelsToBeLurkedCount() > 0) {
@@ -301,62 +361,5 @@ public class LurkAdapter extends RecyclerView.Adapter<LurkAdapter.LurkViewHolder
     private void setLurkCount() {
         lurkCount = streamingYorkieDB.lurkDAO().getLurkCount();
         weakRecyclerView.get().post(LurkAdapter.this::notifyDataSetChanged);
-    }
-
-    /**
-     * Method for sending a message to the lurked channel chat
-     * @author LethalMaus
-     * @param channel String channel name
-     * @param message String message to be sent
-     */
-    private void sendLurkMessage(String channel, String message) {
-        new Thread() {
-            public void run() {
-                if (new File(weakActivity.get().getFilesDir().toString() + File.separator + "TOKEN").exists()) {
-                    String token = new ReadFileHandler(null, new WeakReference<>(weakContext.get()), "TOKEN").readFile();
-                    ChannelEntity channelEntity = streamingYorkieDB.channelDAO().getChannel();
-                    if (channelEntity != null) {
-                        Configuration configuration = new Configuration.Builder()
-                                .setAutoNickChange(false)
-                                .setOnJoinWhoEnabled(false)
-                                .setCapEnabled(true)
-                                .addCapHandler(new EnableCapHandler("twitch.tv/membership"))
-                                .addServer("irc.twitch.tv")
-                                .setName(channelEntity.getDisplay_name())
-                                .setServerPassword("oauth:" + token)
-                                .addAutoJoinChannel("#" + channel)
-                                .addListener(new ListenerAdapter() {})
-                                .buildConfiguration();
-                        PircBotX bot = new PircBotX(configuration);
-                        new Thread() {
-                            public void run() {
-                                try {
-                                    bot.startBot();
-                                } catch (Exception e) {
-                                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error starting chat: " + e.toString(), true).run();
-                                }
-                            }
-                        }.start();
-                        try {
-                            //Wait for bot to start as the above method blocks the thread
-                            Thread.sleep(1000);
-                            if (bot.isConnected()) {
-                                bot.sendIRC().message("#" + channel, message);
-                                if (weakActivity != null && weakActivity.get() != null && !weakActivity.get().isDestroyed() && !weakActivity.get().isFinishing()) {
-                                    weakActivity.get().runOnUiThread(() ->
-                                            Toast.makeText(weakActivity.get(), "Message sent", Toast.LENGTH_SHORT).show()
-                                    );
-                                }
-                            }
-                        } catch (Exception e) {
-                            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error sending to chat: " + e.toString(), true).run();
-                        } finally {
-                            bot.stopBotReconnect();
-                            bot.close();
-                        }
-                    }
-                }
-            }
-        }.start();
     }
 }
