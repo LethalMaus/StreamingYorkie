@@ -127,10 +127,22 @@ Click on one of the images below to be redirected a designated site.
 
 ## Shout-outs
 
-A big thank you to for going out of their way to support Streaming Yorkie goes out to:
+A big thank you to you all for going out of your way supporting Streaming Yorkie. Whether it's bug reporting, feature requests, promoting or in-app purchases, your contribution is highly appreciated.
 
-+ [Werwuermchen](https://www.twitch.tv/werwuermchen) & [biaxxation](https://www.twitch.tv/biaxxation)
-+ [techno17ad](https://www.twitch.tv/techno17ad)
+<table>
+  <tr>
+    <td><a href="https://www.twitch.tv/werwuermchen">Werwuermchen</a></td>
+    <td><a href="https://www.twitch.tv/biaxxation">biaxxation</a></td>
+    <td><a href="https://www.twitch.tv/techno17ad">techno17ad</a></td>
+    <td><a href="https://www.twitch.tv/smokeywoodz">SMOKEYWOODZ</a></td>
+    <td><a href="https://www.twitch.tv/rhexisgaming">Rhexisgaming</a></td>
+    <td><a href="https://www.twitch.tv/killmonka1997">KILLMONKA1997</a></td>
+  </tr>
+  <tr>
+    <td><a href="https://www.twitch.tv/gamingwithak47">gamingwithak47</a></td>
+    <td><a href="https://www.twitch.tv/graspingguiter01">graspingguiter01</a></td>
+  </tr>
+</table>
 
 ---
 
@@ -479,6 +491,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.3.1-a](#231-a)
 + [2.3.0-a](#230-a)
 + [2.2.2-a](#222-a)
 + [2.2.1-a](#221-a)
@@ -497,6 +510,21 @@ This can take up to 15 minutes to activate.
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+---
+
+### 2.3.1-a
+
+<details>
+<summary>Bug fixes & minor improvements</summary>
+
+Improvements:
++   Deep linking for easier following on discord
+
+Issues fixed:
++   Follower/following bug
+
+</details>
 
 ---
 

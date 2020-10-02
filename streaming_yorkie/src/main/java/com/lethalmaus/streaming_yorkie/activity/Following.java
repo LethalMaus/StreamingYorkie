@@ -27,15 +27,15 @@ public class Following extends FollowParent {
         findViewById(R.id.count1).setVisibility(View.GONE);
 
         final ImageButton currentButton = findViewById(R.id.page2);
-        currentButton.setOnClickListener(View ->
+        currentButton.setOnClickListener(view ->
                 pageButtonListenerAction(currentButton, "Current", daoType, "CURRENT", Globals.EXCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
         );
         final ImageButton unfollowedButton = findViewById(R.id.page3);
-        unfollowedButton.setOnClickListener(View ->
+        unfollowedButton.setOnClickListener(view ->
                 pageButtonListenerAction(unfollowedButton, "Unfollowed", daoType, "UNFOLLOWED", Globals.DELETE_BUTTON, Globals.EXCLUDE_BUTTON)
         );
         final ImageButton exclusionsButton = findViewById(R.id.page4);
-        exclusionsButton.setOnClickListener(View ->
+        exclusionsButton.setOnClickListener(view ->
                 pageButtonListenerAction(exclusionsButton, "Excluded", daoType, "EXCLUDED", Globals.INCLUDE_BUTTON, Globals.NOTIFICATIONS_BUTTON)
         );
         requestHandler = new FollowingUpdateRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView));

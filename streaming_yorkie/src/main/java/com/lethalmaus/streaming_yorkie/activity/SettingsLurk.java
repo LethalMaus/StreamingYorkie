@@ -116,11 +116,7 @@ public class SettingsLurk extends AppCompatActivity {
     private void serviceActivationSwitch() {
         Switch autoLurkActivation = findViewById(R.id.settings_autolurk_activation);
         try {
-            if (settings.getString(Globals.SETTINGS_AUTOLURK).equals(Globals.SETTINGS_OFF)) {
-                autoLurkActivation.setChecked(false);
-            } else {
-                autoLurkActivation.setChecked(true);
-            }
+            autoLurkActivation.setChecked(settings.getString(Globals.SETTINGS_AUTOLURK).equals(Globals.SETTINGS_OFF));
         } catch(JSONException e) {
             Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK + getString(R.string.pipe) + e.toString(), true).run();

@@ -36,16 +36,16 @@ public class MultiView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.multi_view);
 
-        ImageView multi_start = findViewById(R.id.multi_start);
-        multi_start.setOnClickListener((View v) -> {
+        ImageView multiStart = findViewById(R.id.multi_start);
+        multiStart.setOnClickListener((View v) -> {
             if (RequestHandler.networkIsAvailable(new WeakReference<>(getApplicationContext()))) {
                 getChannels();
                 if (!channels.isEmpty()) {
                     findViewById(R.id.multi_input).setVisibility(View.GONE);
-                    WebView multi_view = findViewById(R.id.multi_view);
-                    multi_view.setVisibility(View.VISIBLE);
-                    multi_view.getSettings().setJavaScriptEnabled(true);
-                    multi_view.loadUrl("https://lethalmaus.github.io/TwitchMultiView/?channels=" + channels.replaceAll("\\s", ""));
+                    WebView multiView = findViewById(R.id.multi_view);
+                    multiView.setVisibility(View.VISIBLE);
+                    multiView.getSettings().setJavaScriptEnabled(true);
+                    multiView.loadUrl("https://lethalmaus.github.io/TwitchMultiView/?channels=" + channels.replaceAll("\\s", ""));
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().hide();
                     }
@@ -79,10 +79,10 @@ public class MultiView extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        WebView multi_view = findViewById(R.id.multi_view);
-        if (multi_view.getVisibility() == View.VISIBLE) {
-            multi_view.setVisibility(View.GONE);
-            multi_view.loadUrl("about:blank");
+        WebView multiView = findViewById(R.id.multi_view);
+        if (multiView.getVisibility() == View.VISIBLE) {
+            multiView.setVisibility(View.GONE);
+            multiView.loadUrl("about:blank");
             findViewById(R.id.multi_input).setVisibility(View.VISIBLE);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().show();

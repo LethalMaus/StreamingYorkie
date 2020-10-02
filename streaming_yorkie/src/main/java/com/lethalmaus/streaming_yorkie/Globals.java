@@ -440,7 +440,7 @@ public class Globals {
      * @param weakReference weak reference
      * @return boolean if usable
      */
-    public static boolean checkWeakReference(WeakReference weakReference) {
+    public static boolean checkWeakReference(WeakReference<?> weakReference) {
         return weakReference != null && weakReference.get() != null;
     }
 }

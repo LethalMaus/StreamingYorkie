@@ -69,8 +69,8 @@ public class Lurk extends AppCompatActivity {
                 lurkAdapter.datasetChanged(false)
         );
 
-        ImageView lurk_start = findViewById(R.id.lurk_start);
-        lurk_start.setOnClickListener((View v) -> {
+        ImageView lurkStart = findViewById(R.id.lurk_start);
+        lurkStart.setOnClickListener((View v) -> {
                     if (SystemClock.elapsedRealtime() - mLastClickTime > 5000) {
                         mLastClickTime = SystemClock.elapsedRealtime();
                         EditText channelInput = findViewById(R.id.lurk_input);
@@ -81,6 +81,7 @@ public class Lurk extends AppCompatActivity {
                             String channelInputText = channelInput.getText().toString().replaceAll("\\s", "");
                             channelInput.setText("");
                             new Thread() {
+                                @Override
                                 public void run() {
                                     LurkDAO lurkDAO = StreamingYorkieDB.getInstance(getApplicationContext()).lurkDAO();
                                     lurkDAO.insertLurk(new LurkEntity(channelInputText, 0, null, null, null, true, true));
@@ -116,7 +117,7 @@ public class Lurk extends AppCompatActivity {
         Globals.onBackPressed(this);
     }
 
-    public final static int REQUEST_CODE = 6421;
+    public static final int REQUEST_CODE = 6421;
 
     /**
      * Checks for permission for the Lurk Service
@@ -134,11 +135,9 @@ public class Lurk extends AppCompatActivity {
     @RequiresApi(23)
     @Override
     protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
-        if (requestCode == REQUEST_CODE) {
-            if (!Settings.canDrawOverlays(this)) {
-                Toast.makeText(this, "Cannot Lurk without permission", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        if (requestCode == REQUEST_CODE && !Settings.canDrawOverlays(this)) {
+            Toast.makeText(this, "Cannot Lurk without permission", Toast.LENGTH_SHORT).show();
+            finish();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

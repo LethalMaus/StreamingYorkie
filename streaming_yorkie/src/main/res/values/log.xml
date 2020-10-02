@@ -8,4 +8,7 @@
     <string name="error_reading_lurk_settings">Error reading Lurk settings</string>
     <string name="error_creating_lurk_settings">Error creating Lurk settings</string>
     <string name="error_changing_lurk_settings">Error changing Lurk settings</string>
+    <string name="error_reading_vod_settings">Error reading VOD settings</string>
+    <string name="error_creating_vod_settings">Error creating VOD settings</string>
+    <string name="error_changing_vod_settings">Error changing VOD settings</string>
 </resources>

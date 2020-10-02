@@ -45,7 +45,7 @@ public interface FollowingDAO {
      * @return UserEntity
      */
     @Query("SELECT * FROM following WHERE (status LIKE 'NEW' OR status LIKE 'CURRENT') ORDER BY created_at DESC LIMIT 1 OFFSET :offset")
-    FollowerEntity getCurrentUserByPosition(int offset);
+    FollowingEntity getCurrentUserByPosition(int offset);
 
     /**
      * Gets all Users who haven't changed last_updated and don't contain the status 'EXCLUDED'
@@ -62,7 +62,7 @@ public interface FollowingDAO {
      * @param last_updated Long of when it was last updated
      * @return Array of UserEntity Ids
      */
-    @Query("SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND last_updated == :last_updated ORDER BY created_at DESC LIMIT " + Globals.USER_UPDATE_REQUEST_LIMIT)
+    @Query("SELECT id FROM following WHERE status NOT LIKE 'UNFOLLOWED' AND last_updated >= :last_updated ORDER BY created_at DESC LIMIT " + Globals.USER_UPDATE_REQUEST_LIMIT)
     int[] getLastUsers(Long last_updated);
 
     /**

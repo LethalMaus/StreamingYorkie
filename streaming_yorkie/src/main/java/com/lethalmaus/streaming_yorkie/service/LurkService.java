@@ -210,7 +210,7 @@ public class LurkService extends Service {
                     channelNames.append(prefix);
                     prefix = ", ";
                     channelNames.append(lurk.getChannelName());
-                    activateChatBot(lurk.getChannelName(), informChannel && !lurk.isChannelInformedOfLurk());
+                    activateChatBot(lurk.getChannelName().toLowerCase(), informChannel && !lurk.isChannelInformedOfLurk());
                     lurk.setChannelInformedOfLurk(true);
                     streamingYorkieDB.lurkDAO().updateLurk(lurk);
                 }
@@ -351,8 +351,7 @@ public class LurkService extends Service {
                                 .setName(channelEntity.getDisplay_name())
                                 .setServerPassword("oauth:" + token)
                                 .addAutoJoinChannel("#" + channel.toLowerCase())
-                                .addListener(new ListenerAdapter() {
-                                })
+                                .addListener(new ListenerAdapter() {})
                                 .buildConfiguration();
                         try (PircBotX bot = new PircBotX(configuration)) {
                             new Thread() {
@@ -368,9 +367,13 @@ public class LurkService extends Service {
                             }.start();
                             if (sendMessage) {
                                 //Wait for bot to start as the above method blocks the thread
+                                Thread.sleep(1000);
                                 if (bot.isConnected()) {
-                                    Thread.sleep(1000);
-                                    bot.sendIRC().message("#" + channel, message);
+                                    try {
+                                        bot.sendIRC().message("#" + channel, message);
+                                    } catch (Exception e) {
+                                        new WriteFileHandler(null, new WeakReference<>(getApplicationContext()), Globals.FILE_ERROR, null, "Error sending message: " + e.toString(), true).run();
+                                    }
                                 }
                             }
                         } catch (Exception e) {
