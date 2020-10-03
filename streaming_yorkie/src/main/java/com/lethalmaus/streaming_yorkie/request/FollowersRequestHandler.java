@@ -53,7 +53,9 @@ public class FollowersRequestHandler extends RequestHandler {
         new Thread() {
             public void run() {
                 try {
-                    cursor = response.getString("_cursor");
+                    if (response.has("_cursor")) {
+                        cursor = response.getString("_cursor");
+                    }
                     if (twitchTotal == 0) {
                         twitchTotal = response.getInt("_total");
                     }
