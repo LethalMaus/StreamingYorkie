@@ -6,6 +6,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="56dp">
+
+        <ImageButton
+            android:id="@+id/page1"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="2dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/category"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/host_menu" />
+
+        <ImageButton
+            android:id="@+id/page2"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="2dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/category"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/search" />
+    </LinearLayout>
+
     <ImageButton
         android:id="@+id/hostButton"
         android:layout_width="50dp"
@@ -16,8 +52,9 @@
         android:contentDescription="@string/menu_host"
         android:cropToPadding="false"
         android:scaleType="centerInside"
+        app:tint="#06f100"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:srcCompat="@drawable/host" />
 
     <EditText
@@ -34,7 +71,7 @@
         android:textColor="#313131"
         app:layout_constraintEnd_toStartOf="@+id/hostButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:targetApi="o" />
 
     <androidx.recyclerview.widget.RecyclerView

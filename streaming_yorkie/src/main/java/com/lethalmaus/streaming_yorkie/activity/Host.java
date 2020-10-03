@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,6 +48,8 @@ public class Host extends AppCompatActivity implements StartDragListener {
     protected RecyclerView recyclerView;
     protected RecyclerView.LayoutManager layoutManager;
     private ItemTouchHelper touchHelper;
+    private EditText input;
+    private ImageView inputAction;
 
     //Timer between clicks to prevent multiple requests
     private long mLastClickTime = 0;
@@ -62,17 +65,65 @@ public class Host extends AppCompatActivity implements StartDragListener {
             getSupportActionBar().setSubtitle("Auto Host List");
         }
 
+        input = findViewById(R.id.hostInput);
+        inputAction = findViewById(R.id.hostButton);
+
         recyclerView = findViewById(R.id.hostList);
         this.weakRecyclerView =  new WeakReference<>(recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+        final ImageButton autoHostButton = findViewById(R.id.page1);
+        autoHostButton.setOnClickListener(view -> {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime > 3000) {
+                        mLastClickTime = SystemClock.elapsedRealtime();
+                        setupAutoHost();
+                    }
+                }
+        );
+        final ImageButton searchButton = findViewById(R.id.page2);
+        searchButton.setOnClickListener(view ->
+                {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime > 3000) {
+                        mLastClickTime = SystemClock.elapsedRealtime();
+                        setupAutoHostSearch();
+                    }
+                }
+        );
+
         final HostAdapter hostAdapter = new HostAdapter(weakActivity, weakContext, weakRecyclerView, new ArrayList<>(), this);
         recyclerView.setAdapter(hostAdapter);
         ItemTouchHelper.Callback callback = new ItemMoveCallback(hostAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerView);
+        setupAutoHost();
+    }
 
+    private void setupAutoHostSearch() {
+        //TODO
+        //Load current list
+        findViewById(R.id.page1).setBackgroundResource(0);
+        findViewById(R.id.page2).setBackgroundResource(R.drawable.highlight_page_button);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle("Who auto hosts me?");
+        }
+        inputAction.setImageResource(R.drawable.search);
+        inputAction.setOnClickListener((View v) -> {
+            handleSearch(input);
+        });
+    }
+
+    private void setupAutoHost() {
+        findViewById(R.id.page2).setBackgroundResource(0);
+        findViewById(R.id.page1).setBackgroundResource(R.drawable.highlight_page_button);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle("Auto Host List");
+        }
+        inputAction.setImageResource(R.drawable.host);
+        inputAction.setOnClickListener((View v) -> {
+            handleNewHost(input);
+        });
         new Thread() {
             @Override
             public void run() {
@@ -82,12 +133,10 @@ public class Host extends AppCompatActivity implements StartDragListener {
                 }
             }
         }.start();
+    }
 
-        EditText hostInput = findViewById(R.id.hostInput);
-        ImageView newHost = findViewById(R.id.hostButton);
-        newHost.setOnClickListener((View v) -> {
-            handleNewHost(hostInput);
-        });
+    private void handleSearch(EditText hostInput) {
+        //TODO send request, add to db, display in adapter
     }
 
     private void handleNewHost(EditText hostInput) {
