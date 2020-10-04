@@ -59,28 +59,28 @@ public class FollowingRequestHandler extends RequestHandler {
                         twitchTotal = response.getInt("_total");
                     }
                     itemCount += response.getJSONArray("follows").length();
-                    if (response.getJSONArray("follows").length() > 0) {
-                        for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
-                            FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id")),
-                                    response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("display_name"),
-                                    response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
-                                    response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
-                                    response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
-                                    timestamp);
-                            FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
-                            if (existingFollowingEntity != null) {
-                                if (existingFollowingEntity.getStatus() != null
-                                        && existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
-                                    followingEntity.setStatus("EXCLUDED");
-                                } else {
-                                    followingEntity.setStatus("CURRENT");
-                                }
-                                streamingYorkieDB.followingDAO().updateUser(followingEntity);
+                    for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
+                        FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id")),
+                                response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("display_name"),
+                                response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
+                                response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
+                                response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
+                                timestamp);
+                        FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
+                        if (existingFollowingEntity != null) {
+                            if (existingFollowingEntity.getStatus() != null
+                                    && existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
+                                followingEntity.setStatus("EXCLUDED");
                             } else {
-                                followingEntity.setStatus("NEW");
-                                streamingYorkieDB.followingDAO().insertUser(followingEntity);
+                                followingEntity.setStatus("CURRENT");
                             }
+                            streamingYorkieDB.followingDAO().updateUser(followingEntity);
+                        } else {
+                            followingEntity.setStatus("NEW");
+                            streamingYorkieDB.followingDAO().insertUser(followingEntity);
                         }
+                    }
+                    if (response.getJSONArray("follows").length() == Globals.USER_REQUEST_LIMIT && itemCount < twitchTotal) {
                         sendRequest(true);
                     } else {
                         if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {

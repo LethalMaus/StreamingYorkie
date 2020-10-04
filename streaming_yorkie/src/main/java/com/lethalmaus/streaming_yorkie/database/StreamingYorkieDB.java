@@ -42,7 +42,7 @@ public abstract class StreamingYorkieDB extends RoomDatabase {
             steamingYorkieDBInstance = Room
                     .databaseBuilder(context, StreamingYorkieDB.class, DB_NAME)
                     .fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build();
         }
         return steamingYorkieDBInstance;
@@ -59,6 +59,13 @@ public abstract class StreamingYorkieDB extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `lurk` (`channelName` TEXT NOT NULL, `channelId` INTEGER NOT NULL, `broadcastId` TEXT, `logo` TEXT, `html` TEXT, `channelInformedOfLurk` INTEGER NOT NULL, `channelIsToBeLurked` INTEGER NOT NULL, PRIMARY KEY(`channelName`))");
+        }
+    };
+
+    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            //do nothing as the schema repeats in MIGRATION_4_5 due to fix
         }
     };
 
