@@ -28,7 +28,11 @@ public class FollowingRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        return "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=desc&offset=" + this.offset;
+        /*FIXME
+           'sortby=login' was added due to bug on twitch side, this will affect the update request handler and should be removed when resolved
+            https://github.com/twitchdev/issues/issues/237
+        */
+        return "https://api.twitch.tv/kraken/users/" + userID + "/follows/channels?limit=" + Globals.USER_REQUEST_LIMIT + "&direction=desc&sortby=login&offset=" + this.offset;
     }
 
     @Override

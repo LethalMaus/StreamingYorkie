@@ -26,7 +26,7 @@ import com.lethalmaus.streaming_yorkie.entity.VODEntity;
  * Streaming Yorkie Database
  * @author LethalMaus
  */
-@Database(entities = {FollowerEntity.class, FollowingEntity.class, F4FEntity.class, ChannelEntity.class, VODEntity.class, LurkEntity.class}, version = 3)
+@Database(entities = {FollowerEntity.class, FollowingEntity.class, F4FEntity.class, ChannelEntity.class, VODEntity.class, LurkEntity.class}, version = 4)
 public abstract class StreamingYorkieDB extends RoomDatabase {
     private static final String DB_NAME = "streaming_yorkie";
     private static StreamingYorkieDB steamingYorkieDBInstance;
@@ -48,24 +48,24 @@ public abstract class StreamingYorkieDB extends RoomDatabase {
         return steamingYorkieDBInstance;
     }
 
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             //do nothing as the schema repeats in MIGRATION_2_3 due to fix
         }
     };
 
-    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+    public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE IF NOT EXISTS `lurk` (`channelName` TEXT NOT NULL, `channelId` INTEGER NOT NULL, `broadcastId` TEXT, `logo` TEXT, `html` TEXT, `channelInformedOfLurk` INTEGER NOT NULL, `channelIsToBeLurked` INTEGER NOT NULL, PRIMARY KEY(`channelName`))");
         }
     };
 
-    private static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            //do nothing as the schema repeats in MIGRATION_4_5 due to fix
+            database.execSQL("ALTER TABLE `following` ADD COLUMN `excludeUntil` INTEGER NOT NULL DEFAULT 0");
         }
     };
 
