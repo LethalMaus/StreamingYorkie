@@ -23,7 +23,7 @@ public class FollowingEntity extends UserEntity {
      */
     public FollowingEntity(int id, String display_name, String logo, String created_at, boolean notifications, long last_updated, long excludeUntil) {
         super(id, display_name, logo, created_at, notifications, last_updated);
-        excludeUntil = this.excludeUntil;
+        this.excludeUntil = excludeUntil;
     }
 
     /**

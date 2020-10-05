@@ -491,6 +491,9 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.3.4-a](#234-a)
++ [2.3.3-a](#233-a)
++ [2.3.2-a](#232-a)
 + [2.3.1-a](#231-a)
 + [2.3.0-a](#230-a)
 + [2.2.2-a](#222-a)
@@ -510,6 +513,42 @@ This can take up to 15 minutes to activate.
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+---
+
+### 2.3.4-a
+
+<details>
+<summary>Hotfix</summary>
+
+Issues fixed:
++   Following bug from twitch api
+
+</details>
+
+---
+
+### 2.3.3-a
+
+<details>
+<summary>Hotfix</summary>
+
+Issues fixed:
++   DB crashes
+
+</details>
+
+---
+
+### 2.3.2-a
+
+<details>
+<summary>Hotfix</summary>
+
+Issues fixed:
++   Follower/following bug
+
+</details>
 
 ---
 
