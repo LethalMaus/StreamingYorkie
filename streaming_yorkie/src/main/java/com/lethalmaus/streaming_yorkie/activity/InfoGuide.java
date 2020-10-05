@@ -30,40 +30,40 @@ public class InfoGuide extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        final Button menus_button = findViewById(R.id.guide_menus_button);
-        menus_button.setOnClickListener((View v) -> {
-            ConstraintLayout menus_view = findViewById(R.id.guide_menus);
-            if (menus_view.getChildCount() <= 0) {
+        final Button menusButton = findViewById(R.id.guide_menus_button);
+        menusButton.setOnClickListener((View v) -> {
+            ConstraintLayout menusView = findViewById(R.id.guide_menus);
+            if (menusView.getChildCount() <= 0) {
                 resetViews();
-                menus_button.setBackgroundResource(R.drawable.button_selected);
-                View menus = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_menus, menus_view, false);
-                menus_view.addView(menus, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                menusButton.setBackgroundResource(R.drawable.button_selected);
+                View menus = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_menus, menusView, false);
+                menusView.addView(menus, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             } else {
                 resetViews();
             }
         });
 
-        final Button categories_button = findViewById(R.id.guide_categories_button);
-        categories_button.setOnClickListener((View v) -> {
-            ConstraintLayout categories_view = findViewById(R.id.guide_categories);
-            if (categories_view.getChildCount() <= 0) {
+        final Button categoriesButton = findViewById(R.id.guide_categories_button);
+        categoriesButton.setOnClickListener((View v) -> {
+            ConstraintLayout categoriesView = findViewById(R.id.guide_categories);
+            if (categoriesView.getChildCount() <= 0) {
                 resetViews();
-                categories_button.setBackgroundResource(R.drawable.button_selected);
-                View categories = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_categories, categories_view, false);
-                categories_view.addView(categories, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                categoriesButton.setBackgroundResource(R.drawable.button_selected);
+                View categories = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_categories, categoriesView, false);
+                categoriesView.addView(categories, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             } else {
                 resetViews();
             }
         });
 
-        final Button actions_button = findViewById(R.id.guide_actions_button);
-        actions_button.setOnClickListener((View v) -> {
-            ConstraintLayout actions_view = findViewById(R.id.guide_actions);
-            if (actions_view.getChildCount() <= 0) {
+        final Button actionsButton = findViewById(R.id.guide_actions_button);
+        actionsButton.setOnClickListener((View v) -> {
+            ConstraintLayout actionsView = findViewById(R.id.guide_actions);
+            if (actionsView.getChildCount() <= 0) {
                 resetViews();
-                actions_button.setBackgroundResource(R.drawable.button_selected);
-                View actions = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_actions, actions_view, false);
-                actions_view.addView(actions, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                actionsButton.setBackgroundResource(R.drawable.button_selected);
+                View actions = LayoutInflater.from(InfoGuide.this).inflate(R.layout.info_guide_actions, actionsView, false);
+                actionsView.addView(actions, new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             } else {
                 resetViews();
             }

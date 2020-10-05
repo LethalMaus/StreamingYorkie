@@ -38,9 +38,9 @@ import java.lang.ref.WeakReference;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     //All activities & contexts are weak referenced to avoid memory leaks
-    private static WeakReference<Activity> weakActivity;
-    private static WeakReference<Context> weakContext;
-    private static StreamingYorkieDB streamingYorkieDB;
+    private static WeakReference<Activity> weakActivity = null;
+    private static WeakReference<Context> weakContext = null;
+    private static StreamingYorkieDB streamingYorkieDB = null;
     private RecyclerView recyclerView;
     private String userType;
     private String userStatus;
@@ -577,7 +577,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 int padding = (int) (-30 * scale);
                 lottieButton.setPadding(padding, padding, padding, padding);
                 if (followingEntity.isNotifications()) {
-                    lottieButton.setProgress(100);
+                    lottieButton.setProgress(1);
                 } else {
                     lottieButton.setProgress(0);
                 }
@@ -589,7 +589,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                             final FollowingEntity followingEntityAfter = streamingYorkieDB.followingDAO().getUserById(userID);
                             weakActivity.get().runOnUiThread(() -> {
                                 if (followingEntityAfter.isNotifications()) {
-                                    lottieButton.setProgress(100);
+                                    lottieButton.setProgress(1);
                                     lottieButton.setSpeed(-1);
                                 } else {
                                     lottieButton.setProgress(0);
@@ -598,17 +598,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 lottieButton.playAnimation();
                             });
                             if (RequestHandler.networkIsAvailable(weakContext)) {
-                                if (followingEntityAfter.isNotifications()) {
-                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, false).sendRequest(false);
-                                    weakActivity.get().runOnUiThread(() ->
-                                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
-                                    );
-                                } else {
-                                    new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, true).sendRequest(false);
-                                    weakActivity.get().runOnUiThread(() ->
-                                            weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
-                                    );
-                                }
+                                new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, followingEntityAfter.isNotifications()).sendRequest(false);
+                                weakActivity.get().runOnUiThread(() ->
+                                        weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
+                                );
                             } else if (weakActivity != null && weakActivity.get() != null) {
                                 weakActivity.get().runOnUiThread(() ->
                                         Toast.makeText(weakActivity.get(), "Cannot change Notification preferences when offline", Toast.LENGTH_SHORT).show());

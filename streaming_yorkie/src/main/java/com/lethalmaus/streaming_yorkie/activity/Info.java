@@ -29,7 +29,7 @@ public class Info extends AppCompatActivity {
     protected WeakReference<Activity> weakActivity;
     protected WeakReference<Context> weakContext;
     //hidden count on Dev Logo to display all files in the same directory as the App
-    private int showDevLogs;
+    private int showDevLogs = 7;
 
     private RequestHandler requestHandler;
 
@@ -42,7 +42,6 @@ public class Info extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        showDevLogs = 7;
         requestHandler = new DevInfoRequestHandler(weakActivity, weakContext);
         requestHandler.sendRequest(false);
 

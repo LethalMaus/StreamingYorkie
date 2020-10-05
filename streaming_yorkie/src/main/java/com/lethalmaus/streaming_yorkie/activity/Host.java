@@ -86,48 +86,53 @@ public class Host extends AppCompatActivity implements StartDragListener {
         EditText hostInput = findViewById(R.id.hostInput);
         ImageView newHost = findViewById(R.id.hostButton);
         newHost.setOnClickListener((View v) -> {
-            if (SystemClock.elapsedRealtime() - mLastClickTime > 3000) {
-                String hostInputText = hostInput.getText().toString().replaceAll("\\s", "");
-                if (hostInputText.length() > 0) {
-                    new AutoHostRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)) {
-                        @Override
-                        public void responseHandler(final JSONObject response) {
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        //TODO here you can check if the user also hosts you
-                                        if (response.getJSONObject("data").isNull("user")) {
-                                            if (Globals.checkWeakActivity(weakActivity)) {
-                                                weakActivity.get().runOnUiThread(() ->
-                                                        Toast.makeText(weakActivity.get(), "User does not exist.", Toast.LENGTH_SHORT).show()
-                                                );
-                                            }
-                                        } else {
-                                            String id = response.getJSONObject("data").getJSONObject("user").getString("id");
-                                            if (Globals.checkWeakRecyclerView(weakRecyclerView)) {
-                                                HostAdapter adapter = (HostAdapter) weakRecyclerView.get().getAdapter();
-                                                if (adapter != null) {
-                                                    adapter.addToAutohostList(id);
-                                                }
-                                            }
-                                        }
-                                    } catch (JSONException e) {
+            handleNewHost(hostInput);
+        });
+    }
+
+    private void handleNewHost(EditText hostInput) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime > 3000) {
+            mLastClickTime = SystemClock.elapsedRealtime();
+            String hostInputText = hostInput.getText().toString().replaceAll("\\s", "");
+            if (hostInputText.length() > 0) {
+                new AutoHostRequestHandler(weakActivity, weakContext, new WeakReference<>(recyclerView)) {
+                    @Override
+                    public void responseHandler(final JSONObject response) {
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    //TODO here you can check if the user also hosts you
+                                    if (response.getJSONObject("data").isNull("user")) {
                                         if (Globals.checkWeakActivity(weakActivity)) {
                                             weakActivity.get().runOnUiThread(() ->
-                                                    Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(weakActivity.get(), "User does not exist.", Toast.LENGTH_SHORT).show()
                                             );
                                         }
-                                        new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "New host response error | " + e.toString(), true).run();
+                                    } else {
+                                        String id = response.getJSONObject("data").getJSONObject("user").getString("id");
+                                        if (Globals.checkWeakRecyclerView(weakRecyclerView)) {
+                                            HostAdapter adapter = (HostAdapter) weakRecyclerView.get().getAdapter();
+                                            if (adapter != null) {
+                                                adapter.addToAutohostList(id);
+                                            }
+                                        }
                                     }
+                                } catch (JSONException e) {
+                                    if (Globals.checkWeakActivity(weakActivity)) {
+                                        weakActivity.get().runOnUiThread(() ->
+                                                Toast.makeText(weakActivity.get(), "Twitch has changed its API, please contact the developer.", Toast.LENGTH_SHORT).show()
+                                        );
+                                    }
+                                    new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "New host response error | " + e.toString(), true).run();
                                 }
-                            }.start();
-                        }
-                    }.postBodyForGettingList(hostInputText).initiate().sendRequest(true);
-                    hostInput.setText("");
-                }
+                            }
+                        }.start();
+                    }
+                }.postBodyForGettingList(hostInputText).initiate().sendRequest(true);
+                hostInput.setText("");
             }
-        });
+        }
     }
 
     @Override

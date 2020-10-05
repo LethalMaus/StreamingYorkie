@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
@@ -25,7 +25,7 @@
         <service
             android:name=".service.LurkService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <activity
             android:name=".activity.MainActivity"
@@ -36,126 +36,144 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="lethalmaus.github.io"
+                    android:pathPrefix="/StreamingYorkie/follow" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.Authorization"
             android:configChanges="orientation|screenSize"
             android:label="Authorization"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.UserParent"
             android:label="User Parent"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.FollowParent"
             android:label="Follow Parent"
             android:parentActivityName=".activity.UserParent"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Follow4Follow"
             android:configChanges="orientation|screenSize"
             android:label="Follow4Follow"
             android:parentActivityName=".activity.FollowParent"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Followers"
             android:configChanges="orientation|screenSize"
             android:label="Followers"
             android:parentActivityName=".activity.FollowParent"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Following"
             android:configChanges="orientation|screenSize"
             android:label="Following"
             android:parentActivityName=".activity.FollowParent"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Dashboard"
             android:configChanges="orientation|screenSize"
             android:label="Dashboard"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.VODs"
             android:configChanges="orientation|screenSize"
             android:label="VODs"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.MultiView"
             android:configChanges="orientation|screenSize"
             android:label="Multi View"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Lurk"
             android:configChanges="orientation|screenSize"
             android:label="Lurk"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Host"
             android:configChanges="orientation|screenSize"
             android:label="Host"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Channel"
             android:configChanges="orientation|screenSize"
             android:label="Channel Info"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Shop"
             android:configChanges="orientation|screenSize"
             android:label="Shop"
             android:parentActivityName=".activity.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Info"
             android:label="Info"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.InfoGuide"
             android:configChanges="orientation|screenSize"
             android:label="Info Guide"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.SettingsMenu"
             android:label="Settings"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.SettingsLurk"
             android:configChanges="orientation|screenSize"
             android:label="Settings Lurk"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.SettingsVOD"
             android:configChanges="orientation|screenSize"
             android:label="Settings VODs"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.SettingsF4F"
             android:configChanges="orientation|screenSize"
             android:label="Settings F4F"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".activity.Logs"
             android:configChanges="orientation|screenSize"
             android:label="Logs"
-            android:launchMode="singleInstance"/>
-        <receiver android:name=".receiver.AutoLurkReceiver" android:enabled="true" android:exported="false">
+            android:launchMode="singleInstance" />
+
+        <receiver
+            android:name=".receiver.AutoLurkReceiver"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="LURK_ALARM" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.AutoBootReceiver" android:enabled="true">
+        <receiver
+            android:name=".receiver.AutoBootReceiver"
+            android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

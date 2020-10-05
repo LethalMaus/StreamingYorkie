@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.database.StreamingYorkieDB;
+import com.lethalmaus.streaming_yorkie.entity.ChannelEntity;
 import com.lethalmaus.streaming_yorkie.file.DeleteFileHandler;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
@@ -374,7 +375,14 @@ public class SettingsF4F extends AppCompatActivity {
             Toast.makeText(SettingsF4F.this, "Changes saved", Toast.LENGTH_SHORT).show();
             try {
                 if (settings.getBoolean(Globals.SETTINGS_SHARE_F4F_STATUS) && (settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOW) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_FOLLOWUNFOLLOW))) {
-                    postToDiscord("**#USERNAME** is doing F4F automatically every **" + settings.getString(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + "**. Follow them here https://www.twitch.tv/#USERNAME", true);
+                    int timeParam = 1;
+                    if (settings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(SETTINGS_INTERVAL_UNIT_HOURS)) {
+                        timeParam = 60;
+                    } else if (settings.getString(Globals.SETTINGS_INTERVAL_UNIT).equals(SETTINGS_INTERVAL_UNIT_DAYS)) {
+                        timeParam = 60 * 24;
+                    }
+                    timeParam *= settings.getInt(Globals.SETTINGS_INTERVAL);
+                    postToDiscord("**#USERNAME** is doing F4F automatically every **" + settings.getInt(Globals.SETTINGS_INTERVAL) + " " + settings.getString(Globals.SETTINGS_INTERVAL_UNIT) + "**. Follow them via StreamingYorkie https://lethalmaus.github.io/StreamingYorkie/follow/#USER_ID?exclude=" + timeParam + " and check them out on Twitch https://www.twitch.tv/#USERNAME", true);
                 } else if (new File(getFilesDir().toString() + File.separator + Globals.FILE_SHARE_F4F).exists() && (settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_OFF) || settings.getString(SETTINGS_AUTOFOLLOW).contentEquals(SETTINGS_UNFOLLOW))) {
                     postToDiscord("```diff\n- #USERNAME is NOT doing F4F automatically anymore.\n```", false);
                 }
@@ -397,14 +405,16 @@ public class SettingsF4F extends AppCompatActivity {
      * Method for posting to discord
      * @author LethalMaus
      * @param postBodyContent String message that is sent to discord. #USERNAME will be replaced with the username.
-     * @param active Boolean is user is actively doing F4F or not
+     * @param active boolean is user is actively doing F4F or not
      */
-    private void postToDiscord(String postBodyContent, Boolean active) {
+    private void postToDiscord(String postBodyContent, boolean active) {
         new Thread(() -> {
             try {
                 JSONObject postBody = new JSONObject();
-                String username =  StreamingYorkieDB.getInstance(weakContext.get()).channelDAO().getChannel().getDisplay_name();
-                postBody.put("content", postBodyContent.replace("#USERNAME", username));
+                ChannelEntity channel = StreamingYorkieDB.getInstance(weakContext.get()).channelDAO().getChannel();
+                String username =  channel.getDisplay_name();
+                int id = channel.getId();
+                postBody.put("content", postBodyContent.replace("#USERNAME", username).replace("#USER_ID", String.valueOf(id)));
                 new ShareF4FStatusRequestHandler(new WeakReference<>(SettingsF4F.this), weakContext){
                     @Override
                     public void responseHandler(final JSONObject response) {
