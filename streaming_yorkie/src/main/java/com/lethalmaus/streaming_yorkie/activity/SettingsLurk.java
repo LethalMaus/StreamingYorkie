@@ -11,11 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.lethalmaus.streaming_yorkie.Globals;
 import com.lethalmaus.streaming_yorkie.R;
@@ -114,9 +114,9 @@ public class SettingsLurk extends AppCompatActivity {
      * @author LethalMaus
      */
     private void serviceActivationSwitch() {
-        Switch autoLurkActivation = findViewById(R.id.settings_autolurk_activation);
+        SwitchCompat autoLurkActivation = findViewById(R.id.settings_autolurk_activation);
         try {
-            autoLurkActivation.setChecked(settings.getString(Globals.SETTINGS_AUTOLURK).equals(Globals.SETTINGS_OFF));
+            autoLurkActivation.setChecked(settings.getString(Globals.SETTINGS_AUTOLURK).equals(Globals.SETTINGS_LURK));
         } catch(JSONException e) {
             Toast.makeText(SettingsLurk.this, getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
             new WriteFileHandler(weakActivity, weakContext, Globals.FILE_ERROR, null,getString(R.string.error_reading_lurk_settings) + getString(R.string.pipe) + Globals.SETTINGS_AUTOLURK + getString(R.string.pipe) + e.toString(), true).run();
@@ -140,7 +140,7 @@ public class SettingsLurk extends AppCompatActivity {
      * @author LethalMaus
      */
     private void wifiOnlySwitch() {
-        Switch wifiOnly = findViewById(R.id.settings_autolurk_wifi_only);
+        SwitchCompat wifiOnly = findViewById(R.id.settings_autolurk_wifi_only);
         try {
             wifiOnly.setChecked(settings.getBoolean(Globals.SETTINGS_WIFI_ONLY));
         } catch(JSONException e) {
@@ -162,7 +162,7 @@ public class SettingsLurk extends AppCompatActivity {
      * @author LethalMaus
      */
     private void audioOnlySwitch() {
-        Switch audioOnly = findViewById(R.id.settings_autolurk_audio_only);
+        SwitchCompat audioOnly = findViewById(R.id.settings_autolurk_audio_only);
         try {
             audioOnly.setChecked(settings.getBoolean(Globals.SETTINGS_AUDIO_ONLY));
         } catch(JSONException e) {
@@ -185,7 +185,7 @@ public class SettingsLurk extends AppCompatActivity {
      * @author LethalMaus
      */
     private void informChannelSwitch() {
-        Switch informChannel = findViewById(R.id.settings_autolurk_inform);
+        SwitchCompat informChannel = findViewById(R.id.settings_autolurk_inform);
         try {
             informChannel.setChecked(settings.getBoolean(Globals.SETTINGS_LURK_INFORM));
         } catch(JSONException e) {

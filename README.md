@@ -141,6 +141,13 @@ A big thank you to you all for going out of your way supporting Streaming Yorkie
     <td align="center"><a href="https://www.twitch.tv/killmonka1997">KILLMONKA1997</a></td>
     <td align="center"><a href="https://www.twitch.tv/gamingwithak47">gamingwithak47</a></td>
     <td align="center"><a href="https://www.twitch.tv/graspingguiter01">graspingguiter01</a></td>
+    <td align="center"><a href="https://www.twitch.tv/grandadtree">GrandadTree</a></td>
+    <td align="center"><a href="https://www.twitch.tv/chicken_tendies">chicken_tendies</a></td>
+  </tr>
+  <tr>
+      <td align="center"><a href="https://www.twitch.tv/dmb2k">dmb2k</a></td>
+      <td align="center"><a href="https://www.twitch.tv/tg__assassin">TG__ASSASSIN</a></td>
+      <td align="center"><a href="https://www.twitch.tv/elsize29">elsize29</a></td>
   </tr>
 </table>
 
@@ -491,6 +498,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.3.5-a](#235-a)
 + [2.3.4-a](#234-a)
 + [2.3.3-a](#233-a)
 + [2.3.2-a](#232-a)
@@ -513,6 +521,18 @@ This can take up to 15 minutes to activate.
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+---
+
+### 2.3.5-a
+
+<details>
+<summary>Bug fix</summary>
+
+Issue fixed:
++   Lurk settings activation switch
+
+</details>
 
 ---
 
