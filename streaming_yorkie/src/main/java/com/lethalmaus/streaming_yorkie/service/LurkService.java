@@ -206,7 +206,7 @@ public class LurkService extends Service {
                 channelNames = new StringBuilder();
                 String prefix = "";
                 for (LurkEntity lurk : lurks) {
-                    htmlInjection.append(lurk.getHtml());
+                    htmlInjection.append(lurk.getHtml().replaceAll("\n", ""));
                     channelNames.append(prefix);
                     prefix = ", ";
                     channelNames.append(lurk.getChannelName());

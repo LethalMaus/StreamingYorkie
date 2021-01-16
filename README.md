@@ -498,6 +498,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.3.6-a](#236-a)
 + [2.3.5-a](#235-a)
 + [2.3.4-a](#234-a)
 + [2.3.3-a](#233-a)
@@ -521,6 +522,18 @@ This can take up to 15 minutes to activate.
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+---
+
+### 2.3.6-a
+
+<details>
+<summary>Bug fix</summary>
+
+Issue fixed:
++   Lurk feature fix due to Twitch API change.
+
+</details>
 
 ---
 

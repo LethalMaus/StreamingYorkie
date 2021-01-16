@@ -40,12 +40,12 @@ public class LurkRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        return "https://api.twitch.tv/api/channels/" + channel.toLowerCase() + "/access_token?need_https=true&platform=web&player_backend=mediaplayer&player_type=embed&client_id=" + Globals.TWITCHID;
+        return "https://gql.twitch.tv/gql";
     }
 
     @Override
     public int method() {
-        return Request.Method.GET;
+        return Request.Method.POST;
     }
 
     /**
@@ -68,6 +68,26 @@ public class LurkRequestHandler extends RequestHandler {
      */
     public LurkRequestHandler newRequest(String channel) {
         this.channel = channel;
+        try {
+            JSONObject postBody = new JSONObject();
+            postBody.put("operationName", "PlaybackAccessToken");
+            JSONObject variables = new JSONObject();
+            variables.put("isLive", true);
+            variables.put("login", channel.toLowerCase());
+            variables.put("isVod", false);
+            variables.put("vodID", "");
+            variables.put("playerType", "embed");
+            postBody.put("variables", variables);
+            JSONObject persistedQuery = new JSONObject();
+            persistedQuery.put("version", 1);
+            persistedQuery.put("sha256Hash", "0828119ded1c13477966434e15800ff57ddacf13ba1911c129dc2200705b0712");
+            JSONObject extensions = new JSONObject();
+            extensions.put("persistedQuery", persistedQuery);
+            postBody.put("extensions", extensions);
+            setPostBody(postBody);
+        } catch (JSONException e) {
+            new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error setting post body for LurkRequest |" + e, true).run();
+        }
         return this;
     }
 
@@ -76,8 +96,8 @@ public class LurkRequestHandler extends RequestHandler {
         new Thread() {
             public void run() {
                 try {
-                    lurkToken = response.getString("token");
-                    signature = response.getString("sig");
+                    lurkToken = response.getJSONObject("data").getJSONObject("streamPlaybackAccessToken").getString("value");
+                    signature = response.getJSONObject("data").getJSONObject("streamPlaybackAccessToken").getString("signature");
                     getLurkUrl(new JSONObject(lurkToken).getString("channel_id"));
                 } catch (JSONException e) {
                     new WriteFileHandler(weakActivity, weakContext, "ERROR", null, "Error reading first Lurk Url JSON | " + e.toString(), true).run();
@@ -131,7 +151,7 @@ public class LurkRequestHandler extends RequestHandler {
                                                         } else {
                                                             lurkUrl = response.substring(response.indexOf("VIDEO=\"chunked\"") + 16);
                                                         }
-                                                        lurkUrl = lurkUrl.substring(0, lurkUrl.indexOf("\n"));
+                                                        lurkUrl = lurkUrl.substring(0, lurkUrl.indexOf("\n")).replace("\n", "");
                                                     }
                                                 } catch (JSONException e) {
                                                     Toast.makeText(weakContext.get(), "Error reading settings for " + Globals.SETTINGS_AUTOLURK, Toast.LENGTH_SHORT).show();
