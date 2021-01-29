@@ -6,16 +6,16 @@ assemble.dependsOn('lint')
 //check.dependsOn('checkstyle')
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     configurations {
         all*.exclude group: 'com.google.guava', module: 'listenablefuture'
     }
     defaultConfig {
         applicationId 'com.lethalmaus.streaming_yorkie'
         minSdkVersion 23
-        targetSdkVersion 29
-        versionCode 41
-        versionName "2.3.6-a"
+        targetSdkVersion 30
+        versionCode 42
+        versionName "2.3.7-a"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
