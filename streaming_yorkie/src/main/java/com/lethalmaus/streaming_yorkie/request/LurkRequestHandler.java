@@ -164,7 +164,7 @@ public class LurkRequestHandler extends RequestHandler {
                                         }
                                         broadcastId = broadcastId.substring(0, broadcastId.indexOf("\","));
                                         String htmlBlock = "<div id='" + channel.toLowerCase().trim() + "'>"
-                                                + "<video autoplay onerror='this.load()' onloadstart='this.volume=0.010001'>"
+                                                + "<video width='200' height='120' autoplay onerror='this.load()' onloadstart='this.volume=0.010001'>"
                                                 + "<source src='" + lurkUrl + "' type='application/x-mpegURL' onended='document.getElementById('" + channel.toLowerCase().trim() + "').outerHTML=\"\"'>"
                                                 + "</video></div>";
                                         if (lurk.getChannelId() == 0 || lurk.getHtml() == null || lurk.getHtml().isEmpty()) {

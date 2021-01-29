@@ -16,6 +16,7 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -178,13 +179,18 @@ public class LurkService extends Service {
             params.height = 1;
             webView = new WebView(LurkService.this);
             webView.setWebViewClient(new WebViewClient());
+            webView.setWebChromeClient(new WebChromeClient());
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setDomStorageEnabled(true);
+            webView.getSettings().setAllowFileAccess(true);
+            webView.getSettings().setAllowFileAccessFromFileURLs(true);
+            webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
             webView.loadUrl("file:///" + getFilesDir() + File.separator + Globals.FILE_LURK_HTML);
             if (windowManager != null) {
                 windowManager.addView(webView, params);
                 showNotification(false);
+                webView.loadUrl("javascript:(function() { document.getElementsByTagName('video')[0].play(); })()");
             }
         };
         new Thread() {

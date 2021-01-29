@@ -64,44 +64,16 @@ public class FollowingRequestHandler extends RequestHandler {
                     }
                     itemCount += response.getJSONArray("follows").length();
                     for (int i = 0; i < response.getJSONArray("follows").length(); i++) {
-                        FollowingEntity followingEntity = new FollowingEntity(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id")),
-                                response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("display_name"),
-                                response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("logo").replace("300x300", "50x50"),
-                                response.getJSONArray("follows").getJSONObject(i).getString("created_at"),
-                                response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"),
-                                timestamp,
-                                0);
-                        FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(followingEntity.getId());
+                        FollowingEntity existingFollowingEntity = streamingYorkieDB.followingDAO().getUserById(Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id")));
                         if (existingFollowingEntity != null) {
-                            if (existingFollowingEntity.getStatus() != null
-                                    && existingFollowingEntity.getStatus().contentEquals("EXCLUDED")) {
-                                followingEntity.setStatus("EXCLUDED");
-                            } else {
-                                followingEntity.setStatus("CURRENT");
-                            }
-                            streamingYorkieDB.followingDAO().updateUser(followingEntity);
-                        } else {
-                            followingEntity.setStatus("NEW");
-                            streamingYorkieDB.followingDAO().insertUser(followingEntity);
+                            existingFollowingEntity.setLogo(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("logo").replace("300x300", "50x50"));
+                            existingFollowingEntity.setNotifications(response.getJSONArray("follows").getJSONObject(i).getBoolean("notifications"));
+                            streamingYorkieDB.followingDAO().updateUser(existingFollowingEntity);
                         }
                     }
                     if (response.getJSONArray("follows").length() == Globals.USER_REQUEST_LIMIT && itemCount < twitchTotal) {
                         sendRequest(true);
                     } else {
-                        if (twitchTotal != itemCount && weakActivity != null && weakActivity.get() != null) {
-                            weakActivity.get().runOnUiThread(() ->
-                                    Toast.makeText(weakActivity.get(), "Twitch is slow. Its data for 'Following' is out of sync. Total should be '" + twitchTotal
-                                            + "' but is only giving '" + itemCount + "'", Toast.LENGTH_SHORT).show()
-                            );
-                        }
-                        new WriteFileHandler(weakActivity, weakContext, "TWITCH_FOLLOWING_TOTAL_COUNT", null, String.valueOf(twitchTotal), false).writeToFileOrPath();
-                        List<FollowingEntity> unfollowing = streamingYorkieDB.followingDAO().getUnfollowedUsers(timestamp);
-                        for (int i = 0; i < unfollowing.size(); i++) {
-                            unfollowing.get(i).setStatus("UNFOLLOWED");
-                            streamingYorkieDB.followingDAO().updateUser(unfollowing.get(i));
-                        }
-                        //TODO this can be added to onCompletion by extending a base adapter
-
                         if (Globals.checkWeakActivity(weakActivity) && Globals.checkWeakRecyclerView(recyclerView)) {
                             final UserAdapter userAdapter = (UserAdapter) recyclerView.get().getAdapter();
                             if (userAdapter != null) {

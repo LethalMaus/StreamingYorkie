@@ -63,7 +63,7 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                     if (lastFollowing.length == response.getJSONArray("follows").length() && response.getInt("_total") == twitchFollowingTotalCount) {
                         for (int i = 0; i < lastFollowing.length; i++) {
                             if (lastFollowing[i] != Integer.parseInt(response.getJSONArray("follows").getJSONObject(i).getJSONObject("channel").getString("_id"))) {
-                                new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
+                                new HelixFollowingRequestHandler(weakActivity, weakContext, recyclerView){
                                     @Override
                                     public void onCompletion(boolean hideProgressBar) {
                                         super.onCompletion(false);
@@ -75,7 +75,7 @@ public class FollowingUpdateRequestHandler extends RequestHandler {
                         }
                         onCompletion(true);
                     } else {
-                        new FollowingRequestHandler(weakActivity, weakContext, recyclerView){
+                        new HelixFollowingRequestHandler(weakActivity, weakContext, recyclerView){
                             @Override
                             public void onCompletion(boolean hideProgressBar) {
                                 super.onCompletion(false);
