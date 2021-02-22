@@ -498,6 +498,7 @@ This can take up to 15 minutes to activate.
 <details>
 <summary>v2.x.x</summary>
 
++ [2.3.8-a](#238-a)
 + [2.3.7-a](#237-a)
 + [2.3.6-a](#236-a)
 + [2.3.5-a](#235-a)
@@ -523,6 +524,19 @@ This can take up to 15 minutes to activate.
 + [2.0.2-a](#202-a)
 + [2.0.1-a](#201-a)
 + [2.0.0-a](#200-a)
+
+---
+
+### 2.3.8-a
+
+<details>
+<summary>Minor bug fixes</summary>
+
+Issue fixed:
++   Workaround for Twitch v5 API cursor bug
++   Fixed Following notification bug
+
+</details>
 
 ---
 

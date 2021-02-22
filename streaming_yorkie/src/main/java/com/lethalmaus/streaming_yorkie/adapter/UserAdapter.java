@@ -598,7 +598,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                                 lottieButton.playAnimation();
                             });
                             if (RequestHandler.networkIsAvailable(weakContext)) {
-                                new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, followingEntityAfter.isNotifications()).sendRequest(false);
+                                new FollowRequestHandler(weakActivity, weakContext).setRequestParameters(Request.Method.PUT, userID, !followingEntityAfter.isNotifications()).sendRequest(false);
                                 weakActivity.get().runOnUiThread(() ->
                                         weakActivity.get().findViewById(R.id.progressbar).setVisibility(View.INVISIBLE)
                                 );
