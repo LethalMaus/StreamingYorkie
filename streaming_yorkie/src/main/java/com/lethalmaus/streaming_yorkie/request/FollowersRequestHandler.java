@@ -2,6 +2,7 @@ package com.lethalmaus.streaming_yorkie.request;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Base64;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * Class for requesting Followers
@@ -55,6 +55,9 @@ public class FollowersRequestHandler extends RequestHandler {
                 try {
                     if (response.has("_cursor")) {
                         cursor = response.getString("_cursor");
+                        //This fixes the Twitch cursor bug
+                        JSONObject cursorObject = new JSONObject(new String(Base64.decode(cursor, Base64.DEFAULT)));
+                        cursor = cursorObject.getString("is");
                     }
                     if (twitchTotal == 0) {
                         twitchTotal = response.getInt("_total");

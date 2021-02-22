@@ -65,7 +65,7 @@ public class Globals {
     //ID of Twitch
     public static final String TWITCHID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
     //Object limit per request. Gets added to offset
-    public static final int USER_REQUEST_LIMIT = 25;
+    public static final int USER_REQUEST_LIMIT = 100;
     public static final int USER_UPDATE_REQUEST_LIMIT = 3;
     public static final int VOD_REQUEST_LIMIT = 10;
     public static final int VOD_UPDATE_REQUEST_LIMIT = 1;

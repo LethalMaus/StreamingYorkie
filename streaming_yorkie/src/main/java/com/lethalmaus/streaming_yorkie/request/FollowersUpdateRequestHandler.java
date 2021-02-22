@@ -2,14 +2,12 @@ package com.lethalmaus.streaming_yorkie.request;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.R;
 import com.lethalmaus.streaming_yorkie.file.ReadFileHandler;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 

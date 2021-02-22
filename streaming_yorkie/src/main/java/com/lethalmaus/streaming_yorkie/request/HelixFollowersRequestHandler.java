@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.lethalmaus.streaming_yorkie.Globals;
-import com.lethalmaus.streaming_yorkie.adapter.UserAdapter;
 import com.lethalmaus.streaming_yorkie.entity.FollowerEntity;
 import com.lethalmaus.streaming_yorkie.file.WriteFileHandler;
 
@@ -29,7 +28,7 @@ public class HelixFollowersRequestHandler extends RequestHandler {
 
     @Override
     public String url() {
-        return "https://api.twitch.tv/helix/users/follows?to_id=" + userID + "&after=" + cursor;
+        return "https://api.twitch.tv/helix/users/follows?to_id=" + userID + "&first=" + Globals.USER_REQUEST_LIMIT  + "&after=" + cursor;
     }
 
     @Override
@@ -81,7 +80,7 @@ public class HelixFollowersRequestHandler extends RequestHandler {
                             streamingYorkieDB.followerDAO().insertUser(followerEntity);
                         }
                     }
-                    if (response.getJSONArray("data").length() == 20 && itemCount < twitchTotal) {
+                    if (response.getJSONArray("data").length() == Globals.USER_REQUEST_LIMIT && itemCount < twitchTotal) {
                         sendRequest(true);
                     } else {
                         if (twitchTotal != itemCount && Globals.checkWeakActivity(weakActivity)) {
