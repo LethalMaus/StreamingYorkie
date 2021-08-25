@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/progress"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/page1"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/emptyLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/emptyuserrow_symbol"
+            android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/emote_feels_bad_man" />
+
+        <TextView
+            android:id="@+id/emptyInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/nothing_to_show"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emptyLogo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/page1">
+
+        <TextView
+            android:id="@+id/progressInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/progress_info"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/progressBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="5dp"
+            android:minHeight="5dp"
+            android:progress="0"
+            android:animateLayoutChanges="true"
+            android:progressDrawable="@drawable/seekbar_background"
+            app:layout_constraintTop_toBottomOf="@+id/progressInfo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/page1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/custom_button_secondary"
+        android:importantForAccessibility="no"
+        android:paddingTop="5dp"
+        android:paddingBottom="20dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/page2"
+        tools:srcCompat="@drawable/followed"
+        app:tint="@color/colorPrimary" />
+
+    <TextView
+        android:id="@+id/count1"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:textColor="@color/colorPrimary"
+        android:text="@string/zero"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/page1"
+        app:layout_constraintStart_toStartOf="@+id/page1"
+        app:layout_constraintEnd_toEndOf="@+id/page1"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/page2"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/custom_button_primary"
+        android:importantForAccessibility="no"
+        android:paddingTop="5dp"
+        android:paddingBottom="20dp"
+        android:scaleType="centerInside"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/page1"
+        app:layout_constraintEnd_toStartOf="@+id/page3"
+        tools:srcCompat="@drawable/unfollowed"/>
+
+    <TextView
+        android:id="@+id/count2"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:textColor="@color/white"
+        android:text="@string/zero"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/page2"
+        app:layout_constraintStart_toStartOf="@+id/page2"
+        app:layout_constraintEnd_toEndOf="@+id/page2"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/page3"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@drawable/custom_button_primary"
+        android:importantForAccessibility="no"
+        android:paddingTop="5dp"
+        android:paddingBottom="20dp"
+        android:scaleType="centerInside"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/page2"
+        app:layout_constraintEnd_toStartOf="@+id/page4"
+        tools:srcCompat="@drawable/excluded"/>
+
+    <TextView
+        android:id="@+id/count3"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:text="@string/zero"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/page3"
+        app:layout_constraintStart_toStartOf="@+id/page3"
+        app:layout_constraintEnd_toEndOf="@+id/page3"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/page4"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@drawable/custom_button_primary"
+        android:importantForAccessibility="no"
+        android:paddingTop="5dp"
+        android:paddingBottom="20dp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/page3"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:srcCompat="@drawable/excluded"/>
+
+    <TextView
+        android:id="@+id/count4"
+        android:layout_width="0dp"
+        android:layout_height="20dp"
+        android:layout_weight="1"
+        android:textColor="@color/white"
+        android:text="@string/zero"
+        android:textAlignment="center"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/page4"
+        app:layout_constraintStart_toStartOf="@+id/page4"
+        app:layout_constraintEnd_toEndOf="@+id/page4"
+        android:textSize="12sp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

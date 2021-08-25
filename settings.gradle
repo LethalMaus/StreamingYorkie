@@ -1,1 +1,2 @@
-include ':streaming_yorkie'
+include ':app'
+rootProject.name = "Streaming Yorkie"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string translatable="false" name="app_name">StreamingYorkie</string>
+    <string translatable="false" name="twitch_url">twitch.tv</string>
+    <string translatable="false" name="twitch_url_no_reload">https://www.twitch.tv/?no-reload=true</string>
+    <string translatable="false" name="twitch_url_passport_callback">https://www.twitch.tv/passport-callback#access_token</string>
+    <string translatable="false" name="twitch_url_oauth2">https://id.twitch.tv/oauth2/</string>
+    <string translatable="false" name="twitch_url_twitch_oauth2">https://id.twitch.tv/oauth2/authorize?response_type=token&amp;client_id=kimne78kx3ncx6brgo4mv6wki5h1ko&amp;redirect_uri=https://www.twitch.tv/passport-callback&amp;scope=chat_login user_read user_subscriptions user_presence_friends_read chat%3Aread+chat%3Aedit+channel%3Amoderate+whispers%3Aread+whispers%3Aedit+channel_editor</string>
+    <string translatable="false" name="twitch_url_client_oauth2">https://id.twitch.tv/oauth2/authorize?response_type=token&amp;client_id=tjots3mhxunw0sj2a20ka3wz39p7bp&amp;redirect_uri=http://localhost&amp;force_verify=true&amp;scope=user_follows_edit user_read channel_read chat%3Aread+chat%3Aedit+channel%3Amoderate+whispers%3Aread+whispers%3Aedit+channel_editor</string>
+    <string translatable="false" name="twitch_url_parameter_access_token">access_token</string>
+    <string translatable="false" name="twitch_access_denied">http://localhost/?error=access_denied</string>
+    <string translatable="false" name="localhost">localhost</string>
+    <string translatable="false" name="twitch_api">https://api.twitch.tv</string>
+    <string translatable="false" name="app_client_id">tjots3mhxunw0sj2a20ka3wz39p7bp</string>
+    <string translatable="false" name="twitch_client_id">kimne78kx3ncx6brgo4mv6wki5h1ko</string>
+
+    <string translatable="false" name="zero">0</string>
+</resources>

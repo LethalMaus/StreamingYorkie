@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_enabled="false"
+        android:drawable="@color/gray"/>
+    <item
+        android:state_enabled="true"
+        android:state_pressed="true">
+        <rotate
+            android:fromDegrees="180"
+            android:toDegrees="0"
+            android:drawable="@drawable/custom_button_primary_normal"/>
+    </item>
+    <item
+        android:drawable="@drawable/custom_button_primary_normal" />
+</selector>
